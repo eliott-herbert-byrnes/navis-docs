@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id              String          @id @default(uuid())
+  email           String          @unique
+  name            String?
+  image           String?
+  emailVerifiedAt DateTime?
+  createdAt       DateTime        @default(now())
+  memberships     OrgMembership[]
+}
+
+model Organization {
+  id               String          @id @default(uuid())
+  name             String
+  slug             String          @unique
+  ownerUserId      String
+  plan             String          @default("business")
+  entitlementsJSON Json            @default("{}")
+  createdAt        DateTime        @default(now())
+  memberships      OrgMembership[]
+  departments      Department[]
+}
+
+model OrgMembership {
+  id        String   @id @default(uuid())
+  orgId     String
+  userId    String
+  role      String // owner | admin | member
+  createdAt DateTime @default(now())
+
+  user User         @relation(fields: [userId], references: [id])
+  org  Organization @relation(fields: [orgId], references: [id])
+
+  @@unique([orgId, userId])
+}
+
+model Department {
+  id        String       @id @default(uuid())
+  orgId     String
+  name      String
+  createdAt DateTime     @default(now())
+  org       Organization @relation(fields: [orgId], references: [id])
+  teams     Team[]
+}
+
+model Team {
+  id           String     @id @default(uuid())
+  departmentId String
+  name         String
+  createdAt    DateTime   @default(now())
+  department   Department @relation(fields: [departmentId], references: [id])
+  categories   Category[]
+  Process      Process[]
+  NewsPost     NewsPost[]
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  teamId    String
+  name      String
+  sortOrder Int       @default(0)
+  team      Team      @relation(fields: [teamId], references: [id])
+  processes Process[]
+}
+
+model Process {
+  id                 String   @id @default(uuid())
+  teamId             String
+  categoryId         String?
+  slug               String
+  title              String
+  description        String?
+  style              String // raw | steps | flow | yesno
+  status             String // draft | published | archived
+  pendingVersionId   String?
+  publishedVersionId String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  team     Team             @relation(fields: [teamId], references: [id])
+  category Category?        @relation(fields: [categoryId], references: [id])
+  versions ProcessVersion[]
+}
+
+model ProcessVersion {
+  id          String   @id @default(uuid())
+  processId   String
+  createdBy   String
+  createdAt   DateTime @default(now())
+  style       String
+  contentJSON Json
+  contentText String?
+
+  process Process @relation(fields: [processId], references: [id])
+}
+
+model NewsPost {
+  id        String   @id @default(uuid())
+  teamId    String
+  title     String
+  bodyJSON  Json
+  pinned    Boolean  @default(false)
+  createdBy String
+  createdAt DateTime @default(now())
+  team      Team     @relation(fields: [teamId], references: [id])
+}
+
+model Favorite {
+  userId    String
+  processId String
+
+  @@id([userId, processId])
+}
+
+model Idea {
+  id        String   @id @default(uuid())
+  teamId    String
+  createdBy String
+  title     String
+  body      String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
+
+model ErrorReport {
+  id        String   @id @default(uuid())
+  processId String
+  createdBy String
+  body      String
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+}
+
+model IngestionJob {
+  id              String   @id @default(uuid())
+  orgId           String
+  processId       String
+  sourceType      String // pdf | docx | text
+  fileKey         String?
+  status          String // queued | parsing | generating | failed | ready
+  error           String?
+  outputVersionId String?
+  createdAt       DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  orgId      String
+  actorId    String
+  action     String
+  entityType String
+  entityId   String
+  at         DateTime @default(now())
+  beforeJSON Json?
+  afterJSON  Json?
+}
