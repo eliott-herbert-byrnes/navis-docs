@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, OrgMembershipRole, ProcessStyle, ProcessStatus } from '@prisma/client'
 const prisma = new PrismaClient();
 
 async function main() {
@@ -27,8 +27,8 @@ async function main() {
 
   await prisma.orgMembership.upsert({
     where: { orgId_userId: { orgId: org.id, userId: user.id } },
-    update: { role: 'owner' },
-    create: { orgId: org.id, userId: user.id, role: 'owner' },
+    update: { role: OrgMembershipRole.OWNER },
+    create: { orgId: org.id, userId: user.id, role: OrgMembershipRole.OWNER  },
   });
 
   const dept1 = await prisma.department.upsert({
@@ -63,8 +63,8 @@ async function main() {
       slug: 'setup-a-direct-debit',
       title: 'Setup a Direct Debit',
       description: 'Follow the below information to setup a direct debit.',
-      style: 'steps',
-      status: 'published',
+      style: ProcessStyle.STEPS,
+      status: ProcessStatus.PUBLISHED,
     },
   });
 
@@ -75,16 +75,16 @@ async function main() {
       slug: 'kyc-basic-check',
       title: 'KYC Basic Check',
       description: 'Basic verification steps for new customers.',
-      style: 'raw',
-      status: 'published',
+      style: ProcessStyle.RAW,
+      status: ProcessStatus.PUBLISHED,
     },
   });
 
-  await prisma.processVersion.create({
+  const pv1 = await prisma.processVersion.create({
     data: {
       processId: p1.id,
       createdBy: user.id,
-      style: 'steps',
+      style: ProcessStyle.STEPS,
       contentJSON: {
         type: 'doc',
         content: [
@@ -99,18 +99,13 @@ async function main() {
       },
       contentText: 'Open ticket… Review context… Reply using template…',
     },
-  }).then(async (ver) => {
-    await prisma.process.update({
-      where: { id: p1.id },
-      data: { publishedVersionId: ver.id },
-    });
-  });
+  })
 
-  await prisma.processVersion.create({
+  const pv2 = await prisma.processVersion.create({
     data: {
       processId: p2.id,
       createdBy: user.id,
-      style: 'raw',
+      style: ProcessStyle.RAW,
       contentJSON: {
         type: 'doc',
         content: [
@@ -120,11 +115,16 @@ async function main() {
       },
       contentText: 'Collect basic identity documents…',
     },
-  }).then(async (ver) => {
-    await prisma.process.update({
-      where: { id: p2.id },
-      data: { publishedVersionId: ver.id },
-    });
+  })
+
+  await prisma.process.update({
+    where: { id: p1.id },
+    data: { pendingVersionId: pv1.id },
+  });
+
+  await prisma.process.update({
+    where: { id: p2.id },
+    data: { pendingVersionId: pv2.id },
   });
 
   await prisma.newsPost.create({
