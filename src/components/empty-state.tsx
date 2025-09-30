@@ -1,8 +1,8 @@
 import { Card } from "./ui/card";
 
 type EmptyStateProps = {
-    title: string;
-    body: string;
+    title?: string;
+    body?: string;
     cta?: React.ReactNode;
 }
 

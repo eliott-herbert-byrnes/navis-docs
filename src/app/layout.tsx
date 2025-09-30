@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 // import { ThemeProvider } from "@/components/theme/theme-provider";
 // import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
+const GeistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -29,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen `}
+        className={`${GeistSans.variable} antialiased min-h-screen `}
       >
         <Providers>
           <div className="grid min-h-screen md:grid-cols-[240px_1fr]">
