@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 // import { ThemeProvider } from "@/components/theme/theme-provider";
 // import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
             </main>
           </div>
         </Providers>
+        <Toaster />
       </body>
     </html>
   );

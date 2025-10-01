@@ -1,9 +1,9 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "./prisma";
+import { auth } from "@/auth"
 
+// import NextAuth from "next-auth";
 export const getSessionUser = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session?.user?.email || !(session as any).userId) return null;
   return { email: session.user.email, userId: (session as any).userId as string };
 }
@@ -15,3 +15,4 @@ export const getUserOrg = async (userId: string) => {
   });
   return membership?.org ?? null;
 }
+

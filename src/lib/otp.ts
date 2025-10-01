@@ -8,7 +8,7 @@ function hashCode(code: string) {
 export const createOtpFor = async (email: string) => {
   const code = ("" + Math.floor(10000 + Math.random() * 90000)).slice(0, 5);
   const codeHash = hashCode(code);
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); 
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   await prisma.emailOTP.create({
     data: { email: email.toLowerCase(), codeHash, expiresAt },
@@ -29,6 +29,7 @@ export const verifyOtpAndConsume = async (email: string, code: string) => {
   if (!row) return false;
   if (row.attempts >= 5) return false;
   const ok = row.codeHash === hashCode(code);
+
   await prisma.emailOTP.update({
     where: { id: row.id },
     data: {
@@ -36,5 +37,6 @@ export const verifyOtpAndConsume = async (email: string, code: string) => {
       consumedAt: ok ? new Date() : null,
     },
   });
+
   return ok;
 };

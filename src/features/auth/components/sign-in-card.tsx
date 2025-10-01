@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { AuthCard } from "@/components/auth-card";
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,35 +11,54 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+
+// TODO: add OTP and check if it is working
+import { requestOtpAction } from "../actions/request-otp";
+import { verifyOtpAction } from "../actions/verify-otp";
+import { toast } from "sonner";
 
 const SignInCard = () => {
+  const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
   const [code, setCode] = useState("");
+  const [sent, setSent] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
 
-  async function requestCode() {
-    const res = await fetch("/api/auth/request-code", {
-      method: "POST",
-      body: JSON.stringify({ email }),
-      headers: { "content-type": "application/json" },
-    });
-    if (res.ok) setSent(true);
-  }
+  const continueWithGoogle = () => {
+    signIn("google", { callbackUrl: "/onboarding" });
+  };
 
-  async function verifyCode() {
-    const res = await signIn("credentials", {
-      email,
-      code,
-      redirect: true,
-      callbackUrl: "/onboarding",
+  // TODO: add OTP and check if it is working
+  const requestCode = () => {
+    startTransition(async () => {
+      const res = await requestOtpAction(email);
+      setMsg(res.message);
+      if (res.ok) {
+        setSent(true);
+        toast.success("Code sent. Check your email");
+      } else {
+        toast.error(res.message ?? "Invalid email");
+      }
     });
-    // next-auth handles redirect
-  }
+  };
+
+  const verifyCode = () => {
+    startTransition(async () => {
+      const res = await verifyOtpAction({ email, code });
+      if (res.ok) {
+        window.location.assign("/onboarding");
+        toast.success("Code verified. Redirecting to onboarding...");
+      } else {
+        setMsg(res.message ?? null);
+        toast.error(res.message ?? "Invalid code");
+      }
+    });
+  };
 
   const header = (
     <>
-      <Button onClick={() => signIn("google", { callbackUrl: "/onboarding" })}>
+      <Button onClick={continueWithGoogle} disabled={pending}>
         <div className="flex justify-center items-center ">
           <span className="mr-2">
             <svg
@@ -63,25 +81,32 @@ const SignInCard = () => {
 
   const content = (
     <>
-      <div className="flex flex-row gap-3 items-center justify-center mx-auto max-w-[130px]">
-        <Separator />
-        <span className="text-sm text-muted-foreground">or</span>
-        <Separator />
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="h-px flex-1 bg-border" />
+        <span>or</span>
+        <div className="h-px flex-1 bg-border" />
       </div>
     </>
   );
 
-  // TODO: add manual input for email address
+  // TODO: add manual input for email address and check if it is working
   const footer = (
     <div className="flex flex-col gap-3 justify-center items-center w-full ">
       <Input
-        placeholder="robert.scott@navis-docs.com"
+        placeholder="robert.scott@navisdocs.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <Button variant="outline" className="w-full" onClick={requestCode}>
+
+      {/* // TODO: add RequestCode and check if it is working */}
+      <Button variant="outline" className="w-full" onClick={requestCode} disabled={pending || !email}>
         Email me a code
       </Button>
+      {msg && (
+        <p className="text-sm text-red-500 text-center">
+          {msg}
+        </p>
+      )}
     </div>
   );
 
@@ -106,14 +131,14 @@ const SignInCard = () => {
         </>
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground text-center">
             We sent a 5-digit code to {email}
           </p>
           <InputOTP
             value={code}
             onChange={(e) => setCode(e)}
             maxLength={5}
-            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+            pattern={REGEXP_ONLY_DIGITS}
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
@@ -127,7 +152,9 @@ const SignInCard = () => {
           <Button
             variant="outline"
             className="w-full max-w-[250px] mt-1"
+            // TODO: check if code is working
             onClick={verifyCode}
+            disabled={pending}
           >
             Verify & Continue
           </Button>
