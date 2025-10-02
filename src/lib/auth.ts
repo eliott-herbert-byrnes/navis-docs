@@ -1,7 +1,6 @@
 import { prisma } from "./prisma";
 import { auth } from "@/auth"
 
-// import NextAuth from "next-auth";
 export const getSessionUser = async () => {
   const session = await auth();
   if (!session?.user?.email || !(session as any).userId) return null;

@@ -42,7 +42,7 @@ export const {
       },
     }),
   ],
-  pages: { signIn: "/auth/signin" },
+  pages: { signIn: "/auth/sign-in" },
   callbacks: {
     async jwt({ token, user }) {
       if (user?.id) token.uid = user.id;

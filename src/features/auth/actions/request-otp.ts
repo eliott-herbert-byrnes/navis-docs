@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createOtpFor } from "@/lib/otp";
 import { Resend } from "resend";
 import { limiter } from "../lib/rate-limit";
+import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
   email: z.email().min(1, { message: "Is Required" }).max(191),

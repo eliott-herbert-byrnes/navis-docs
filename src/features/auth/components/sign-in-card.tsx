@@ -3,20 +3,13 @@
 import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { AuthCard } from "@/components/auth-card";
+import { CardCompact } from "@/components/auth-card";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-
-// TODO: add OTP and check if it is working
 import { requestOtpAction } from "../actions/request-otp";
 import { verifyOtpAction } from "../actions/verify-otp";
 import { toast } from "sonner";
+import { OtpInput } from "./otp-input";
 
 const SignInCard = () => {
   const [pending, startTransition] = useTransition();
@@ -29,7 +22,6 @@ const SignInCard = () => {
     signIn("google", { callbackUrl: "/onboarding" });
   };
 
-  // TODO: add OTP and check if it is working
   const requestCode = () => {
     startTransition(async () => {
       const res = await requestOtpAction(email);
@@ -88,8 +80,6 @@ const SignInCard = () => {
       </div>
     </>
   );
-
-  // TODO: add manual input for email address and check if it is working
   const footer = (
     <div className="flex flex-col gap-3 justify-center items-center w-full ">
       <Input
@@ -98,15 +88,15 @@ const SignInCard = () => {
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      {/* // TODO: add RequestCode and check if it is working */}
-      <Button variant="outline" className="w-full" onClick={requestCode} disabled={pending || !email}>
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={requestCode}
+        disabled={pending || !email}
+      >
         Email me a code
       </Button>
-      {msg && (
-        <p className="text-sm text-red-500 text-center">
-          {msg}
-        </p>
-      )}
+      {msg && <p className="text-sm text-red-500 text-center">{msg}</p>}
     </div>
   );
 
@@ -114,45 +104,33 @@ const SignInCard = () => {
     <div className="flex flex-col gap-3 items-center my-auto mx-auto w-full max-w-[350px]">
       {!sent ? (
         <>
+          {/* EMAIL UI FLOW */}
           <h2 className="text-xl font-bold">Navis Docs</h2>
           <h1 className="text-3xl font-semibold">Welcome back</h1>
-          <AuthCard
+          <CardCompact
             className="flex flex-col gap-3 mt-3 w-full"
             header={header}
             content={content}
             footer={footer}
           />
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link href="" className="underline">
-              Sign up
+            <Link href="/terms" className="underline">
+              Read our terms of service and privacy policy{" "}
             </Link>
           </p>
         </>
       ) : (
         <>
+          {/* OTP UI FLOW */}
           <p className="text-sm text-muted-foreground text-center">
             We sent a 5-digit code to {email}
           </p>
-          <InputOTP
-            value={code}
-            onChange={(e) => setCode(e)}
-            maxLength={5}
-            pattern={REGEXP_ONLY_DIGITS}
-          >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-            </InputOTPGroup>
-          </InputOTP>
+
+          <OtpInput code={code} setCode={setCode} />
 
           <Button
             variant="outline"
             className="w-full max-w-[250px] mt-1"
-            // TODO: check if code is working
             onClick={verifyCode}
             disabled={pending}
           >
