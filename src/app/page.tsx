@@ -7,7 +7,6 @@ import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function Home() {
-  const [showInvite, setShowInvite] = useState(false);
 
   return (
     <>

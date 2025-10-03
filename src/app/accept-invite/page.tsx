@@ -14,29 +14,25 @@ export default async function AcceptInvite({
   searchParams: { token?: string };
 }) {
   const raw = searchParams.token?.trim();
-  if (!raw) redirect("/auth/sign-in");
+  if (!raw) redirect("/auth/signin");
   const tokenHash = sha256(raw);
 
   const user = await getSessionUser();
   if (!user) {
-    redirect(
-      `/auth/sign-in?callbackUrl=${encodeURIComponent(`/accept-invite?token=${raw}`)}`
-    );
+    redirect(`/auth/signin?callbackUrl=${encodeURIComponent(`/accept-invite?token=${raw}`)}`);
   }
 
   const invite = await prisma.invitation.findUnique({ where: { tokenHash } });
 
+  // Validation & status checks
   if (!invite) {
     return <div className="max-w-lg mx-auto">Invite is invalid.</div>;
   }
   if (invite.status !== "PENDING") {
-    return (
-      <div className="max-w-lg mx-auto">
-        This invite has already been used or revoked.
-      </div>
-    );
+    return <div className="max-w-lg mx-auto">This invite has already been used or revoked.</div>;
   }
   if (invite.expiresAt < new Date()) {
+    // mark expired once
     await prisma.invitation.update({
       where: { id: invite.id },
       data: { status: "EXPIRED" },
@@ -44,9 +40,8 @@ export default async function AcceptInvite({
     return <div className="max-w-lg mx-auto">Invite has expired.</div>;
   }
 
-  const existing = await prisma.orgMembership.findFirst({
-    where: { userId: user.userId },
-  });
+  // One org per user rule
+  const existing = await prisma.orgMembership.findFirst({ where: { userId: user.userId } });
   if (existing) {
     return (
       <div className="max-w-lg mx-auto">
@@ -55,13 +50,10 @@ export default async function AcceptInvite({
     );
   }
 
+  // Atomic accept
   await prisma.$transaction([
     prisma.orgMembership.create({
-      data: {
-        orgId: invite.orgId,
-        userId: user.userId,
-        role: invite.role as OrgMembershipRole,
-      },
+      data: { orgId: invite.orgId, userId: user.userId, role: invite.role as OrgMembershipRole },
     }),
     prisma.invitation.update({
       where: { id: invite.id },
@@ -69,5 +61,5 @@ export default async function AcceptInvite({
     }),
   ]);
 
-  redirect("/");
+  redirect("/app");
 }
