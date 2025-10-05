@@ -1,65 +1,68 @@
-import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { getSessionUser } from "@/lib/auth";
-import { createHash } from "crypto";
-import { OrgMembershipRole } from "@prisma/client";
+"use client";
+import { CardCompact } from "@/components/auth-card";
+import { FieldError } from "@/components/form/field-error";
+import { Form } from "@/components/form/form";
+import { useActionState } from "@/components/form/hooks/use-action-state";
+import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
+import { Input } from "@/components/ui/input";
+import { acceptInvite } from "@/features/invite/actions/accept-invite";
+import { SubmitButton } from "@/features/invite/components/submit-button";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
+const AcceptInvitePage = () => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? "";
+  const [actionState, action, isPending] = useActionState(
+    acceptInvite,
+    EMPTY_ACTION_STATE
+  );
+  const router = useRouter();
 
-export default async function AcceptInvite({
-  searchParams,
-}: {
-  searchParams: { token?: string };
-}) {
-  const raw = searchParams.token?.trim();
-  if (!raw) redirect("/auth/signin");
-  const tokenHash = sha256(raw);
+  // TODO: Auto submit
+  // const autoSubmit = useRef(false);
+  // useEffect(() => {
+  //   if (!token) return;
+  //   if (actionState.status === "SUCCESS" || isPending) return;
+  //   if (autoSubmit.current) return;
+  //   autoSubmit.current = true;
+  //   const fd = new FormData();
+  //   fd.set("token", token);
+  //   action(fd);
+  // }, [token, action, isPending, actionState.status]);
 
-  const user = await getSessionUser();
-  if (!user) {
-    redirect(`/auth/signin?callbackUrl=${encodeURIComponent(`/accept-invite?token=${raw}`)}`);
-  }
+  useEffect(() => {
+    if (actionState.status !== "SUCCESS") return;
+    const to = actionState.data?.redirect;
+    if (to) router.replace(to);
+  }, [actionState.status, actionState.data?.redirect, router]);
 
-  const invite = await prisma.invitation.findUnique({ where: { tokenHash } });
+  return (
+    <div className="flex flex-col gap-3 items-center my-auto mx-auto w-full max-w-[350px]">
+      <h2 className="text-xl font-bold">Navis Docs</h2>
+      <h1 className="text-3xl font-semibold">Organization Invitation</h1>
+      <CardCompact
+        className="flex flex-col gap-3 mt-3 w-full"
+        header={
+          <Form
+            action={action}
+            actionState={actionState}
+            className="max-w-lg mx-auto flex flex-col gap-3 animate-from-top animate-duration-300"
+          >
+            <Input id="token" name="token" type="hidden" value={token} />
+            <FieldError actionState={actionState} name="token" />
+            <p className="text-sm text-muted-foreground">
+              {actionState.status === "ERROR"
+                ? actionState.message ||
+                  "An error occurred while accepting the invitation"
+                : "You have been invited to join an organization"}
+            </p>
+            <SubmitButton label="Accept Invitation" />
+          </Form>
+        }
+      />
+    </div>
+  );
+};
 
-  // Validation & status checks
-  if (!invite) {
-    return <div className="max-w-lg mx-auto">Invite is invalid.</div>;
-  }
-  if (invite.status !== "PENDING") {
-    return <div className="max-w-lg mx-auto">This invite has already been used or revoked.</div>;
-  }
-  if (invite.expiresAt < new Date()) {
-    // mark expired once
-    await prisma.invitation.update({
-      where: { id: invite.id },
-      data: { status: "EXPIRED" },
-    });
-    return <div className="max-w-lg mx-auto">Invite has expired.</div>;
-  }
-
-  // One org per user rule
-  const existing = await prisma.orgMembership.findFirst({ where: { userId: user.userId } });
-  if (existing) {
-    return (
-      <div className="max-w-lg mx-auto">
-        Your account already belongs to an organization.
-      </div>
-    );
-  }
-
-  // Atomic accept
-  await prisma.$transaction([
-    prisma.orgMembership.create({
-      data: { orgId: invite.orgId, userId: user.userId, role: invite.role as OrgMembershipRole },
-    }),
-    prisma.invitation.update({
-      where: { id: invite.id },
-      data: { status: "ACCEPTED", acceptedAt: new Date() },
-    }),
-  ]);
-
-  redirect("/app");
-}
+export default AcceptInvitePage;

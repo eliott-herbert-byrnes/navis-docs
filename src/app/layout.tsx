@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import { Sidebar } from "@/components/Sidebar";
 // import { ThemeProvider } from "@/components/theme/theme-provider";
 // import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Separator } from "@/components/ui/separator";
+import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { OrgBadge } from "@/features/org/components/org-bade";
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,25 +25,35 @@ export const metadata: Metadata = {
   description: "Welcome to the Navis Docs",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getSessionUser();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${GeistSans.variable} antialiased min-h-screen `}
-      >
+      <body className={`${GeistSans.variable} antialiased min-h-screen`}>
         <Providers>
-          <div className="grid min-h-screen md:grid-cols-[240px_1fr]">
-            <Sidebar />
-            <main className="min-h-full p-[var(--space-3)]">
-              <div className="flex h-full flex-col rounded-lg border-2 p-4">
-                {children}
+          <SidebarProvider defaultOpen={false}>
+            <AppSidebar />
+            <SidebarInset className="p-2">
+              <div className="flex flex-row h-full">
+                <div className="flex h-full w-full flex-col rounded-lg border-2 p-4">
+                  {user && (
+                    <>
+                      <div className="flex flex-row items-center justify-between">
+                        <SidebarTrigger className="" />
+                        {/* <OrgBadge /> */}
+                      </div>
+                      <Separator className="my-2" />
+                    </>
+                  )}
+                  {children}
+                </div>
               </div>
-            </main>
-          </div>
+            </SidebarInset>
+          </SidebarProvider>
         </Providers>
         <Toaster />
       </body>

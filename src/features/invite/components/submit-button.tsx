@@ -16,6 +16,7 @@ type submitButtonProps = {
     | "link";
   size?: "default" | "sm" | "lg" | "icon";
   disabled?: boolean;
+  className?: string;
 };
 
 const SubmitButton = ({
@@ -24,6 +25,7 @@ const SubmitButton = ({
   variant,
   size,
   disabled,
+  className,
 }: submitButtonProps) => {
   const { pending } = useFormStatus();
 
@@ -33,6 +35,7 @@ const SubmitButton = ({
       type="submit"
       variant={variant}
       size={size}
+      className={className}
     >
       {pending ? (
         <LucideLoaderCircle className="h-4 w-4 animate-spin" />

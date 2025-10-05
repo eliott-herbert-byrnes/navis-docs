@@ -15,3 +15,9 @@ export const getUserOrg = async (userId: string) => {
   return membership?.org ?? null;
 }
 
+export const isOrgAdminOrOwner = async (userId: string) => {
+  const membership = await prisma.orgMembership.findFirst({
+    where: { userId, role: { in: ["ADMIN", "OWNER"] } },
+  });
+  return membership !== null;
+}

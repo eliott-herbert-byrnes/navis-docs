@@ -2,7 +2,6 @@
 
 import {z} from "zod";
 import {limiter} from '../lib/rate-limit';
-// import { verifyOtpAndConsume } from "@/lib/otp";
 import { signIn } from "@/auth";
 
 const schema = z.object({
@@ -19,12 +18,8 @@ export const verifyOtpAction = async (input: {email: string, code: string}) => {
         code: input.code.trim(),
     })
 
-    
-
-    // const ok = await verifyOtpAndConsume(email, code);
-    // if (!ok) return {ok: false, message: 'Invalid or expired code'};
-
     const res = await signIn("credentials", { email, code, redirect: false });
     if (res?.error) return { ok: false, message: res.error };
+    
     return { ok: true };
 ;}

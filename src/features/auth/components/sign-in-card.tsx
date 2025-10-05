@@ -4,12 +4,14 @@ import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { CardCompact } from "@/components/auth-card";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { requestOtpAction } from "../actions/request-otp";
 import { verifyOtpAction } from "../actions/verify-otp";
 import { toast } from "sonner";
 import { OtpInput } from "./otp-input";
+import { onboardingPath } from "@/app/paths";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LucideLoaderCircle } from "lucide-react";
 
 const SignInCard = () => {
   const [pending, startTransition] = useTransition();
@@ -17,9 +19,16 @@ const SignInCard = () => {
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [pendingGoogle, setPendingGoogle] = useState(false);
 
   const continueWithGoogle = () => {
-    signIn("google", { callbackUrl: "/onboarding" });
+    setPendingGoogle(true);
+    const cb =
+    new URLSearchParams(window.location.search).get("callbackUrl") ||
+    onboardingPath();
+    void signIn("google", { callbackUrl: cb }).finally(() => {
+      setPendingGoogle(false);
+    });
   };
 
   const requestCode = () => {
@@ -39,8 +48,13 @@ const SignInCard = () => {
     startTransition(async () => {
       const res = await verifyOtpAction({ email, code });
       if (res.ok) {
-        window.location.assign("/onboarding");
+        window.location.assign(onboardingPath());
         toast.success("Code verified. Redirecting to onboarding...");
+        const cb =
+          new URLSearchParams(window.location.search).get("callbackUrl") ||
+          onboardingPath();
+          toast.success("Code verified. Redirecting...");
+          window.location.assign(cb);
       } else {
         setMsg(res.message ?? null);
         toast.error(res.message ?? "Invalid code");
@@ -65,12 +79,13 @@ const SignInCard = () => {
               <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
             </svg>
           </span>
-          Continue with Google
+          {pendingGoogle ? <LucideLoaderCircle className="h-4 w-4 animate-spin" /> : "Continue with Google"}
         </div>
       </Button>
     </>
   );
-
+  
+  
   const content = (
     <>
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -94,7 +109,7 @@ const SignInCard = () => {
         onClick={requestCode}
         disabled={pending || !email}
       >
-        Email me a code
+        {pending ? <LucideLoaderCircle className="h-4 w-4 animate-spin" /> :"Email me a code"}
       </Button>
       {msg && <p className="text-sm text-red-500 text-center">{msg}</p>}
     </div>
@@ -113,29 +128,32 @@ const SignInCard = () => {
             content={content}
             footer={footer}
           />
-          <p className="text-sm text-muted-foreground">
-            <Link href="/terms" className="underline">
-              Read our terms of service and privacy policy{" "}
-            </Link>
-          </p>
         </>
       ) : (
         <>
           {/* OTP UI FLOW */}
-          <p className="text-sm text-muted-foreground text-center">
-            We sent a 5-digit code to {email}
-          </p>
+          <Card className="flex flex-col my-auto mx-auto gap-3 mt-3 w-full">
+            <CardHeader>
+              <CardTitle className="text-center">Verify your email</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col justify-center items-center gap-3 w-full">
+                <OtpInput code={code} setCode={setCode} />
 
-          <OtpInput code={code} setCode={setCode} />
-
-          <Button
-            variant="outline"
-            className="w-full max-w-[250px] mt-1"
-            onClick={verifyCode}
-            disabled={pending}
-          >
-            Verify & Continue
-          </Button>
+                <Button
+                  variant="default"
+                  className="w-full max-w-[180px]"
+                  onClick={verifyCode}
+                  disabled={pending}
+                >
+                  {pending ? <LucideLoaderCircle className="h-4 w-4 animate-spin" /> :"Verify"}
+                </Button>
+                <p className="text-sm text-muted-foreground text-center">
+                  We sent a 5-digit code to {email}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>

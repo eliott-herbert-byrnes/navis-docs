@@ -6,9 +6,9 @@ import { InvitationDialog } from "./invitation-dialog";
 import { createInvitation } from "../actions/create-invite";
 
 const InvitationCreateButton = () => {
-    const [actionState, action] = useActionState(
+    const [actionState, action] = useActionState(       
         createInvitation,
-        EMPTY_ACTION_STATE
+        EMPTY_ACTION_STATE,
     );
 
     return (

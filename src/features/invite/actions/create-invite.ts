@@ -6,19 +6,17 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { sha256 } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
 import { limiter } from "@/lib/ratelimit";
-import { createHash, randomBytes } from "crypto";
+import { OrgMembershipRole } from "@prisma/client";
+import { randomBytes } from "crypto";
 import { headers } from "next/headers";
 import { z } from "zod";
 
 const schema = z.object({
   email: z.email().min(1, { message: "Is Required" }).max(191),
 });
-
-function sha256(s: string) {
-  return createHash("sha256").update(s).digest("hex");
-}
 
 export const createInvitation = async (
   _actionState: ActionState,
@@ -83,8 +81,7 @@ export const createInvitation = async (
     const tokenHash = sha256(rawToken);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    const rawRole = "member";
-    const role = rawRole.toLowerCase().trim();
+    const role: OrgMembershipRole = "MEMBER";
 
     await prisma.invitation.create({
       data: {
