@@ -6,7 +6,7 @@ import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { PlusIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import { onboardingPath, signInPath } from "./paths";
-import { DepartmentCard } from "@/features/departments/components/department-card";
+import { DepartmentList } from "@/features/departments/components/department-list";
 
 export default async function Home() {
   const user = await getSessionUser();
@@ -28,11 +28,7 @@ export default async function Home() {
         }
       />
 
-      {/* <EmptyState
-        title="No departments found"
-        body="Create a new department to get started"
-      /> */}
-      <DepartmentCard />
+      <DepartmentList orgId={org.id} />
     </>
   );
 }

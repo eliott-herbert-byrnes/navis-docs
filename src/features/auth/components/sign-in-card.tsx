@@ -28,6 +28,7 @@ const SignInCard = () => {
     onboardingPath();
     void signIn("google", { callbackUrl: cb }).finally(() => {
       setPendingGoogle(false);
+      toast.success("Redirecting to dashboard...");
     });
   };
 
@@ -53,8 +54,8 @@ const SignInCard = () => {
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
           onboardingPath();
-          toast.success("Code verified. Redirecting...");
-          window.location.assign(cb);
+        toast.success("Code verified. Redirecting...");
+        window.location.assign(cb);
       } else {
         setMsg(res.message ?? null);
         toast.error(res.message ?? "Invalid code");
@@ -79,13 +80,16 @@ const SignInCard = () => {
               <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
             </svg>
           </span>
-          {pendingGoogle ? <LucideLoaderCircle className="h-4 w-4 animate-spin" /> : "Continue with Google"}
+          {pendingGoogle ? (
+            <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+          ) : (
+            "Continue with Google"
+          )}
         </div>
       </Button>
     </>
   );
-  
-  
+
   const content = (
     <>
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -108,8 +112,13 @@ const SignInCard = () => {
         className="w-full"
         onClick={requestCode}
         disabled={pending || !email}
+        type="submit"
       >
-        {pending ? <LucideLoaderCircle className="h-4 w-4 animate-spin" /> :"Email me a code"}
+        {pending ? (
+          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+        ) : (
+          "Email me a code"
+        )}
       </Button>
       {msg && <p className="text-sm text-red-500 text-center">{msg}</p>}
     </div>
@@ -146,7 +155,11 @@ const SignInCard = () => {
                   onClick={verifyCode}
                   disabled={pending}
                 >
-                  {pending ? <LucideLoaderCircle className="h-4 w-4 animate-spin" /> :"Verify"}
+                  {pending ? (
+                    <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Verify"
+                  )}
                 </Button>
                 <p className="text-sm text-muted-foreground text-center">
                   We sent a 5-digit code to {email}

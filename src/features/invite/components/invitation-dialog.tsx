@@ -53,17 +53,22 @@ const InvitationDialog = ({
           actionState={actionState}
           onSuccess={handleClose}
           onError={handleClose}
-          >
+        >
           <Input
             id="email"
             name="email"
             type="email"
             placeholder="Email"
             required
-            />
+          />
           <FieldError actionState={actionState} name="email" />
           <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button className="w-[75px]" type="button" variant="outline" onClick={handleClose}>
+            <Button
+              className="w-[75px]"
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+            >
               Cancel
             </Button>
             <SubmitButton className="w-[75px]" label="Invite" />

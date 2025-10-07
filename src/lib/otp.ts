@@ -38,5 +38,14 @@ export const verifyOtpAndConsume = async (email: string, code: string) => {
     },
   });
 
+  if (ok) {
+    await prisma.emailOTP.deleteMany({
+      where: {
+        email: email.toLowerCase(),
+        codeHash: hashCode(code),
+      },
+    });
+  }
+
   return ok;
 };

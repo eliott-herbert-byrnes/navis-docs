@@ -1,35 +1,95 @@
-import { onboardingPath, signInPath } from "@/app/paths";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSessionUser, getUserOrg } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  EyeIcon,
+  PencilIcon,
+  PlusIcon,
+  SquareArrowUpRight,
+  TrashIcon,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { TeamDropdown } from "./team-dropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 
-const DepartmentCard = async () => {
+type DepartmentCardProps = {
+  department: {
+    id: string;
+    name: string;
+    teams: { id: string; name: string }[];
+  };
+};
+
+const DepartmentCard = async ({ department }: DepartmentCardProps) => {
+
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
+  const admin = await isOrgAdminOrOwner(user?.userId ?? "");
 
-  const org = await getUserOrg(user.userId);
-  if (!org) redirect(onboardingPath());
+  const buttons = (
+    <>
+      <div className="flex flex-row gap-x-2 gap-y-2 w-full">
+        <div className="flex gap-x-2">
+          <Button variant="outline" className="w-full w-[96px]">
+            <EyeIcon className="w-4 h-4" />
+            View
+          </Button>
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button disabled={!admin} variant="default" className="w-full max-w-[96px]">
+              <SquareArrowUpRight className="w-4 h-4" />
+              Actions
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>
+              <PencilIcon className="w-4 h-4" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <PlusIcon className="w-4 h-4" />
+              Team
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <TrashIcon className="w-4 h-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
+  );
 
-//   const deptCount = await prisma.department.count({ where: { orgId: org.id } });
-  const teams = await prisma.team.findMany({
-    where: { department: { orgId: org.id } },
-    include: { department: true },
-  });
   return (
-    <Card>
+    <Card className="w-full max-w-[250px]">
       <CardHeader>
         <CardTitle>
-        <div>
-          {teams.map((team) => (
-            <div key={team.id}>
-              {team.department?.name ?? "No Department"}
-            </div>
-          ))}
-        </div>
+          <Badge className="text-sm">{department.name}</Badge>
         </CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">
+          Select a team to view processes
+        </p>
       </CardHeader>
+      <CardContent>
+        <TeamDropdown department={department} />
+      </CardContent>
+      <CardFooter>
+        <CardAction>{buttons}</CardAction>
+      </CardFooter>
     </Card>
   );
 };
+
 export { DepartmentCard };

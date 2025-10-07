@@ -57,7 +57,8 @@ export const acceptInvite = async (
     admin: "ADMIN",
     member: "MEMBER",
   };
-  const memberRole: OrgMembershipRole = roleMap[(invite.role || "").toLowerCase()] ?? "MEMBER";
+  const memberRole: OrgMembershipRole =
+    roleMap[(invite.role || "").toLowerCase()] ?? "MEMBER";
 
   await prisma.$transaction([
     prisma.orgMembership.create({

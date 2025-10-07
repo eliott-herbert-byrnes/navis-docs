@@ -3,6 +3,28 @@ const prisma = new PrismaClient();
 
 async function main() {
 
+await prisma.$transaction([
+  prisma.ingestionJob.deleteMany(),
+  prisma.errorReport.deleteMany(),
+  prisma.newsPost.deleteMany(),
+  prisma.favorite.deleteMany(),
+  prisma.idea.deleteMany(),
+  prisma.processVersion.deleteMany(),
+  prisma.process.deleteMany(),
+  prisma.category.deleteMany(),
+  prisma.team.deleteMany(),
+  prisma.department.deleteMany(),
+  prisma.orgMembership.deleteMany(),
+  prisma.invitation.deleteMany(),
+  prisma.account.deleteMany(),
+  prisma.verificationToken.deleteMany(),
+  prisma.emailOTP.deleteMany(),
+  prisma.auditLog.deleteMany(),
+
+  prisma.organization.deleteMany(),
+  prisma.user.deleteMany(),
+]);
+
   const user = await prisma.user.upsert({
     where: { email: 'demo@navisdocs.com' },
     update: {},
@@ -13,7 +35,7 @@ async function main() {
     where: { slug: 'demo-orginization' },
     update: {},
     create: {
-      name: 'Demo OrgInization',
+      name: 'Demo Orginization',
       slug: 'demo-orginization',
       ownerUserId: user.id,
       plan: 'business',

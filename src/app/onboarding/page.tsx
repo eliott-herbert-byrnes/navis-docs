@@ -1,5 +1,6 @@
-import { OnboardingForm } from "@/features/onboarding/components/onboarding-form";
+import { OnboardForm } from "@/features/onboarding/components/onboard-form";
 import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { GalleryVerticalEnd } from "lucide-react";
 import { redirect } from "next/navigation";
 
 const OnboardingPage = async () => {
@@ -11,8 +12,16 @@ const OnboardingPage = async () => {
   if (ExistingOrg) redirect("/");
 
   return (
-    <div className="flex flex-col gap-3 items-center my-auto mx-auto w-full max-w-[350px]">
-      <OnboardingForm />
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <a href="#" className="flex items-center gap-2 self-center font-medium">
+          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+            <GalleryVerticalEnd className="size-4" />
+          </div>
+          Onboarding
+        </a>
+        <OnboardForm />
+      </div>
     </div>
   );
 };

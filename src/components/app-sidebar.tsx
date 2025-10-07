@@ -10,6 +10,7 @@ import {
   User2,
   Lightbulb,
   LucideShip,
+  LogOutIcon,
 } from "lucide-react";
 
 import {
@@ -37,6 +38,8 @@ import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme/theme-switcher";
 import { OrgBadge } from "@/features/org/components/org-bade";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 const items = [
   {
@@ -98,13 +101,11 @@ export async function AppSidebar() {
     <Sidebar variant="floating">
       <SidebarContent>
         <SidebarGroup className="flex flex-col gap-2 h-full">
-          {/* <SidebarGroupLabel className="text-md font-semibold">
-            Navis Docs
-          </SidebarGroupLabel> */}
+
           <SidebarGroupLabel>
             <div className="flex flex-row gap-2 items-center">
-            <LucideShip className="w-4 h-4" />
-            <OrgBadge />
+              <LucideShip className="w-4 h-4" />
+              <OrgBadge />
             </div>
           </SidebarGroupLabel>
           <Separator />
@@ -165,17 +166,25 @@ export async function AppSidebar() {
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem>
-                  <span>Support</span>
+                  <Button variant="ghost" className="flex flex-row justify-start w-full h-6">
+                    <Link href="/" className="text-sm font-normal cursor-default">Support</Link>
+                  </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Documentation</span>
+                <Button variant="ghost" className="flex flex-row justify-start w-full h-6">
+                    <Link href="/" className="text-sm font-normal cursor-default">Documentation</Link>
+                  </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Feedback</span>
+                  <Button variant="ghost" className="flex flex-row justify-start w-full h-6">
+                    <Link href="/" className="text-sm font-normal cursor-default">Feedback</Link>
+                  </Button>
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem>
-                  <span onClick={signOutAction}>Sign out</span>
+                  <Button onClick={signOutAction} variant="ghost" className="flex flex-row justify-start w-full h-6">
+                    <p className="text-sm font-normal">Logout</p>
+                  </Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

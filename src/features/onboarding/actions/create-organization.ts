@@ -1,5 +1,6 @@
 "use server";
 
+import { homePath, signInPath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,
@@ -21,11 +22,11 @@ export const createOrganization = async (
 ): Promise<ActionState> => {
   const user = await getSessionUser();
   if (!user) {
-    redirect("/auth/sign-in");
+    redirect(signInPath());
   }
 
   const ExistingOrg = await getUserOrg(user.userId);
-  if (ExistingOrg) redirect("/");
+  if (ExistingOrg) redirect(homePath());
 
   try {
     const rawName = String(formData.get("name") ?? "");
@@ -41,11 +42,7 @@ export const createOrganization = async (
     });
 
     if (orgName) {
-      return toActionState(
-        "ERROR",
-        "Organization already exists",
-        formData
-      );
+      return toActionState("ERROR", "Organization already exists", formData);
     }
 
     const org = await prisma.organization.create({
@@ -76,7 +73,7 @@ export const createOrganization = async (
       formData,
       {
         org,
-        redirect: "/",
+        redirect: homePath(),
       }
     );
   } catch (error) {

@@ -43,8 +43,7 @@ export default async function RootLayout({
                   {user && (
                     <>
                       <div className="flex flex-row items-center justify-between">
-                        <SidebarTrigger className="" />
-                        {/* <OrgBadge /> */}
+                        <SidebarTrigger />
                       </div>
                       <Separator className="my-2" />
                     </>
