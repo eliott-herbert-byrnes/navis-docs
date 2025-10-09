@@ -12,7 +12,6 @@ const DepartmentList = async ({ orgId }: DepartmentListProps) => {
   return (
     <>
       {departments.length ? (
-        // <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-row flex-wrap gap-4">
           {departments.map((department) => (
             <DepartmentCard key={department.id} department={department} />

@@ -126,7 +126,7 @@ model Department {
   orgId     String
   name      String
   createdAt DateTime     @default(now())
-  org       Organization @relation(fields: [orgId], references: [id])
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
   teams     Team[]
 
   @@index([orgId, name])

@@ -73,7 +73,6 @@ export function SignInForm({
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
           onboardingPath();
-        toast.success("Code verified. Redirecting...");
         window.location.assign(cb);
       } else {
         setMsg(res.message ?? null);

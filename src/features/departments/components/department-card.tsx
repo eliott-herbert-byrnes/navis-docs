@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardAction,
@@ -9,10 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   EyeIcon,
-  PencilIcon,
-  PlusIcon,
   SquareArrowUpRight,
-  TrashIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TeamDropdown } from "./team-dropdown";
@@ -22,21 +20,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { DepartmentDeleteButton } from "./department-buttons/department-delete-button";
+import { DepartmentTeamButton } from "./department-buttons/department-team-button";
+import { DepartmentOverviewButton } from "./overview/department-overview-button";
 
 type DepartmentCardProps = {
   department: {
     id: string;
     name: string;
-    teams: { id: string; name: string }[];
+    teams: { id: string; name: string }[]; 
   };
 };
 
-const DepartmentCard = async ({ department }: DepartmentCardProps) => {
-
-  const user = await getSessionUser();
-  const admin = await isOrgAdminOrOwner(user?.userId ?? "");
-
+const DepartmentCard = ({ department }: DepartmentCardProps) => {
   const buttons = (
     <>
       <div className="flex flex-row gap-x-2 gap-y-2 w-full">
@@ -48,23 +44,20 @@ const DepartmentCard = async ({ department }: DepartmentCardProps) => {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button disabled={!admin} variant="default" className="w-full max-w-[96px]">
+            <Button variant="default" className="w-full max-w-[96px]">
               <SquareArrowUpRight className="w-4 h-4" />
               Actions
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              <PencilIcon className="w-4 h-4" />
-              Edit
+          <DropdownMenuContent className="flex flex-col gap-1.5">
+            <DropdownMenuItem asChild>
+              <DepartmentOverviewButton title={department.name} departmentId={department.id} />
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <PlusIcon className="w-4 h-4" />
-              Team
+            <DropdownMenuItem asChild >
+              <DepartmentTeamButton departmentId={department.id} />
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <TrashIcon className="w-4 h-4" />
-              Delete
+            <DropdownMenuItem asChild>
+              <DepartmentDeleteButton departmentId={department.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
