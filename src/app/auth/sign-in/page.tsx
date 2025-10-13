@@ -1,8 +1,7 @@
 "use client";
 
-import { SignInCard } from "@/features/auth/components/sign-in-card";
 import { SignInForm } from "@/features/auth/components/sign-in-form";
-import { GalleryVerticalEnd, LucideShip } from "lucide-react";
+import {  LucideShip } from "lucide-react";
 
 const SignInPage = () => {
   return (

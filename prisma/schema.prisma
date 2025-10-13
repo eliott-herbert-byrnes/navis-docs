@@ -92,8 +92,12 @@ model Organization {
   slug             String          @unique
   ownerUserId      String
   ownerUser        User            @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
-  plan             String          @default("business")
+  plan             String          @default("business") // "business" | "enterprise"
   entitlementsJSON Json            @default("{}")
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  stripeSubscriptionStatus String? // active | trialing | past_due | canceled | incomplete...
+  currentPeriodEnd DateTime?
   createdAt        DateTime        @default(now())
   memberships      OrgMembership[]
   ingestionJobs    IngestionJob[]

@@ -32,7 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { homePath, invitePath } from "@/app/paths";
+import { homePath, invitePath, subscriptionPath } from "@/app/paths";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
@@ -79,7 +79,7 @@ const items = [
   },
   {
     title: "Subscription",
-    url: "#",
+    url: subscriptionPath(),
     icon: CreditCard,
     isAdmin: true,
   },
