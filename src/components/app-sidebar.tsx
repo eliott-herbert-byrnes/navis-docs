@@ -81,7 +81,7 @@ const items = [
     title: "Subscription",
     url: subscriptionPath(),
     icon: CreditCard,
-    isAdmin: true,
+    isAdmin: false,
   },
   {
     title: "Settings",
@@ -107,6 +107,7 @@ export async function AppSidebar() {
               <LucideShip className="w-4 h-4" />
               <OrgBadge />
             </div>
+            
           </SidebarGroupLabel>
           <Separator />
           <SidebarGroupContent>

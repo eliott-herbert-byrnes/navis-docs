@@ -10,8 +10,8 @@ import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { OrgMembershipRole } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { stripe } from "@/lib/stripe";
 import { z } from "zod";
+import { inngest } from "@/inngest/client";
 
 const createOrganizationSchema = z.object({
   name: z.string().min(6).max(191),
@@ -68,10 +68,14 @@ export const createOrganization = async (
       },
     });
 
-    const customer = await stripe.customers.create({
-      email: user.email,
-      name: org.name,
-      metadata: {orgId: org.id, orgSlug: org.slug},
+    await inngest.send({
+      name: "onboarding/create-organization",
+      data: {
+        orgId: org.id,
+        orgSlug: org.slug,
+        orgName: org.name,
+        orgOwnerUserId: user.userId,
+      },
     });
 
     return toActionState(

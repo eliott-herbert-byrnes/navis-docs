@@ -197,7 +197,10 @@ export function SignInForm({
                     )}
                   </Button>
                   <FieldDescription className="text-center">
-                    Didn&apos;t receive the code? <a href="#" onClick={requestCode}>Resend</a>
+                    Didn&apos;t receive the code?{" "}
+                    <a href="#" onClick={requestCode}>
+                      Resend
+                    </a>
                   </FieldDescription>
                 </FieldGroup>
               </form>

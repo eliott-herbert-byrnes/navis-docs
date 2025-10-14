@@ -94,15 +94,26 @@ model Organization {
   ownerUser        User            @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
   plan             String          @default("business") // "business" | "enterprise"
   entitlementsJSON Json            @default("{}")
-  stripeCustomerId String?
-  stripeSubscriptionId String?
-  stripeSubscriptionStatus String? // active | trialing | past_due | canceled | incomplete...
+  stripeCustomerId String?         @unique
+  stripeSubscriptionId String?     @unique
+  stripeSubscriptionStatus StripeSubscriptionStatus?
   currentPeriodEnd DateTime?
   createdAt        DateTime        @default(now())
   memberships      OrgMembership[]
   ingestionJobs    IngestionJob[]
   departments      Department[]
   invitations      Invitation[]
+}
+
+enum StripeSubscriptionStatus {
+    active
+    incomplete
+    incomplete_expired
+    past_due
+    canceled
+    unpaid
+    trialing
+    paused
 }
 
 enum OrgMembershipRole {

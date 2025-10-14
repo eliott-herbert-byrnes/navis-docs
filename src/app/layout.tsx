@@ -14,6 +14,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { OrgBadge } from "@/features/org/components/org-bade";
+import { Badge } from "@/components/ui/badge";
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const user = await getSessionUser();
+  const org = await getUserOrg(user?.userId ?? "");
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${GeistSans.variable} antialiased min-h-screen`}>
@@ -44,6 +46,11 @@ export default async function RootLayout({
                     <>
                       <div className="flex flex-row items-center justify-between">
                         <SidebarTrigger />
+                        <Badge variant="outline">
+                          {org?.plan
+                            ? `${org.plan.charAt(0).toUpperCase()}${org.plan.slice(1)}`
+                            : "No plan"}
+                        </Badge>
                       </div>
                       <Separator className="my-2" />
                     </>
