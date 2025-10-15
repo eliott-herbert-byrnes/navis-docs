@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 
-export const getStripeCustomerByOrg = async (orgSlug: string) => {
+export const getStripeCustomerByOrg = async (orgSlug: string | null | undefined) => {
   if (!orgSlug) {
     return null;
   }

@@ -14,6 +14,10 @@ const handleSubscriptionUpdated = async (subscription: Stripe.Subscription) => {
   await stripeData.updateStripeSubscription(subscription);
 };
 
+const handleSubscriptionDeleted = async (subscription: Stripe.Subscription) => {
+  await stripeData.deleteStripeSubscription(subscription);
+};
+
 export async function POST(req: Request) {
   const body = await req.text();
   const signature = (await headers()).get("Stripe-Signature");
@@ -39,6 +43,11 @@ export async function POST(req: Request) {
         break;
       case "customer.subscription.updated":
         await handleSubscriptionUpdated(
+          event.data.object as Stripe.Subscription
+        );
+        break;
+      case "customer.subscription.deleted":
+        await handleSubscriptionDeleted(
           event.data.object as Stripe.Subscription
         );
         break;

@@ -13,3 +13,14 @@ export const updateStripeSubscription = async (subscription: Stripe.Subscription
         },
   });
 };
+
+export const deleteStripeSubscription = async (subscription: Stripe.Subscription) => {
+    await prisma.organization.update({
+        where: { stripeCustomerId: subscription.customer as string },
+        data: {
+            stripeSubscriptionId: null,
+            stripeSubscriptionStatus: null,
+            currentPeriodEnd: null,
+        },
+    });
+};

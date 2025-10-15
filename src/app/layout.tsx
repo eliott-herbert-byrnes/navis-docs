@@ -15,6 +15,8 @@ import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { OrgBadge } from "@/features/org/components/org-bade";
 import { Badge } from "@/components/ui/badge";
+import { getStripeCustomerByOrg } from "@/features/stripe/queries/get-stripe-customer";
+import { stripe } from "@/lib/stripe"; // ADD
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +35,27 @@ export default async function RootLayout({
 }) {
   const user = await getSessionUser();
   const org = await getUserOrg(user?.userId ?? "");
+  const stripeCustomer = await getStripeCustomerByOrg(org?.slug ?? "");
+
+  // Prefer live Stripe status if we know the subscription ID
+  let subscriptionStatus = stripeCustomer?.stripeSubscriptionStatus ?? null;
+  if (stripeCustomer?.stripeSubscriptionId) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(
+        stripeCustomer.stripeSubscriptionId
+      );
+      subscriptionStatus = sub.status;
+    } catch {
+    }
+  }
+
+  const activeSubscription = subscriptionStatus === "active";
+  const activePlan = stripeCustomer?.plan ?? "";
+  const planLabel =
+    activeSubscription && activePlan
+      ? `${activePlan.charAt(0).toUpperCase()}${activePlan.slice(1)}`
+      : "No plan";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${GeistSans.variable} antialiased min-h-screen`}>
@@ -46,11 +69,7 @@ export default async function RootLayout({
                     <>
                       <div className="flex flex-row items-center justify-between">
                         <SidebarTrigger />
-                        <Badge variant="outline">
-                          {org?.plan
-                            ? `${org.plan.charAt(0).toUpperCase()}${org.plan.slice(1)}`
-                            : "No plan"}
-                        </Badge>
+                        <Badge variant="outline">{planLabel}</Badge>
                       </div>
                       <Separator className="my-2" />
                     </>

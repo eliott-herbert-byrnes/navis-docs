@@ -37,7 +37,7 @@ const SubscriptionPage = async () => {
         actions={manageSubscription}
       />
       <Suspense fallback={<Spinner />}>
-        <Products orgSlug={org.slug} org={org} />
+        <Products orgSlug={org.slug} />
       </Suspense>
     </>
   );

@@ -6,21 +6,23 @@ import { Button } from "@/components/ui/button";
 import { createCustomerPortal } from "../actions/create-customer-portal";
 
 type CustomerPortalFormProps = {
-    orgSlug: string;
-    children: React.ReactNode;
-}
+  orgSlug: string;
+  children: React.ReactNode;
+};
 
 const CustomerPortalForm = ({ orgSlug, children }: CustomerPortalFormProps) => {
-    const [actionState, action] = useActionState(
-        createCustomerPortal.bind(null, orgSlug),
-        EMPTY_ACTION_STATE
-    )
+  const [actionState, action] = useActionState(
+    createCustomerPortal.bind(null, orgSlug),
+    EMPTY_ACTION_STATE
+  );
 
-    return (
-        <Form action={action} actionState={actionState}>
-            <Button className="text-sm" variant="outline" type="submit">{children}</Button>
-        </Form>
-    )
-}
+  return (
+    <Form action={action} actionState={actionState}>
+      <Button className="text-sm" variant="outline" type="submit">
+        {children}
+      </Button>
+    </Form>
+  );
+};
 
 export { CustomerPortalForm };

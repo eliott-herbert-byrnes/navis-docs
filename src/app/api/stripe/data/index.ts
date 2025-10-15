@@ -1,1 +1,1 @@
-export * from "./update-organization";
+export * from "./crud-stripe";

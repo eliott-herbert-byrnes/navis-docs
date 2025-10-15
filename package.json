@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "prisma": {
-    "seed": "tsx prisma/seed.ts && tsx src/lib/stripe/seed.ts"
+    "seed": "tsx prisma/seed.ts"
+  },
+  "stripe": {
+    "seed": "tsx src/lib/stripe/seed.ts"
   },
   "scripts": {
     "dev": "next dev",
@@ -16,6 +19,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "seed": "prisma db seed && tsx src/lib/stripe/seed.ts",
     "format": "prettier --write .",
     "email": "email dev --dir src/emails"
   },

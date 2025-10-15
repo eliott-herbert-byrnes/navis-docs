@@ -40,16 +40,16 @@ export const createCheckoutSession = async (
   if (!membership) redirect(homePath());
 
   let customerId = org.stripeCustomerId;
-  if(!customerId){
+  if (!customerId) {
     const customer = await stripe.customers.create({
-        email: undefined,
-        name: org.name,
-        metadata: { orgId: org.id, orgSlug: org.slug },
-    })
+      email: undefined,
+      name: org.name,
+      metadata: { orgId: org.id, orgSlug: org.slug, plan: org.plan },
+    });
     await prisma.organization.update({
-        where: { id: org.id },
-        data: { stripeCustomerId: customer.id },
-    })
+      where: { id: org.id },
+      data: { stripeCustomerId: customer.id },
+    });
     customerId = customer.id;
   }
 
@@ -61,8 +61,8 @@ export const createCheckoutSession = async (
     allow_promotion_codes: true,
     success_url: `${baseUrl}/subscription?status=success`,
     cancel_url: `${baseUrl}/subscription?status=canceled`,
-    metadata: { orgId: org.id, orgSlug: org.slug },
-  })
+    metadata: { orgId: org.id, orgSlug: org.slug, plan: org.plan },
+  });
 
   if (!session.url) {
     return toActionState("ERROR", "Stripe session URL could not be created");

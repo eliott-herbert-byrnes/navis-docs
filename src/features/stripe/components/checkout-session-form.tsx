@@ -5,44 +5,53 @@ import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import { createCheckoutSession } from "../actions/create-checkout-session";
 import clsx from "clsx";
+import { Badge } from "@/components/ui/badge";
+
+type Plan = "business" | "enterprise";
 
 type CheckoutSessionFormProps = {
   orgSlug: string | null | undefined;
   priceId: string;
-  activePriceId: string | null | undefined;
+  activePlan: string | null | undefined;
+  targetPlan: Plan;
   children: React.ReactNode;
+  activeSubscription: boolean;
 };
 
 const CheckoutSessionForm = ({
   orgSlug,
   priceId,
   children,
-  activePriceId,
+  activePlan,
+  targetPlan,
+  activeSubscription,
 }: CheckoutSessionFormProps) => {
   const [actionState, action] = useActionState(
     createCheckoutSession.bind(null, orgSlug, priceId),
     EMPTY_ACTION_STATE
   );
-  const isActivePrice = activePriceId === priceId;
 
-  // TODO: CHECK WHY THIS IS NOT WORKING
+  const normalizedActivePlan = (activePlan ?? "").toLowerCase() as Plan | "";
+  const isActivePlan = activeSubscription && normalizedActivePlan === targetPlan;
 
   return (
-    <Form action={action} actionState={actionState}>
+    <Form
+      action={action}
+      actionState={actionState}
+      className="flex flex-row gap-2"
+    >
       <Button
         type="submit"
-        disabled={isActivePrice}
-        className={clsx("flex flex-col", {
-          "h-16": !!activePriceId,
-        })}
+        disabled={isActivePlan}
+        className="flex flex-col gap-0"
       >
-        {!activePriceId ? null : isActivePrice ? (
-          <span>Current Plan</span>
-        ) : (
-          <span>Change Plan</span>
-        )}
         <div>{children}</div>
       </Button>
+      {isActivePlan && (
+        <Badge className="h-9" variant="outline">
+          <span className="text-sm">Active</span>
+        </Badge>
+      )}
     </Form>
   );
 };
