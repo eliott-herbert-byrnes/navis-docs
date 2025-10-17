@@ -1,57 +1,61 @@
-import { prisma } from "@/lib/prisma";
+"use server";
 
-export const getStripeProvisionByOrg = async (orgSlug: string) => {
-  if (!orgSlug) {
+import {prisma} from "@/lib/prisma";
+
+export type OrgProvisioning = {
+  allowedDepartments: number;
+  allowedTeamsPerDepartment: number;
+  currentDepartments: number;
+  currentTeams: number;
+}
+
+// TODO: Add Process provisions once processes are implemented
+
+export const getStripeProvisionByOrg = async (orgSlug: string): Promise<OrgProvisioning> => {
+
+
+  const org = await prisma.organization.findUnique({
+    where: { slug: orgSlug },
+    select: {id: true, plan: true, entitlementsJSON: true}
+  })
+
+  if (!org){
     return {
-      allowedProcesses: 0,
       allowedDepartments: 0,
       allowedTeamsPerDepartment: 0,
-    };
+      currentDepartments: 0,
+      currentTeams: 0,
+    }
   }
 
-  const [allowedProcesses, allowedDepartments, allowedTeamsPerDepartment, stripeCustomer] =
-    await prisma.$transaction([
-      prisma.organization.count({
-        where: {
-          slug: orgSlug,
-        },
-      }),
-      prisma.department.count({
-        where: {
-          org: {
-            slug: orgSlug,
-          },
-        },
-      }),
-      prisma.team.count({
-        where: {
-          department: {
-            org: {
-              slug: orgSlug,
-            },
-          },
-        },
-      }),
-      prisma.organization.findUnique({
-        where: {
-          slug: orgSlug,
-        },
-        select: {
-          stripeSubscriptionStatus: true,
-        },
-      }),
-    ]);
+  const defaults = {
+    business: {processes: 100, departments: 3, teamsPerDepartment: 1},
+    enterprise: {processes: 1000, departments: 1000, teamsPerDepartment: 1000},
+  } as const;
 
-  // Determine the maximum value among allowedProcesses, allowedDepartments, and allowedTeamsPerDepartment
-  const currentProvisioning = Math.max(
-    allowedProcesses,
-    allowedDepartments,
-    allowedTeamsPerDepartment
+  const planKey = (org.plan || "business").toLowerCase() as "business" | "enterprise";
+  const ent = typeof org.entitlementsJSON === "object" && org.entitlementsJSON !== null ? org.entitlementsJSON as Record<string, unknown> : {};
+
+  const allowedDepartments = Number(
+    (typeof ent.maxDepartments === "number" || typeof ent.maxDepartments === "string") 
+      ? ent.maxDepartments 
+      : defaults[planKey].departments
   );
-  const isActive = stripeCustomer?.stripeSubscriptionStatus === "active";
+  const allowedTeamsPerDepartment = Number(
+    (typeof ent.maxTeamsPerDepartment === "number" || typeof ent.maxTeamsPerDepartment === "string")
+      ? ent.maxTeamsPerDepartment
+      : defaults[planKey].teamsPerDepartment
+  );
+
+  const [currentDepartments, currentTeams] =  await prisma.$transaction([
+    prisma.department.count({ where: { orgId: org.id } }),
+    prisma.team.count({ where: { department: { orgId: org.id } } }),
+  ]);
 
   return {
-    currentProvisioning,
-    isActive,
+    allowedDepartments,
+    allowedTeamsPerDepartment,
+    currentDepartments,
+    currentTeams,
   };
 };
