@@ -5,9 +5,6 @@ import { stripe } from "@/lib/stripe";
 export type EventCreateOrganization = {
   data: {
     orgId: string;
-    orgSlug: string;
-    orgName: string;
-    orgOwnerUserId: string;
   };
 };
 
@@ -19,7 +16,7 @@ export const eventCreateOrganization = inngest.createFunction(
     event: "onboarding/create-organization",
   },
   async ({ event }) => {
-    const { orgId, orgSlug, orgName, orgOwnerUserId } = event.data;
+    const { orgId } = event.data;
 
     const org = await prisma.organization.findUniqueOrThrow({
       where: { id: orgId },

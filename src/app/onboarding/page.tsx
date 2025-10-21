@@ -2,14 +2,13 @@ import { OnboardForm } from "@/features/onboarding/components/onboard-form";
 import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { GalleryVerticalEnd } from "lucide-react";
 import { redirect } from "next/navigation";
+import { homePath } from "../paths";
 
 const OnboardingPage = async () => {
   const user = await getSessionUser();
-  if (!user) {
-    redirect("/auth/sign-in");
-  }
-  const ExistingOrg = await getUserOrg(user.userId);
-  if (ExistingOrg) redirect("/");
+
+  const ExistingOrg = await getUserOrg(user!.userId);
+  if (ExistingOrg) redirect(homePath());
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">

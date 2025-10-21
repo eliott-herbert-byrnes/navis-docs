@@ -1,7 +1,7 @@
 "use server";
 import { homePath, signInPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { OrgMembershipRole } from "@prisma/client";

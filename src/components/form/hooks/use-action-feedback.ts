@@ -32,7 +32,7 @@ const useActionFeedback = (
     }
 
     prevTimestamp.current = actionState.timestamp;
-  }, [actionState.timestamp, actionState.status, onSuccess, onError]);
+  }, [actionState, options, actionState.timestamp, actionState.status, onSuccess, onError]);
 };
 
 export { useActionFeedback };

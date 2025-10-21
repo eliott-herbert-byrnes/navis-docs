@@ -3,7 +3,6 @@ import { homePath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { Products } from "@/features/stripe/components/product";
 import { LucideSettings } from "lucide-react";
 import { CustomerPortalForm } from "@/features/stripe/components/customer-portal-form";
@@ -12,12 +11,11 @@ import { Spinner } from "@/components/ui/spinner";
 
 const SubscriptionPage = async () => {
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
+  const isAdmin = await isOrgAdminOrOwner(user!.userId);
   if (!isAdmin) redirect(homePath());
 
-  const org = await getUserOrg(user.userId);
+  const org = await getUserOrg(user!.userId);
   if (!org) redirect(homePath());
 
   const manageSubscription = (

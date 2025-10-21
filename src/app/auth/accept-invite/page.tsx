@@ -13,7 +13,7 @@ import { useEffect } from "react";
 const AcceptInvitePage = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const [actionState, action, isPending] = useActionState(
+  const [actionState, action] = useActionState(
     acceptInvite,
     EMPTY_ACTION_STATE
   );

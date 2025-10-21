@@ -2,14 +2,13 @@
 
 import { z } from "zod";
 import { createOtpFor } from "@/lib/otp";
-import { Resend } from "resend";
+// import { Resend } from "resend";
 import { limiter } from "../lib/rate-limit";
-import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
   email: z.email().min(1, { message: "Is Required" }).max(191),
 });
-const resend = new Resend(process.env.RESEND_API_KEY);
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const requestOtpAction = async (emailRaw: string) => {
   const { success } = await limiter("otp:request");

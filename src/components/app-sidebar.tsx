@@ -10,7 +10,6 @@ import {
   User2,
   Lightbulb,
   LucideShip,
-  LogOutIcon,
 } from "lucide-react";
 
 import {
@@ -33,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { homePath, invitePath, subscriptionPath } from "@/app/paths";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme/theme-switcher";

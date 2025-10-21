@@ -7,14 +7,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -32,7 +30,6 @@ import { DepartmentTeamTable } from "./department-team-table";
 
 type DepartmentOverviewProps = {
   title: string;
-  description?: string;
   action: (payload: FormData) => void;
   actionState: ActionState;
   disabled: boolean;
@@ -40,7 +37,6 @@ type DepartmentOverviewProps = {
 };
 const DepartmentOverview = ({
   title,
-  description,
   disabled,
   action,
   actionState,

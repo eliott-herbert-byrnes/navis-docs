@@ -4,7 +4,6 @@ import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "react";
 import { DepartmentOverview } from "./department-overview";
 import { overviewDepartment } from "../../actions/overview-department";
-import { Team } from "@prisma/client";
 
 type DepartmentOverviewButtonProps = {
     departmentId: string;

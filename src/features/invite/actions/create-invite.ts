@@ -1,5 +1,6 @@
 "use server";
 
+import { acceptInvitePath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,
@@ -95,7 +96,7 @@ export const createInvitation = async (
       },
     });
 
-    const link = `${process.env.NEXTAUTH_URL}/accept-invite?token=${rawToken}`;
+    const link = `${process.env.NEXTAUTH_URL}${acceptInvitePath(rawToken)}`;
     console.log(link);
     return toActionState("SUCCESS", "Invite created", formData);
   } catch (error) {

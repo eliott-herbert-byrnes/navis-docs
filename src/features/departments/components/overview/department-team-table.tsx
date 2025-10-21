@@ -92,9 +92,7 @@ export const columns: ColumnDef<Team>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const team = row.original;
-
+    cell: () => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -113,39 +111,50 @@ export const columns: ColumnDef<Team>[] = [
   },
 ];
 
-export function DepartmentTeamTable({ departmentId }: { departmentId: string }) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [teams, setTeams] = React.useState<Team[]>([])
-  const [loading, setLoading] = React.useState(true)
-  const [error, setError] = React.useState<string | null>(null)
+export function DepartmentTeamTable({
+  departmentId,
+}: {
+  departmentId: string;
+}) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [teams, setTeams] = React.useState<Team[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    let alive = true
+    let alive = true;
     const run = async () => {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
       try {
-        const res = await fetch(`/api/departments/${departmentId}/teams`, { cache: "no-store" })
+        const res = await fetch(`/api/departments/${departmentId}/teams`, {
+          cache: "no-store",
+        });
         if (!res.ok) {
-          const msg = (await res.json().catch(() => ({}))).error ?? `Failed to load teams`
-          throw new Error(msg)
+          const msg =
+            (await res.json().catch(() => ({}))).error ??
+            `Failed to load teams`;
+          throw new Error(msg);
         }
-        const json = await res.json()
-        if (alive) setTeams(json.teams ?? [])
-      } catch (e: any) {
-        if (alive) setError(e?.message ?? "Failed to load teams")
+        const json = await res.json();
+        if (alive) setTeams(json.teams ?? []);
+      } catch (e) {
+        if (alive) setError((e as string) ?? "Failed to load teams");
       } finally {
-        if (alive) setLoading(false)
+        if (alive) setLoading(false);
       }
-    }
-    run()
+    };
+    run();
     return () => {
-      alive = false
-    }
-  }, [departmentId])
+      alive = false;
+    };
+  }, [departmentId]);
 
   const table = useReactTable({
     data: teams,
@@ -160,9 +169,7 @@ export function DepartmentTeamTable({ departmentId }: { departmentId: string }) 
     onRowSelectionChange: setRowSelection,
     state: { sorting, columnFilters, columnVisibility, rowSelection },
     initialState: { pagination: { pageIndex: 0, pageSize: 7 } },
-  })
-
-  const rows = table.getRowModel().rows ?? [];
+  });
 
   return (
     <div className="w-full">
@@ -226,29 +233,44 @@ export function DepartmentTeamTable({ departmentId }: { departmentId: string }) 
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 items-center justify-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 items-center justify-center"
+                >
                   <Spinner />
                 </TableCell>
               </TableRow>
             ) : error ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-red-500">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-red-500"
+                >
                   {error}
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>

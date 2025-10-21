@@ -4,7 +4,6 @@ import { useActionState } from "@/components/form/hooks/use-action-state";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import { createCheckoutSession } from "../actions/create-checkout-session";
-import clsx from "clsx";
 import { Badge } from "@/components/ui/badge";
 
 type Plan = "business" | "enterprise";
@@ -32,7 +31,8 @@ const CheckoutSessionForm = ({
   );
 
   const normalizedActivePlan = (activePlan ?? "").toLowerCase() as Plan | "";
-  const isActivePlan = activeSubscription && normalizedActivePlan === targetPlan;
+  const isActivePlan =
+    activeSubscription && normalizedActivePlan === targetPlan;
 
   return (
     <Form

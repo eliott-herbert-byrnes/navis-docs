@@ -45,11 +45,15 @@ export const {
   pages: { signIn: "/auth/sign-in" },
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.id) token.uid = user.id;
+      if (user?.id) {
+        token.sub = user.id;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (token?.uid) (session as any).userId = token.uid;
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
       return session;
     },
   },

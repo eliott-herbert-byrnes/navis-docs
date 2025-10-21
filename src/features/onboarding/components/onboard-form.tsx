@@ -8,12 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useActionState } from "@/components/form/hooks/use-action-state";
@@ -62,7 +57,9 @@ export function OnboardForm({
                 <FieldError actionState={actionState} name="name" />
               </Field>
               <Field>
-                <Button type="submit" disabled={isPending}>Create Organization</Button>
+                <Button type="submit" disabled={isPending}>
+                  Create Organization
+                </Button>
               </Field>
             </FieldGroup>
           </Form>

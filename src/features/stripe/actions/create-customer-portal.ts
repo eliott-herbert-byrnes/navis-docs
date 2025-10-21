@@ -5,6 +5,7 @@ import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
+import { Stripe } from "stripe";
 
 export const createCustomerPortal = async (orgSlug: string) => {
   const user = await getSessionUser();
@@ -54,10 +55,16 @@ export const createCustomerPortal = async (orgSlug: string) => {
     : "http://localhost:3000";
 
   // Optional: only create this once and store the ID; keeping it here is fine for now
-  const productsWithPrices: Array<{ product: any; prices: any[] }> = [];
+  const productsWithPrices: Array<{
+    product: Stripe.Product;
+    prices: Stripe.Price[];
+  }> = [];
   const products = await stripe.products.list({ active: true });
   for (const product of products.data) {
-    const prices = await stripe.prices.list({ active: true, product: product.id });
+    const prices = await stripe.prices.list({
+      active: true,
+      product: product.id,
+    });
     productsWithPrices.push({ product, prices: prices.data });
   }
 

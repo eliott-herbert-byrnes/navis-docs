@@ -105,15 +105,16 @@ const seed = async () => {
     metadata: { plan: "business", allowedProcesses: 100, allowedDepartments: 3, allowedTeamsPerDepartment: 1 },
   });
 
-  const enterprisePrice = await stripe.prices.create({
-    product: productTwo.id,
-    unit_amount: 29999,
-    currency: "usd",
-    recurring: {
-      interval: "month",
-    },
-    metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
-  });
+  // TODO: Uncomment this when we have want to test seeding an enterprise plan
+  // const enterprisePrice = await stripe.prices.create({
+  //   product: productTwo.id,
+  //   unit_amount: 29999,
+  //   currency: "usd",
+  //   recurring: {
+  //     interval: "month",
+  //   },
+  //   metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
+  // });
 
   const attachedPm = await stripe.paymentMethods.attach("pm_card_visa", {
     customer: customer.id,
@@ -131,14 +132,16 @@ const seed = async () => {
     },
   });
 
+  const currentPeriodEnd = subscription.items.data[0]?.current_period_end
+  ? new Date(subscription.items.data[0]?.current_period_end * 1000)
+  : null;
+
   await prisma.organization.update({
     where: { id: org.id },
     data: {
       stripeSubscriptionId: subscription.id,
       stripeSubscriptionStatus: subscription.status,
-      currentPeriodEnd: (subscription as any).current_period_end
-        ? new Date((subscription as any).current_period_end * 1000)
-        : null,
+      currentPeriodEnd: currentPeriodEnd,
       plan: "business",
     },
   });

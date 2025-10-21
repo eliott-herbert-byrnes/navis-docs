@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-// import { ThemeProvider } from "@/components/theme/theme-provider";
-// import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import {
@@ -13,7 +11,6 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrg } from "@/lib/auth";
-import { OrgBadge } from "@/features/org/components/org-bade";
 import { Badge } from "@/components/ui/badge";
 import { getStripeCustomerByOrg } from "@/features/stripe/queries/get-stripe-customer";
 import { stripe } from "@/lib/stripe"; // ADD
@@ -45,8 +42,7 @@ export default async function RootLayout({
         stripeCustomer.stripeSubscriptionId
       );
       subscriptionStatus = sub.status;
-    } catch {
-    }
+    } catch {}
   }
 
   const activeSubscription = subscriptionStatus === "active";
