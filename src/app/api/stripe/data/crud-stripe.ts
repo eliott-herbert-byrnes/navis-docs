@@ -17,9 +17,34 @@ export const updateStripeSubscription = async (
       });
 
       const product = price.product as Stripe.Product;
-      plan = product.metadata?.plan || null;
+      const rawPlan = product.metadata?.plan;
+      plan = rawPlan ? rawPlan.toLowerCase() : null;
     } catch (error) {
       console.error("Error retrieving price:", error);
+    }
+  }
+
+  let entitlementsJSON = {};
+  if (priceId) {
+    try {
+      const price = await stripe.prices.retrieve(priceId);
+      if (price.metadata){
+        const {
+          allowedProcesses,
+          allowedDepartments,
+          allowedTeamsPerDepartment
+        } = price.metadata;
+
+        if (allowedProcesses || allowedDepartments || allowedTeamsPerDepartment){
+          entitlementsJSON = {
+            allowedProcesses: allowedProcesses ? Number(allowedProcesses) : undefined,
+            allowedDepartments: allowedDepartments ? Number(allowedDepartments) : undefined,
+            allowedTeamsPerDepartment: allowedTeamsPerDepartment ? Number(allowedTeamsPerDepartment) : undefined,
+          };
+        }
+      }
+    } catch (error) {
+      console.error("Error retrieving price metadata:", error);
     }
   }
 
@@ -32,6 +57,7 @@ export const updateStripeSubscription = async (
         ? new Date(currentPeriodEnd * 1000)
         : null,
         ...(plan && {plan}),
+        ...(Object.keys(entitlementsJSON).length > 0 && {entitlementsJSON}),
     },
   });
 };
