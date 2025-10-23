@@ -1,5 +1,5 @@
 "use server";
-import { homePath, signInPath } from "@/app/paths";
+import { acceptInvitePath, homePath, signInPath } from "@/app/paths";
 import {
   ActionState,
   toActionState,
@@ -21,7 +21,7 @@ export const acceptInvite = async (
   const user = await getSessionUser();
   if (!user) {
     redirect(
-      `${signInPath()}?callbackUrl=${encodeURIComponent(`/accept-invite?token=${raw}`)}`
+      `${signInPath()}?callbackUrl=${encodeURIComponent(acceptInvitePath(raw))}`
     );
   }
 

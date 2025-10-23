@@ -5,11 +5,16 @@ export default async function ProcessLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { departmentId: string; teamId: string };
+  params: Promise<{ departmentId: string; teamId: string }>;
 }) {
+  const { departmentId, teamId } = await params;
+
   return (
     <div className="flex h-full w-full">
-      <ProcessSidebar departmentId={params.departmentId} teamId={params.teamId} />
+      <ProcessSidebar
+        departmentId={departmentId}
+        teamId={teamId}
+      />
       <main className="flex-1 overflow-auto p-4">{children}</main>
     </div>
   );

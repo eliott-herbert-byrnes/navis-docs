@@ -36,7 +36,7 @@ import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme/theme-switcher";
-import { OrgBadge } from "@/features/org/components/org-bade";
+import { OrgBadge } from "@/features/org/components/org-badge";
 import { Button } from "./ui/button";
 import Link from "next/link";
 
@@ -80,7 +80,7 @@ const items = [
     title: "Subscription",
     url: subscriptionPath(),
     icon: CreditCard,
-    isAdmin: false,
+    isAdmin: true,
   },
   {
     title: "Settings",

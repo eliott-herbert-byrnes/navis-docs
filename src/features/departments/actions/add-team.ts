@@ -74,6 +74,7 @@ try {
 
     return toActionState("SUCCESS", "Team added successfully", formData, {
         team,
+        isAdmin: isAdmin,
     });
 
 } catch (error) {

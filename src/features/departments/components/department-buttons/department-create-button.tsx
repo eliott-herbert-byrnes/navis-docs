@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import { DepartmentDialog } from "./department-create-dialog";
 import { createDepartment } from "../../actions/create-department";
 
-const DepartmentCreateButton = () => {
+const DepartmentCreateButton = ({ isAdmin }: { isAdmin: boolean }) => {
   const [actionState, action] = useActionState(
     createDepartment,
     EMPTY_ACTION_STATE
@@ -17,7 +17,7 @@ const DepartmentCreateButton = () => {
       description="Create a new department and add teams"
       action={action}
       actionState={actionState}
-      disabled={actionState.payload?.get("isAdmin") === "false"}
+      disabled={!isAdmin}
     />
   );
 };

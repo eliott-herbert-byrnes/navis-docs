@@ -1,5 +1,5 @@
 import { Heading } from "@/components/Heading";
-import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { onboardingPath, signInPath } from "./paths";
 import { DepartmentList } from "@/features/departments/components/department-list";
@@ -14,12 +14,14 @@ export default async function Home() {
   const org = await getUserOrg(user.userId);
   if (!org) redirect(onboardingPath());
 
+  const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
+
   return (
     <>
       <Heading
         title="Departments"
         description="Manage your departments"
-        actions={<DepartmentCreateButton />}
+        actions={isAdmin ? <DepartmentCreateButton isAdmin={isAdmin} /> : null}
       />
       <Suspense fallback={<Spinner />}>
         <DepartmentList orgId={org.id} />

@@ -20,7 +20,6 @@ import {
 import { DepartmentDeleteButton } from "./department-buttons/department-delete-button";
 import { DepartmentTeamButton } from "./department-buttons/department-team-button";
 import { DepartmentOverviewButton } from "./overview/department-overview-button";
-import Link from "next/link";
 import { teamProcessPath } from "@/app/paths";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -31,9 +30,10 @@ type DepartmentCardProps = {
     name: string;
     teams: { id: string; name: string }[];
   };
+  isAdmin: boolean;
 };
 
-const DepartmentCard = ({ department }: DepartmentCardProps) => {
+const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -73,15 +73,16 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
           <DropdownMenuContent className="flex flex-col gap-1.5">
             <DropdownMenuItem asChild>
               <DepartmentOverviewButton
+                isAdmin={isAdmin}
                 title={department.name}
                 departmentId={department.id}
               />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <DepartmentTeamButton departmentId={department.id} />
+              <DepartmentTeamButton departmentId={department.id} isAdmin={isAdmin} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <DepartmentDeleteButton departmentId={department.id} />
+              <DepartmentDeleteButton departmentId={department.id} isAdmin={isAdmin} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

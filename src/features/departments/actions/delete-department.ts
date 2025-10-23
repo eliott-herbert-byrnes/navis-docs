@@ -58,6 +58,7 @@ export const deleteDepartment = async (
         formData,
         {
             department: deleted,
+            isAdmin: isAdmin,
       }
     );
   } catch (error) {

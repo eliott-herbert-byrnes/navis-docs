@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
-import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { getStripeCustomerByOrg } from "@/features/stripe/queries/get-stripe-customer";
 import { stripe } from "@/lib/stripe"; // ADD
@@ -31,6 +31,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const user = await getSessionUser();
+  const isAdmin = await isOrgAdminOrOwner(user?.userId ?? "");
   const org = await getUserOrg(user?.userId ?? "");
   const stripeCustomer = await getStripeCustomerByOrg(org?.slug ?? "");
 
@@ -65,7 +66,7 @@ export default async function RootLayout({
                     <>
                       <div className="flex flex-row items-center justify-between">
                         <SidebarTrigger />
-                        <Badge variant="outline">{planLabel}</Badge>
+                        {isAdmin && <Badge variant="outline">{planLabel}</Badge>}
                       </div>
                       <Separator className="my-2" />
                     </>

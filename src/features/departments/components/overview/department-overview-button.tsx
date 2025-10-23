@@ -8,9 +8,10 @@ import { overviewDepartment } from "../../actions/overview-department";
 type DepartmentOverviewButtonProps = {
     departmentId: string;
     title: string;
+    isAdmin: boolean;
 };
 
-const DepartmentOverviewButton = ({ departmentId, title }: DepartmentOverviewButtonProps) => {
+const DepartmentOverviewButton = ({ departmentId, title, isAdmin }: DepartmentOverviewButtonProps) => {
     const [actionState, action] = useActionState(       
         overviewDepartment,
         EMPTY_ACTION_STATE,
@@ -21,7 +22,7 @@ const DepartmentOverviewButton = ({ departmentId, title }: DepartmentOverviewBut
         title={title}
         action={action}
         actionState={actionState}
-        disabled={actionState.data?.isAdmin === "false"}
+        disabled={!isAdmin}
         departmentId={departmentId}
         />
     );

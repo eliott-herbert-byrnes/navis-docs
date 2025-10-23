@@ -6,7 +6,7 @@ import { deleteDepartment } from "../../actions/delete-department";
 import { DepartmentDeleteDialog } from "./department-delete-dialog";
 
 
-const DepartmentDeleteButton = ({ departmentId }: { departmentId: string }) => {
+const DepartmentDeleteButton = ({ departmentId, isAdmin }: { departmentId: string, isAdmin: boolean }) => {
     const [actionState, action] = useActionState(       
         deleteDepartment,
         EMPTY_ACTION_STATE,
@@ -18,7 +18,7 @@ const DepartmentDeleteButton = ({ departmentId }: { departmentId: string }) => {
         description="This action cannot be undone."
         action={action}
         actionState={actionState}
-        disabled={actionState.payload?.get("isAdmin") === "false"}
+        disabled={!isAdmin}
         departmentId={departmentId}
         />
     );

@@ -6,7 +6,7 @@ import { DepartmentTeamDialog } from "./department-team-dialog";
 import { addTeam } from "../../actions/add-team";
 
 
-const DepartmentTeamButton = ({ departmentId }: { departmentId: string }) => {
+const DepartmentTeamButton = ({ departmentId, isAdmin }: { departmentId: string, isAdmin: boolean }) => {
     const [actionState, action] = useActionState(       
         addTeam,
         EMPTY_ACTION_STATE,
@@ -18,7 +18,7 @@ const DepartmentTeamButton = ({ departmentId }: { departmentId: string }) => {
         description="Add a new team to the department"
         action={action}
         actionState={actionState}
-        disabled={actionState.payload?.get("isAdmin") === "false"}
+        disabled={!isAdmin}
         departmentId={departmentId}
         />
     );
