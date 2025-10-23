@@ -25,11 +25,20 @@ type TeamDropdownProps = {
     name: string;
     teams: { id: string; name: string }[];
   };
+  selectedTeamId: string | null;
+  onTeamSelect: (teamId: string) => void;
 };
 
-const TeamDropdown = ({ department }: TeamDropdownProps) => {
+const TeamDropdown = ({
+  department,
+  selectedTeamId,
+  onTeamSelect,
+}: TeamDropdownProps) => {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+
+  const selectedTeam = department.teams.find(
+    (team) => team.id === selectedTeamId
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,9 +49,7 @@ const TeamDropdown = ({ department }: TeamDropdownProps) => {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? department.teams.find((team) => team.name === value)?.name
-            : "Select team..."}
+          {selectedTeam ? selectedTeam.name : "Select team..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -52,20 +59,20 @@ const TeamDropdown = ({ department }: TeamDropdownProps) => {
           <CommandList>
             <CommandEmpty>No team found.</CommandEmpty>
             <CommandGroup>
-              {department.teams.map((dep) => (
+              {department.teams.map((team) => (
                 <CommandItem
-                  key={dep.id}
-                  value={dep.name}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                  key={team.id}
+                  value={team.name}
+                  onSelect={() => {
+                    onTeamSelect(team.id);
                     setOpen(false);
                   }}
                 >
-                  {dep.name}
+                  {team.name}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === dep.name ? "opacity-100" : "opacity-0"
+                      selectedTeamId === team.name ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
