@@ -15,7 +15,7 @@ const DepartmentDeleteButton = ({ departmentId, isAdmin }: { departmentId: strin
     return (
         <DepartmentDeleteDialog 
         title="Are you sure you want to delete this department?"
-        description="This action cannot be undone."
+        description="All associated teams and processes will be deleted as well. This action cannot be undone."
         action={action}
         actionState={actionState}
         disabled={!isAdmin}

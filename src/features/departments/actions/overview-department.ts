@@ -1,6 +1,7 @@
 "use server";
 import { homePath } from "@/app/paths";
 import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
+import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -49,9 +50,24 @@ export const overviewDepartment = async (
             return toActionState("ERROR", "Department not found", formData);
         }
 
+        const beforeState = {
+            id: department.id,
+            name: department.name,
+        }
+
         const updatedDepartment = await prisma.department.update({
             where: { id: departmentId },
             data: { name: departmentName },
+        });
+
+        await createAuditLog({
+            orgId: org.id,
+            actorId: user.userId,
+            action: "DEPARTMENT_RENAMED",
+            entityType: "DEPARTMENT",
+            entityId: departmentId,
+            beforeJSON: beforeState,
+            afterJSON: { id: updatedDepartment.id, name: updatedDepartment.name },
         });
     
         revalidatePath(homePath());

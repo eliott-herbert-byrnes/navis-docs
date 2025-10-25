@@ -11,6 +11,8 @@ const DepartmentCreateButton = ({ isAdmin }: { isAdmin: boolean }) => {
     EMPTY_ACTION_STATE
   );
 
+  
+
   return (
     <DepartmentDialog
       title="Create Department"

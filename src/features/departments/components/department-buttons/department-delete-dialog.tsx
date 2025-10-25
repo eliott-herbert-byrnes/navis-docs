@@ -59,7 +59,7 @@ const DepartmentDeleteDialog = ({
           <input type="hidden" name="departmentId" value={departmentId} />
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
+            <DialogDescription className="text-red-500">{description}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-row gap-2 mt-4">
             <Button

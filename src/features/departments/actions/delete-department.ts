@@ -6,6 +6,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -46,9 +47,23 @@ export const deleteDepartment = async (
         return toActionState("ERROR", "Department not found", formData);
     }
 
+    const beforeState = {
+      id: department.id,
+      name: department.name,
+    }
+
     const deleted = await prisma.department.delete({
         where: {id: departmentId},
     })
+
+    await createAuditLog({
+      orgId: org.id,
+      actorId: user.userId,
+      action: "DEPARTMENT_DELETED",
+      entityType: "DEPARTMENT",
+      entityId: departmentId,
+      beforeJSON: beforeState,
+    });
 
     revalidatePath(homePath());
     

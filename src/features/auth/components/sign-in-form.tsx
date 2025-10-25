@@ -188,6 +188,11 @@ export function SignInForm({
                     <FieldDescription className="text-center">
                       Enter the 6-digit code sent to your email.
                     </FieldDescription>
+                      {msg && msg === "Invalid code" ? (
+                        <div className="text-center text-sm text-red-500">{msg}</div>
+                      ) : (
+                        <div className="text-center text-sm">{msg}</div>
+                      )}
                   </Field>
                   <Button type="submit" onClick={verifyCode} disabled={pending}>
                     {pending ? (

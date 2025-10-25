@@ -50,29 +50,24 @@ export function ProcessSidebar({ departmentId, teamId }: ProcessSidebarProps) {
       <nav className="flex-1 overflow-y-auto p-2">
         <div className="space-y-1">
           {/* Favorites Section */}
-          <Link href={`/departments/${departmentId}/${teamId}/processes/favourites`}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-2"
-            >
+          <Link
+            href={`/departments/${departmentId}/${teamId}/processes/favourites`}
+          >
+            <Button variant="ghost" className="w-full justify-start gap-2">
               <Star className="h-4 w-4" />
               Favorites
             </Button>
           </Link>
-          <Link href={`/departments/${departmentId}/${teamId}/processes/address-book`}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-2"
-            >
+          <Link
+            href={`/departments/${departmentId}/${teamId}/processes/address-book`}
+          >
+            <Button variant="ghost" className="w-full justify-start gap-2">
               <Book className="h-4 w-4" />
               Address Book
             </Button>
           </Link>
           <Link href={`/departments/${departmentId}/${teamId}/processes/News`}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-2"
-            >
+            <Button variant="ghost" className="w-full justify-start gap-2">
               <Newspaper className="h-4 w-4" />
               News
             </Button>
@@ -88,7 +83,13 @@ export function ProcessSidebar({ departmentId, teamId }: ProcessSidebarProps) {
                   variant="ghost"
                   className="w-full justify-between group"
                 >
-                  <span className="font-medium">{category.name}</span>
+                  <span className="font-medium">
+                    {category.name}
+                    <span className="text-xs text-muted-foreground ml-2">
+                      {category.processes.length}
+                    </span>
+                  </span>
+
                   <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
                 </Button>
               </CollapsibleTrigger>

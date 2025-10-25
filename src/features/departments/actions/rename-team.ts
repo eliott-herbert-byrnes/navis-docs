@@ -6,6 +6,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -64,9 +65,24 @@ export const renameTeam = async (
       return toActionState("ERROR", "Team with this name already exists", formData);
     }
 
+    const beforeState = {
+      id: team.id,
+      name: team.name,
+    }
+
     const updated = await prisma.team.update({
       where: { id: team.id },
       data: { name: newTeamName },
+    });
+
+    await createAuditLog({
+      orgId: org.id,
+      actorId: user.userId,
+      action: "TEAM_RENAMED",
+      entityType: "TEAM",
+      entityId: team.id,
+      beforeJSON: beforeState,
+      afterJSON: { id: updated.id, name: updated.name, departmentId: updated.departmentId },
     });
 
     revalidatePath(homePath());

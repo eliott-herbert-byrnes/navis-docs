@@ -30,7 +30,6 @@ export const createCustomerPortal = async (orgSlug: string) => {
     return toActionState("ERROR", "Organization not found");
   }
 
-  // Ensure a Stripe customer exists
   let customerId = org.stripeCustomerId;
   if (!customerId) {
     const customer = await stripe.customers.create({
@@ -45,7 +44,6 @@ export const createCustomerPortal = async (orgSlug: string) => {
     customerId = customer.id;
   }
 
-  // Build a valid absolute return URL with scheme and fallback
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL;
   const hasScheme = !!rawAppUrl && /^(http|https):\/\//i.test(rawAppUrl);
   const baseUrl = rawAppUrl
@@ -54,47 +52,50 @@ export const createCustomerPortal = async (orgSlug: string) => {
       : `https://${rawAppUrl}`
     : "http://localhost:3000";
 
-  // Optional: only create this once and store the ID; keeping it here is fine for now
-  const productsWithPrices: Array<{
-    product: Stripe.Product;
-    prices: Stripe.Price[];
-  }> = [];
-  const products = await stripe.products.list({ active: true });
-  for (const product of products.data) {
-    const prices = await stripe.prices.list({
-      active: true,
-      product: product.id,
-    });
-    productsWithPrices.push({ product, prices: prices.data });
-  }
+    const productsWithPrices: Array<{
+      product: Stripe.Product;
+      prices: Stripe.Price[];
+    }> = [];
+    const products = await stripe.products.list({ active: true });
+    for (const product of products.data) {
+      const prices = await stripe.prices.list({
+        active: true,
+        product: product.id,
+      });
+      if (prices.data.length > 0) {
+        productsWithPrices.push({ product, prices: prices.data });
+      }
+    }
 
-  const configuration = await stripe.billingPortal.configurations.create({
-    business_profile: {
-      privacy_policy_url: `${baseUrl}/privacy`,
-      terms_of_service_url: `${baseUrl}/terms`,
-    },
-    features: {
-      payment_method_update: { enabled: true },
-      customer_update: {
-        allowed_updates: ["name", "email", "address", "tax_id"],
-        enabled: true,
+    const configuration = await stripe.billingPortal.configurations.create({
+      business_profile: {
+        privacy_policy_url: `${baseUrl}/privacy`,
+        terms_of_service_url: `${baseUrl}/terms`,
       },
-      invoice_history: { enabled: true },
-      subscription_cancel: {
-        enabled: true,
-        mode: "at_period_end",
+      features: {
+        payment_method_update: { enabled: true },
+        customer_update: {
+          allowed_updates: ["name", "email", "address", "tax_id"],
+          enabled: true,
+        },
+        invoice_history: { enabled: true },
+        subscription_cancel: {
+          enabled: true,
+          mode: "at_period_end",
+        },
+        subscription_update: {
+          default_allowed_updates: ["price"],
+          enabled: true,
+          proration_behavior: "create_prorations",
+          products: productsWithPrices.length > 0 
+            ? productsWithPrices.map(({ product, prices }) => ({
+                product: product.id,
+                prices: prices.map((price) => price.id),
+              }))
+            : undefined,
+        },
       },
-      subscription_update: {
-        default_allowed_updates: ["price"],
-        enabled: true,
-        proration_behavior: "create_prorations",
-        products: productsWithPrices.map(({ product, prices }) => ({
-          product: product.id,
-          prices: prices.map((price) => price.id),
-        })),
-      },
-    },
-  });
+    });
 
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,

@@ -6,6 +6,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { createAuditLog } from "@/features/audit/utils/audit";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -74,10 +75,18 @@ export const createDepartment = async (
       return toActionState("ERROR", "Department already exists", formData);
     }
 
-    const { allowedDepartments, currentDepartments, allowedTeamsPerDepartment } = await getStripeProvisionByOrg(org.slug);
+    const {
+      allowedDepartments,
+      currentDepartments,
+      allowedTeamsPerDepartment,
+    } = await getStripeProvisionByOrg(org.slug);
 
     if (currentDepartments >= allowedDepartments) {
-      return toActionState("ERROR", "You have reached the maximum number of departments", formData);
+      return toActionState(
+        "ERROR",
+        "You have reached the maximum number of departments",
+        formData
+      );
     }
 
     const department = await prisma.department.create({
@@ -87,18 +96,47 @@ export const createDepartment = async (
       },
     });
 
+    await createAuditLog({
+      orgId: org.id,
+      actorId: user.userId,
+      action: "DEPARTMENT_CREATED",
+      entityType: "DEPARTMENT",
+      entityId: department.id,
+      afterJSON: {
+        id: department.id,
+        name: departmentName,
+      },
+    });
+
     const teamNames = [teamName1, teamName2, teamName3].filter(
       (value) => value.trim().length > 0
     );
 
     if (teamNames.length > allowedTeamsPerDepartment) {
-      return toActionState("ERROR", "You have reached the maximum number of teams per department", formData);
+      return toActionState(
+        "ERROR",
+        "You have reached the maximum number of teams per department",
+        formData
+      );
     }
 
     for (const teamName of teamNames) {
-      await prisma.team.create({
+      const team = await prisma.team.create({
         data: {
           name: teamName,
+          departmentId: department.id,
+        },
+      });
+
+      await createAuditLog({
+        orgId: org.id,
+        actorId: user.userId,
+        action: "TEAM_CREATED",
+        entityType: "TEAM",
+        entityId: department.id,
+        afterJSON: {
+          id: team.id,
+          name: team.name,
           departmentId: department.id,
         },
       });

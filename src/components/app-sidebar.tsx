@@ -10,6 +10,7 @@ import {
   User2,
   Lightbulb,
   LucideShip,
+  History,
 } from "lucide-react";
 
 import {
@@ -31,7 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { homePath, invitePath, subscriptionPath } from "@/app/paths";
+import { auditPath, homePath, invitePath, subscriptionPath } from "@/app/paths";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
@@ -67,8 +68,14 @@ const items = [
     title: "Userbase",
     url: "#",
     icon: Users,
-    separator: true,
     isAdmin: true,
+  },
+  {
+    title: "Audit Log",
+    url: auditPath(),
+    icon: History,
+    isAdmin: true,
+    separator: true,
   },
   {
     title: "Invite",
