@@ -68,7 +68,6 @@ import {
         );
         subscriptionStatus = sub.status;
       } catch {
-        // ignore and use DB status
       }
     }
   

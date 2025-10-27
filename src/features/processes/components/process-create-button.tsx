@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { teamProcessCreatePath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { LucideLoaderCircle, PlusIcon } from "lucide-react";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 const ProcessCreateButton = ({
   departmentId,
@@ -14,13 +15,22 @@ const ProcessCreateButton = ({
   teamId: string;
   isAdmin: boolean;
 }) => {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const handleCreateProcess = () => {
+    startTransition(() => {
+      router.push(teamProcessCreatePath(departmentId, teamId));
+    });
+  };
   return (
-    <Link href={teamProcessCreatePath(departmentId, teamId)}>
-      {isAdmin ? <Button variant="outline" disabled={!isAdmin}>
+    <Button variant="outline" disabled={!isAdmin} onClick={handleCreateProcess}>
+      {isPending ? (
+        <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+      ) : (
         <PlusIcon className="w-4 h-4" />
-        Create Process
-      </Button> : null}
-    </Link>
+      )}
+      Create Process
+    </Button>
   );
 };
 

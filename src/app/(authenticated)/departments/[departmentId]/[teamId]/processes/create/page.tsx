@@ -3,8 +3,9 @@ import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { EmptyState } from "@/components/empty-state";
 import { onboardingPath, signInPath, teamProcessPath } from "@/app/paths";
+import { CreateProcessForm } from "@/features/processes/components/process-create-form";
+import { getCategories } from "@/features/processes/queries/get-categories";
 
 export default async function ProcessCreatePage({
   params,
@@ -22,6 +23,8 @@ export default async function ProcessCreatePage({
   const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
   if (!isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
+  const { list: categories } = await getCategories(teamId);
+
   return (
     <>
       <Heading
@@ -29,9 +32,10 @@ export default async function ProcessCreatePage({
         description="Create a new process and add a category"
       />
       <Suspense fallback={<Spinner />}>
-        <EmptyState
-          title="No processes found"
-          body="Create a new process to get started"
+        <CreateProcessForm 
+        departmentId={departmentId}
+        teamId={teamId}
+        categories={categories}
         />
       </Suspense>
     </>
