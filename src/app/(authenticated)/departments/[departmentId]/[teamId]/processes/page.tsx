@@ -37,8 +37,8 @@ export default async function ProcessPage({
   return (
     <>
       <Heading
-        title={`${teamName} Processes`}
-        actions={isAdmin ? <ProcessCreateButton isAdmin={isAdmin} /> : null}
+        title={`${teamName} Docs`}
+        actions={isAdmin ? <ProcessCreateButton departmentId={departmentId} teamId={teamId} isAdmin={isAdmin} /> : null}
         breadcrumbs={
           <ProcessBreadcrumbs
             teamName={teamName}
@@ -47,10 +47,7 @@ export default async function ProcessPage({
         }
       />
       <Suspense fallback={<Spinner />}>
-        <EmptyState
-          title="No processes found"
-          body="Create a new process to get started"
-        />
+        <CreateProcessForm />
       </Suspense>
     </>
   );

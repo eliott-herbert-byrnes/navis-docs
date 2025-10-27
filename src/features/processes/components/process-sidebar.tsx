@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Search, ChevronRight, Star, Book, Newspaper } from "lucide-react";
+import { Search, ChevronRight, Star, Book, Newspaper, Home } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { teamProcessCreatePath, teamProcessPath } from "@/app/paths";
 
 type ProcessSidebarProps = {
   departmentId: string;
@@ -51,7 +52,15 @@ export function ProcessSidebar({ departmentId, teamId }: ProcessSidebarProps) {
         <div className="space-y-1">
           {/* Favorites Section */}
           <Link
-            href={`/departments/${departmentId}/${teamId}/processes/favourites`}
+            href={teamProcessPath(departmentId, teamId)}
+          >
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <Home className="h-4 w-4" />
+              Docs Home
+            </Button>
+          </Link>
+          <Link
+            href={teamProcessCreatePath(departmentId, teamId)}
           >
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Star className="h-4 w-4" />

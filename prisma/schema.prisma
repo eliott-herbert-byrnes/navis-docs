@@ -9,16 +9,16 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(uuid())
-  email           String          @unique
-  name            String?
-  image           String?
-  emailVerified   DateTime?       @map("emailVerifiedAt")
-  createdAt       DateTime        @default(now())
-  memberships     OrgMembership[]
-  accounts        Account[]
-  invitations     Invitation[]
-  organizations   Organization[]
+  id            String          @id @default(uuid())
+  email         String          @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?       @map("emailVerifiedAt")
+  createdAt     DateTime        @default(now())
+  memberships   OrgMembership[]
+  accounts      Account[]
+  invitations   Invitation[]
+  organizations Organization[]
 }
 
 model Account {
@@ -87,33 +87,33 @@ model VerificationToken {
 }
 
 model Organization {
-  id               String          @id @default(uuid())
-  name             String
-  slug             String          @unique
-  ownerUserId      String
-  ownerUser        User            @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
-  plan             String          @default("business") // "business" | "enterprise"
-  entitlementsJSON Json            @default("{}")
-  stripeCustomerId String?         @unique
-  stripeSubscriptionId String?     @unique
+  id                       String                    @id @default(uuid())
+  name                     String
+  slug                     String                    @unique
+  ownerUserId              String
+  ownerUser                User                      @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
+  plan                     String                    @default("business") // "business" | "enterprise"
+  entitlementsJSON         Json                      @default("{}")
+  stripeCustomerId         String?                   @unique
+  stripeSubscriptionId     String?                   @unique
   stripeSubscriptionStatus StripeSubscriptionStatus?
-  currentPeriodEnd DateTime?
-  createdAt        DateTime        @default(now())
-  memberships      OrgMembership[]
-  ingestionJobs    IngestionJob[]
-  departments      Department[]
-  invitations      Invitation[]
+  currentPeriodEnd         DateTime?
+  createdAt                DateTime                  @default(now())
+  memberships              OrgMembership[]
+  ingestionJobs            IngestionJob[]
+  departments              Department[]
+  invitations              Invitation[]
 }
 
 enum StripeSubscriptionStatus {
-    active
-    incomplete
-    incomplete_expired
-    past_due
-    canceled
-    unpaid
-    trialing
-    paused
+  active
+  incomplete
+  incomplete_expired
+  past_due
+  canceled
+  unpaid
+  trialing
+  paused
 }
 
 enum OrgMembershipRole {
@@ -193,10 +193,14 @@ model Process {
   description        String?
   style              ProcessStyle
   status             ProcessStatus
-  pendingVersionId   String?
-  publishedVersionId String?
+  pendingVersionId   String?       @unique
+  publishedVersionId String?       @unique
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
+
+  versions         ProcessVersion[]
+  pendingVersion   ProcessVersion?  @relation("PendingVersion", fields: [pendingVersionId], references: [id])
+  publishedVersion ProcessVersion?  @relation("PublishedVersion", fields: [publishedVersionId], references: [id])
 
   team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
   ingestionJobs IngestionJob[]
@@ -217,6 +221,13 @@ model ProcessVersion {
   contentJSON   Json
   contentText   String?
   ingestionJobs IngestionJob[]
+
+  process Process? @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  pendingOf   Process? @relation("PendingVersion")
+  publishedOf Process? @relation("PublishedVersion")
+
+  @@index([processId, createdAt])
 }
 
 model NewsPost {

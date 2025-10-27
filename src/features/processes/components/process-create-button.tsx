@@ -1,24 +1,26 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
-import { ProcessDialog } from "./process-create-dialog";
-import { createProcess } from "../actions/create-process";
+import Link from "next/link";
+import { teamProcessCreatePath } from "@/app/paths";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
 
-const ProcessCreateButton = ({ isAdmin }: { isAdmin: boolean }) => {
-  const [actionState, action] = useActionState(
-    createProcess,
-    EMPTY_ACTION_STATE
-  );
-
+const ProcessCreateButton = ({
+  departmentId,
+  teamId,
+  isAdmin,
+}: {
+  departmentId: string;
+  teamId: string;
+  isAdmin: boolean;
+}) => {
   return (
-    <ProcessDialog
-      title="Create Process"
-      description="Create a new process and add a category"
-      action={action}
-      actionState={actionState}
-      disabled={!isAdmin}
-    />
+    <Link href={teamProcessCreatePath(departmentId, teamId)}>
+      {isAdmin ? <Button variant="outline" disabled={!isAdmin}>
+        <PlusIcon className="w-4 h-4" />
+        Create Process
+      </Button> : null}
+    </Link>
   );
 };
 

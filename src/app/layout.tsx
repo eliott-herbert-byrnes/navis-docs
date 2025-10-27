@@ -35,7 +35,6 @@ export default async function RootLayout({
   const org = await getUserOrg(user?.userId ?? "");
   const stripeCustomer = await getStripeCustomerByOrg(org?.slug ?? "");
 
-  // Prefer live Stripe status if we know the subscription ID
   let subscriptionStatus = stripeCustomer?.stripeSubscriptionStatus ?? null;
   if (stripeCustomer?.stripeSubscriptionId) {
     try {
@@ -66,7 +65,9 @@ export default async function RootLayout({
                     <>
                       <div className="flex flex-row items-center justify-between">
                         <SidebarTrigger />
-                        {isAdmin && <Badge variant="outline">{planLabel}</Badge>}
+                        {isAdmin && (
+                          <Badge variant="outline">{planLabel}</Badge>
+                        )}
                       </div>
                       <Separator className="my-2" />
                     </>
