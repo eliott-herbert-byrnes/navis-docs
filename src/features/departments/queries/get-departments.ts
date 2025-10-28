@@ -5,7 +5,11 @@ import { prisma } from "@/lib/prisma";
 type DepartmentListItem = {
   id: string;
   name: string;
-  teams: { id: string; name: string }[];
+  teams: {
+    id: string;
+    name: string;
+    _count: { process: number };
+  }[];
 };
 
 export const getDepartments = async (
@@ -20,7 +24,15 @@ export const getDepartments = async (
       select: {
         id: true,
         name: true,
-        teams: { select: { id: true, name: true } },
+        teams: {
+          select: {
+            id: true,
+            name: true,
+            _count: {
+              select: { process: true },
+            },
+          },
+        },
       },
     }),
     prisma.department.count({

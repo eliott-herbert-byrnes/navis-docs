@@ -3,13 +3,23 @@ import { ProcessStyle } from "@prisma/client";
 export const getInitialContentForStyle = (style: ProcessStyle) => {
   switch (style) {
     case "STEPS":
-      return { steps: [{ text: "" }] };
+      return { steps: [{ heading: "", description: "" }] };
     case "RAW":
-      return { blocks: [{ type: "paragraph", text: "" }] };
+      return {
+        tiptap: {
+          type: "doc",
+          content: [
+            {
+              type: "paragraph",
+              content: [],
+            },
+          ],
+        },
+      };
     case "FLOW":
-      return { nodes: [], edges: [] }; 
+      return { nodes: [], edges: [] };
     case "YESNO":
-      return { cards: [{ question: "", yes: null, no: null }] };
+      return { cards: [{ id: "1", question: "", yesNext: null, noNext: null }] };
     default:
       return {};
   }

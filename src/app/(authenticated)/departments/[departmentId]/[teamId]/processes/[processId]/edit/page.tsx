@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { onboardingPath, signInPath, teamProcessPath } from "@/app/paths";
 import { getCategories } from "@/features/processes/queries/get-categories";
+import { getProcessForEdit } from "@/features/processes/queries/get-process-for-edit";
+import { EditProcessForm } from "@/features/processes/components/process-edit-form";
 
 export default async function ProcessEditPage({
   params,
@@ -22,7 +24,14 @@ export default async function ProcessEditPage({
   const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
   if (!isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
-  const { list: categories } = await getCategories(teamId);
+  const [{list: categories}, process] = await Promise.all([
+    getCategories(teamId),
+    getProcessForEdit(processId),
+  ]);
+
+  if(!process){
+    redirect(teamProcessPath(departmentId, teamId));
+  }
 
   return (
     <>
@@ -36,6 +45,7 @@ export default async function ProcessEditPage({
         teamId={teamId}
         categories={categories}
         processId={processId}
+        process={process}
         />
       </Suspense>
     </>

@@ -89,7 +89,7 @@ export const createProcess = async (
         categoryId: categoryId || null,
         title: processTitle,
         description: processDescription,
-        style: processStyle as ProcessStyle,
+        style: finalisedProcessStyle,
         status: ProcessStatus.DRAFT,
         slug: makeSlugFromTitle(processTitle),
       },
@@ -99,8 +99,8 @@ export const createProcess = async (
       data: {
         processId: process.id,
         createdBy: user.userId,
-        style: processStyle as ProcessStyle,
-        contentJSON: getInitialContentForStyle(processStyle as ProcessStyle),
+        style: finalisedProcessStyle,
+        contentJSON: getInitialContentForStyle(finalisedProcessStyle),
       },
     });
 
@@ -112,7 +112,7 @@ export const createProcess = async (
     });
 
     return toActionState("SUCCESS", "Process created successfully", formData, {
-        redirect: editProcessPath(departmentId, teamId, process.slug),
+        redirect: editProcessPath(departmentId, teamId, process.id),
     });
   } catch (error) {
     return fromErrorToActionState(error, formData);

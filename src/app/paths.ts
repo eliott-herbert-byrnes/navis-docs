@@ -18,7 +18,7 @@ export const teamProcessPath = (departmentId: string, teamId: string) =>
 export const processPath = (
   departmentId: string,
   teamId: string,
-  processSlug: string
-) => `/departments/${departmentId}/${teamId}/processes/${processSlug}`;
-export const editProcessPath = (departmentId: string, teamId: string, processSlug: string) =>
-  `/departments/${departmentId}/${teamId}/processes/${processSlug}/edit`;
+  processId: string
+) => `/departments/${departmentId}/${teamId}/processes/${processId}`;
+export const editProcessPath = (departmentId: string, teamId: string, processId: string) =>
+  `/departments/${departmentId}/${teamId}/processes/${processId}/edit`;

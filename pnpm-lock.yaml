@@ -74,6 +74,12 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tiptap/extension-placeholder':
+        specifier: ^3.9.0
+        version: 3.9.0(@tiptap/extensions@3.9.0(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))(@tiptap/pm@3.9.0))
+      '@tiptap/extension-underline':
+        specifier: ^3.9.0
+        version: 3.9.0(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))
       '@tiptap/react':
         specifier: ^3.9.0
         version: 3.9.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))(@tiptap/pm@3.9.0)(@types/react-dom@19.1.9(@types/react@19.1.14))(@types/react@19.1.14)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -2493,6 +2499,11 @@ packages:
     resolution: {integrity: sha512-cVsRVKNpnEycdIyfUpQMeM46CfAq55d2e0OBit/XCXU03T+aYhud8bkRJRlOEekAhtU+37d9iojwtVwXI5lTcg==}
     peerDependencies:
       '@tiptap/core': ^3.9.0
+
+  '@tiptap/extension-placeholder@3.9.0':
+    resolution: {integrity: sha512-OX/YqwM2vRzt5Md1mVyDlyPkqM0E91qDB84nPFa07VE1zSwjNF6u6LTeCQz3GbVI6vT/rP+872kI0UN0b6k4pw==}
+    peerDependencies:
+      '@tiptap/extensions': ^3.9.0
 
   '@tiptap/extension-strike@3.9.0':
     resolution: {integrity: sha512-MZjKjlNme30nBzigtmFRh+NqsrgprRPnRUUxPZHLYK9MV13Ax0nRc6d0mo1d/rIqOnmFiyhOfpVFb4GwoGGevA==}
@@ -7690,6 +7701,10 @@ snapshots:
   '@tiptap/extension-paragraph@3.9.0(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))':
     dependencies:
       '@tiptap/core': 3.9.0(@tiptap/pm@3.9.0)
+
+  '@tiptap/extension-placeholder@3.9.0(@tiptap/extensions@3.9.0(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))(@tiptap/pm@3.9.0))':
+    dependencies:
+      '@tiptap/extensions': 3.9.0(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))(@tiptap/pm@3.9.0)
 
   '@tiptap/extension-strike@3.9.0(@tiptap/core@3.9.0(@tiptap/pm@3.9.0))':
     dependencies:

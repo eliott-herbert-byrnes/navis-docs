@@ -21,7 +21,7 @@ import { Card } from "@/components/ui/card";
 import { FieldError } from "@/components/form/field-error";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { homePath } from "@/app/paths";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { ProcessSelectCategories } from "./process-select-categories";
@@ -37,13 +37,21 @@ const CreateProcessForm = ({
   teamId,
   categories,
 }: CreateProcessFormProps) => {
-  const [actionState, action] = useActionState(
+  const [actionState, action, isPending] = useActionState(
     createProcess,
     EMPTY_ACTION_STATE
   );
-  const [isPending, startTransition] = useTransition();
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isCancelPending, startTransition] = useTransition();
+  const [createNewCategory, setCreateNewCategory] = useState(
+    categories.length === 0
+  );
   const router = useRouter();
+
+  useEffect(() => {
+    if (actionState.status !== "SUCCESS") return;
+    const to = actionState.data?.redirect;
+    if (to) router.push(to);
+  }, [actionState.status, actionState.data?.redirect, router]);
 
   const handleCancel = () => {
     startTransition(() => {
@@ -52,7 +60,7 @@ const CreateProcessForm = ({
   };
 
   const handleNewCategoryChange = (checked: boolean) => {
-    setIsDisabled(checked);
+    setCreateNewCategory(checked);
   };
 
   return (
@@ -76,6 +84,7 @@ const CreateProcessForm = ({
                     placeholder="Process Title"
                     name="processTitle"
                     required
+                    disabled={isPending}
                   />
                   <FieldError actionState={actionState} name="processTitle" />
                 </Field>
@@ -89,6 +98,7 @@ const CreateProcessForm = ({
                     placeholder="Enter a short description of the process"
                     className="resize-none"
                     required
+                    disabled={isPending}
                   />
                   <FieldError
                     actionState={actionState}
@@ -108,7 +118,7 @@ const CreateProcessForm = ({
                 <ProcessSelectCategories
                   categories={categories}
                   name="processCategoryId"
-                  isDisabled={isDisabled}
+                  isDisabled={createNewCategory}
                 />
                 <FieldDescription>
                   Select an existing category or create a new one.
@@ -119,8 +129,9 @@ const CreateProcessForm = ({
                   <Checkbox
                     id="newProcessCategory"
                     name="newProcessCategory"
-                    defaultChecked={categories.length === 0}
+                    checked={createNewCategory}
                     onCheckedChange={handleNewCategoryChange}
+                    disabled={isPending}
                   />
                   <FieldLabel
                     htmlFor="newProcessCategory"
@@ -129,18 +140,21 @@ const CreateProcessForm = ({
                     Create a new category
                   </FieldLabel>
                 </Field>
-                <Field>
-                  <Input
-                    id="newProcessCategoryName"
-                    placeholder="New Category Name"
-                    name="newProcessCategoryName"
-                    required
-                  />
-                </Field>
-                <FieldError
-                  actionState={actionState}
-                  name="newProcessCategoryName"
-                />
+                {createNewCategory && (
+                  <Field>
+                    <Input
+                      id="newProcessCategoryName"
+                      placeholder="New Category Name"
+                      name="newProcessCategoryName"
+                      required
+                      disabled={isPending}
+                    />
+                    <FieldError
+                      actionState={actionState}
+                      name="newProcessCategoryName"
+                    />
+                  </Field>
+                )}
               </FieldGroup>
             </FieldSet>
             <FieldSeparator />
@@ -151,7 +165,11 @@ const CreateProcessForm = ({
                   <FieldDescription>
                     Select the style of the process.
                   </FieldDescription>
-                  <RadioGroup defaultValue="raw" name="processStyle">
+                  <RadioGroup
+                    defaultValue="raw"
+                    name="processStyle"
+                    disabled={isPending}
+                  >
                     <FieldLabel htmlFor="rawtext">
                       <Field orientation="horizontal">
                         <FieldContent>
@@ -202,14 +220,22 @@ const CreateProcessForm = ({
             </FieldSet>
             <FieldSeparator />
             <Field orientation="horizontal">
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={isPending || isCancelPending}>
+                {isPending ? (
+                  <>
+                    <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
+                  </>
+                ) : (
+                  "Submit"
+                )}
+              </Button>
               <Button
                 variant="outline"
                 type="button"
                 onClick={handleCancel}
-                disabled={isPending}
+                disabled={isPending || isCancelPending}
               >
-                {isPending ? (
+                {isCancelPending ? (
                   <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                 ) : (
                   "Cancel"

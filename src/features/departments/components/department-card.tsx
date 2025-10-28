@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, LucideLoaderCircle, SquareArrowUpRight } from "lucide-react";
+import { EyeIcon, LucideLoaderCircle, SquareArrowUpRight, FileText, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TeamDropdown } from "./team-dropdown";
 import {
@@ -28,7 +28,11 @@ type DepartmentCardProps = {
   department: {
     id: string;
     name: string;
-    teams: { id: string; name: string }[];
+    teams: {
+      id: string;
+      name: string;
+      _count: { process: number };
+    }[];
   };
   isAdmin: boolean;
 };
@@ -37,6 +41,11 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  const totalProcesses = department.teams.reduce(
+    (sum, team) => sum + team._count.process,
+    0
+  );
 
   const handleViewClick = () => {
     if (!selectedTeamId) return;
@@ -96,9 +105,16 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
         <CardTitle>
           <Badge className="text-sm">{department.name}</Badge>
         </CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">
-          Select a team to view processes
-        </p>
+        <div className="flex flex-wrap gap-2 mt-2">
+          <Badge variant="outline" className="gap-1.5 font-normal">
+            <FileText className="h-3 w-3" />
+            <span>{totalProcesses} {totalProcesses === 1 ? "process" : "processes"}</span>
+          </Badge>
+          <Badge variant="outline" className="gap-1.5 font-normal">
+            <Users className="h-3 w-3" />
+            <span>{department.teams.length} {department.teams.length === 1 ? "team" : "teams"}</span>
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent>
         <TeamDropdown
