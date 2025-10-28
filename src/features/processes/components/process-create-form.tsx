@@ -18,13 +18,6 @@ import { Button } from "@/components/ui/button";
 import { createProcess } from "../actions/create-process";
 import { useActionState } from "@/components/form/hooks/use-action-state";
 import { Card } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FieldError } from "@/components/form/field-error";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { homePath } from "@/app/paths";
@@ -36,11 +29,14 @@ import { ProcessSelectCategories } from "./process-select-categories";
 type CreateProcessFormProps = {
   departmentId: string;
   teamId: string;
-  categories: {id: string, name: string}[];
-}
+  categories: { id: string; name: string }[];
+};
 
-
-const CreateProcessForm = ({ departmentId, teamId, categories }: CreateProcessFormProps) => {
+const CreateProcessForm = ({
+  departmentId,
+  teamId,
+  categories,
+}: CreateProcessFormProps) => {
   const [actionState, action] = useActionState(
     createProcess,
     EMPTY_ACTION_STATE
@@ -63,6 +59,8 @@ const CreateProcessForm = ({ departmentId, teamId, categories }: CreateProcessFo
     <div className="w-full max-w-[700px] mx-auto my-auto">
       <Card className="p-6 animate-from-top animate-duration-300">
         <Form action={action} actionState={actionState}>
+          <input type="hidden" name="departmentId" value={departmentId} />
+          <input type="hidden" name="teamId" value={teamId} />
           <FieldGroup>
             <FieldSet>
               <FieldLegend>Create a new process </FieldLegend>
@@ -105,10 +103,13 @@ const CreateProcessForm = ({ departmentId, teamId, categories }: CreateProcessFo
               <FieldDescription>
                 Select the category of the process or create a new one.
               </FieldDescription>
-              {/* // TODO: Add categories from the database */}
               <Field>
                 <FieldLabel>Categories</FieldLabel>
-                <ProcessSelectCategories categories={categories} name="processCategoryId" isDisabled={isDisabled} />
+                <ProcessSelectCategories
+                  categories={categories}
+                  name="processCategoryId"
+                  isDisabled={isDisabled}
+                />
                 <FieldDescription>
                   Select an existing category or create a new one.
                 </FieldDescription>
@@ -202,11 +203,16 @@ const CreateProcessForm = ({ departmentId, teamId, categories }: CreateProcessFo
             <FieldSeparator />
             <Field orientation="horizontal">
               <Button type="submit">Submit</Button>
-              <Button variant="outline" type="button" onClick={handleCancel} disabled={isPending}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleCancel}
+                disabled={isPending}
+              >
                 {isPending ? (
-                    <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+                  <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                 ) : (
-                    "Cancel"
+                  "Cancel"
                 )}
               </Button>
             </Field>
