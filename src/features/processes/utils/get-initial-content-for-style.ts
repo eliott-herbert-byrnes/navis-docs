@@ -19,7 +19,9 @@ export const getInitialContentForStyle = (style: ProcessStyle) => {
     case "FLOW":
       return { nodes: [], edges: [] };
     case "YESNO":
-      return { cards: [{ id: "1", question: "", yesNext: null, noNext: null }] };
+      return {
+        cards: [{ id: "1", question: "", yesNext: null, noNext: null }],
+      };
     default:
       return {};
   }

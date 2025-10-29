@@ -8,7 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, LucideLoaderCircle, SquareArrowUpRight, FileText, Users } from "lucide-react";
+import {
+  EyeIcon,
+  LucideLoaderCircle,
+  SquareArrowUpRight,
+  FileText,
+  Users,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TeamDropdown } from "./team-dropdown";
 import {
@@ -88,10 +94,16 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
               />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <DepartmentTeamButton departmentId={department.id} isAdmin={isAdmin} />
+              <DepartmentTeamButton
+                departmentId={department.id}
+                isAdmin={isAdmin}
+              />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <DepartmentDeleteButton departmentId={department.id} isAdmin={isAdmin} />
+              <DepartmentDeleteButton
+                departmentId={department.id}
+                isAdmin={isAdmin}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -108,11 +120,16 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
         <div className="flex flex-wrap gap-2 mt-2">
           <Badge variant="outline" className="gap-1.5 font-normal">
             <FileText className="h-3 w-3" />
-            <span>{totalProcesses} {totalProcesses === 1 ? "process" : "processes"}</span>
+            <span>
+              {totalProcesses} {totalProcesses === 1 ? "process" : "processes"}
+            </span>
           </Badge>
           <Badge variant="outline" className="gap-1.5 font-normal">
             <Users className="h-3 w-3" />
-            <span>{department.teams.length} {department.teams.length === 1 ? "team" : "teams"}</span>
+            <span>
+              {department.teams.length}{" "}
+              {department.teams.length === 1 ? "team" : "teams"}
+            </span>
           </Badge>
         </div>
       </CardHeader>

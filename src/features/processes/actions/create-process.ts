@@ -13,15 +13,15 @@ import { getInitialContentForStyle } from "../utils/get-initial-content-for-styl
 import { editProcessPath } from "@/app/paths";
 
 const inputSchema = z.object({
-    departmentId: z.string().min(1, { message: "Department is required" }),
-    teamId: z.string().min(1, { message: "Team is required" }),
-    processTitle: z.string().min(1, { message: "Is Required" }).max(100),
-    processDescription: z.string().min(1, { message: "Is Required" }).max(500),
-    processCategoryId: z.string().optional(),
-    newProcessCategory: z.boolean().optional(),
-    newProcessCategoryName: z.string().optional(),
-    processStyle: z.enum(["raw", "steps", "flow", "yesno"]),
-  });
+  departmentId: z.string().min(1, { message: "Department is required" }),
+  teamId: z.string().min(1, { message: "Team is required" }),
+  processTitle: z.string().min(1, { message: "Is Required" }).max(100),
+  processDescription: z.string().min(1, { message: "Is Required" }).max(500),
+  processCategoryId: z.string().optional(),
+  newProcessCategory: z.boolean().optional(),
+  newProcessCategoryName: z.string().optional(),
+  processStyle: z.enum(["raw", "steps", "flow", "yesno"]),
+});
 
 export const createProcess = async (
   _actionState: ActionState,
@@ -44,17 +44,35 @@ export const createProcess = async (
     }
 
     const parsed = inputSchema.parse({
-        departmentId: String(formData.get("departmentId") ?? "").trim(),
-        teamId: String(formData.get("teamId") ?? "").trim(),
-        processTitle: String(formData.get("processTitle") ?? "").trim(),
-        processDescription: String(formData.get("processDescription") ?? "").trim(),
-        processCategoryId: String(formData.get("processCategoryId") ?? "").trim() || undefined,
-        newProcessCategory: formData.get("newProcessCategory") === "on",
-        newProcessCategoryName: String(formData.get("newProcessCategoryName") ?? "").trim() || undefined,
-        processStyle: String(formData.get("processStyle") ?? "raw").trim() as "raw" | "steps" | "flow" | "yesno",
-      });
+      departmentId: String(formData.get("departmentId") ?? "").trim(),
+      teamId: String(formData.get("teamId") ?? "").trim(),
+      processTitle: String(formData.get("processTitle") ?? "").trim(),
+      processDescription: String(
+        formData.get("processDescription") ?? ""
+      ).trim(),
+      processCategoryId:
+        String(formData.get("processCategoryId") ?? "").trim() || undefined,
+      newProcessCategory: formData.get("newProcessCategory") === "on",
+      newProcessCategoryName:
+        String(formData.get("newProcessCategoryName") ?? "").trim() ||
+        undefined,
+      processStyle: String(formData.get("processStyle") ?? "raw").trim() as
+        | "raw"
+        | "steps"
+        | "flow"
+        | "yesno",
+    });
 
-    const { departmentId, teamId, processTitle, processDescription, processCategoryId, newProcessCategory, newProcessCategoryName, processStyle } = parsed;
+    const {
+      departmentId,
+      teamId,
+      processTitle,
+      processDescription,
+      processCategoryId,
+      newProcessCategory,
+      newProcessCategoryName,
+      processStyle,
+    } = parsed;
 
     const team = await prisma.team.findFirst({
       where: { id: teamId, departmentId: departmentId },
@@ -64,22 +82,22 @@ export const createProcess = async (
     }
 
     let categoryId = processCategoryId;
-    if(newProcessCategory && newProcessCategoryName) {
-        const newCategory = await prisma.category.create({
-            data: {
-                teamId: teamId,
-                name: newProcessCategoryName,
-                sortOrder: 0,
-            },
-        });
-        categoryId = newCategory.id;
+    if (newProcessCategory && newProcessCategoryName) {
+      const newCategory = await prisma.category.create({
+        data: {
+          teamId: teamId,
+          name: newProcessCategoryName,
+          sortOrder: 0,
+        },
+      });
+      categoryId = newCategory.id;
     }
 
     const styleMap: Record<string, ProcessStyle> = {
-        raw: ProcessStyle.RAW,
-        steps: ProcessStyle.STEPS,
-        flow: ProcessStyle.FLOW,
-        yesno: ProcessStyle.YESNO,
+      raw: ProcessStyle.RAW,
+      steps: ProcessStyle.STEPS,
+      flow: ProcessStyle.FLOW,
+      yesno: ProcessStyle.YESNO,
     };
     const finalisedProcessStyle = styleMap[processStyle];
 
@@ -112,7 +130,7 @@ export const createProcess = async (
     });
 
     return toActionState("SUCCESS", "Process created successfully", formData, {
-        redirect: editProcessPath(departmentId, teamId, process.id),
+      redirect: editProcessPath(departmentId, teamId, process.id),
     });
   } catch (error) {
     return fromErrorToActionState(error, formData);

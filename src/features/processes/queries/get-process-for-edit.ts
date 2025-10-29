@@ -1,4 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { JSONContent } from "@tiptap/react";
+
+type ProcessContent = {
+    tiptap?: JSONContent;
+  };
 
 export type ProcessForEdit = {
     id: string;
@@ -14,13 +19,13 @@ export type ProcessForEdit = {
     } | null;
     pendingVersion: {
         id: string;
-        contentJSON: any;
+        contentJSON: ProcessContent;
         style: "RAW" | "STEPS" | "FLOW" | "YESNO";
         createdAt: Date;
     } | null;
     publishedVersion: {
         id: string;
-        contentJSON: any;
+        contentJSON: ProcessContent;
         style: "RAW" | "STEPS" | "FLOW" | "YESNO";
         createdAt: Date;
     } | null;

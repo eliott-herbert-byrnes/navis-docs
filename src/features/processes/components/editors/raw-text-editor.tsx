@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -20,9 +20,13 @@ import {
 import { useEffect } from "react";
 import "./tiptap-styles.css";
 
+type ProcessContent = {
+  tiptap?: JSONContent;
+};
+
 type RawTextEditorProps = {
-  content: any;
-  onChange: (content: any) => void;
+  content: ProcessContent;
+  onChange: (content: ProcessContent) => void;
   isPreview: boolean;
 };
 
@@ -31,6 +35,7 @@ export function RawTextEditor({
   onChange,
   isPreview,
 }: RawTextEditorProps) {
+  
   const initialContent = content?.tiptap || {
     type: "doc",
     content: [{ type: "paragraph" }],

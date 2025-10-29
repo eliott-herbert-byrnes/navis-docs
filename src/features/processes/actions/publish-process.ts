@@ -70,11 +70,7 @@ export async function publishProcess(
       },
     });
 
-    return toActionState(
-      "SUCCESS",
-      "Process published successfully",
-      formData
-    );
+    return toActionState("SUCCESS", "Process published successfully", formData);
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
@@ -108,7 +104,6 @@ function generatePlainTextFromTiptap(contentJSON: any): string {
     }
   }
 
-  // Extract text from Tiptap JSON structure
   if (contentJSON.tiptap) {
     extractText(contentJSON.tiptap);
   } else {
@@ -117,4 +112,3 @@ function generatePlainTextFromTiptap(contentJSON: any): string {
 
   return text.trim();
 }
-
