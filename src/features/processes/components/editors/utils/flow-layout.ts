@@ -43,4 +43,3 @@ export const getLayoutedElements = (
 
   return { nodes: layoutedNodes, edges };
 };
-

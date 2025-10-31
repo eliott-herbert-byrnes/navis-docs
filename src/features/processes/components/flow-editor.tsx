@@ -66,8 +66,7 @@ const nodeTypes = {
 
 export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
   const { fitView, getNodes } = useReactFlow();
-  
-  // Update node data callback
+
   const updateNodeData = useCallback(
     (
       nodeId: string,
@@ -100,7 +99,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialFlow.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialFlow.edges);
 
-  // Sync to parent when nodes/edges change
   const syncToParent = useCallback(
     (newNodes: Node[], newEdges: Edge[]) => {
       onChange({
@@ -114,24 +112,23 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     [content, onChange]
   );
 
-  // Handle edge connections
   const onConnect = useCallback(
     (connection: Connection) => {
-      // Check if source is a decision node and add appropriate label
       const sourceNode = nodes.find((n) => n.id === connection.source);
       let label = "";
-      
+
       if (sourceNode?.type === "decision") {
-        // Label based on which handle was used
         label = connection.sourceHandle === "yes" ? "Yes" : "No";
       }
-      
+
       const newEdge = {
         ...connection,
         label,
-        style: { stroke: sourceNode?.type === "decision" ? "#eab308" : "#94a3b8" },
+        style: {
+          stroke: sourceNode?.type === "decision" ? "#eab308" : "#94a3b8",
+        },
       };
-      
+
       const newEdges = addEdge(newEdge, edges);
       setEdges(newEdges);
       syncToParent(nodes, newEdges);
@@ -139,7 +136,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     [edges, nodes, setEdges, syncToParent]
   );
 
-  // Add a new node
   const addNode = useCallback(
     (type: FlowNodeType) => {
       const newNode: FlowNode = {
@@ -160,7 +156,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     [nodes, edges, setNodes, syncToParent]
   );
 
-  // Delete a node
   const deleteNode = useCallback(
     (nodeId: string) => {
       const newNodes = nodes.filter((n) => n.id !== nodeId);
@@ -174,7 +169,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     [nodes, edges, setNodes, setEdges, syncToParent]
   );
 
-  // Wrap update function to work with current state
   const handleNodeDataUpdate = useCallback(
     (nodeId: string, newData: Partial<FlowNode["data"]>) => {
       const updatedNodes = updateNodeData(nodeId, newData, nodes, edges);
@@ -184,7 +178,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     [nodes, edges, setNodes, syncToParent, updateNodeData]
   );
 
-  // Auto-layout nodes
   const handleAutoLayout = useCallback(() => {
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       nodes,
@@ -194,51 +187,47 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
     syncToParent(layoutedNodes, layoutedEdges);
-    
-    // Fit view after layout
+
     setTimeout(() => fitView(), 0);
     toast.success("Nodes arranged automatically");
   }, [nodes, edges, setNodes, setEdges, syncToParent, fitView]);
 
-  // Validate flow
   const handleValidate = useCallback(() => {
     const issues: string[] = [];
-    
-    // Check for disconnected nodes
+
     const connectedNodeIds = new Set<string>();
     edges.forEach((edge) => {
       connectedNodeIds.add(edge.source);
       connectedNodeIds.add(edge.target);
     });
-    
+
     const disconnectedNodes = nodes.filter(
       (node) => !connectedNodeIds.has(node.id) && nodes.length > 1
     );
-    
+
     if (disconnectedNodes.length > 0) {
       issues.push(`${disconnectedNodes.length} disconnected node(s) found`);
     }
-    
-    // Check for multiple start nodes
+
     const startNodes = nodes.filter((n) => n.type === "start");
     if (startNodes.length === 0) {
       issues.push("No start node found");
     } else if (startNodes.length > 1) {
       issues.push(`${startNodes.length} start nodes found (should be 1)`);
     }
-    
-    // Check for end nodes
+
     const endNodes = nodes.filter((n) => n.type === "end");
     if (endNodes.length === 0) {
       issues.push("No end node found");
     }
-    
-    // Check for nodes without labels
-    const unlabeledNodes = nodes.filter((n) => !n.data.label || n.data.label.trim() === "");
+
+    const unlabeledNodes = nodes.filter(
+      (n) => !n.data.label || n.data.label.trim() === ""
+    );
     if (unlabeledNodes.length > 0) {
       issues.push(`${unlabeledNodes.length} node(s) without labels`);
     }
-    
+
     if (issues.length === 0) {
       toast.success("✓ No issues found!");
     } else {
@@ -256,7 +245,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     }
   }, [nodes, edges]);
 
-  // Export to PNG
   const handleExport = useCallback(() => {
     const nodesBounds = getRectOfNodes(getNodes());
     const transform = getTransformForBounds(
@@ -298,7 +286,6 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       });
   }, [getNodes]);
 
-  // Add onUpdateData and onDelete callbacks to all nodes
   const nodesWithCallbacks = nodes.map((node) => ({
     ...node,
     data: {

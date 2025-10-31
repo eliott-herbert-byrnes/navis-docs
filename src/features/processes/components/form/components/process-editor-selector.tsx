@@ -4,6 +4,7 @@ import { StepsEditor } from "../../editors/steps-editor";
 import { FlowEditor } from "../../flow-editor";
 import { ProcessContent } from "../utils/process-edit-utils";
 import { ReactFlowProvider } from "reactflow";
+import { YesNoPairsEditor } from "@/features/processes/components/editors/yesno-pairs-editor";
 
 type ProcessEditorSelectorProps = {
   processStyle: "RAW" | "STEPS" | "FLOW" | "YESNO";
@@ -48,9 +49,11 @@ export function ProcessEditorSelector({
         );
       case "YESNO":
         return (
-          <div className="p-8 text-center text-muted-foreground">
-            Yes/No editor will be implemented next
-          </div>
+          <YesNoPairsEditor
+            content={content}
+            onChange={onChange}
+            isPreview={isPreview}
+          />
         );
       default:
         return (
@@ -61,7 +64,6 @@ export function ProcessEditorSelector({
     }
   };
 
-  // Don't wrap FLOW editor in card padding since it needs full control
   if (processStyle === "FLOW") {
     return <Card className="min-h-[600px] overflow-hidden">{renderEditor()}</Card>;
   }

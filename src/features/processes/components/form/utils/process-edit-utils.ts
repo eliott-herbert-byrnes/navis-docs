@@ -7,10 +7,27 @@ import { Step } from "../../editors/steps-editor";
 import { FlowContent } from "../../flow-editor";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
+
+export type YesNoNode = {
+  id: string;
+  question: string;
+  description?: string;
+  yesNodeId?: string;
+  noNodeId?: string;
+  isEndNode?: boolean;
+  endMessage?: string;
+}
+
+export type YesNoContent = {
+  nodes: YesNoNode[];
+  startNodeId?: string;
+}
+
 export type ProcessContent = {
   tiptap?: JSONContent;
   steps?: Step[];
   flow?: FlowContent;
+  yesno?: YesNoContent;
 };
 
 type SaveProcessParams = {
@@ -122,4 +139,3 @@ export const handleCancelEdit = (
     router.push(teamProcessPath(departmentId, teamId));
   });
 };
-
