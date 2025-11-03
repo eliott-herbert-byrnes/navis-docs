@@ -14,13 +14,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import { ProcessFavoriteButton } from "./favorite/components/process-favorite-button";
 
 type ProcessViewActionsProps = {
   departmentId: string;
   teamId: string;
   processId: string;
   canEdit: boolean;
-  isFavourite?: boolean;
+  isFavorite: boolean;
 };
 
 export function ProcessViewActions({
@@ -28,7 +29,7 @@ export function ProcessViewActions({
   teamId,
   processId,
   canEdit,
-  isFavourite = false,
+  isFavorite,
 }: ProcessViewActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -82,14 +83,11 @@ export function ProcessViewActions({
           <Share2 className="w-4 h-4 mr-2" />
           Share
         </Button>
-        <Button
-          variant="outline"
+        <ProcessFavoriteButton
+          processId={processId}
+          initialIsFavorite={isFavorite}
           size="sm"
-          onClick={handleFavourite}
-          className={isFavourite ? "text-yellow-500" : ""}
-        >
-          <Star className={`w-4 h-4 ${isFavourite ? "fill-current" : ""}`} />
-        </Button>
+        />
         <Button variant="outline" size="sm" onClick={handleReport}>
           <Flag className="w-4 h-4" />
         </Button>
@@ -98,7 +96,12 @@ export function ProcessViewActions({
       {/* Mobile Actions - Dropdown */}
       <div className="md:hidden">
         {canEdit && (
-          <Button onClick={handleEdit} size="sm" className="mr-2" disabled={isPending}>
+          <Button
+            onClick={handleEdit}
+            size="sm"
+            className="mr-2"
+            disabled={isPending}
+          >
             {isPending ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
@@ -123,11 +126,13 @@ export function ProcessViewActions({
               Share
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleFavourite}>
-              <Star
-                className={`w-4 h-4 mr-2 ${isFavourite ? "fill-current text-yellow-500" : ""}`}
+            <DropdownMenuItem asChild>
+              <ProcessFavoriteButton
+                processId={processId}
+                initialIsFavorite={isFavorite}
+                showLabel={true}
+                size="sm"
               />
-              {isFavourite ? "Unfavourite" : "Favourite"}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleReport}>
               <Flag className="w-4 h-4 mr-2" />

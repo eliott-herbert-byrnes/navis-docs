@@ -40,6 +40,7 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
             teamId={teamId}
             processId={processId}
             canEdit={canEdit}
+            isFavorite={process.isFavorite}
           />
         </div>
       </div>
