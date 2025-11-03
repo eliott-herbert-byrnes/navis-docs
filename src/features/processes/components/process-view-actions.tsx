@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, Printer, Share2, Flag, Star } from "lucide-react";
+import { Edit, Printer, Share2, Flag, Star, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcessPath } from "@/app/paths";
 import { toast } from "sonner";
+import { useTransition } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,9 +31,12 @@ export function ProcessViewActions({
   isFavourite = false,
 }: ProcessViewActionsProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const handleEdit = () => {
-    router.push(editProcessPath(departmentId, teamId, processId));
+    startTransition(() => {
+      router.push(editProcessPath(departmentId, teamId, processId));
+    });
   };
 
   const handlePrint = () => {
@@ -49,12 +53,10 @@ export function ProcessViewActions({
   };
 
   const handleReport = () => {
-    // Placeholder for report functionality
     toast.info("Report functionality coming soon");
   };
 
   const handleFavourite = () => {
-    // Placeholder for favourite functionality
     toast.info("Favourite functionality coming soon");
   };
 
@@ -63,8 +65,12 @@ export function ProcessViewActions({
       {/* Desktop Actions */}
       <div className="hidden md:flex gap-2">
         {canEdit && (
-          <Button onClick={handleEdit} size="sm">
-            <Edit className="w-4 h-4 mr-2" />
+          <Button onClick={handleEdit} size="sm" disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Edit className="w-4 h-4 mr-2" />
+            )}
             Edit
           </Button>
         )}
@@ -92,8 +98,12 @@ export function ProcessViewActions({
       {/* Mobile Actions - Dropdown */}
       <div className="md:hidden">
         {canEdit && (
-          <Button onClick={handleEdit} size="sm" className="mr-2">
-            <Edit className="w-4 h-4 mr-2" />
+          <Button onClick={handleEdit} size="sm" className="mr-2" disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Edit className="w-4 h-4 mr-2" />
+            )}
             Edit
           </Button>
         )}
