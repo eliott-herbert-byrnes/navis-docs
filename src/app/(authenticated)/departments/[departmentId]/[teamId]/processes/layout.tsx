@@ -1,4 +1,6 @@
 import { ProcessSidebar } from "@/features/processes/components/process-sidebar";
+import { Providers } from "@/app/providers";
+
 
 export default async function ProcessLayout({
   children,
@@ -10,6 +12,7 @@ export default async function ProcessLayout({
   const { departmentId, teamId } = await params;
 
   return (
+    <Providers>
     <div className="flex h-full w-full">
       <ProcessSidebar
         departmentId={departmentId}
@@ -17,5 +20,6 @@ export default async function ProcessLayout({
       />
       <main className="flex-1 overflow-auto p-4">{children}</main>
     </div>
+    </Providers>
   );
 }

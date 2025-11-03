@@ -236,7 +236,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
           <div className="font-semibold">Flow validation issues:</div>
           <ul className="list-disc pl-4 mt-1">
             {issues.map((issue, i) => (
-              <li key={i}>{issue}</li>
+              <li key={`issue-${i}-${issue.slice(0, 20)}`}>{issue}</li>
             ))}
           </ul>
         </div>,

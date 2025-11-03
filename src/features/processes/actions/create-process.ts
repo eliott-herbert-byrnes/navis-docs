@@ -165,6 +165,19 @@ export const createProcess = async (
       redirect: editProcessPath(departmentId, teamId, process.id),
     });
   } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Unique constraint failed")
+    ) {
+      if (error.message.includes("slug")) {
+        return toActionState(
+          "ERROR",
+          "Process with this title already exists",
+          formData
+        );
+      }
+    }
+
     return fromErrorToActionState(error, formData);
   }
 };

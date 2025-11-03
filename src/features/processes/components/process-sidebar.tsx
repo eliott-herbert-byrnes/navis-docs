@@ -11,6 +11,7 @@ import Link from "next/link";
 import { teamProcessCreatePath, teamProcessPath, processPath, viewProcessPath } from "@/app/paths";
 import { getCategoriesWithProcesses } from "../queries/get-categories-with-processes";
 import { prisma } from "@/lib/prisma";
+import { ProcessSearchButton } from "./process-search-button";
 
 type ProcessSidebarProps = {
   departmentId: string;
@@ -45,10 +46,11 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
       {/* Header */}
       <div className="p-4 border-b">
         {/* Search */}
-        <div className="relative">
+        {/* <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search processes..." className="pl-8" />
-        </div>
+        </div> */}
+        <ProcessSearchButton departmentId={departmentId} teamId={teamId} />
       </div>
 
       {/* Content */}

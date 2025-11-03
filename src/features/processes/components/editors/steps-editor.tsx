@@ -2,14 +2,14 @@ import { Button } from "@/components/ui/button";
 import { JSONContent } from "@tiptap/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { 
-  addStep, 
-  createEmptyStep, 
-  deleteStep, 
-  toggleStepExpand, 
-  updateStepDescription, 
-  updateSteps, 
-  updateStepTitle 
+import {
+  addStep,
+  createEmptyStep,
+  deleteStep,
+  toggleStepExpand,
+  updateStepDescription,
+  updateSteps,
+  updateStepTitle,
 } from "./utils/steps-editor-utils";
 import { StepItem } from "./components/step-item";
 
@@ -36,7 +36,15 @@ export function StepsEditor({
   onChange,
   isPreview,
 }: StepsEditorProps) {
-  const initialSteps = content?.steps || [createEmptyStep()];
+  // Ensure all steps have IDs
+  const initialSteps = content?.steps?.length
+    ? content.steps.map((step, index) => ({
+        ...step,
+        id:
+          step.id ||
+          `step-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`,
+      }))
+    : [createEmptyStep()];
   const [steps, setSteps] = useState<Step[]>(initialSteps);
 
   const handleUpdateSteps = (newSteps: Step[]) => {
@@ -69,14 +77,16 @@ export function StepsEditor({
                 key={step.id}
                 step={step}
                 index={index}
-                onUpdateTitle={(title) => 
+                onUpdateTitle={(title) =>
                   updateStepTitle(step.id, title, steps, handleUpdateSteps)
                 }
                 onUpdateDescription={(desc) =>
                   updateStepDescription(step.id, desc, steps, handleUpdateSteps)
                 }
                 onDelete={() => deleteStep(step.id, steps, handleUpdateSteps)}
-                onToggleExpand={() => toggleStepExpand(step.id, steps, handleUpdateSteps)}
+                onToggleExpand={() =>
+                  toggleStepExpand(step.id, steps, handleUpdateSteps)
+                }
                 onAddAfter={() => addStep(steps, handleUpdateSteps, index)}
                 isPreview={false}
               />
