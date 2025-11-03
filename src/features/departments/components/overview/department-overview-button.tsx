@@ -24,6 +24,7 @@ const DepartmentOverviewButton = ({ departmentId, title, isAdmin }: DepartmentOv
         actionState={actionState}
         disabled={!isAdmin}
         departmentId={departmentId}
+        isAdmin={isAdmin}
         />
     );
 };

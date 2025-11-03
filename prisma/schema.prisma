@@ -60,7 +60,6 @@ enum InvitationStatus {
 }
 
 model Invitation {
-  id              String           @id @default(cuid())
   orgId           String
   email           String
   role            String
@@ -75,6 +74,7 @@ model Invitation {
   org           Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
   invitedByUser User?        @relation(fields: [invitedByUserId], references: [id], onDelete: SetNull)
 
+  @@id(name: "invitationId", [orgId, email])
   @@index([orgId, email, status])
 }
 

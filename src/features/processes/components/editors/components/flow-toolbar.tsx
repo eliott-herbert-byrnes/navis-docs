@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Circle, Square, Diamond, CircleDot, Network, Download, AlertCircle } from "lucide-react";
-import { FlowNodeType } from "../../flow-editor";
+import { FlowNodeType } from "../flow-editor";
 
 type FlowToolbarProps = {
   onAddNode: (type: FlowNodeType) => void;

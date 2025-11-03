@@ -22,3 +22,5 @@ export const processPath = (
 ) => `/departments/${departmentId}/${teamId}/processes/${processId}`;
 export const editProcessPath = (departmentId: string, teamId: string, processId: string) =>
   `/departments/${departmentId}/${teamId}/processes/${processId}/edit`;
+export const viewProcessPath = (departmentId: string, teamId: string, processId: string) =>
+  `/departments/${departmentId}/${teamId}/processes/${processId}/view`;

@@ -310,11 +310,11 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
         </Card>
       </div>
 
-      {isPreview && (
+      {/* {isPreview && (
         <div className="text-sm text-muted-foreground text-center">
           Total cards: {yesnoContent.nodes.length} | End cards: {yesnoContent.nodes.filter((n) => n.isEndNode).length}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

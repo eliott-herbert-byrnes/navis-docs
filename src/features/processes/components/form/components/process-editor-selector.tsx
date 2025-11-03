@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { RawTextEditor } from "../../editors/raw-text-editor";
 import { StepsEditor } from "../../editors/steps-editor";
-import { FlowEditor } from "../../flow-editor";
+import { FlowEditor } from "../../editors/flow-editor";
 import { ProcessContent } from "../utils/process-edit-utils";
 import { ReactFlowProvider } from "reactflow";
 import { YesNoPairsEditor } from "@/features/processes/components/editors/yesno-pairs-editor";

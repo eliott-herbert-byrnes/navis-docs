@@ -34,6 +34,7 @@ type DepartmentOverviewProps = {
   actionState: ActionState;
   disabled: boolean;
   departmentId: string;
+  isAdmin: boolean;
 };
 const DepartmentOverview = ({
   title,
@@ -41,6 +42,7 @@ const DepartmentOverview = ({
   action,
   actionState,
   departmentId,
+  isAdmin,
 }: DepartmentOverviewProps) => {
   const [open, setOpen] = useState(false);
 
@@ -128,7 +130,7 @@ const DepartmentOverview = ({
                           Delete the department and all its data
                         </CardDescription>
                       </div>
-                      <DepartmentDeleteButton departmentId={departmentId} />
+                      <DepartmentDeleteButton departmentId={departmentId} isAdmin={isAdmin} />
                     </div>
                   </CardContent>
                 </Card>

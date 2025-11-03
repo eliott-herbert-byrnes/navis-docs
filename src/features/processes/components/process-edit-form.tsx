@@ -70,12 +70,24 @@ export const EditProcessForm = ({
       </Button>
     ),
     onSuccess: () => {
-      handleCancelEdit(router, departmentId, teamId, startTransition, teamProcessPath);
+      handleCancelEdit(
+        router,
+        departmentId,
+        teamId,
+        startTransition,
+        teamProcessPath
+      );
     },
   });
 
   const handleCancelWithoutChanges = () => {
-    handleCancelEdit(router, departmentId, teamId, startTransition, teamProcessPath);
+    handleCancelEdit(
+      router,
+      departmentId,
+      teamId,
+      startTransition,
+      teamProcessPath
+    );
   };
 
   const handleContentChange = useCallback((newContent: ProcessContent) => {
@@ -113,6 +125,8 @@ export const EditProcessForm = ({
       hasUnsavedChanges,
       setIsPublishing,
       router,
+      departmentId,
+      teamId,
     });
   };
 

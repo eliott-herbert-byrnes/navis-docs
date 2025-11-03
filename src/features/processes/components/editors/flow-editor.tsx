@@ -18,13 +18,13 @@ import ReactFlow, {
 } from "reactflow";
 import { toPng } from "html-to-image";
 import "reactflow/dist/style.css";
-import { ProcessContent } from "./form/utils/process-edit-utils";
-import { FlowToolbar } from "./editors/components/flow-toolbar";
-import { StartNode } from "./editors/components/flow-node-start";
-import { StepNode } from "./editors/components/flow-node-step";
-import { DecisionNode } from "./editors/components/flow-node-decision";
-import { EndNode } from "./editors/components/flow-node-end";
-import { getLayoutedElements } from "./editors/utils/flow-layout";
+import { ProcessContent } from "../form/utils/process-edit-utils";
+import { FlowToolbar } from "./components/flow-toolbar";
+import { StartNode } from "./components/flow-node-start";
+import { StepNode } from "./components/flow-node-step";
+import { DecisionNode } from "./components/flow-node-decision";
+import { EndNode } from "./components/flow-node-end";
+import { getLayoutedElements } from "./utils/flow-layout";
 import { toast } from "sonner";
 
 export type FlowNodeType = "start" | "step" | "decision" | "end";

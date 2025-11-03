@@ -4,6 +4,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProcessStatus, ProcessStyle } from "@prisma/client";
@@ -91,6 +92,19 @@ export const createProcess = async (
         },
       });
       categoryId = newCategory.id;
+
+      await createAuditLog({
+        orgId: org.id,
+        actorId: user.userId,
+        action: "CATEGORY_CREATED",
+        entityType: "CATEGORY",
+        entityId: newCategory.id,
+        afterJSON: {
+          id: newCategory.id,
+          name: newCategory.name,
+          teamId: newCategory.teamId,
+        },
+      });
     }
 
     const styleMap: Record<string, ProcessStyle> = {
@@ -126,6 +140,24 @@ export const createProcess = async (
       where: { id: process.id },
       data: {
         pendingVersionId: version.id,
+      },
+    });
+
+    await createAuditLog({
+      orgId: org.id,
+      actorId: user.userId,
+      action: "PROCESS_CREATED",
+      entityType: "PROCESS",
+      entityId: process.id,
+      afterJSON: {
+        id: process.id,
+        title: process.title,
+        description: process.description,
+        slug: process.slug,
+        style: process.style,
+        status: process.status,
+        teamId: process.teamId,
+        categoryId: process.categoryId,
       },
     });
 

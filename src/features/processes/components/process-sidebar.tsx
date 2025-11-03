@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { teamProcessCreatePath, teamProcessPath, processPath } from "@/app/paths";
+import { teamProcessCreatePath, teamProcessPath, processPath, viewProcessPath } from "@/app/paths";
 import { getCategoriesWithProcesses } from "../queries/get-categories-with-processes";
 import { prisma } from "@/lib/prisma";
 
@@ -104,7 +104,7 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
                     {category.processes.map((process) => (
                       <Link
                         key={process.id}
-                        href={processPath(departmentId, teamId, process.slug)}
+                        href={viewProcessPath(departmentId, teamId, process.id)}
                         className="block"
                       >
                         <Button
@@ -146,7 +146,7 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
                     {uncategorizedProcesses.map((process) => (
                       <Link
                         key={process.id}
-                        href={processPath(departmentId, teamId, process.slug)}
+                        href={viewProcessPath(departmentId, teamId, process.id)}
                         className="block"
                       >
                         <Button
@@ -156,6 +156,7 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
                           title={process.title}
                         >
                           <span className="truncate">
+
                             {process.title.length > 28
                               ? `${process.title.slice(0, 28)}...`
                               : process.title}

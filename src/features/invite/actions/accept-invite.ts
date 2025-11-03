@@ -35,7 +35,7 @@ export const acceptInvite = async (
 
   if (invite.expiresAt < new Date()) {
     await prisma.invitation.update({
-      where: { id: invite.id },
+      where: { invitationId: { orgId: invite.orgId, email: invite.email } },
       data: { status: "EXPIRED" },
     });
     return toActionState("ERROR", "Invite expired", formData);
@@ -69,7 +69,7 @@ export const acceptInvite = async (
       },
     }),
     prisma.invitation.update({
-      where: { id: invite.id },
+      where: { invitationId: { orgId: invite.orgId, email: invite.email } },
       data: { status: "ACCEPTED", acceptedAt: new Date() },
     }),
   ]);

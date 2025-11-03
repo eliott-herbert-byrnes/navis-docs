@@ -5,7 +5,8 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { createAuditLog } from "@/features/audit/utils/audit";
+import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProcessStatus } from "@prisma/client";
 import { z } from "zod";
@@ -22,6 +23,11 @@ export async function publishProcess(
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
+    }
+
+    const org = await getUserOrg(user.userId);
+    if (!org) {
+      return toActionState("ERROR", "No organization found", formData);
     }
 
     const isAdmin = await isOrgAdminOrOwner(user.userId);
@@ -65,6 +71,22 @@ export async function publishProcess(
     await prisma.process.update({
       where: { id: parsed.processId },
       data: {
+        status: ProcessStatus.PUBLISHED,
+        publishedVersionId: process.pendingVersion.id,
+      },
+    });
+
+    await createAuditLog({
+      orgId: org.id,
+      actorId: user.userId,
+      action: "PROCESS_PUBLISHED",
+      entityType: "PROCESS",
+      entityId: process.id,
+      beforeJSON: {
+        status: process.status,
+        publishedVersionId: process.publishedVersionId,
+      },
+      afterJSON: {
         status: ProcessStatus.PUBLISHED,
         publishedVersionId: process.pendingVersion.id,
       },

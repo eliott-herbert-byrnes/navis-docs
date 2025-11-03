@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitButton } from "./submit-button";
 
@@ -29,10 +30,16 @@ const InvitationDialog = ({
   action,
   actionState,
 }: InvitationDialogProps) => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleSuccess = () => {
+    handleClose();
+    router.refresh();
   };
 
   return (
@@ -51,7 +58,7 @@ const InvitationDialog = ({
         <Form
           action={action}
           actionState={actionState}
-          onSuccess={handleClose}
+          onSuccess={handleSuccess}
           onError={handleClose}
         >
           <Input

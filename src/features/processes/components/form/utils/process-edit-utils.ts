@@ -4,8 +4,9 @@ import { publishProcess } from "../../../actions/publish-process";
 import { ProcessForEdit } from "../../../queries/get-process-for-edit";
 import { JSONContent } from "@tiptap/react";
 import { Step } from "../../editors/steps-editor";
-import { FlowContent } from "../../flow-editor";
+import { FlowContent } from "../../editors/flow-editor";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { viewProcessPath } from "@/app/paths";
 
 
 export type YesNoNode = {
@@ -44,6 +45,8 @@ type PublishProcessParams = {
   hasUnsavedChanges: boolean;
   setIsPublishing: (value: boolean) => void;
   router: AppRouterInstance;
+  departmentId: string;
+  teamId: string;
 };
 
 export const handleSaveProcess = async ({
@@ -94,7 +97,10 @@ export const handlePublishProcess = async ({
   hasUnsavedChanges,
   setIsPublishing,
   router,
+  departmentId,
+  teamId,
 }: PublishProcessParams) => {
+
   if (hasUnsavedChanges) {
     toast.error("Please save your changes before publishing");
     return;
@@ -116,7 +122,7 @@ export const handlePublishProcess = async ({
 
     if (result.status === "SUCCESS") {
       toast.success("Process published successfully");
-      router.refresh();
+      router.push(viewProcessPath(departmentId, teamId, processId));
     } else {
       toast.error(result.message || "Failed to publish");
     }

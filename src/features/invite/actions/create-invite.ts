@@ -1,6 +1,6 @@
 "use server";
 
-import { acceptInvitePath } from "@/app/paths";
+import { acceptInvitePath, invitePath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,
@@ -13,6 +13,8 @@ import { limiter } from "@/lib/ratelimit";
 import { OrgMembershipRole } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const schema = z.object({
@@ -21,25 +23,21 @@ const schema = z.object({
 
 export const createInvitation = async (
   _actionState: ActionState,
-  formData: FormData,
+  formData: FormData
 ) => {
-
   try {
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
-    const ip = (await headers()).get("x-forwarded-for") ||
-    (await headers()).get("cf-connecting-ip") ||
-    "anon"
+    const ip =
+      (await headers()).get("x-forwarded-for") ||
+      (await headers()).get("cf-connecting-ip") ||
+      "anon";
     const { success } = await limiter.limit(`invite:${ip}`);
     if (!success) {
-      return toActionState(
-        "ERROR",
-        "Too many requests",
-        formData
-      );
+      return toActionState("ERROR", "Too many requests", formData);
     }
 
     const org = await getUserOrg(user.userId);
@@ -98,6 +96,10 @@ export const createInvitation = async (
 
     const link = `${process.env.NEXTAUTH_URL}${acceptInvitePath(rawToken)}`;
     console.log(link);
+
+    // Revalidate the invite page to show the new invitation
+    revalidatePath(invitePath());
+
     return toActionState("SUCCESS", "Invite created", formData);
   } catch (error) {
     return fromErrorToActionState(error, formData);

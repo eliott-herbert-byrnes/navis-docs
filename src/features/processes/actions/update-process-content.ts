@@ -5,7 +5,8 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { createAuditLog } from "@/features/audit/utils/audit";
+import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
@@ -23,6 +24,11 @@ export async function updateProcessContent(
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
+    }
+
+    const org = await getUserOrg(user.userId);
+    if (!org) {
+      return toActionState("ERROR", "No organization found", formData);
     }
 
     const isAdmin = await isOrgAdminOrOwner(user.userId);
@@ -66,9 +72,27 @@ export async function updateProcessContent(
       );
     }
 
+    const oldContent = process.pendingVersion.contentJSON;
+
     await prisma.processVersion.update({
       where: { id: parsed.versionId },
       data: { contentJSON: parsed.contentJSON },
+    });
+
+    await createAuditLog({
+      orgId: org.id,
+      actorId: user.userId,
+      action: "PROCESS_EDITED",
+      entityType: "PROCESS",
+      entityId: process.id,
+      beforeJSON: {
+        versionId: parsed.versionId,
+        contentJSON: oldContent,
+      },
+      afterJSON: {
+        versionId: parsed.versionId,
+        contentJSON: parsed.contentJSON,
+      },
     });
 
     return toActionState(
