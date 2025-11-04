@@ -1,12 +1,9 @@
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
-  Search,
   ChevronRight,
-  Star,
   Home,
   FileText,
-  Lightbulb,
+  Newspaper,
 } from "lucide-react";
 import {
   Collapsible,
@@ -16,9 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
+  newsPath,
   teamProcessCreatePath,
   teamProcessPath,
-  processPath,
   viewProcessPath,
 } from "@/app/paths";
 import { getCategoriesWithProcesses } from "../queries/get-categories-with-processes";
@@ -54,9 +51,9 @@ export async function ProcessSidebar({
     },
   });
 
-  const totalProcesses =
-    categories.reduce((sum, cat) => sum + cat.processes.length, 0) +
-    uncategorizedProcesses.length;
+  // const totalProcesses =
+  //   categories.reduce((sum, cat) => sum + cat.processes.length, 0) +
+  //   uncategorizedProcesses.length;
   return (
     <aside className="w-64 border-r bg-background flex flex-col h-full">
       {/* Header */}
@@ -72,6 +69,13 @@ export async function ProcessSidebar({
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Home className="h-4 w-4" />
               Processes Home
+            </Button>
+          </Link>
+          <Link href={newsPath(departmentId, teamId)}>
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <Newspaper className="h-4 w-4" />
+              News
+              <span className="text-xs text-muted-foreground ml-2">0</span>
             </Button>
           </Link>
 
@@ -93,7 +97,7 @@ export async function ProcessSidebar({
           ) : (
             <>
               {categories.map((category) => (
-                <Collapsible key={category.id} defaultOpen>
+                <Collapsible key={category.id}>
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="ghost"
@@ -135,7 +139,7 @@ export async function ProcessSidebar({
 
               {/* Uncategorized Processes */}
               {uncategorizedProcesses.length > 0 && (
-                <Collapsible defaultOpen>
+                <Collapsible>
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="ghost"

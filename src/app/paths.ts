@@ -9,6 +9,10 @@ export const acceptInvitePath = (token?: string) =>
 export const auditPath = () => "/audit";
 export const errorsPath = () => "/errors";
 export const ideasPath = () => "/ideas";
+export const newsPath = (departmentId: string, teamId: string) =>
+  `/departments/${departmentId}/${teamId}/processes/news`;
+export const newsCreatePath = (departmentId: string, teamId: string) =>
+  `/departments/${departmentId}/${teamId}/processes/news-create`;
 
 // Process Database Paths
 export const departmentPath = (departmentId: string) =>

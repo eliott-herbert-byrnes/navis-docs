@@ -21,3 +21,10 @@ export const isOrgAdminOrOwner = async (userId: string) => {
   });
   return membership !== null;
 };
+
+export const getUserById = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+  return user ?? null;
+};
