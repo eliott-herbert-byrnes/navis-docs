@@ -157,7 +157,7 @@ model Team {
   categories   Category[]
   process      Process[]
   newsPost     NewsPost[]
-
+  ideas        Idea[]
   @@index([departmentId, name])
 }
 
@@ -207,6 +207,7 @@ model Process {
   ingestionJobs IngestionJob[]
   category      Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   favorites     Favorite[]
+  errorReports  ErrorReport[]
   @@unique([teamId, slug])
   @@index([teamId, categoryId])
   @@index([teamId, title])
@@ -270,6 +271,7 @@ model Idea {
   body      String
   status    IdeaStatus @default(NEW)
   createdAt DateTime   @default(now())
+  team      Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([teamId, status, createdAt])
 }
@@ -287,6 +289,7 @@ model ErrorReport {
   body      String
   status    ErrorReportStatus @default(OPEN)
   createdAt DateTime          @default(now())
+  process   Process           @relation(fields: [processId], references: [id], onDelete: Cascade)
 
   @@index([processId, status, createdAt])
 }

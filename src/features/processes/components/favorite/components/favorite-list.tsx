@@ -31,38 +31,40 @@ export async function FavoriteList({
       {favorites.map((process) => (
         <Card
           key={process.id}
-          className="hover:border-primary transition-colors"
+          className="hover:border-primary transition-colors flex flex-col h-full"
         >
           <CardHeader className="pb-3">
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start justify-between gap-2 min-h-[3rem]">
               <Link
                 href={viewProcessPath(departmentId, teamId, process.id)}
                 className="flex-1"
               >
-                <CardTitle className="text-base hover:text-primary transition-colors">
+                <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
                   {process.title}
                 </CardTitle>
               </Link>
               <ProcessFavoriteButton
                 processId={process.id}
                 initialIsFavorite={true}
-                size="icon"
+                size="sm"
               />
             </div>
           </CardHeader>
-          <CardContent>
-            {process.category && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                <Folder className="w-3 h-3" />
-                {process.category.name}
-              </div>
-            )}
-            {process.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {process.description}
-              </p>
-            )}
-            <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+          <CardContent className="flex-1 flex flex-col justify-between">
+            <div className="space-y-3">
+              {process.category && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Folder className="w-3 h-3" />
+                  {process.category.name}
+                </div>
+              )}
+              {process.description && (
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {process.description}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
               <FileText className="w-3 h-3" />
               <span className="capitalize">{process.style.toLowerCase()}</span>
             </div>

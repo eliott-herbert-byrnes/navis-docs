@@ -32,7 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { auditPath, homePath, invitePath, subscriptionPath } from "@/app/paths";
+import { auditPath, errorsPath, homePath, ideasPath, invitePath, subscriptionPath } from "@/app/paths";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
@@ -49,14 +49,16 @@ const items = [
   },
   {
     title: "Errors",
-    url: "#",
+    url: errorsPath(),
     icon: Inbox,
+    isAdmin: true,
   },
   {
     title: "Ideas",
-    url: "#",
+    url: ideasPath(),
     icon: Lightbulb,
     separator: true,
+    isAdmin: true,
   },
   {
     title: "Process Database",

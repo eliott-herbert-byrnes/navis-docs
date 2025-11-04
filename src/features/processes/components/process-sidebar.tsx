@@ -1,6 +1,13 @@
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Search, ChevronRight, Star, Home, FileText } from "lucide-react";
+import {
+  Search,
+  ChevronRight,
+  Star,
+  Home,
+  FileText,
+  Lightbulb,
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -8,19 +15,28 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { teamProcessCreatePath, teamProcessPath, processPath, viewProcessPath } from "@/app/paths";
+import {
+  teamProcessCreatePath,
+  teamProcessPath,
+  processPath,
+  viewProcessPath,
+} from "@/app/paths";
 import { getCategoriesWithProcesses } from "../queries/get-categories-with-processes";
 import { prisma } from "@/lib/prisma";
 import { ProcessSearchButton } from "./process-search-button";
+import { IdeaButton } from "./Idea/components/idea-button";
 
 type ProcessSidebarProps = {
   departmentId: string;
   teamId: string;
 };
 
-export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarProps) {
+export async function ProcessSidebar({
+  departmentId,
+  teamId,
+}: ProcessSidebarProps) {
   const categories = await getCategoriesWithProcesses(teamId);
-  
+
   const uncategorizedProcesses = await prisma.process.findMany({
     where: {
       teamId,
@@ -31,25 +47,20 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
       id: true,
       slug: true,
       title: true,
-      status: true,
+      status: true, 
     },
     orderBy: {
       title: "asc",
     },
   });
 
-  const totalProcesses = 
-    categories.reduce((sum, cat) => sum + cat.processes.length, 0) + 
+  const totalProcesses =
+    categories.reduce((sum, cat) => sum + cat.processes.length, 0) +
     uncategorizedProcesses.length;
   return (
     <aside className="w-64 border-r bg-background flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b">
-        {/* Search */}
-        {/* <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search processes..." className="pl-8" />
-        </div> */}
         <ProcessSearchButton departmentId={departmentId} teamId={teamId} />
       </div>
 
@@ -63,13 +74,8 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
               Processes Home
             </Button>
           </Link>
-          
-          <Link href={`${teamProcessPath(departmentId, teamId)}?view=favorites`}>
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <Star className="h-4 w-4" />
-              Favorites
-            </Button>
-          </Link>
+
+          <IdeaButton teamId={teamId} />
 
           <Separator className="my-2" />
 
@@ -158,7 +164,6 @@ export async function ProcessSidebar({ departmentId, teamId }: ProcessSidebarPro
                           title={process.title}
                         >
                           <span className="truncate">
-
                             {process.title.length > 28
                               ? `${process.title.slice(0, 28)}...`
                               : process.title}

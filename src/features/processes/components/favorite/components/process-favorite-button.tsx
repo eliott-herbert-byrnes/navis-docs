@@ -10,7 +10,6 @@ import { Loader2, Star } from "lucide-react";
 type ProcessFavoriteButtonProps = {
   processId: string;
   initialIsFavorite: boolean;
-//   variant?: "default" | "outline" | "ghost";
   showLabel?: boolean;
   size?: "default" | "sm" | "lg" | "icon";
 };
@@ -18,7 +17,6 @@ type ProcessFavoriteButtonProps = {
 export function ProcessFavoriteButton({
   processId,
   initialIsFavorite,
-//   variant = "default",
   showLabel = false,
   size = "sm",
 }: ProcessFavoriteButtonProps) {
@@ -29,19 +27,17 @@ export function ProcessFavoriteButton({
 
   const handleToggle = () => {
     startTransition(async () => {
-      // Optimistic update inside transition
       setOptimisticIsFavorite(!optimisticIsFavorite);
 
       const result = await toggleFavorite({
         processId,
-        isFavorited: optimisticIsFavorite, // Pass current state (before toggle)
+        isFavorited: optimisticIsFavorite,
       });
 
       if (result.status === "SUCCESS") {
         toast.success(result.message);
-        router.refresh(); // Refresh to get updated state from server
+        router.refresh();
       } else {
-        // Revert on error
         setOptimisticIsFavorite(optimisticIsFavorite);
         toast.error(result.message || "Failed to toggle favorite");
       }
@@ -54,7 +50,9 @@ export function ProcessFavoriteButton({
       size={size}
       onClick={handleToggle}
       disabled={isPending}
-      className={optimisticIsFavorite ? "bg-yellow-500 hover:bg-yellow-600" : ""}
+      className={
+        optimisticIsFavorite ? "bg-yellow-500 hover:bg-yellow-600" : ""
+      }
     >
       {isPending ? (
         <Loader2 className="w-4 h-4 animate-spin" />

@@ -7,6 +7,8 @@ export const subscriptionPath = () => "/subscription";
 export const acceptInvitePath = (token?: string) =>
   `/auth/accept-invite${token ? `?token=${token}` : ""}`;
 export const auditPath = () => "/audit";
+export const errorsPath = () => "/errors";
+export const ideasPath = () => "/ideas";
 
 // Process Database Paths
 export const departmentPath = (departmentId: string) =>

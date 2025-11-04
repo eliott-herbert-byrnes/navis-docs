@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import { ProcessFavoriteButton } from "./favorite/components/process-favorite-button";
+import { ProcessErrorButton } from "./error/components/process-error-button";
 
 type ProcessViewActionsProps = {
   departmentId: string;
@@ -53,14 +54,6 @@ export function ProcessViewActions({
     }
   };
 
-  const handleReport = () => {
-    toast.info("Report functionality coming soon");
-  };
-
-  const handleFavourite = () => {
-    toast.info("Favourite functionality coming soon");
-  };
-
   return (
     <div className="flex gap-2">
       {/* Desktop Actions */}
@@ -88,9 +81,7 @@ export function ProcessViewActions({
           initialIsFavorite={isFavorite}
           size="sm"
         />
-        <Button variant="outline" size="sm" onClick={handleReport}>
-          <Flag className="w-4 h-4" />
-        </Button>
+        <ProcessErrorButton processId={processId} />
       </div>
 
       {/* Mobile Actions - Dropdown */}
@@ -134,9 +125,8 @@ export function ProcessViewActions({
                 size="sm"
               />
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleReport}>
-              <Flag className="w-4 h-4 mr-2" />
-              Report Issue
+            <DropdownMenuItem asChild>
+              <ProcessErrorButton processId={processId} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

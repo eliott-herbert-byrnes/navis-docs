@@ -8,6 +8,7 @@ import { onboardingPath, signInPath } from "@/app/paths";
 import { getDepartments } from "@/features/departments/queries/get-departments";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
+import { FavoriteList } from "@/features/processes/components/favorite/components/favorite-list";
 
 export default async function ProcessPage({
   params,
@@ -55,10 +56,7 @@ export default async function ProcessPage({
         }
       />
       <Suspense fallback={<Spinner />}>
-        <EmptyState
-          title="No processes found"
-          body="Create a new process to get started"
-        />
+        <FavoriteList departmentId={departmentId} teamId={teamId} />
       </Suspense>
     </>
   );
