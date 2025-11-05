@@ -33,7 +33,7 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
   return (
     <div className="space-y-4">
       {/* Header with Title and Actions */}
-        <Heading title={process.title} description={process.description || ""} />
+      <Heading title={process.title} description={process.description || ""} />
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="process-view-actions" data-print-hide>
           <ProcessViewActions

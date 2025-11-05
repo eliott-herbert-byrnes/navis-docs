@@ -29,7 +29,9 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
         )}
       </div>
       <div className="flex-1 space-y-2 overflow-hidden">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap overflow-hidden text-ellipsis">{content}</p>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap overflow-hidden text-ellipsis">
+          {content}
+        </p>
       </div>
     </div>
   );

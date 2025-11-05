@@ -13,6 +13,8 @@ export const newsPath = (departmentId: string, teamId: string) =>
   `/departments/${departmentId}/${teamId}/processes/news`;
 export const newsCreatePath = (departmentId: string, teamId: string) =>
   `/departments/${departmentId}/${teamId}/processes/news-create`;
+export const processBasePath = () => "/process-base";
+export const userBasePath = () => "/user-base";
 
 // Process Database Paths
 export const departmentPath = (departmentId: string) =>

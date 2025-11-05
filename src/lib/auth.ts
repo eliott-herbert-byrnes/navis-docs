@@ -29,6 +29,46 @@ export const getUserById = async (userId: string) => {
   return user ?? null;
 };
 
+export const getOrgMembers = async (orgId: string, search?: string) => {
+  const members = await prisma.orgMembership.findMany({
+    where: {
+      orgId,
+      ...(search
+        ? { user: { 
+          OR: [
+            { name: { contains: search, mode: "insensitive" as const } },
+            { email: { contains: search, mode: "insensitive" as const } },
+          ],
+        },
+        }
+        : {}),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+          emailVerified: true,
+          memberships: {
+            select: {
+              role: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      user: {
+        name: "asc",
+      },
+    },
+    take: 10,
+  });
+  return members ?? null;
+};
+
 export async function getUserTeamIds(userId: string): Promise<string[]> {
   const memberships = await prisma.orgMembership.findMany({
     where: { userId },
@@ -47,9 +87,7 @@ export async function getUserTeamIds(userId: string): Promise<string[]> {
     },
   });
 
-  return memberships.flatMap(m => 
-    m.org.departments.flatMap(d => 
-      d.teams.map(t => t.id)
-    )
+  return memberships.flatMap((m) =>
+    m.org.departments.flatMap((d) => d.teams.map((t) => t.id))
   );
 }

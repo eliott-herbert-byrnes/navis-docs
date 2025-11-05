@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getUserById } from "@/lib/auth";
 
 type InvitationListProps = {
   orgId: string;
@@ -40,6 +41,13 @@ const InvitationList = async ({
     );
   }
 
+  const invitedByUsers = await Promise.all(
+    invites.map((invitation) => getUserById(invitation.invitedByUserId ?? ""))
+  );
+  const invitedByUserMap = Object.fromEntries(
+    invitedByUsers.map((user) => [user?.id, user])
+  );
+
   return (
     <>
       {/* Mobile: cards */}
@@ -48,12 +56,30 @@ const InvitationList = async ({
           <CardCompact
             key={inv.email}
             title={inv.email}
-            description={`Invited by: ${inv.invitedByUserId ? `${inv.invitedByUserId}` : "Deleted User"}`}
+            description={`Invited by: ${invitedByUserMap[inv.invitedByUserId ?? ""]?.name ?? "Deleted User"}`}
             content={
               <div className="flex flex-col gap-1.5 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Invited At</span>
                   <span>{format(inv.createdAt, "yyyy-MM-dd, HH:mm")}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Status</span>
+                  <span>
+                    {inv.status === "PENDING"
+                      ? "Pending"
+                      : inv.status === "ACCEPTED"
+                        ? "Accepted"
+                        : inv.status === "EXPIRED"
+                          ? "Expired"
+                          : inv.status === "REVOKED"
+                            ? "Revoked"
+                            : "Unknown"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Invited By</span>
+                  <span>{invitedByUserMap[inv.invitedByUserId ?? ""]?.name ?? "Deleted User"}</span>
                 </div>
               </div>
             }
@@ -75,6 +101,7 @@ const InvitationList = async ({
               <TableHead>Email</TableHead>
               <TableHead>Invited At</TableHead>
               <TableHead>Invited By</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -96,9 +123,19 @@ const InvitationList = async ({
                     {format(invitation.createdAt, "yyyy-MM-dd, HH:mm")}
                   </TableCell>
                   <TableCell>
-                    {invitation.invitedByUserId
-                      ? `${invitation.invitedByUserId}`
-                      : "Deleted User"}
+                    {invitedByUserMap[invitation.invitedByUserId ?? ""]?.name ??
+                      "Deleted User"}
+                  </TableCell>
+                  <TableCell>
+                    {invitation.status === "PENDING"
+                      ? "Pending"
+                      : invitation.status === "ACCEPTED"
+                        ? "Accepted"
+                        : invitation.status === "EXPIRED"
+                          ? "Expired"
+                          : invitation.status === "REVOKED"
+                            ? "Revoked"
+                            : "Unknown"}
                   </TableCell>
                   <TableCell className="flex justify-end gap-x-2">
                     {buttons}

@@ -20,20 +20,10 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  CircleCheck,
-  Loader2,
   Search,
-  Archive,
-  Check,
-  Trash,
-  Eye,
   MoreVertical,
-  Plus,
 } from "lucide-react";
-import { toast } from "sonner";
 import { z } from "zod";
-import Link from "next/link";
-
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,7 +42,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -73,43 +62,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateErrorStatus } from "../actions/update-error-status";
-import { viewProcessPath } from "@/app/paths";
-import { useRouter } from "next/navigation";
-import { ProcessErrorDeleteButton } from "./process-error-delete-button";
+import { format } from "date-fns/format";
+import { UserDeleteButton } from "./user-delete-button";
+import { OrgMembershipRole } from "@prisma/client";
 
 export const schema = z.object({
   id: z.string(),
-  createdBy: z.string(),
-  processName: z.string(),
-  category: z.string(),
-  status: z.enum(["OPEN", "RESOLVED", "ARCHIVED"]),
-  body: z.string(),
   createdAt: z.date(),
-  processId: z.string(),
-  teamId: z.string(),
-  departmentId: z.string(),
+  orgId: z.string(),
+  userId: z.string(),
+  role: z.nativeEnum(OrgMembershipRole),
+  user: z.object({
+    id: z.string(),
+    name: z.string().nullable(),
+    email: z.string(),
+    emailVerified: z.date().nullable(),
+    createdAt: z.date(),
+    memberships: z.array(
+      z.object({
+        role: z.nativeEnum(OrgMembershipRole),
+      })
+    ),
+  }),
 });
 
-type ErrorReport = z.infer<typeof schema>;
+type User = z.infer<typeof schema>;
 
-function TableCellViewer({ item }: { item: ErrorReport }) {
-  const router = useRouter();
+function TableCellViewer({ item }: { item: User }) {
   const isMobile = useIsMobile();
-  const [isUpdating, setIsUpdating] = React.useState(false);
-
-  const handleStatusChange = async (status: "RESOLVED" | "ARCHIVED") => {
-    setIsUpdating(true);
-    const result = await updateErrorStatus(item.id, status);
-    setIsUpdating(false);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  };
 
   return (
     <div className="w-full">
@@ -119,84 +99,39 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
             variant="link"
             className="text-foreground w-fit px-0 text-left"
           >
-            {item.processName}
+            {item.user.name}
           </Button>
         </SheetTrigger>
         <SheetContent side={isMobile ? "bottom" : "right"}>
           <SheetHeader className="gap-1">
-            <SheetTitle>{item.processName}</SheetTitle>
-            <SheetDescription>Error Report Details</SheetDescription>
+            <SheetTitle>{item.user.name}</SheetTitle>
+            <SheetDescription>User Details</SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-4 overflow-y-auto py-4 text-sm mx-4">
             <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Status</Label>
-              <Badge variant="outline" className="w-fit">
-                {item.status}
-              </Badge>
+              <Label className="font-semibold">Name</Label>
+              <p className="text-muted-foreground">{item.user.name}</p>
             </div>
 
             <Separator />
-
             <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Created By</Label>
-              <p className="text-muted-foreground">{item.createdBy}</p>
+              <Label className="font-semibold">Email</Label>
+              <p className="text-muted-foreground">{item.user.email}</p>
             </div>
-
             <Separator />
-
             <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Category</Label>
-              <p className="text-muted-foreground">{item.category}</p>
-            </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Report Body</Label>
-              <p className="text-muted-foreground whitespace-pre-wrap">
-                {item.body}
-              </p>
-            </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Submitted</Label>
+              <Label className="font-semibold">Email Verified</Label>
               <p className="text-muted-foreground">
-                {new Date(item.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {item.user.emailVerified ? "Yes" : "No"}
               </p>
             </div>
-
-            {item.status === "OPEN" && (
-              <>
-                <Separator />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleStatusChange("RESOLVED")}
-                    disabled={isUpdating}
-                    className="flex-1"
-                  >
-                    <Check className="mr-2 h-4 w-4" />
-                    Complete
-                  </Button>
-                  <Button
-                    onClick={() => handleStatusChange("ARCHIVED")}
-                    disabled={isUpdating}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    <Archive className="mr-2 h-4 w-4" />
-                    Archive
-                  </Button>
-                </div>
-              </>
-            )}
+            <Separator />
+            <div className="flex flex-col gap-2">
+              <Label className="font-semibold">Created At</Label>
+              <p className="text-muted-foreground">
+                {format(item.user.createdAt, "yyyy-MM-dd, HH:mm")}
+              </p>
+            </div>
           </div>
           <SheetFooter>
             <SheetClose asChild>
@@ -209,12 +144,7 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
   );
 }
 
-export function ProcessErrorList({
-  data: initialData,
-}: {
-  data: ErrorReport[];
-}) {
-  const router = useRouter();
+export function UserList({ data: initialData }: { data: User[] }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -226,33 +156,8 @@ export function ProcessErrorList({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
 
-  const handleStatusUpdate = async (
-    errorId: string,
-    status: "RESOLVED" | "ARCHIVED"
-  ) => {
-    const result = await updateErrorStatus(errorId, status);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
-  };
-
-  const handleStatusFilterChange = (value: string) => {
-    setStatusFilter(value);
-
-    if (value === "ALL") {
-      table.getColumn("status")?.setFilterValue(undefined);
-    } else {
-      table.getColumn("status")?.setFilterValue(value);
-    }
-  };
-
-  const columns: ColumnDef<ErrorReport>[] = [
+  const columns: ColumnDef<User>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -282,52 +187,33 @@ export function ProcessErrorList({
       enableHiding: false,
     },
     {
-      accessorKey: "processName",
-      header: "Process Name",
+      accessorKey: "name",
+      header: "Name",
+      accessorFn: (row) => row.user.name,
       cell: ({ row }) => {
         return <TableCellViewer item={row.original} />;
       },
       enableHiding: false,
     },
     {
-      accessorKey: "category",
-      header: "Category",
+      accessorKey: "email",
+      header: "Email",
+      accessorFn: (row) => row.user.email,
       cell: ({ row }) => (
         <div className="w-32">
           <Badge variant="outline" className="text-muted-foreground px-1.5">
-            {row.original.category}
+            {row.original.user.email}
           </Badge>
         </div>
       ),
     },
     {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = row.original.status;
-        return (
-          <Badge
-            variant="outline"
-            className="text-muted-foreground px-1.5 flex items-center gap-1 w-fit"
-          >
-            {status === "RESOLVED" ? (
-              <CircleCheck className="fill-green-500 dark:fill-green-400 h-4 w-4" />
-            ) : status === "ARCHIVED" ? (
-              <Archive className="h-4 w-4" />
-            ) : (
-              <Loader2 className="h-4 w-4" />
-            )}
-            {status}
-          </Badge>
-        );
-      },
-    },
-    {
       accessorKey: "createdAt",
-      header: "Submitted",
+      header: "Created At",
+      accessorFn: (row) => row.user.createdAt,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
-          {new Date(row.original.createdAt).toLocaleDateString("en-US", {
+          {new Date(row.original.user.createdAt).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
             year: "numeric",
@@ -351,40 +237,7 @@ export function ProcessErrorList({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <Link
-                href={viewProcessPath(
-                  row.original.departmentId,
-                  row.original.teamId,
-                  row.original.processId
-                )}
-              >
-                <Eye className="ml-1 mr-2 h-4 w-4" />
-                View Process
-              </Link>
-            </DropdownMenuItem>
-            {row.original.status === "OPEN" && (
-              <>
-                <DropdownMenuItem
-                  onClick={() =>
-                    handleStatusUpdate(row.original.id, "RESOLVED")
-                  }
-                >
-                  <Check className="ml-1 mr-2 h-4 w-4" />
-                  Complete
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() =>
-                    handleStatusUpdate(row.original.id, "ARCHIVED")
-                  }
-                >
-                  <Archive className="ml-1 mr-2 h-4 w-4" />
-                  Archive
-                </DropdownMenuItem>
-              </>
-            )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <ProcessErrorDeleteButton errorId={row.original.id} />
+              <UserDeleteButton userId={row.original.user.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -402,7 +255,7 @@ export function ProcessErrorList({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.user.id,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -423,27 +276,14 @@ export function ProcessErrorList({
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by process name..."
-            value={
-              (table.getColumn("processName")?.getFilterValue() as string) ?? ""
-            }
+            placeholder="Search by user name or email..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("processName")?.setFilterValue(event.target.value)
+              table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className="pl-10"
           />
         </div>
-        <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-          <SelectTrigger className="w-[125px]">
-            <SelectValue placeholder={statusFilter} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All</SelectItem>
-            <SelectItem value="OPEN">Open</SelectItem>
-            <SelectItem value="RESOLVED">Completed</SelectItem>
-            <SelectItem value="ARCHIVED">Archived</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       <div className="overflow-hidden rounded-lg border">
@@ -489,7 +329,7 @@ export function ProcessErrorList({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No error reports found.
+                  No users found.
                 </TableCell>
               </TableRow>
             )}

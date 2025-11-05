@@ -60,7 +60,7 @@ export default async function ProcessPage({
         <FavoriteList departmentId={departmentId} teamId={teamId} />
       </Suspense>
       <Suspense fallback={<Spinner />}>
-      <AIChatDrawer teamId={teamId} departmentId={departmentId} />
+        <AIChatDrawer teamId={teamId} departmentId={departmentId} />
       </Suspense>
     </>
   );

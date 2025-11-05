@@ -24,11 +24,15 @@ export type AuditAction =
   | "CATEGORY_CREATED"
   | "CATEGORY_RENAMED"
   | "CATEGORY_DELETED"
+// TODO: User actions
+  | "USER_CREATED"
+  | "USER_RENAMED"
+  | "USER_DELETED"
 // TODO: NewsPost actions
 // TODO: ErrorReport actions
 // TODO: IngestionJob actions
 
-export type AuditEntityType = "DEPARTMENT" | "TEAM" | "PROCESS" | "CATEGORY";
+export type AuditEntityType = "DEPARTMENT" | "TEAM" | "PROCESS" | "CATEGORY" | "USER";
 
 type AuditLogData = {
   orgId: string;

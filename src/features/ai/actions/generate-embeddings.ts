@@ -23,13 +23,12 @@ export async function generateProcessEmbeddings(processId: string) {
   const chunks = chunkProcessContent(process.publishedVersion.contentText);
 
   for (const chunk of chunks) {
-
     try {
-    const embedding = await generateEmbedding(chunk.chunkText);
+      const embedding = await generateEmbedding(chunk.chunkText);
 
-    const embeddingString = `[${embedding.join(",")}]`;
+      const embeddingString = `[${embedding.join(",")}]`;
 
-    await prisma.$executeRaw`
+      await prisma.$executeRaw`
     INSERT INTO "ProcessChunk" (
         id, "processId", "teamId", title, "chunkIndex", "chunkText", embedding, "createdAt"
     ) VALUES (
@@ -43,10 +42,12 @@ export async function generateProcessEmbeddings(processId: string) {
         NOW()
     )
     `;
-        
     } catch (error) {
-        console.error(`Failed to generate embedding for chunk ${chunk.chunkIndex}:`, error);
-        throw error;
+      console.error(
+        `Failed to generate embedding for chunk ${chunk.chunkIndex}:`,
+        error
+      );
+      throw error;
     }
   }
 

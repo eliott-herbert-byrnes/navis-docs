@@ -32,7 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { auditPath, errorsPath, homePath, ideasPath, invitePath, subscriptionPath } from "@/app/paths";
+import { auditPath, errorsPath, homePath, ideasPath, invitePath, processBasePath, subscriptionPath, userBasePath } from "@/app/paths";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
@@ -61,14 +61,14 @@ const items = [
     isAdmin: true,
   },
   {
-    title: "Process Database",
-    url: "#",
+    title: "Processbase",
+    url: processBasePath(),
     icon: Database,
     isAdmin: true,
   },
   {
     title: "Userbase",
-    url: "#",
+    url: userBasePath(),
     icon: Users,
     isAdmin: true,
   },

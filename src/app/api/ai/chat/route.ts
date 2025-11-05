@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const assistantMessage =
       response.content[0].type === "text"
         ? response.content[0].text
-        : "I couldn't process your message. Please try again.";
+        : "I couldn't process your message. Please try again or contact support.";
 
     const sources = Array.from(
       new Map(

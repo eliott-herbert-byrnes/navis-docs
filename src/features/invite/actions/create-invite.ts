@@ -9,13 +9,12 @@ import {
 import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { sha256 } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
-import { limiter } from "@/lib/ratelimit";
 import { OrgMembershipRole } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
+import { limiter } from "@/features/auth/lib/rate-limit";
 
 const schema = z.object({
   email: z.email().min(1, { message: "Is Required" }).max(191),
@@ -35,7 +34,7 @@ export const createInvitation = async (
       (await headers()).get("x-forwarded-for") ||
       (await headers()).get("cf-connecting-ip") ||
       "anon";
-    const { success } = await limiter.limit(`invite:${ip}`);
+    const { success } = await limiter(`invite:${ip}`);
     if (!success) {
       return toActionState("ERROR", "Too many requests", formData);
     }
@@ -97,7 +96,6 @@ export const createInvitation = async (
     const link = `${process.env.NEXTAUTH_URL}${acceptInvitePath(rawToken)}`;
     console.log(link);
 
-    // Revalidate the invite page to show the new invitation
     revalidatePath(invitePath());
 
     return toActionState("SUCCESS", "Invite created", formData);
