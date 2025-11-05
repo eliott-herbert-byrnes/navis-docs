@@ -9,6 +9,7 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { signInPath } from "@/app/paths";
 import "./print.css";
+import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
 
 type ProcessViewPageProps = {
   params: Promise<{ departmentId: string; teamId: string; processId: string }>;
@@ -51,6 +52,9 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
       {/* Content */}
       <Suspense fallback={<Spinner />}>
         <ProcessContent process={process} />
+      </Suspense>
+      <Suspense fallback={<Spinner />}>
+        <AIChatDrawer teamId={teamId} departmentId={departmentId} />
       </Suspense>
     </div>
   );

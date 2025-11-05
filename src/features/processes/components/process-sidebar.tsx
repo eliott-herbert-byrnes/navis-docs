@@ -75,7 +75,6 @@ export async function ProcessSidebar({
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Newspaper className="h-4 w-4" />
               News
-              <span className="text-xs text-muted-foreground ml-2">0</span>
             </Button>
           </Link>
 

@@ -123,13 +123,13 @@ export async function NewsPostList({
                 <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
                   {newsPost.title}
                 </CardTitle>
-                  {isAdmin ? (
-                      <NewsDeleteButton
-                        newsPostId={newsPost.id}
-                        departmentId={departmentId}
-                        teamId={teamId}
-                      />
-                    ) : null}
+                {isAdmin ? (
+                  <NewsDeleteButton
+                    newsPostId={newsPost.id}
+                    departmentId={departmentId}
+                    teamId={teamId}
+                  />
+                ) : null}
               </div>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">

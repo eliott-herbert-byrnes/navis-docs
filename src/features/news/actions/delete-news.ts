@@ -22,7 +22,11 @@ export const deleteNewsPost = async (
 
     const isAdmin = await isOrgAdminOrOwner(user.userId);
     if (!isAdmin) {
-        return toActionState("ERROR", "Only admins can delete news posts", formData);
+      return toActionState(
+        "ERROR",
+        "Only admins can delete news posts",
+        formData
+      );
     }
 
     const departmentId = String(formData.get("departmentId") ?? "");
@@ -41,4 +45,3 @@ export const deleteNewsPost = async (
     return fromErrorToActionState(error, formData);
   }
 };
-

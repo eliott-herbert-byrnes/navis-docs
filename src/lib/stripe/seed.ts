@@ -7,7 +7,18 @@ const seed = async () => {
   const t0 = performance.now();
   console.log("Stripe Seed: Started ...");
 
-  // clean up
+  // clean up database stripe references first
+  console.log("Cleaning up database Stripe references...");
+  await prisma.organization.updateMany({
+    data: {
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+      stripeSubscriptionStatus: null,
+      currentPeriodEnd: null,
+    },
+  });
+
+  // clean up stripe
 
   // 1) Fetch products and capture default price IDs
   const products = await stripe.products.list({ limit: 100 });
@@ -35,10 +46,23 @@ const seed = async () => {
     }
   }
 
-  // 4) Delete customers (auto-paginate)
+  // 4) Cancel all active subscriptions first
+  for await (const subscription of stripe.subscriptions.list({ limit: 100, status: 'all' })) {
+    try {
+      if (subscription.status === 'active' || subscription.status === 'trialing') {
+        await stripe.subscriptions.cancel(subscription.id);
+        console.log(`Cancelled subscription ${subscription.id}`);
+      }
+    } catch (e) {
+      console.warn(`Could not cancel subscription ${subscription.id}`, e);
+    }
+  }
+
+  // 5) Delete customers (auto-paginate)
   for await (const customer of stripe.customers.list({ limit: 100 })) {
     try {
       await stripe.customers.del(customer.id);
+      console.log(`Deleted customer ${customer.id}`);
     } catch (e) {
       console.warn(`Could not delete customer ${customer.id}`, e);
     }
@@ -105,16 +129,15 @@ const seed = async () => {
     metadata: { plan: "business", allowedProcesses: 100, allowedDepartments: 3, allowedTeamsPerDepartment: 1 },
   });
 
-  // TODO: Uncomment this when we have want to test seeding an enterprise plan
-  // const enterprisePrice = await stripe.prices.create({
-  //   product: productTwo.id,
-  //   unit_amount: 29999,
-  //   currency: "usd",
-  //   recurring: {
-  //     interval: "month",
-  //   },
-  //   metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
-  // });
+  const enterprisePrice = await stripe.prices.create({
+    product: productTwo.id,
+    unit_amount: 29999,
+    currency: "usd",
+    recurring: {
+      interval: "month",
+    },
+    metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
+  });
 
   const attachedPm = await stripe.paymentMethods.attach("pm_card_visa", {
     customer: customer.id,
@@ -147,7 +170,12 @@ const seed = async () => {
   });
 
   const t1 = performance.now();
-  console.log(`Stripe Seed: Finished (${t1 - t0}ms)`);
+  console.log(`\n✅ Stripe Seed: Finished (${Math.round(t1 - t0)}ms)`);
+  console.log(`   - Created products: Business & Enterprise`);
+  console.log(`   - Created prices: Business ($49.99/mo) & Enterprise ($299.99/mo)`);
+  console.log(`   - Created customer: ${customer.email}`);
+  console.log(`   - Created subscription: ${subscription.id} (${subscription.status})`);
+  console.log(`   - Organization updated with Stripe IDs\n`);
 };
 
 seed();

@@ -9,6 +9,7 @@ import { getDepartments } from "@/features/departments/queries/get-departments";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
 import { FavoriteList } from "@/features/processes/components/favorite/components/favorite-list";
+import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
 
 export default async function ProcessPage({
   params,
@@ -57,6 +58,9 @@ export default async function ProcessPage({
       />
       <Suspense fallback={<Spinner />}>
         <FavoriteList departmentId={departmentId} teamId={teamId} />
+      </Suspense>
+      <Suspense fallback={<Spinner />}>
+      <AIChatDrawer teamId={teamId} departmentId={departmentId} />
       </Suspense>
     </>
   );

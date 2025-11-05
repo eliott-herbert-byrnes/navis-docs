@@ -60,7 +60,7 @@ export default async function RootLayout({
             <AppSidebar />
             <SidebarInset className="p-2">
               <div className="flex flex-row h-full">
-                <div className="flex h-full w-full flex-col rounded-lg border-2 p-4">
+                <div className="flex h-full w-full flex-col rounded-lg  p-4">
                   {user && (
                     <>
                       <div className="flex flex-row items-center justify-between">

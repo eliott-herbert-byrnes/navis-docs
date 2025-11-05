@@ -106,7 +106,7 @@ export async function AppSidebar() {
   const isAdmin = await isOrgAdminOrOwner(user.userId);
 
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="inset">
       <SidebarContent>
         <SidebarGroup className="flex flex-col gap-2 h-full">
 
@@ -157,7 +157,7 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
+        <SidebarMenu className="border-2 rounded-lg">
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

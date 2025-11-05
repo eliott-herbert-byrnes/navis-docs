@@ -5,6 +5,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { generateProcessEmbeddings } from "@/features/ai/actions/generate-embeddings";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -75,6 +76,12 @@ export async function publishProcess(
         publishedVersionId: process.pendingVersion.id,
       },
     });
+
+    try {
+      await generateProcessEmbeddings(parsed.processId);
+    } catch (error) {
+      console.error('Failed to generate embeddings:', error);
+    }
 
     await createAuditLog({
       orgId: org.id,

@@ -415,23 +415,284 @@ await prisma.$transaction([
   await prisma.process.update({ where: { id: p7.id }, data: { publishedVersionId: pv7.id, pendingVersionId: pv7.id } });
   await prisma.process.update({ where: { id: p8.id }, data: { publishedVersionId: pv8.id, pendingVersionId: pv8.id } });
 
+  // ========================================
+  // ERROR REPORTS (6 total: 2 OPEN, 2 RESOLVED, 2 ARCHIVED)
+  // ========================================
+  
+  // OPEN Error Reports
+  await prisma.errorReport.create({
+    data: {
+      processId: p3.id, // Direct Debit Setup
+      createdBy: user.id,
+      body: 'Step 4 is unclear about which system screen to use. The Direct Debit section has multiple entry points and the instructions don\'t specify which one to navigate to. This causes confusion for new staff members.',
+      status: 'OPEN',
+      createdAt: new Date('2024-11-01T09:30:00Z'),
+    },
+  });
+
+  await prisma.errorReport.create({
+    data: {
+      processId: p7.id, // Customer Complaint Resolution
+      createdBy: user.id,
+      body: 'The decision tree doesn\'t account for complaints that involve both service issues AND financial disputes. We had a case where a customer complained about poor service that led to missed payment and fees. The process needs a combined pathway.',
+      status: 'OPEN',
+      createdAt: new Date('2024-10-28T14:15:00Z'),
+    },
+  });
+
+  // RESOLVED Error Reports
+  await prisma.errorReport.create({
+    data: {
+      processId: p1.id, // KYC Basic Check
+      createdBy: user.id,
+      body: 'The sanctions screening step mentions using "electronic verification system" but doesn\'t provide the login credentials or link to the system. New team members don\'t know which system to access.',
+      status: 'RESOLVED',
+      createdAt: new Date('2024-10-15T11:20:00Z'),
+    },
+  });
+
+  await prisma.errorReport.create({
+    data: {
+      processId: p4.id, // Credit Card Application Review
+      createdBy: user.id,
+      body: 'Step 3 references checking credit score but the threshold of 650 mentioned later contradicts our actual policy which is 680. This needs to be corrected to avoid incorrect approvals.',
+      status: 'RESOLVED',
+      createdAt: new Date('2024-10-20T16:45:00Z'),
+    },
+  });
+
+  // ARCHIVED Error Reports
+  await prisma.errorReport.create({
+    data: {
+      processId: p2.id, // Account Closure
+      createdBy: user.id,
+      body: 'The pre-closure checklist is missing a step to verify if customer has any pending disputes or chargebacks. This caused issues when we closed an account with an active dispute.',
+      status: 'ARCHIVED',
+      createdAt: new Date('2024-09-10T10:00:00Z'),
+    },
+  });
+
+  await prisma.errorReport.create({
+    data: {
+      processId: p6.id, // Loan Approval
+      createdBy: user.id,
+      body: 'The flowchart shows "DTI < 43%" but recent regulatory changes require us to use 40% for personal loans. The diagram is outdated.',
+      status: 'ARCHIVED',
+      createdAt: new Date('2024-09-05T13:30:00Z'),
+    },
+  });
+
+  // ========================================
+  // IDEAS (8 total: 2 NEW, 2 IN_PROGRESS, 2 COMPLETED, 2 ARCHIVED)
+  // ========================================
+
+  // NEW Ideas
+  await prisma.idea.create({
+    data: {
+      teamId: teamOps.id,
+      createdBy: user.id,
+      title: 'Add Video Tutorials for Complex Processes',
+      body: 'We should create short 2-3 minute video walkthroughs for our most complex processes like loan approvals and account closures. Many team members are visual learners and videos would complement the written documentation. We could embed them directly in the process pages.',
+      status: 'NEW',
+      createdAt: new Date('2024-11-03T08:00:00Z'),
+    },
+  });
+
+  await prisma.idea.create({
+    data: {
+      teamId: teamComp.id,
+      createdBy: user.id,
+      title: 'Implement Process Version History Viewer',
+      body: 'It would be helpful to see what changed between process versions. A side-by-side diff viewer showing changes would make it easier to understand updates and review changes before publishing.',
+      status: 'NEW',
+      createdAt: new Date('2024-11-02T15:30:00Z'),
+    },
+  });
+
+  // IN_PROGRESS Ideas
+  await prisma.idea.create({
+    data: {
+      teamId: teamOps.id,
+      createdBy: user.id,
+      title: 'Create Mobile-Friendly Process Views',
+      body: 'Many staff members access processes from tablets or phones while helping customers. We should optimize the process views for mobile devices with larger buttons, better spacing, and offline capability for critical processes.',
+      status: 'IN_PROGRESS',
+      createdAt: new Date('2024-10-25T09:45:00Z'),
+    },
+  });
+
+  await prisma.idea.create({
+    data: {
+      teamId: teamComp.id,
+      createdBy: user.id,
+      title: 'Add Search Functionality Within Processes',
+      body: 'For long processes with many steps, we need a search feature that lets users quickly find specific terms or steps. This would be especially useful for RAW format processes with lots of text content.',
+      status: 'IN_PROGRESS',
+      createdAt: new Date('2024-10-22T14:20:00Z'),
+    },
+  });
+
+  // COMPLETED Ideas
+  await prisma.idea.create({
+    data: {
+      teamId: teamOps.id,
+      createdBy: user.id,
+      title: 'Add Process Categories for Better Organization',
+      body: 'Processes should be grouped into categories like "Payment Processing", "Account Management", etc. This would make it easier to find related processes and improve navigation.',
+      status: 'COMPLETED',
+      createdAt: new Date('2024-09-15T10:30:00Z'),
+    },
+  });
+
+  await prisma.idea.create({
+    data: {
+      teamId: teamComp.id,
+      createdBy: user.id,
+      title: 'Enable Process Favoriting',
+      body: 'Users should be able to favorite frequently used processes for quick access. A favorites section in the sidebar would save time and improve user experience.',
+      status: 'COMPLETED',
+      createdAt: new Date('2024-09-18T16:00:00Z'),
+    },
+  });
+
+  // ARCHIVED Ideas
+  await prisma.idea.create({
+    data: {
+      teamId: teamOps.id,
+      createdBy: user.id,
+      title: 'Integrate with Salesforce CRM',
+      body: 'We should integrate the process documentation with our Salesforce CRM so that relevant processes appear contextually when viewing customer records.',
+      status: 'ARCHIVED',
+      createdAt: new Date('2024-08-10T11:00:00Z'),
+    },
+  });
+
+  await prisma.idea.create({
+    data: {
+      teamId: teamComp.id,
+      createdBy: user.id,
+      title: 'Add Real-Time Collaboration Features',
+      body: 'Multiple users should be able to edit processes simultaneously with real-time updates showing what others are changing. Like Google Docs but for our process documentation.',
+      status: 'ARCHIVED',
+      createdAt: new Date('2024-08-05T09:30:00Z'),
+    },
+  });
+
+  // ========================================
+  // NEWS POSTS (6 total: 3 per team with 1 pinned per team)
+  // ========================================
+
+  // Account Services Team (teamOps) News Posts
   await prisma.newsPost.create({
     data: {
       teamId: teamOps.id,
-      title: 'Updated Compliance Procedures - Q4 2024',
+      title: 'New Payment Processing System Launch - Action Required',
       bodyJSON: { 
         type: 'doc', 
         content: [
-          { type: 'paragraph', content: [{ type: 'text', text: 'All team members: Please review the updated KYC and fraud detection procedures. New regulatory requirements from the Financial Conduct Authority are now in effect.' }] },
-          { type: 'paragraph', content: [{ type: 'text', text: 'Key changes: Enhanced identity verification for high-risk customers, revised transaction monitoring thresholds, and updated customer complaint handling timelines.' }] }
+          { type: 'paragraph', content: [{ type: 'text', text: 'Important Update: We are launching a new payment processing system on November 15th. All team members must complete the mandatory training by November 10th.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Key Changes: The new system features faster transaction processing, enhanced fraud detection, and improved reporting capabilities. Please review the updated Direct Debit and Payment Processing procedures in your process documentation.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Training sessions are available daily at 10 AM and 2 PM in the main conference room. Contact Sarah Chen to book your session.' }] }
         ] 
       },
       pinned: true,
       createdBy: user.id,
+      createdAt: new Date('2024-11-01T08:00:00Z'),
     },
   });
 
-  console.log('✅ Seed complete');
+  await prisma.newsPost.create({
+    data: {
+      teamId: teamOps.id,
+      title: 'Q4 Performance Review: Outstanding Customer Service Metrics',
+      bodyJSON: { 
+        type: 'doc', 
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Congratulations team! Our customer satisfaction scores reached an all-time high of 94% this quarter. Average resolution time improved by 15% thanks to everyone following our updated complaint resolution processes.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Special recognition goes to the account closure team for maintaining 100% accuracy while processing 23% more closures than last quarter. Your attention to our documented procedures shows!' }] }
+        ] 
+      },
+      pinned: false,
+      createdBy: user.id,
+      createdAt: new Date('2024-10-28T14:30:00Z'),
+    },
+  });
+
+  await prisma.newsPost.create({
+    data: {
+      teamId: teamOps.id,
+      title: 'Updated Holiday Schedule and Staffing Changes',
+      bodyJSON: { 
+        type: 'doc', 
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Please note our extended hours for the upcoming holiday season. We will be operating 7 AM - 9 PM Monday through Saturday from November 20th through December 31st.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Additional temporary staff will join us starting November 18th. Please help welcome them and direct them to our process documentation for training materials. Remember to use the buddy system for the first week.' }] }
+        ] 
+      },
+      pinned: false,
+      createdBy: user.id,
+      createdAt: new Date('2024-10-20T09:00:00Z'),
+    },
+  });
+
+  // Verification & Fraud Team (teamComp) News Posts
+  await prisma.newsPost.create({
+    data: {
+      teamId: teamComp.id,
+      title: 'Critical: New Fraud Detection Protocols Effective Immediately',
+      bodyJSON: { 
+        type: 'doc', 
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Urgent: We have identified a new fraud pattern targeting credit card applications. All applications from IP addresses in the following regions must undergo enhanced verification: Eastern Europe, Southeast Asia, and West Africa.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Additional Requirements: Request video verification call for all high-risk applications. Verify employment directly with employer using phone number from independent source (not provided by applicant). Check social media profiles for consistency with application details.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'The Credit Card Application Review process has been updated to reflect these changes. Please review immediately and acknowledge receipt via the compliance system.' }] }
+        ] 
+      },
+      pinned: true,
+      createdBy: user.id,
+      createdAt: new Date('2024-11-02T10:00:00Z'),
+    },
+  });
+
+  await prisma.newsPost.create({
+    data: {
+      teamId: teamComp.id,
+      title: 'KYC Verification Tool Upgrade Completed Successfully',
+      bodyJSON: { 
+        type: 'doc', 
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Good news! The KYC verification system upgrade was completed over the weekend with zero downtime. The new system offers improved document scanning, faster verification times, and better integration with our sanctions databases.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'New Features: Automatic document expiry alerts, enhanced biometric matching for photo IDs, real-time PEP screening updates, and simplified interface for address verification. Average verification time is now under 90 seconds!' }] }
+        ] 
+      },
+      pinned: false,
+      createdBy: user.id,
+      createdAt: new Date('2024-10-26T11:15:00Z'),
+    },
+  });
+
+  await prisma.newsPost.create({
+    data: {
+      teamId: teamComp.id,
+      title: 'Monthly Compliance Training: Transaction Dispute Updates',
+      bodyJSON: { 
+        type: 'doc', 
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Reminder: Monthly compliance training is scheduled for November 8th at 2 PM. This month we are focusing on recent updates to transaction dispute resolution procedures and new regulatory requirements from the Financial Conduct Authority.' }] },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Topics include: Updated provisional credit timelines, new documentation requirements for fraud claims, revised chargeback procedures, and best practices for customer communication during investigations. Attendance is mandatory.' }] }
+        ] 
+      },
+      pinned: false,
+      createdBy: user.id,
+      createdAt: new Date('2024-10-18T15:45:00Z'),
+    },
+  });
+
+  console.log('✅ Seed complete with mock data:');
+  console.log('   - 8 Processes with versions');
+  console.log('   - 6 Error Reports (2 OPEN, 2 RESOLVED, 2 ARCHIVED)');
+  console.log('   - 8 Ideas (2 NEW, 2 IN_PROGRESS, 2 COMPLETED, 2 ARCHIVED)');
+  console.log('   - 6 News Posts (3 per team, 1 pinned per team)');
 }
 
 main().catch(async (e) => {

@@ -28,3 +28,28 @@ export const getUserById = async (userId: string) => {
   });
   return user ?? null;
 };
+
+export async function getUserTeamIds(userId: string): Promise<string[]> {
+  const memberships = await prisma.orgMembership.findMany({
+    where: { userId },
+    include: {
+      org: {
+        include: {
+          departments: {
+            include: {
+              teams: {
+                select: { id: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return memberships.flatMap(m => 
+    m.org.departments.flatMap(d => 
+      d.teams.map(t => t.id)
+    )
+  );
+}

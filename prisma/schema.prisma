@@ -149,15 +149,17 @@ model Department {
 }
 
 model Team {
-  id           String     @id @default(uuid())
+  id           String         @id @default(uuid())
   departmentId String
   name         String
-  createdAt    DateTime   @default(now())
-  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime       @default(now())
+  department   Department     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   categories   Category[]
   process      Process[]
   newsPost     NewsPost[]
   ideas        Idea[]
+  ProcessChunk ProcessChunk[]
+
   @@index([departmentId, name])
 }
 
@@ -208,6 +210,8 @@ model Process {
   category      Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   favorites     Favorite[]
   errorReports  ErrorReport[]
+  ProcessChunk  ProcessChunk[]
+
   @@unique([teamId, slug])
   @@index([teamId, categoryId])
   @@index([teamId, title])
@@ -232,6 +236,23 @@ model ProcessVersion {
   @@index([processId, createdAt])
 }
 
+model ProcessChunk {
+  id         String                       @id @default(uuid())
+  processId  String
+  teamId     String
+  title      String
+  chunkIndex Int
+  chunkText  String                       @db.Text
+  embedding  Unsupported("vector(1536)")?
+  createdAt  DateTime                     @default(now())
+
+  process Process @relation(fields: [processId], references: [id], onDelete: Cascade)
+  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId, processId])
+  @@index([processId, chunkIndex])
+}
+
 model NewsPost {
   id        String   @id @default(uuid())
   teamId    String
@@ -248,8 +269,8 @@ model NewsPost {
 model Favorite {
   userId    String
   processId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  process   Process  @relation(fields: [processId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  process   Process @relation(fields: [processId], references: [id], onDelete: Cascade)
 
   @@id([userId, processId])
   @@index([userId])
