@@ -31,7 +31,7 @@ const ProcessBasePage = async ({ searchParams }: ProcessBasePageProps) => {
   return (
     <>
       <Heading
-        title="ProcessBase"
+        title="Processbase"
         description="View and manage processes for your organization"
       />
       <Suspense fallback={<Spinner />} key={search}>

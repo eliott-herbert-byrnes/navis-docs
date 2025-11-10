@@ -11,7 +11,7 @@ export type AuditAction =
   | "TEAM_CREATED"
   | "TEAM_RENAMED"
   | "TEAM_DELETED"
-// TODO: Process actions
+  // TODO: Process actions
   | "PROCESS_CREATED"
   | "PROCESS_RENAMED"
   | "PROCESS_DELETED"
@@ -20,19 +20,24 @@ export type AuditAction =
   | "PROCESS_ARCHIVED"
   | "PROCESS_UNARCHIVED"
   | "PROCESS_EDITED"
-// TODO: Category actions
+  // TODO: Category actions
   | "CATEGORY_CREATED"
   | "CATEGORY_RENAMED"
   | "CATEGORY_DELETED"
-// TODO: User actions
+  // TODO: User actions
   | "USER_CREATED"
   | "USER_RENAMED"
-  | "USER_DELETED"
+  | "USER_DELETED";
 // TODO: NewsPost actions
 // TODO: ErrorReport actions
 // TODO: IngestionJob actions
 
-export type AuditEntityType = "DEPARTMENT" | "TEAM" | "PROCESS" | "CATEGORY" | "USER";
+export type AuditEntityType =
+  | "DEPARTMENT"
+  | "TEAM"
+  | "PROCESS"
+  | "CATEGORY"
+  | "USER";
 
 type AuditLogData = {
   orgId: string;
@@ -75,6 +80,7 @@ export async function createAuditLog(data: AuditLogData) {
 export async function getAuditLogs(
   orgId: string,
   actorId?: string,
+  search?: string,
   options?: {
     entityType?: AuditEntityType;
     entityId?: string;
@@ -88,6 +94,13 @@ export async function getAuditLogs(
       ...(actorId && { actorId }),
       ...(options?.entityType && { entityType: options.entityType }),
       ...(options?.entityId && { entityId: options.entityId }),
+      ...(search && {
+        OR: [
+          { entityId: { contains: search, mode: "insensitive" as const } },
+          { action: { contains: search, mode: "insensitive" as const } },
+          { actorId: { contains: search, mode: "insensitive" as const } },
+        ],
+      }),
     },
     orderBy: { at: "desc" },
     take: options?.limit ?? 50,
