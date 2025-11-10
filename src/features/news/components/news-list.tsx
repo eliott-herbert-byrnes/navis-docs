@@ -6,8 +6,9 @@ import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react";
 import { getSessionUser, getUserById, isOrgAdminOrOwner } from "@/lib/auth";
 import { NewsDeleteButton } from "./news-delete-button";
-import { signInPath, teamProcessPath } from "@/app/paths";
+import { signInPath } from "@/app/paths";
 import { redirect } from "next/navigation";
+import DOMPurify from "dompurify";
 
 type NewsPostListProps = {
   departmentId: string;
@@ -71,7 +72,7 @@ export async function NewsPostList({
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                   <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
-                    {newsPost.title}
+                    {DOMPurify.sanitize(newsPost.title)}
                   </CardTitle>
                   <div className="flex gap-2 justify-start items-center mb-2">
                     <p className="text-sm text-muted-foreground flex gap-2">
@@ -88,7 +89,7 @@ export async function NewsPostList({
                 </div>
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground line-clamp-3">
-                    {getTextFromBodyJSON(newsPost.body)}
+                    {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body))}
                   </p>
                 </div>
               </CardHeader>
@@ -121,7 +122,7 @@ export async function NewsPostList({
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                 <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
-                  {newsPost.title}
+                  {DOMPurify.sanitize(newsPost.title)}
                 </CardTitle>
                 {isAdmin ? (
                   <NewsDeleteButton
@@ -133,7 +134,7 @@ export async function NewsPostList({
               </div>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">
-                  {getTextFromBodyJSON(newsPost.body)}
+                  {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body))}
                 </p>
               </div>
             </CardHeader>

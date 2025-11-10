@@ -2,6 +2,7 @@ import { viewProcessPath } from "@/app/paths";
 import { searchProcessChunks } from "@/features/ai/queries/search-chunks";
 import { anthropic } from "@/lib/ai/anthropic";
 import { getSessionUser, getUserTeamIds } from "@/lib/auth";
+import { aiLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -9,6 +10,14 @@ export async function POST(req: NextRequest) {
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { success } = await getLimitByUser(aiLimiter, user.userId, "ai-chat");
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait before sending another." },
+        { status: 429 }
+      );
     }
 
     const { message, teamId, departmentId } = await req.json();

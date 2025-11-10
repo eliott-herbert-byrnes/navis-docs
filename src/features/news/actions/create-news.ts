@@ -1,11 +1,16 @@
 "use server";
 import { newsPath } from "@/app/paths";
-import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
+import {
+  ActionState,
+  fromErrorToActionState,
+  toActionState,
+} from "@/components/form/utils/to-action-state";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-
+import DOMPurify from "dompurify";
+import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 const createNewsSchema = z.object({
   teamId: z.string().min(1, { message: "Is Required" }),
@@ -22,6 +27,15 @@ export const createNews = async (
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
+    }
+
+    const { success } = await getLimitByUser(
+      createLimiter,
+      user.userId,
+      "news-create"
+    );
+    if (!success) {
+      return toActionState("ERROR", "Too many requests", formData);
     }
 
     const org = await getUserOrg(user.userId);
@@ -45,6 +59,11 @@ export const createNews = async (
 
     const { teamId, newsPostTitle, newsPostBody, pinned } = parsed;
 
+    const sanitizedBody = DOMPurify.sanitize(newsPostBody, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    });
+
     const createdNews = await prisma.newsPost.create({
       data: {
         teamId,
@@ -52,7 +71,10 @@ export const createNews = async (
         bodyJSON: {
           type: "doc",
           content: [
-            { type: "paragraph", content: [{ type: "text", text: newsPostBody }] },
+            {
+              type: "paragraph",
+              content: [{ type: "text", text: sanitizedBody }],
+            },
           ],
         },
         pinned,
@@ -67,7 +89,7 @@ export const createNews = async (
       formData
     );
     successState.data = {
-        ...successState.data,
+      ...successState.data,
       redirect: newsPath(departmentId, teamId),
     };
     return successState;

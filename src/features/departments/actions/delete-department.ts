@@ -9,6 +9,7 @@ import {
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { revalidatePath } from "next/cache";
 import {z} from "zod";
 
@@ -24,6 +25,15 @@ export const deleteDepartment = async (
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
+    }
+
+    const { success } = await getLimitByUser(
+      deleteLimiter,
+      user.userId,
+      "department-delete"
+    );
+    if (!success) {
+      return toActionState("ERROR", "Too many requests", formData);
     }
 
     const org = await getUserOrg(user.userId);

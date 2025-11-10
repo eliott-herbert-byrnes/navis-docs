@@ -25,15 +25,12 @@ import {
   Search,
   Archive,
   Check,
-  Trash,
   Eye,
   MoreVertical,
-  Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import Link from "next/link";
-
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,6 +74,7 @@ import { updateErrorStatus } from "../actions/update-error-status";
 import { viewProcessPath } from "@/app/paths";
 import { useRouter } from "next/navigation";
 import { ProcessErrorDeleteButton } from "./process-error-delete-button";
+import DOMPurify from 'dompurify';
 
 export const schema = z.object({
   id: z.string(),
@@ -154,7 +152,7 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Report Body</Label>
               <p className="text-muted-foreground whitespace-pre-wrap">
-                {item.body}
+                {DOMPurify.sanitize(item.body)}
               </p>
             </div>
 

@@ -12,6 +12,7 @@ import { z } from "zod";
 import { makeSlugFromTitle } from "../utils/make-slug-from-title";
 import { getInitialContentForStyle } from "../utils/get-initial-content-for-style";
 import { editProcessPath } from "@/app/paths";
+import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 const inputSchema = z.object({
   departmentId: z.string().min(1, { message: "Department is required" }),
@@ -32,6 +33,15 @@ export const createProcess = async (
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
+    }
+
+    const { success } = await getLimitByUser(
+      createLimiter,
+      user.userId,
+      "process-create"
+    );
+    if (!success) {
+      return toActionState("ERROR", "Too many requests", formData);
     }
 
     const org = await getUserOrg(user.userId);

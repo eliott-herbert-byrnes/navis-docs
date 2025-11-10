@@ -68,10 +68,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { viewProcessPath } from "@/app/paths";
 import { useRouter } from "next/navigation";
 import { updateIdeaStatus } from "../actions/update-idea-status";
 import { IdeaDeleteButton } from "./idea-delete-button";
+import DOMPurify from 'dompurify';
 
 export const schema = z.object({
   id: z.string(),
@@ -114,12 +114,12 @@ function TableCellViewer({ item }: { item: Idea }) {
             variant="link"
             className="text-foreground w-fit px-0 text-left"
           >
-            {item.title}
+            {DOMPurify.sanitize(item.title)}
           </Button>
         </SheetTrigger>
         <SheetContent side={isMobile ? "bottom" : "right"}>
           <SheetHeader className="gap-1">
-            <SheetTitle>{item.title}</SheetTitle>
+            <SheetTitle>{DOMPurify.sanitize(item.title)}</SheetTitle>
             <SheetDescription>Idea Details</SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-4 overflow-y-auto py-4 text-sm mx-4">
@@ -142,7 +142,7 @@ function TableCellViewer({ item }: { item: Idea }) {
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Idea Body</Label>
               <p className="text-muted-foreground whitespace-pre-wrap">
-                {item.body}
+                {DOMPurify.sanitize(item.body)}
               </p>
             </div>
 

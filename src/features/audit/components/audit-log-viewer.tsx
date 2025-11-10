@@ -30,7 +30,7 @@ export async function AuditLogViewer({ logs }: AuditLogViewerProps) {
   }
 
   const users = await Promise.all(logs.map((log) => getUserById(log.actorId)));
-  
+
   return (
     <div className="space-y-4">
       {logs.map((log) => (

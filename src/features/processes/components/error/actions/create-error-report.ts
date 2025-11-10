@@ -10,6 +10,8 @@ import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import DOMPurify from "dompurify";
+import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 const inputSchema = z.object({
   processId: z.string().min(1, { message: "Is Required" }),
@@ -26,6 +28,15 @@ export const createErrorReport = async (
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
+    const { success } = await getLimitByUser(
+      createLimiter,
+      user.userId,
+      "error-report-create"
+    );
+    if (!success) {
+      return toActionState("ERROR", "Too many requests", formData);
+    }
+
     const org = await getUserOrg(user.userId);
     if (!org) {
       return toActionState("ERROR", "No organization found", formData);
@@ -38,11 +49,16 @@ export const createErrorReport = async (
 
     const { processId, errorReport: errorBody } = parsed;
 
+    const sanitizedBody = DOMPurify.sanitize(errorBody, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    });
+
     const createdReport = await prisma.errorReport.create({
       data: {
         processId,
         createdBy: user.userId,
-        body: errorBody,
+        body: sanitizedBody,
         status: "OPEN",
       },
     });

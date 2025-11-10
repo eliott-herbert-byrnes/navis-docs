@@ -10,6 +10,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 
@@ -33,6 +34,14 @@ export const createDepartment = async (
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
+    const { success } = await getLimitByUser(
+      createLimiter,
+      user.userId,
+      "department-create"
+    );
+    if (!success) {
+      return toActionState("ERROR", "Too many requests", formData);
+    }
     const org = await getUserOrg(user.userId);
 
     if (!org) {

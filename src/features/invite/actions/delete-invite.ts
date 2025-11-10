@@ -3,6 +3,7 @@ import { invitePath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { revalidatePath } from "next/cache";
 
 type DeleteInviteProps = {
@@ -14,6 +15,15 @@ export const deleteInvitation = async ({ email, orgId }: DeleteInviteProps) => {
   const user = await getSessionUser();
   if (!user) {
     return toActionState("ERROR", "Unauthorized");
+  }
+
+  const { success } = await getLimitByUser(
+    deleteLimiter,
+    user.userId,
+    "invite-delete"
+  );
+  if (!success) {
+    return toActionState("ERROR", "Too many requests");
   }
 
   const isAdmin = await isOrgAdminOrOwner(user.userId);

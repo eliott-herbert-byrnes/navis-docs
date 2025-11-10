@@ -6,6 +6,7 @@ import {
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { z } from "zod";
 
 const inputSchema = z.object({
@@ -20,6 +21,15 @@ export const deleteProcessFromBase = async (
     const user = await getSessionUser();
     if (!user) {
       return toActionState("ERROR", "Unauthorized", formData);
+    }
+
+    const { success } = await getLimitByUser(
+      deleteLimiter,
+      user.userId,
+      "process-base-delete"
+    );
+    if (!success) {
+      return toActionState("ERROR", "Too many requests", formData);
     }
 
     const isAdmin = await isOrgAdminOrOwner(user.userId);
