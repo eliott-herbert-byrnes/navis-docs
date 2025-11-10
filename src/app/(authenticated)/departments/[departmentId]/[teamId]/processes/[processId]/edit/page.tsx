@@ -1,10 +1,9 @@
 import { Heading } from "@/components/Heading";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { onboardingPath, signInPath, teamProcessPath } from "@/app/paths";
-import { getCategories } from "@/features/processes/queries/get-categories";
+import { signInPath, teamProcessPath } from "@/app/paths";
 import { getProcessForEdit } from "@/features/processes/queries/get-process-for-edit";
 import { EditProcessForm } from "@/features/processes/components/process-edit-form";
 
@@ -18,18 +17,12 @@ export default async function ProcessEditPage({
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const org = await getUserOrg(user.userId);
-  if (!org) redirect(onboardingPath());
+  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
+  if (!org || !isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
-  const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
-  if (!isAdmin) redirect(teamProcessPath(departmentId, teamId));
+  const process = await getProcessForEdit(processId);
 
-  const [{list: categories}, process] = await Promise.all([
-    getCategories(teamId),
-    getProcessForEdit(processId),
-  ]);
-
-  if(!process){
+  if (!process) {
     redirect(teamProcessPath(departmentId, teamId));
   }
 
@@ -40,12 +33,11 @@ export default async function ProcessEditPage({
         description="Edit a process and ship to documentation"
       />
       <Suspense fallback={<Spinner />}>
-        <EditProcessForm 
-        departmentId={departmentId}
-        teamId={teamId}
-        categories={categories}
-        processId={processId}
-        process={process}
+        <EditProcessForm
+          departmentId={departmentId}
+          teamId={teamId}
+          processId={processId}
+          process={process}
         />
       </Suspense>
     </>

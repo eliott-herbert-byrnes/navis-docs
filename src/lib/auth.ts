@@ -7,6 +7,25 @@ export const getSessionUser = async () => {
   return { email: session.user.email, userId: session.user.id };
 };
 
+export const getUserOrgWithRole = async (userId: string) => {
+  const membership = await prisma.orgMembership.findFirst({
+    where: { userId },
+    include: { org: true },
+  });
+  
+  if (!membership) {
+    return { org: null, isAdmin: false, role: null };
+  }
+  
+  const isAdmin = membership.role === "ADMIN" || membership.role === "OWNER";
+  
+  return {
+    org: membership.org,
+    isAdmin,
+    role: membership.role,
+  };
+};
+
 export const getUserOrg = async (userId: string) => {
   const membership = await prisma.orgMembership.findFirst({
     where: { userId },
@@ -29,44 +48,63 @@ export const getUserById = async (userId: string) => {
   return user ?? null;
 };
 
-export const getOrgMembers = async (orgId: string, search?: string) => {
-  const members = await prisma.orgMembership.findMany({
-    where: {
-      orgId,
-      ...(search
-        ? { user: { 
-          OR: [
-            { name: { contains: search, mode: "insensitive" as const } },
-            { email: { contains: search, mode: "insensitive" as const } },
-          ],
-        },
+export const getOrgMembers = async (
+  orgId: string, 
+  search?: string,
+  limit = 10,
+  offset = 0
+) => {
+  const where = {
+    orgId,
+    ...(search
+      ? {
+          user: {
+            OR: [
+              { name: { contains: search, mode: "insensitive" as const } },
+              { email: { contains: search, mode: "insensitive" as const } },
+            ],
+          },
         }
-        : {}),
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          createdAt: true,
-          emailVerified: true,
-          memberships: {
-            select: {
-              role: true,
+      : {}),
+  };
+
+  const [members, total] = await Promise.all([
+    prisma.orgMembership.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            createdAt: true,
+            emailVerified: true,
+            memberships: {
+              select: {
+                role: true,
+              },
             },
           },
         },
       },
-    },
-    orderBy: {
-      user: {
-        name: "asc",
+      orderBy: {
+        user: {
+          name: "asc",
+        },
       },
-    },
-    take: 10,
-  });
-  return members ?? null;
+      take: limit,
+      skip: offset,  
+    }),
+    prisma.orgMembership.count({ where }),
+  ]);
+
+  return {
+    members: members ?? [],
+    total,
+    hasMore: offset + limit < total,
+    currentPage: Math.floor(offset / limit) + 1,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export async function getUserTeamIds(userId: string): Promise<string[]> {

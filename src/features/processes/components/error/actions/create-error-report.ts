@@ -54,7 +54,7 @@ export const createErrorReport = async (
       ALLOWED_ATTR: [],
     });
 
-    const createdReport = await prisma.errorReport.create({
+    await prisma.errorReport.create({
       data: {
         processId,
         createdBy: user.userId,

@@ -2,7 +2,7 @@
 import { homePath } from "@/app/paths";
 import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import z from "zod";
@@ -20,14 +20,8 @@ try {
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
-    const org = await getUserOrg(user.userId);
-
-    if (!org) {
-      return toActionState("ERROR", "No organization found", formData);
-    }
-
-    const isAdmin = await isOrgAdminOrOwner(user.userId);
-    if (!isAdmin) {
+    const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+    if (!org || !isAdmin) {
       return toActionState("ERROR", "Forbidden", formData);
     }
 

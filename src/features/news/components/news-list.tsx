@@ -9,6 +9,7 @@ import { NewsDeleteButton } from "./news-delete-button";
 import { signInPath } from "@/app/paths";
 import { redirect } from "next/navigation";
 import DOMPurify from "dompurify";
+import { JsonObject } from "@prisma/client/runtime/library";
 
 type NewsPostListProps = {
   departmentId: string;
@@ -46,16 +47,20 @@ export async function NewsPostList({
   );
   const userMap = Object.fromEntries(users.map((user) => [user?.id, user]));
 
-  const getTextFromBodyJSON = (json: any): string => {
+  const getTextFromBodyJSON = (json: JsonObject): string => {
     if (!json) return "";
 
-    if (json.type === "text" && json.text) {
+    if (json.type === "text" && typeof json.text === "string") {
       return json.text;
     }
 
-    if (json.content && Array.isArray(json.content)) {
+    if (Array.isArray(json.content)) {
       return json.content
-        .map((item: any) => getTextFromBodyJSON(item))
+        .map((item) =>
+          item && typeof item === "object"
+            ? getTextFromBodyJSON(item as JsonObject)
+            : ""
+        )
         .join(" ");
     }
 
@@ -89,7 +94,7 @@ export async function NewsPostList({
                 </div>
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground line-clamp-3">
-                    {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body))}
+                    {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body as JsonObject))}
                   </p>
                 </div>
               </CardHeader>
@@ -134,7 +139,7 @@ export async function NewsPostList({
               </div>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">
-                  {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body))}
+                  {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body as JsonObject))}
                 </p>
               </div>
             </CardHeader>

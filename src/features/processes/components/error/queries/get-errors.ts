@@ -1,6 +1,6 @@
 "use server";
 
-import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { getSessionUser} from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function getErrors(orgId: string, search?: string) {

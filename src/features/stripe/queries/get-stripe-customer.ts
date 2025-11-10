@@ -8,5 +8,12 @@ export const getStripeCustomerByOrg = async (orgSlug: string | null | undefined)
 
   return await prisma.organization.findUnique({
     where: { slug: orgSlug },
+    select: {
+      stripeCustomerId: true,
+      stripeSubscriptionId: true,
+      stripeSubscriptionStatus: true,
+      plan: true,
+      currentPeriodEnd: true,
+    },
   });
 };

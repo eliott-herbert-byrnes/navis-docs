@@ -1,8 +1,6 @@
-// src/features/processes/components/editors/flow-editor.tsx
-
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -72,7 +70,8 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       nodeId: string,
       newData: Partial<FlowNode["data"]>,
       currentNodes: Node[],
-      currentEdges: Edge[]
+      // currentEdges: Edge[]
+
     ) => {
       const newNodes = currentNodes.map((node) =>
         node.id === nodeId
@@ -171,7 +170,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
 
   const handleNodeDataUpdate = useCallback(
     (nodeId: string, newData: Partial<FlowNode["data"]>) => {
-      const updatedNodes = updateNodeData(nodeId, newData, nodes, edges);
+      const updatedNodes = updateNodeData(nodeId, newData, nodes);
       setNodes(updatedNodes);
       syncToParent(updatedNodes, edges);
     },

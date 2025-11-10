@@ -8,7 +8,6 @@ import { Trash2 } from "lucide-react";
 export function StepNode({
   data,
   isConnectable,
-  id,
 }: {
   data: {
     label: string;
@@ -17,7 +16,6 @@ export function StepNode({
     onDelete?: () => void;
   };
   isConnectable: boolean;
-  id: string;
 }) {
   return (
     <Card className="p-3 min-w-[200px] relative group">

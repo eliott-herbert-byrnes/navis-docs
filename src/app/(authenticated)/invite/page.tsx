@@ -1,11 +1,10 @@
 import { homePath, signInPath } from "@/app/paths";
-import { EmptyState } from "@/components/empty-state";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/ui/spinner";
 import { InvitationCreateButton } from "@/features/invite/components/invitation-create-button";
 import { InvitationList } from "@/features/invite/components/invitation-list";
 import { InvitationSearch } from "@/features/invite/components/invitation-search";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -20,11 +19,8 @@ const InvitationPage = async ({ searchParams }: InvitationPageProps) => {
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
-  if (!isAdmin) redirect(homePath());
-
-  const org = await getUserOrg(user.userId);
-  if (!org) redirect(homePath());
+  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  if (!org || !isAdmin) redirect(homePath());
 
   const params = await searchParams;
   const search = params.search;

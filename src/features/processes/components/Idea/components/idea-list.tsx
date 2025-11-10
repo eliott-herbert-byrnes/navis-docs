@@ -24,7 +24,6 @@ import {
   Loader2,
   Search,
   Archive,
-  Check,
   MoreVertical,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -71,7 +70,6 @@ import {
 import { useRouter } from "next/navigation";
 import { updateIdeaStatus } from "../actions/update-idea-status";
 import { IdeaDeleteButton } from "./idea-delete-button";
-import DOMPurify from 'dompurify';
 
 export const schema = z.object({
   id: z.string(),
@@ -114,12 +112,12 @@ function TableCellViewer({ item }: { item: Idea }) {
             variant="link"
             className="text-foreground w-fit px-0 text-left"
           >
-            {DOMPurify.sanitize(item.title)}
+            {item.title}
           </Button>
         </SheetTrigger>
         <SheetContent side={isMobile ? "bottom" : "right"}>
           <SheetHeader className="gap-1">
-            <SheetTitle>{DOMPurify.sanitize(item.title)}</SheetTitle>
+            <SheetTitle>{item.title}</SheetTitle>
             <SheetDescription>Idea Details</SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-4 overflow-y-auto py-4 text-sm mx-4">
@@ -142,7 +140,7 @@ function TableCellViewer({ item }: { item: Idea }) {
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Idea Body</Label>
               <p className="text-muted-foreground whitespace-pre-wrap">
-                {DOMPurify.sanitize(item.body)}
+                {item.body}
               </p>
             </div>
 

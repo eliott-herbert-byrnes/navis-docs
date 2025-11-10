@@ -1,3 +1,5 @@
+// src/middleware.ts
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -18,17 +20,18 @@ export async function middleware(req: NextRequest) {
 
   const response = NextResponse.next();
 
+  // ✅ FIXED: Better CSP that allows Next.js to work
   const cspHeader = `
-  default-src 'self';
-  script-src 'self' 'nonce-${crypto.getRandomValues(new Uint8Array(16)).toString()}' https://cdn.jsdelivr.net https://js.sentry-cdn.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: https:;
-  connect-src 'self' https://api.github.com https://*.sentry.io https://api.anthropic.com;
-  frame-ancestors 'none';
-  base-uri 'self';
-  form-action 'self';
-`;
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://js.sentry-cdn.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data: https:;
+    connect-src 'self' https://api.github.com https://*.sentry.io https://api.anthropic.com;
+    frame-ancestors 'none';
+    base-uri 'self';
+    form-action 'self';
+  `;
 
   response.headers.set(
     "Content-Security-Policy",

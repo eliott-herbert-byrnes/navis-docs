@@ -15,7 +15,6 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { limiter } from "@/features/auth/lib/rate-limit";
-import { getLimitByUser } from "@/lib/rate-limiter";
 
 const schema = z.object({
   email: z.email().min(1, { message: "Is Required" }).max(191),

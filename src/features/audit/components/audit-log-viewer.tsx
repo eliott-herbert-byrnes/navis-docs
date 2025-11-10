@@ -1,8 +1,8 @@
 import { EmptyState } from "@/components/empty-state";
 import { Separator } from "@/components/ui/separator";
 import { getUserById } from "@/lib/auth";
-import { format, formatDistanceToNow } from "date-fns";
-import { User } from "next-auth";
+import { JsonObject } from "@prisma/client/runtime/library";
+import { formatDistanceToNow } from "date-fns";
 
 type AuditLog = {
   id: string;
@@ -10,8 +10,8 @@ type AuditLog = {
   entityType: string;
   entityId: string;
   at: Date;
-  beforeJSON: any;
-  afterJSON: any;
+  beforeJSON: JsonObject | null;
+  afterJSON: JsonObject | null;
   actorId: string;
 };
 

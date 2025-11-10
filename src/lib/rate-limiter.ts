@@ -1,6 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { headers } from "next/headers";
+import { headers } from "next/dist/server/request/headers";
 
 const redis = Redis.fromEnv();
 

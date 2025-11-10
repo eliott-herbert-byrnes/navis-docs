@@ -14,7 +14,6 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -59,7 +58,10 @@ export function DepartmentTeamTable({
     setError(null);
     try {
       const res = await fetch(`/api/departments/${departmentId}/teams`, {
-        cache: "no-store",
+        next: { 
+          revalidate: 300,  
+          tags: [`department-${departmentId}-teams`]  
+        },
       });
       if (!res.ok) {
         const msg =

@@ -22,7 +22,6 @@ type EditProcessFormProps = {
   teamId: string;
   processId: string;
   process: ProcessForEdit;
-  categories: { id: string; name: string }[];
 };
 
 export const EditProcessForm = ({
@@ -30,7 +29,6 @@ export const EditProcessForm = ({
   teamId,
   processId,
   process,
-  categories,
 }: EditProcessFormProps) => {
   const router = useRouter();
   const [isCancelling, startTransition] = useTransition();

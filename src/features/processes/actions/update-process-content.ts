@@ -44,6 +44,7 @@ export async function updateProcessContent(
     try {
       contentJSON = JSON.parse(contentJSONString);
     } catch (error) {
+      console.error(error);
       return toActionState("ERROR", "Invalid content JSON", formData);
     }
 
@@ -101,6 +102,7 @@ export async function updateProcessContent(
       formData
     );
   } catch (error) {
+    console.error(error);
     return fromErrorToActionState(error, formData);
   }
 }

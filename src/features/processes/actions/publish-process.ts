@@ -10,6 +10,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProcessStatus } from "@prisma/client";
+import { JsonObject } from "@prisma/client/runtime/library";
 import { z } from "zod";
 
 const inputSchema = z.object({
@@ -59,7 +60,7 @@ export async function publishProcess(
     }
 
     const contentText = generatePlainTextFromTiptap(
-      process.pendingVersion.contentJSON
+      process.pendingVersion.contentJSON as JsonObject
     );
 
     await prisma.processVersion.update({
@@ -105,14 +106,14 @@ export async function publishProcess(
   }
 }
 
-function generatePlainTextFromTiptap(contentJSON: any): string {
+function generatePlainTextFromTiptap(contentJSON: JsonObject): string {
   if (!contentJSON || typeof contentJSON !== "object") {
     return "";
   }
 
   let text = "";
 
-  function extractText(node: any): void {
+  function extractText(node: JsonObject): void {
     if (!node) return;
 
     if (node.text) {
@@ -120,24 +121,22 @@ function generatePlainTextFromTiptap(contentJSON: any): string {
     }
 
     if (Array.isArray(node.content)) {
-      node.content.forEach((child: any) => {
-        extractText(child);
-        if (
-          child.type === "paragraph" ||
-          child.type === "heading" ||
-          child.type === "listItem"
+      node.content.forEach((child) => {
+        if (typeof child === "object" && child !== null) {
+          extractText(child as JsonObject);
+          if (
+            (child as { type?: string }).type === "paragraph" ||
+            (child as { type?: string }).type === "heading" ||
+          (child as { type?: string }).type === "listItem"
         ) {
           text += "\n";
+        }
         }
       });
     }
   }
 
-  if (contentJSON.tiptap) {
-    extractText(contentJSON.tiptap);
-  } else {
-    extractText(contentJSON);
-  }
+  extractText(contentJSON.tiptap as JsonObject);
 
   return text.trim();
 }

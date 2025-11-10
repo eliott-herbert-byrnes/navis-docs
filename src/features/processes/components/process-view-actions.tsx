@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, Printer, Share2, Flag, Star, Loader2 } from "lucide-react";
+import { Edit, Printer, Share2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcessPath } from "@/app/paths";
 import { toast } from "sonner";
@@ -50,6 +50,7 @@ export function ProcessViewActions({
       await navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard");
     } catch (error) {
+      console.error(error);
       toast.error("Failed to copy link");
     }
   };

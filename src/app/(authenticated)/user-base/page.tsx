@@ -9,6 +9,7 @@ import { Suspense } from "react";
 type UserBasePageProps = {
   searchParams: Promise<{
     search?: string;
+    page?: string;
   }>;
 };
 
@@ -24,8 +25,16 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
 
   const params = await searchParams;
   const search = params.search;
+  const page = params.page ? parseInt(params.page, 10) : 1;
+  const limit = 10;
+  const offset = (page - 1) * limit;
 
-  const members = await getOrgMembers(org.id, search);
+  const { members } = await getOrgMembers(
+    org.id,
+    search,
+    limit,
+    offset
+  );
 
   return (
     <>
@@ -34,7 +43,9 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
         description="View and manage users for your organization"
       />
       <Suspense fallback={<Spinner />} key={search}>
-        <UserList data={members} />
+        <UserList 
+          data={members} 
+        />
       </Suspense>
     </>
   );

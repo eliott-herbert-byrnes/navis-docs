@@ -1,6 +1,6 @@
 "use server";
 
-import { errorsPath, newsPath } from "@/app/paths";
+import { newsPath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,

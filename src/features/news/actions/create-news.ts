@@ -64,7 +64,7 @@ export const createNews = async (
       ALLOWED_ATTR: [],
     });
 
-    const createdNews = await prisma.newsPost.create({
+    await prisma.newsPost.create({
       data: {
         teamId,
         title: newsPostTitle,

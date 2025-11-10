@@ -1,6 +1,6 @@
 "use client";
 
-import { newsCreatePath, teamProcessCreatePath } from "@/app/paths";
+import { newsCreatePath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle, PlusIcon } from "lucide-react";
 import { useTransition } from "react";

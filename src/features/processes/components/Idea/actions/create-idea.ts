@@ -56,7 +56,7 @@ export const createIdea = async (
       ALLOWED_ATTR: [],
     });
 
-    const createdIdea = await prisma.idea.create({
+    await prisma.idea.create({
       data: {
         title: ideaTitle,
         teamId,

@@ -7,7 +7,6 @@ import { Trash2 } from "lucide-react";
 export function DecisionNode({
   data,
   isConnectable,
-  id,
 }: {
   data: {
     label: string;
@@ -15,7 +14,6 @@ export function DecisionNode({
     onDelete?: () => void;
   };
   isConnectable: boolean;
-  id: string;
 }) {
   return (
     <div className="relative group">

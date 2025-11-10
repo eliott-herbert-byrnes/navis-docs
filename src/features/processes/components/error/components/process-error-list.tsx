@@ -74,7 +74,6 @@ import { updateErrorStatus } from "../actions/update-error-status";
 import { viewProcessPath } from "@/app/paths";
 import { useRouter } from "next/navigation";
 import { ProcessErrorDeleteButton } from "./process-error-delete-button";
-import DOMPurify from 'dompurify';
 
 export const schema = z.object({
   id: z.string(),
@@ -108,6 +107,7 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
       toast.error(result.message);
     }
   };
+
 
   return (
     <div className="w-full">
@@ -152,7 +152,7 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Report Body</Label>
               <p className="text-muted-foreground whitespace-pre-wrap">
-                {DOMPurify.sanitize(item.body)}
+                {item.body}
               </p>
             </div>
 

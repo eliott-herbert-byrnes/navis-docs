@@ -16,27 +16,29 @@ export const getProcessForView = async (processId: string) => {
     redirect(onboardingPath());
   }
 
-  const process = await prisma.process.findUnique({
-    where: { id: processId },
-    include: {
-      publishedVersion: true,
-      team: true,
-      category: true,
-    },
-  });
+  const [process, favorite] = await Promise.all([
+    prisma.process.findUnique({
+      where: { id: processId },
+      include: {
+        publishedVersion: true,
+        team: true,
+        category: true,
+      },
+    }),
+    prisma.favorite.findUnique({
+      where: {
+        userId_processId: {
+          userId: user.userId,
+          processId: processId,
+        },
+      },
+      select: { userId: true },
+    }),
+  ]);
 
   if (!process) {
     return null;
   }
-
-  const favorite = await prisma.favorite.findUnique({
-    where: {
-      userId_processId: {
-        userId: user.userId,
-        processId: processId,
-      },
-    },
-  });
 
   return {
     ...process,

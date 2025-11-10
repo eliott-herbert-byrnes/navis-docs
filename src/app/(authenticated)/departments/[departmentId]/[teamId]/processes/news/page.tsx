@@ -1,10 +1,10 @@
 import { Heading } from "@/components/Heading";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/empty-state";
-import { onboardingPath, signInPath } from "@/app/paths";
+import { signInPath, teamProcessPath } from "@/app/paths";
 import { getDepartments } from "@/features/departments/queries/get-departments";
 import { ProcessBreadcrumbs } from "../_navigation";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
@@ -21,10 +21,8 @@ export default async function NewsPage({
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const org = await getUserOrg(user.userId);
-  if (!org) redirect(onboardingPath());
-
-  const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
+  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  if (!org || !isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
   const { list: departments } = await getDepartments(org.id);
 

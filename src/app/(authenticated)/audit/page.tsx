@@ -1,13 +1,14 @@
 "use server";
-import { auditPath, homePath, signInPath } from "@/app/paths";
+import { homePath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
 import { AuditEntityType, getAuditLogs } from "@/features/audit/utils/audit";
 import { AuditSearch } from "@/features/audit/components/audit-search";
+import { JsonObject } from "@prisma/client/runtime/library";
 
 type AuditPageProps = {
   searchParams: Promise<{
@@ -20,18 +21,21 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const isAdmin = await isOrgAdminOrOwner(user!.userId);
-  if (!isAdmin) redirect(homePath());
-
-  const org = await getUserOrg(user!.userId);
-  if (!org) redirect(homePath());
+  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  if (!org || !isAdmin) redirect(homePath());
 
   const params = await searchParams;
   const search = params.search;
   const entityType = params.entityType;
-  const logs = await getAuditLogs(org.id, undefined, search, {
+  const rawLogs = await getAuditLogs(org.id, undefined, search, {
     entityType,
   });
+  
+  const logs = rawLogs.map(log => ({
+    ...log,
+    beforeJSON: (typeof log.beforeJSON === 'object' ? log.beforeJSON : null) as JsonObject | null,
+    afterJSON: (typeof log.afterJSON === 'object' ? log.afterJSON : null) as JsonObject | null,
+  }));
 
   return (
     <>

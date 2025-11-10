@@ -42,8 +42,10 @@ const AcceptInvitePage = () => {
       <h2 className="text-xl font-bold">Navis Docs</h2>
       <h1 className="text-3xl font-semibold">Organization Invitation</h1>
       <CardCompact
+        title="Join Organization"
+        description="Accept your invitation to join"
         className="flex flex-col gap-3 mt-3 w-full"
-        header={
+        content={
           <Form
             action={action}
             actionState={actionState}
