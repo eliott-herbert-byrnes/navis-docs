@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getAddresses(orgId: string) {
+export async function getAddresses() {
   try {
     const addresses = await prisma.address.findMany({
       orderBy: {

@@ -6,7 +6,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { getSessionUser, getUserOrg, getUserOrgWithRole, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { revalidatePath } from "next/cache";

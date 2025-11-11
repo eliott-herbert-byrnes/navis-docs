@@ -10,6 +10,31 @@ import { Suspense } from "react";
 import { signInPath } from "@/app/paths";
 import "./print.css";
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 1800;
+
+export async function generateStaticParams() {
+  const processes = await prisma.process.findMany({
+    take: 50,
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      teamId: true,
+      team: {
+        select: {
+          departmentId: true,
+        },
+      },
+    },
+  });
+
+  return processes.map((process) => ({
+    departmentId: process.team.departmentId,
+    teamId: process.teamId,
+    processId: process.id,
+  }));
+}
 
 type ProcessViewPageProps = {
   params: Promise<{ departmentId: string; teamId: string; processId: string }>;

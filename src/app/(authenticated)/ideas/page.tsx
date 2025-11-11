@@ -3,7 +3,7 @@ import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/ui/spinner";
 import { IdeaList } from "@/features/processes/components/Idea/components/idea-list";
 import { getOrgIdeas } from "@/features/processes/components/Idea/queries/get-ideas";
-import { getSessionUser, getUserOrg, getUserOrgWithRole, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 

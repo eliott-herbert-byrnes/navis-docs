@@ -1,6 +1,5 @@
 "use client";
 
-import { DialogFooter } from "@/components/ui/dialog";
 import { Form } from "@/components/form/form";
 import { Organization } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
@@ -41,7 +40,12 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
         <Card>
           <CardHeader>
             <CardTitle>Organization Settings</CardTitle>
-            <CardDescription>Manage the organization settings</CardDescription>
+            <CardDescription>
+              Manage the organization settings
+              <p className="text-sm text-muted-foreground text-red-500 mt-2">
+                Export / Delete Organization disabled for MVP
+              </p>
+            </CardDescription>
           </CardHeader>
           <Separator />
 
@@ -86,7 +90,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
               </Button>
             </div>
             <Separator />
-            <SubmitButton label="Update" className="w-[75px]" disabled/>
+            <SubmitButton label="Update" className="w-[75px]" disabled />
           </CardContent>
         </Card>
       </div>

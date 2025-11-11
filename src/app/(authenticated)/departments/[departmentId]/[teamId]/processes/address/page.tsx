@@ -33,7 +33,7 @@ export default async function AddressPage({
     .find((department) => department.id === departmentId)
     ?.teams.find((team) => team.id === teamId)?.name;
 
-  const addresses = await getAddresses(org.id);
+  const addresses = await getAddresses();
 
   return (
     <>

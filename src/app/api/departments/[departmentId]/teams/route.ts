@@ -1,5 +1,5 @@
 // navis-docs/src/app/api/departments/[departmentId]/teams/route.ts
-import { getSessionUser, getUserOrg, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";

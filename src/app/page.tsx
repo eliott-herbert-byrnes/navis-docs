@@ -7,6 +7,12 @@ import { DepartmentCreateButton } from "@/features/departments/components/depart
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 
+export const revalidate = 7200;
+
+export async function generateStaticParams() {
+  return [{}];
+}
+
 export default async function Home() {
   const user = await getSessionUser();
   if (!user) redirect(signInPath());

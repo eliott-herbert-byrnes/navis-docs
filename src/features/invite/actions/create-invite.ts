@@ -6,7 +6,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { getSessionUser, getUserOrg, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { sha256 } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
 import { OrgMembershipRole } from "@prisma/client";

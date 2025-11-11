@@ -4,11 +4,27 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { onboardingPath, signInPath } from "@/app/paths";
-import { getDepartments } from "@/features/departments/queries/get-departments";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
 import { FavoriteList } from "@/features/processes/components/favorite/components/favorite-list";
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
+import { getCachedDepartments } from "@/lib/cache-queries";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const teams = await prisma.team.findMany({
+    select: {
+      id: true,
+      departmentId: true,
+    },
+  });
+  return teams.map((team) => ({
+    departmentId: team.departmentId,
+    teamId: team.id,
+  }));
+}
 
 export default async function ProcessPage({
   params,
@@ -20,11 +36,11 @@ export default async function ProcessPage({
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(signInPath());
 
-  const { list: departments } = await getDepartments(org.id);
+  const { list: departments } = await getCachedDepartments(org.id);
 
   const departmentName = departments.find(
     (department) => department.id === departmentId

@@ -23,6 +23,9 @@ const GeistSans = Geist({
 export const metadata: Metadata = {
   title: "Navis Docs",
   description: "Welcome to the Navis Docs",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default async function RootLayout({

@@ -7,7 +7,7 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { generateProcessEmbeddings } from "@/features/ai/actions/generate-embeddings";
 import { createAuditLog } from "@/features/audit/utils/audit";
-import { getSessionUser, getUserOrg, getUserOrgWithRole, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProcessStatus } from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";

@@ -23,9 +23,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuItem,  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import {
@@ -45,7 +43,6 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { AddressDeleteButton } from "./address-delete-button";
-import { Address } from "@prisma/client";
 
 export const schema = z.object({
   id: z.string(),
