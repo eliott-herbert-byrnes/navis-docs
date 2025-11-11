@@ -14,7 +14,6 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { onboardingPath } from "@/app/paths";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
@@ -46,6 +45,8 @@ export function SignInForm({
   const [msg, setMsg] = useState<string | null>(null);
   const [pendingGoogle, setPendingGoogle] = useState(false);
   const [demoCode, setDemoCode] = useState<string | null>(null);
+
+  console.log("demoCode", demoCode);
 
   const continueWithGoogle = () => {
     setPendingGoogle(true);

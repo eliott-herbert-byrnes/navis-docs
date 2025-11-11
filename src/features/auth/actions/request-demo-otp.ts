@@ -18,6 +18,7 @@ export const requestDemoOtpAction = async () => {
 
     return { ok: true, message: "Demo code generated", code };
   } catch (error) {
+    console.error("Failed to generate demo code:", error);
     return { ok: false, message: "Failed to generate demo code" };
   }
 };
