@@ -5,11 +5,11 @@ import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/empty-state";
 import { signInPath, teamProcessPath } from "@/app/paths";
-import { getDepartments } from "@/features/departments/queries/get-departments";
 import { ProcessBreadcrumbs } from "../_navigation";
 import { getAddresses } from "@/features/address/queries/get-addresses";
 import { AddressList } from "@/features/address/components/address-list";
 import { AddressCreateButton } from "@/features/address/components/address-create-button";
+import { getCachedDepartments } from "@/lib/cache-queries";
 
 export default async function AddressPage({
   params,
@@ -23,7 +23,7 @@ export default async function AddressPage({
   const { org, isAdmin } = await getUserOrgWithRole(user.userId);
   if (!org) redirect(teamProcessPath(departmentId, teamId));
 
-  const { list: departments } = await getDepartments(org.id);
+  const { list: departments } = await getCachedDepartments(org.id);
 
   const departmentName = departments.find(
     (department) => department.id === departmentId

@@ -1,14 +1,14 @@
 import { EmptyState } from "@/components/empty-state";
-import { getDepartments } from "../queries/get-departments";
 import { DepartmentCard } from "./department-card";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { getCachedDepartments } from "@/lib/cache-queries";
 
 type DepartmentListProps = {
   orgId: string;
 };
 
 const DepartmentList = async ({ orgId }: DepartmentListProps) => {
-  const { list: departments } = await getDepartments(orgId);
+  const { list: departments } = await getCachedDepartments(orgId);
   const user = await getSessionUser();
   const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
 

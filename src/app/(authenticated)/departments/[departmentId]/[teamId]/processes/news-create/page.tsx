@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { signInPath, teamProcessPath } from "@/app/paths";
 import { NewsCreateForm } from "@/features/news/components/news-create-form";
-import { getDepartments } from "@/features/departments/queries/get-departments";
+import { getCachedDepartments } from "@/lib/cache-queries";
 
 export default async function NewsCreatePage({
   params,
@@ -20,7 +20,7 @@ export default async function NewsCreatePage({
   const {org, isAdmin} = await getUserOrgWithRole(user.userId);
   if (!org || !isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
-  const { list: departments } = await getDepartments(org.id);
+  const { list: departments } = await getCachedDepartments(org.id);
 
   const teamName = departments
     .find((department) => department.id === departmentId)

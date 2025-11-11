@@ -1,7 +1,7 @@
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { onboardingPath, signInPath } from "./paths";
+import { signInPath } from "./paths";
 import { DepartmentList } from "@/features/departments/components/department-list";
 import { DepartmentCreateButton } from "@/features/departments/components/department-buttons/department-create-button";
 import { Suspense } from "react";
