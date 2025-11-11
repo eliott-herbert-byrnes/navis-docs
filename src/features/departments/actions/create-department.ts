@@ -8,7 +8,7 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrg, getUserOrgWithRole, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { revalidatePath } from "next/cache";
@@ -42,14 +42,8 @@ export const createDepartment = async (
     if (!success) {
       return toActionState("ERROR", "Too many requests", formData);
     }
-    const org = await getUserOrg(user.userId);
-
-    if (!org) {
-      return toActionState("ERROR", "No organization found", formData);
-    }
-
-    const isAdmin = await isOrgAdminOrOwner(user.userId);
-    if (!isAdmin) {
+    const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+    if (!org || !isAdmin) {
       return toActionState("ERROR", "Forbidden", formData);
     }
 

@@ -3,7 +3,7 @@ import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { homePath, signInPath } from "@/app/paths";
+import { onboardingPath, signInPath } from "@/app/paths";
 import { getDepartments } from "@/features/departments/queries/get-departments";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
@@ -21,7 +21,8 @@ export default async function ProcessPage({
   if (!user) redirect(signInPath());
 
   const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org || !isAdmin) redirect(homePath());
+  if (!org) redirect(onboardingPath());
+  if (!isAdmin) redirect(signInPath());
 
   const { list: departments } = await getDepartments(org.id);
 

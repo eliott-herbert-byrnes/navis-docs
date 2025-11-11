@@ -22,7 +22,7 @@ export default async function NewsPage({
   if (!user) redirect(signInPath());
 
   const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org || !isAdmin) redirect(teamProcessPath(departmentId, teamId));
+  if (!org) redirect(teamProcessPath(departmentId, teamId));
 
   const { list: departments } = await getDepartments(org.id);
 

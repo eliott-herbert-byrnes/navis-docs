@@ -12,7 +12,7 @@ export const getProcessForView = async (processId: string) => {
   }
 
   const org = await getUserOrg(user.userId);
-  if (!org) {
+  if (!org.org) {
     redirect(onboardingPath());
   }
 

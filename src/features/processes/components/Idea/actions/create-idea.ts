@@ -10,7 +10,6 @@ import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import DOMPurify from "dompurify";
 import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 const inputSchema = z.object({
@@ -39,7 +38,7 @@ export const createIdea = async (
     }
 
     const org = await getUserOrg(user.userId);
-    if (!org) {
+    if (!org.org) {
       return toActionState("ERROR", "No organization found", formData);
     }
 
@@ -51,17 +50,12 @@ export const createIdea = async (
 
     const { teamId, ideaBody, ideaTitle } = parsed;
 
-    const sanitizedBody = DOMPurify.sanitize(ideaBody, {
-      ALLOWED_TAGS: [],
-      ALLOWED_ATTR: [],
-    });
-
     await prisma.idea.create({
       data: {
         title: ideaTitle,
         teamId,
         createdBy: user.userId,
-        body: sanitizedBody,
+        body: ideaBody,
         status: "NEW",
       },
     });

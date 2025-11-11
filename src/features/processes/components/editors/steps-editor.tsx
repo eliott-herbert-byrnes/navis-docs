@@ -36,7 +36,6 @@ export function StepsEditor({
   onChange,
   isPreview,
 }: StepsEditorProps) {
-  // Ensure all steps have IDs
   const initialSteps = content?.steps?.length
     ? content.steps.map((step, index) => ({
         ...step,

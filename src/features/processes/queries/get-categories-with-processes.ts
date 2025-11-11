@@ -23,7 +23,7 @@ export async function getCategoriesWithProcesses(
       sortOrder: true,
       processes: {
         where: {
-          status: "PUBLISHED", // Only show published processes in sidebar
+          status: "PUBLISHED", 
         },
         select: {
           id: true,

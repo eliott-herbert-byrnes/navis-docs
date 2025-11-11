@@ -38,7 +38,7 @@ import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
       }
   
       const org = await getUserOrg(user.userId);
-      if (!org) {
+      if (!org.org) {
         return toActionState("ERROR", "No organization found", formData);
       }
   
@@ -58,7 +58,7 @@ import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
       });
   
       await createAuditLog({
-        orgId: org.id,
+        orgId: org.org?.id ?? "",
         actorId: user.userId,
         action: "USER_DELETED",
         entityType: "USER",

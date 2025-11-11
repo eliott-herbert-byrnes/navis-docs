@@ -1,10 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import {
-  ChevronRight,
-  Home,
-  FileText,
-  Newspaper,
-} from "lucide-react";
+import { ChevronRight, Home, FileText, Newspaper, BookOpen } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -13,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
+  addressPath,
   newsPath,
   teamProcessCreatePath,
   teamProcessPath,
@@ -44,16 +40,13 @@ export async function ProcessSidebar({
       id: true,
       slug: true,
       title: true,
-      status: true, 
+      status: true,
     },
     orderBy: {
       title: "asc",
     },
   });
 
-  // const totalProcesses =
-  //   categories.reduce((sum, cat) => sum + cat.processes.length, 0) +
-  //   uncategorizedProcesses.length;
   return (
     <aside className="w-64 border-r bg-background flex flex-col h-full">
       {/* Header */}
@@ -75,6 +68,12 @@ export async function ProcessSidebar({
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Newspaper className="h-4 w-4" />
               News
+            </Button>
+          </Link>
+          <Link href={addressPath(departmentId, teamId)}>
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <BookOpen className="h-4 w-4" />
+              Addresses
             </Button>
           </Link>
 

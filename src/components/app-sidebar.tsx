@@ -32,7 +32,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { auditPath, errorsPath, homePath, ideasPath, invitePath, processBasePath, subscriptionPath, userBasePath } from "@/app/paths";
+import {
+  auditPath,
+  errorsPath,
+  homePath,
+  ideasPath,
+  invitePath,
+  processBasePath,
+  settingsPath,
+  subscriptionPath,
+  userBasePath,
+} from "@/app/paths";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
@@ -93,7 +103,7 @@ const items = [
   },
   {
     title: "Settings",
-    url: "#",
+    url: settingsPath(),
     icon: Settings,
     isAdmin: true,
   },
@@ -109,13 +119,11 @@ export async function AppSidebar() {
     <Sidebar variant="inset">
       <SidebarContent>
         <SidebarGroup className="flex flex-col gap-2 h-full">
-
           <SidebarGroupLabel>
             <div className="flex flex-row gap-2 items-center">
               <LucideShip className="w-4 h-4" />
               <OrgBadge />
             </div>
-            
           </SidebarGroupLabel>
           <Separator />
           <SidebarGroupContent>
@@ -175,23 +183,51 @@ export async function AppSidebar() {
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem>
-                  <Button variant="ghost" className="flex flex-row justify-start w-full h-6">
-                    <Link href="/" className="text-sm font-normal cursor-default">Support</Link>
+                  <Button
+                    variant="ghost"
+                    className="flex flex-row justify-start w-full h-6"
+                  >
+                    <Link
+                      href="/"
+                      className="text-sm font-normal cursor-default"
+                    >
+                      Support
+                    </Link>
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                <Button variant="ghost" className="flex flex-row justify-start w-full h-6">
-                    <Link href="/" className="text-sm font-normal cursor-default">Documentation</Link>
+                  <Button
+                    variant="ghost"
+                    className="flex flex-row justify-start w-full h-6"
+                  >
+                    <Link
+                      href="/"
+                      className="text-sm font-normal cursor-default"
+                    >
+                      Documentation
+                    </Link>
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Button variant="ghost" className="flex flex-row justify-start w-full h-6">
-                    <Link href="/" className="text-sm font-normal cursor-default">Feedback</Link>
+                  <Button
+                    variant="ghost"
+                    className="flex flex-row justify-start w-full h-6"
+                  >
+                    <Link
+                      href="/"
+                      className="text-sm font-normal cursor-default"
+                    >
+                      Feedback
+                    </Link>
                   </Button>
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem>
-                  <Button onClick={signOutAction} variant="ghost" className="flex flex-row justify-start w-full h-6">
+                  <Button
+                    onClick={signOutAction}
+                    variant="ghost"
+                    className="flex flex-row justify-start w-full h-6"
+                  >
                     <p className="text-sm font-normal">Logout</p>
                   </Button>
                 </DropdownMenuItem>

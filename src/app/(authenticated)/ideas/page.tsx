@@ -1,9 +1,9 @@
-import { homePath, signInPath } from "@/app/paths";
+import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/ui/spinner";
 import { IdeaList } from "@/features/processes/components/Idea/components/idea-list";
 import { getOrgIdeas } from "@/features/processes/components/Idea/queries/get-ideas";
-import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionUser, getUserOrg, getUserOrgWithRole, isOrgAdminOrOwner } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -17,11 +17,9 @@ const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
-  if (!isAdmin) redirect(homePath());
-
-  const org = await getUserOrg(user.userId);
-  if (!org) redirect(homePath());
+  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  if (!org) redirect(onboardingPath());
+  if (!isAdmin) redirect(signInPath());
 
   const params = await searchParams;
   const search = params.search;

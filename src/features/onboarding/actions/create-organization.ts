@@ -10,6 +10,7 @@ import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { OrgMembershipRole } from "@prisma/client";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { inngest } from "@/inngest/client";
 
@@ -27,7 +28,7 @@ export const createOrganization = async (
   }
 
   const ExistingOrg = await getUserOrg(user.userId);
-  if (ExistingOrg) redirect(homePath());
+  if (ExistingOrg?.org) redirect(homePath());
 
   try {
     const rawName = String(formData.get("name") ?? "");
@@ -68,15 +69,21 @@ export const createOrganization = async (
       },
     });
 
-    await inngest.send({
-      name: "onboarding/create-organization",
-      data: {
-        orgId: org.id,
-        orgSlug: org.slug,
-        orgName: org.name,
-        orgOwnerUserId: user.userId,
-      },
-    });
+    try {
+      await inngest.send({
+        name: "onboarding/create-organization",
+        data: {
+          orgId: org.id,
+          orgSlug: org.slug,
+          orgName: org.name,
+          orgOwnerUserId: user.userId,
+        },
+      });
+    } catch (inngestError) {
+      console.warn("Failed to send Inngest event:", inngestError);
+    }
+
+    revalidatePath("/", "layout");
 
     return toActionState(
       "SUCCESS",

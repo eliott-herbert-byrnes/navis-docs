@@ -11,7 +11,7 @@ export type AuditAction =
   | "TEAM_CREATED"
   | "TEAM_RENAMED"
   | "TEAM_DELETED"
-  // TODO: Process actions
+  //  Process actions
   | "PROCESS_CREATED"
   | "PROCESS_RENAMED"
   | "PROCESS_DELETED"
@@ -20,16 +20,23 @@ export type AuditAction =
   | "PROCESS_ARCHIVED"
   | "PROCESS_UNARCHIVED"
   | "PROCESS_EDITED"
-  // TODO: Category actions
+  // Category actions
   | "CATEGORY_CREATED"
   | "CATEGORY_RENAMED"
   | "CATEGORY_DELETED"
-  // TODO: User actions
+  // User actions
   | "USER_CREATED"
   | "USER_RENAMED"
-  | "USER_DELETED";
-// TODO: NewsPost actions
-// TODO: ErrorReport actions
+  | "USER_DELETED"
+  // Update Role
+  | "USER_ROLE_CHANGED"
+  // Organization actions
+  | "ORGANIZATION_UPDATED"
+  | "ORGANIZATION_DELETED"
+// Address actions
+| "ADDRESS_CREATED"
+| "ADDRESS_UPDATED"
+| "ADDRESS_DELETED";
 // TODO: IngestionJob actions
 
 export type AuditEntityType =
@@ -37,7 +44,10 @@ export type AuditEntityType =
   | "TEAM"
   | "PROCESS"
   | "CATEGORY"
-  | "USER";
+  | "USER"
+  | "USER_ROLE"
+  | "ORGANIZATION"
+  | "ADDRESS";
 
 type AuditLogData = {
   orgId: string;

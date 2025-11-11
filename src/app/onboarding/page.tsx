@@ -8,7 +8,7 @@ const OnboardingPage = async () => {
   const user = await getSessionUser();
 
   const ExistingOrg = await getUserOrg(user!.userId);
-  if (ExistingOrg) redirect(homePath());
+  if (ExistingOrg?.org) redirect(homePath());
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">

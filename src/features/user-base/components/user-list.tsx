@@ -42,6 +42,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -65,6 +66,7 @@ import {
 import { format } from "date-fns/format";
 import { UserDeleteButton } from "./user-delete-button";
 import { OrgMembershipRole } from "@prisma/client";
+import { UserRoleChangeButton } from "./user-role-change-button";
 
 export const schema = z.object({
   id: z.string(),
@@ -208,6 +210,18 @@ export function UserList({ data: initialData }: { data: User[] }) {
       ),
     },
     {
+      accessorKey: "role",
+      header: "Role",
+      accessorFn: (row) => row.role,
+      cell: ({ row }) => (
+        <div className="w-32">
+          <Badge variant="outline" className="text-muted-foreground px-1.5">
+            {row.original.role}
+          </Badge>
+        </div>
+      ),
+    },
+    {
       accessorKey: "createdAt",
       header: "Created At",
       accessorFn: (row) => row.user.createdAt,
@@ -236,6 +250,10 @@ export function UserList({ data: initialData }: { data: User[] }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem asChild>
+              <UserRoleChangeButton userId={row.original.user.id} />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <UserDeleteButton userId={row.original.user.id} />
             </DropdownMenuItem>

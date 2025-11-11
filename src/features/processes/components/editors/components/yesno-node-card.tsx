@@ -43,7 +43,6 @@ export function YesNoNodeCard({
     ? yesnoContent.nodes.find((n) => n.id === node.noNodeId)
     : null;
 
-  // End node view
   if (node.isEndNode) {
     return (
       <Card className="border-2 border-primary">

@@ -38,7 +38,7 @@ await prisma.$transaction([
       name: 'Demo Orginization',
       slug: 'demo-orginization',
       ownerUserId: user.id,
-      plan: 'business',
+      plan: 'enterprise',
       entitlementsJSON: {
         maxProcesses: 100,
         maxDepartments: 3,

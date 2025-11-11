@@ -1,4 +1,4 @@
-import { homePath, signInPath } from "@/app/paths";
+import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/ui/spinner";
 import { UserList } from "@/features/user-base/components/user-list";
@@ -17,11 +17,11 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
   const user = await getSessionUser();
   if (!user) redirect(signInPath());
 
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
-  if (!isAdmin) redirect(homePath());
-
   const org = await getUserOrg(user.userId);
-  if (!org) redirect(homePath());
+  if (!org.org) redirect(onboardingPath());
+
+  const isAdmin = await isOrgAdminOrOwner(user.userId);
+  if (!isAdmin) redirect(signInPath());
 
   const params = await searchParams;
   const search = params.search;
@@ -30,7 +30,7 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
   const offset = (page - 1) * limit;
 
   const { members } = await getOrgMembers(
-    org.id,
+    org.org?.id ?? "",
     search,
     limit,
     offset

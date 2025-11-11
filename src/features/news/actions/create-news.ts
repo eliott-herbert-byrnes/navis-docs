@@ -9,7 +9,6 @@ import { getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import DOMPurify from "dompurify";
 import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 const createNewsSchema = z.object({
@@ -39,7 +38,7 @@ export const createNews = async (
     }
 
     const org = await getUserOrg(user.userId);
-    if (!org) {
+    if (!org.org) {
       return toActionState("ERROR", "No organization found", formData);
     }
 
@@ -59,10 +58,6 @@ export const createNews = async (
 
     const { teamId, newsPostTitle, newsPostBody, pinned } = parsed;
 
-    const sanitizedBody = DOMPurify.sanitize(newsPostBody, {
-      ALLOWED_TAGS: [],
-      ALLOWED_ATTR: [],
-    });
 
     await prisma.newsPost.create({
       data: {
@@ -73,7 +68,7 @@ export const createNews = async (
           content: [
             {
               type: "paragraph",
-              content: [{ type: "text", text: sanitizedBody }],
+              content: [{ type: "text", text: newsPostBody }],
             },
           ],
         },

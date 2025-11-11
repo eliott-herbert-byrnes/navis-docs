@@ -100,24 +100,24 @@ const seed = async () => {
       { name: "Up to 100 processes" },
       { name: "Up to 3 departments" },
       { name: "Up to 1 team per department" },
-      { name: "AI-assisted drafting" },
+      { name: "AI-assistant" },
       { name: "Email support" },
     ],
     metadata: { plan: "business" },
   });
 
-  // const productTwo = await stripe.products.create({
-  //   name: "Navis-docs Enterprise Plan",
-  //   description: "Your Enterprise plan.",
-  //   marketing_features: [
-  //     { name: "Up to 1000 processes" },
-  //     { name: "Unlimited departments" },
-  //     { name: "Unlimited teams per department" },
-  //     { name: "AI-assisted drafting" },
-  //     { name: "Priority support" },
-  //   ],
-  //   metadata: { plan: "enterprise" },
-  // });
+  const productTwo = await stripe.products.create({
+    name: "Navis-docs Enterprise Plan",
+    description: "Your Enterprise plan.",
+    marketing_features: [
+      { name: "Up to 1000 processes" },
+      { name: "Unlimited departments" },
+      { name: "Unlimited teams per department" },
+      { name: "AI-assistant" },
+      { name: "Priority support" },
+    ],
+    metadata: { plan: "enterprise" },
+  });
 
   const businessPrice = await stripe.prices.create({
     product: productOne.id,
@@ -129,15 +129,15 @@ const seed = async () => {
     metadata: { plan: "business", allowedProcesses: 100, allowedDepartments: 3, allowedTeamsPerDepartment: 1 },
   });
 
-  // const enterprisePrice = await stripe.prices.create({
-  //   product: productTwo.id,
-  //   unit_amount: 29999,
-  //   currency: "usd",
-  //   recurring: {
-  //     interval: "month",
-  //   },
-  //   metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
-  // });
+  const enterprisePrice = await stripe.prices.create({
+    product: productTwo.id,
+    unit_amount: 29999,
+    currency: "usd",
+    recurring: {
+      interval: "month",
+    },
+    metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
+  });
 
   const attachedPm = await stripe.paymentMethods.attach("pm_card_visa", {
     customer: customer.id,
@@ -149,7 +149,7 @@ const seed = async () => {
 
   const subscription = await stripe.subscriptions.create({
     customer: customer.id,
-    items: [{ price: businessPrice.id }],
+    items: [{ price: enterprisePrice.id }, { price: businessPrice.id }],
     automatic_tax: {
       enabled: false,
     },
@@ -165,7 +165,7 @@ const seed = async () => {
       stripeSubscriptionId: subscription.id,
       stripeSubscriptionStatus: subscription.status,
       currentPeriodEnd: currentPeriodEnd,
-      plan: "business",
+      plan: "enterprise",
     },
   });
 

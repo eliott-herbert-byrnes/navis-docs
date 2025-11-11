@@ -1,5 +1,5 @@
 "use server";
-import { homePath, signInPath } from "@/app/paths";
+import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -14,7 +14,8 @@ const SubscriptionPage = async () => {
   if (!user) redirect(signInPath());
 
   const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org || !isAdmin) redirect(homePath());
+  if (!org) redirect(onboardingPath());
+  if (!isAdmin) redirect(signInPath());
 
   const manageSubscription = (
     <CustomerPortalForm orgSlug={org.slug}>

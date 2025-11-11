@@ -1,5 +1,5 @@
 // navis-docs/src/app/api/departments/[departmentId]/teams/route.ts
-import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { getSessionUser, getUserOrg, getUserOrgWithRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function GET(
     const user = await getSessionUser();
     if (!user) return new Response("Unauthorized", { status: 401 });
 
-    const org = await getUserOrg(user.userId);
+    const {org} = await getUserOrgWithRole(user.userId);
     if (!org) return new Response("No organization found", { status: 404 });
 
     const { departmentId } = await params;

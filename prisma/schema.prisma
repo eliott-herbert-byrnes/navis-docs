@@ -41,6 +41,16 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model Address {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  phone     String
+  email     String?
+  website   String?
+  createdAt DateTime @default(now())
+}
+
 model EmailOTP {
   id         String    @id @default(cuid())
   email      String

@@ -68,7 +68,6 @@ export function SignInForm({
     startTransition(async () => {
       const res = await verifyOtpAction({ email, code });
       if (res.ok) {
-        window.location.assign(onboardingPath());
         toast.success("Code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||

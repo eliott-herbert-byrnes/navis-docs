@@ -1,5 +1,3 @@
-// src/features/process-base/queries/get-processes.ts
-
 "use server";
 
 import { getSessionUser } from "@/lib/auth";

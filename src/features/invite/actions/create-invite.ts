@@ -6,7 +6,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { getSessionUser, getUserOrg, getUserOrgWithRole } from "@/lib/auth";
 import { sha256 } from "@/lib/crypto";
 import { prisma } from "@/lib/prisma";
 import { OrgMembershipRole } from "@prisma/client";
@@ -39,9 +39,9 @@ export const createInvitation = async (
       return toActionState("ERROR", "Too many requests", formData);
     }
 
-    const org = await getUserOrg(user.userId);
+    const { org } = await getUserOrgWithRole(user.userId);
     if (!org) {
-      return toActionState("ERROR", "No organization found", formData);
+      return toActionState("ERROR", "Forbidden", formData);
     }
 
     const mem = await prisma.orgMembership.findFirst({

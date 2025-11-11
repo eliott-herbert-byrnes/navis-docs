@@ -1,5 +1,3 @@
-// src/middleware.ts
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -20,7 +18,6 @@ export async function middleware(req: NextRequest) {
 
   const response = NextResponse.next();
 
-  // ✅ FIXED: Better CSP that allows Next.js to work
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://js.sentry-cdn.com;

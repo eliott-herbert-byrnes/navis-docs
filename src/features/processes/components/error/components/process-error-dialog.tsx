@@ -44,7 +44,6 @@ export const ProcessErrorDialog = ({
   const handleSuccess = () => {
     console.log("Success callback triggered!");
     handleClose();
-    // Reset the form by changing the key
     setKey((prev) => prev + 1);
     router.refresh();
   };
@@ -52,7 +51,7 @@ export const ProcessErrorDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="sm">
           <Flag className="w-4 h-4" />
         </Button>
       </DialogTrigger>

@@ -8,7 +8,6 @@ import { getSessionUser, getUserById, isOrgAdminOrOwner } from "@/lib/auth";
 import { NewsDeleteButton } from "./news-delete-button";
 import { signInPath } from "@/app/paths";
 import { redirect } from "next/navigation";
-import DOMPurify from "dompurify";
 import { JsonObject } from "@prisma/client/runtime/library";
 
 type NewsPostListProps = {
@@ -77,7 +76,7 @@ export async function NewsPostList({
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                   <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
-                    {DOMPurify.sanitize(newsPost.title)}
+                    {newsPost.title}
                   </CardTitle>
                   <div className="flex gap-2 justify-start items-center mb-2">
                     <p className="text-sm text-muted-foreground flex gap-2">
@@ -94,7 +93,7 @@ export async function NewsPostList({
                 </div>
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground line-clamp-3">
-                    {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body as JsonObject))}
+                    {getTextFromBodyJSON(newsPost.body as JsonObject)}
                   </p>
                 </div>
               </CardHeader>
@@ -127,7 +126,7 @@ export async function NewsPostList({
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                 <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
-                  {DOMPurify.sanitize(newsPost.title)}
+                  {newsPost.title}
                 </CardTitle>
                 {isAdmin ? (
                   <NewsDeleteButton
@@ -139,7 +138,7 @@ export async function NewsPostList({
               </div>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">
-                  {DOMPurify.sanitize(getTextFromBodyJSON(newsPost.body as JsonObject))}
+                  {getTextFromBodyJSON(newsPost.body as JsonObject)}
                 </p>
               </div>
             </CardHeader>

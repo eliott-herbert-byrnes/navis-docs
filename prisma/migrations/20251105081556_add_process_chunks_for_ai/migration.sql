@@ -1,3 +1,6 @@
+-- CreateExtension
+CREATE EXTENSION IF NOT EXISTS "vector";
+
 -- CreateTable
 CREATE TABLE "public"."ProcessChunk" (
     "id" TEXT NOT NULL,
@@ -23,3 +26,35 @@ ALTER TABLE "public"."ProcessChunk" ADD CONSTRAINT "ProcessChunk_processId_fkey"
 
 -- AddForeignKey
 ALTER TABLE "public"."ProcessChunk" ADD CONSTRAINT "ProcessChunk_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateFunction for semantic search
+CREATE OR REPLACE FUNCTION match_process_chunks(
+  query_embedding vector(1536),
+  similarity_threshold float,
+  match_count int,
+  team_id text
+)
+RETURNS TABLE (
+  id text,
+  processId text,
+  teamId text,
+  title text,
+  chunkText text,
+  similarity float
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    pc.id,
+    pc."processId",
+    pc."teamId",
+    pc.title,
+    pc."chunkText",
+    (1 - (pc.embedding <=> query_embedding)) as similarity
+  FROM "ProcessChunk" pc
+  WHERE pc."teamId" = team_id
+    AND (1 - (pc.embedding <=> query_embedding)) > similarity_threshold
+  ORDER BY pc.embedding <=> query_embedding
+  LIMIT match_count;
+END;
+$$ LANGUAGE plpgsql;

@@ -1,4 +1,4 @@
-import { homePath, signInPath } from "@/app/paths";
+import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/ui/spinner";
 import { ProcessErrorList } from "@/features/processes/components/error/components/process-error-list";
@@ -18,7 +18,8 @@ const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
   if (!user) redirect(signInPath());
 
   const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org || !isAdmin) redirect(homePath());
+  if (!org) redirect(onboardingPath());
+  if (!isAdmin) redirect(signInPath());
 
   const params = await searchParams;
   const search = params.search;

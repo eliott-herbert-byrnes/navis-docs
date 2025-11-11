@@ -38,7 +38,7 @@ export const createErrorReport = async (
     }
 
     const org = await getUserOrg(user.userId);
-    if (!org) {
+    if (!org.org) {
       return toActionState("ERROR", "No organization found", formData);
     }
 

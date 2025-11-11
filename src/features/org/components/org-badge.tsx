@@ -6,7 +6,7 @@ const OrgBadge = async () => {
   const org = await getUserOrg(user?.userId ?? "");
   return (
     <Badge variant="default">
-      {org?.name ?? ""}
+      {org?.org?.name ?? ""}
     </Badge>
   );
 };
