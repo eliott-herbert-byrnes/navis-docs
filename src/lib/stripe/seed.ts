@@ -1,7 +1,7 @@
 import { prisma } from "../prisma";
 import { stripe } from "./";
 
-const ORG_SLUG = process.env.SEED_ORG_SLUG ?? "demo-orginization";
+const ORG_SLUG = process.env.SEED_ORG_SLUG ?? "demo-organization";
 
 const seed = async () => {
   const t0 = performance.now();

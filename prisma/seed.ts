@@ -36,11 +36,11 @@ async function main() {
   });
 
   const org = await prisma.organization.upsert({
-    where: { slug: "demo-orginization" },
+    where: { slug: "demo-organization" },
     update: {},
     create: {
-      name: "Demo Orginization",
-      slug: "demo-orginization",
+      name: "Demo Organization",
+      slug: "demo-organization",
       ownerUserId: user.id,
       plan: "enterprise",
       entitlementsJSON: {

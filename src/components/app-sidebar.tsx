@@ -11,6 +11,7 @@ import {
   Lightbulb,
   LucideShip,
   History,
+  Rocket,
 } from "lucide-react";
 
 import {
@@ -34,6 +35,7 @@ import {
 } from "./ui/dropdown-menu";
 import {
   auditPath,
+  demoPath,
   errorsPath,
   homePath,
   ideasPath,
@@ -52,6 +54,13 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 
 const items = [
+  {
+    title: "Demo Info",
+    url: demoPath(),
+    icon: Rocket,
+    isAdmin: true,
+    separator: true,
+  },
   {
     title: "Home",
     url: homePath(),
@@ -106,6 +115,7 @@ const items = [
     url: settingsPath(),
     icon: Settings,
     isAdmin: true,
+    separator: true,
   },
 ];
 
