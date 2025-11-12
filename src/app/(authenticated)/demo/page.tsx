@@ -270,7 +270,7 @@ const DemoPage = async () => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">3. Create Processes</h4>
                 <p className="text-sm text-muted-foreground">
-                  Click "Create Process" in your team to start documenting SOPs.
+                Click &quot;Create Process&quot; in your team to start documenting SOPs.
                 </p>
               </div>
               
