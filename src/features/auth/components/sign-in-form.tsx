@@ -14,7 +14,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { onboardingPath } from "@/app/paths";
+import { demoPath, onboardingPath } from "@/app/paths";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useTransition, useState } from "react";
@@ -114,7 +114,7 @@ export function SignInForm({
         toast.success("Demo code verified. Redirecting...");
         const cb =
         new URLSearchParams(window.location.search).get("callbackUrl") ||
-        onboardingPath();
+        demoPath();
         window.location.assign(cb);
       } else {
         toast.error(res.message ?? "Demo verification failed");
