@@ -27,11 +27,11 @@ export async function FavoriteList({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="flex flex-wrap gap-4">
       {favorites.map((process) => (
         <Card
           key={process.id}
-          className="hover:border-primary transition-colors flex flex-col h-full"
+          className="hover:border-primary transition-colors flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6"
         >
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between gap-2 min-h-[3rem]">

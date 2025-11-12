@@ -67,7 +67,7 @@ export async function AuditLogViewer({ logs }: AuditLogViewerProps) {
           {log.beforeJSON && (
             <div>
               <p className="text-sm font-medium">Before:</p>
-              <pre className="text-xs bg-muted p-2 rounded overflow-auto line-clamp-15">
+              <pre className="text-xs bg-muted p-2 rounded overflow-auto line-clamp-15 max-w-[975px]">
                 {JSON.stringify(log.beforeJSON, null, 2)}
               </pre>
             </div>
@@ -78,7 +78,7 @@ export async function AuditLogViewer({ logs }: AuditLogViewerProps) {
           {log.afterJSON && (
             <div>
               <p className="text-sm font-medium">After:</p>
-              <pre className="text-xs bg-muted p-2 rounded overflow-auto line-clamp-15">
+              <pre className="text-xs bg-muted p-2 rounded overflow-auto line-clamp-15 max-w-[975px]">
                 {JSON.stringify(log.afterJSON, null, 2)}
               </pre>
             </div>
