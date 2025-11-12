@@ -1,8 +1,8 @@
-# NavisDocs 
+# Navis Docs 
 
 **Enterprise Process Documentation & Knowledge Management Platform**
 
-A full-stack SaaS application that centralizes organizational process documentation with AI-powered search, real-time collaboration, and comprehensive audit trails.
+A full-stack SaaS application that centralises organisational process documentation with AI-powered search, real-time collaboration, and comprehensive audit trails.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,7 +10,7 @@ A full-stack SaaS application that centralizes organizational process documentat
 [![Prisma](https://img.shields.io/badge/Prisma-6.16-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
 [![Deployed](https://img.shields.io/badge/Deployed-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
 
-[🌐 Live Demo](https://navisdocs.com)
+[Live Demo](https://navisdocs.com)
 
 ---
 
@@ -31,7 +31,7 @@ A full-stack SaaS application that centralizes organizational process documentat
 
 ---
 
-## 🎯 Overview
+## Overview
 
 Navis Docs is a modern enterprise SaaS platform designed to solve the critical challenge of process documentation management in organisations. Built with a focus on scalability, user experience, and AI-powered intelligence, it serves as a centralised knowledge repository where teams can create, manage, version, and search their standard operating procedures (SOPs).
 
@@ -167,7 +167,7 @@ Navis Docs addresses these challenges through:
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ### **Application Architecture**
 
@@ -512,7 +512,7 @@ const response = await anthropic.messages.create({
 
 ---
 
-## 👨Developer
+## Developer
 
 **Eliot Herbert-Byrnes**
 
