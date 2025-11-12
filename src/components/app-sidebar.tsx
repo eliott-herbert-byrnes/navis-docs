@@ -126,7 +126,7 @@ export async function AppSidebar() {
   const isAdmin = await isOrgAdminOrOwner(user.userId);
 
   return (
-    <Sidebar variant="inset">
+    <Sidebar collapsible="icon" variant="inset">
       <SidebarContent>
         <SidebarGroup className="flex flex-col gap-2 h-full">
           <SidebarGroupLabel>
