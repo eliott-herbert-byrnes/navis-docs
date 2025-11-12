@@ -26,7 +26,7 @@ const DemoPage = async () => {
         <TabsList className="grid w-full grid-cols-4 mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="features">Features</TabsTrigger>
-          <TabsTrigger value="organization">Organization</TabsTrigger>
+          <TabsTrigger value="organization">Organisation</TabsTrigger>
           <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
         </TabsList>
 
@@ -36,12 +36,12 @@ const DemoPage = async () => {
             <CardHeader>
               <CardTitle>What is Navis Docs?</CardTitle>
               <CardDescription>
-                Your centralized process documentation and knowledge management platform
+                Your centralised process documentation and knowledge management platform
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm">
-                Navis Docs is an enterprise process documentation system designed to help teams maintain, organize, 
+                Navis Docs is an enterprise process documentation system designed to help teams maintain, organise, 
                 and share standard operating procedures (SOPs). With built-in AI assistance, version control, and 
                 comprehensive audit trails, Navis Docs ensures your team always has access to current, accurate processes.
               </p>
@@ -88,9 +88,9 @@ const DemoPage = async () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <h4 className="font-medium text-sm">🎯 Standardization</h4>
+                <h4 className="font-medium text-sm">🎯 Standardisation</h4>
                 <p className="text-sm text-muted-foreground">
-                  Ensure consistent processes across departments and teams by centralizing all documentation.
+                  Ensure consistent processes across departments and teams by centralising all documentation.
                 </p>
               </div>
               
@@ -184,7 +184,7 @@ const DemoPage = async () => {
               <div className="border-l-4 border-orange-500 pl-4">
                 <h3 className="font-semibold text-base mb-2">⭐ Favorites</h3>
                 <p className="text-sm text-muted-foreground">
-                  Bookmark frequently-used processes for quick access. Personalize your dashboard with your most-referenced procedures.
+                  Bookmark frequently-used processes for quick access. Personalise your dashboard with your most-referenced procedures.
                 </p>
               </div>
             </CardContent>
@@ -195,13 +195,13 @@ const DemoPage = async () => {
         <TabsContent value="organization" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Organization Hierarchy</CardTitle>
+              <CardTitle>Organisation Hierarchy</CardTitle>
               <CardDescription>How Navis Docs structures your company</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
                 <div className="space-y-3 font-mono text-sm">
-                  <div>📦 Organization (Your Company)</div>
+                  <div>📦 Organisation (Your Company)</div>
                   <div className="ml-6">└─ 🏢 Department (e.g., Operations, Compliance)</div>
                   <div className="ml-12">└─ 👥 Team (e.g., Account Services, Fraud Detection)</div>
                   <div className="ml-18">└─ 📄 Processes</div>
@@ -215,16 +215,16 @@ const DemoPage = async () => {
           <Card>
             <CardHeader>
               <CardTitle>User Roles & Permissions</CardTitle>
-              <CardDescription>Organization structure and admin features</CardDescription>
+              <CardDescription>Organisation structure and admin features</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Badge>Organization Owner</Badge>
+                  <Badge>Organisation Owner</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground ml-0">
-                  Full access to all features. Can invite users, manage subscriptions, and configure organization settings.
+                  Full access to all features. Can invite users, manage subscriptions, and configure organisation settings.
                 </p>
               </div>
 
@@ -256,7 +256,7 @@ const DemoPage = async () => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">1. Create Departments</h4>
                 <p className="text-sm text-muted-foreground">
-                  From Home, create departments that match your organizational structure.
+                  From Home, create departments that match your organisational structure.
                 </p>
               </div>
               
@@ -284,7 +284,7 @@ const DemoPage = async () => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">5. Invite Team Members</h4>
                 <p className="text-sm text-muted-foreground">
-                  Use the Invite section to onboard team members to your organization.
+                  Use the Invite section to onboard team members to your organisation.
                 </p>
               </div>
             </CardContent>
@@ -304,9 +304,9 @@ const DemoPage = async () => {
                 <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
                   <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
                   <div className="flex-1">
-                    <h3 className="font-semibold text-base text-blue-900 dark:text-blue-100">Mobile-Optimized UI</h3>
+                    <h3 className="font-semibold text-base text-blue-900 dark:text-blue-100">Mobile-Optimised UI</h3>
                     <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
-                      Responsive redesign optimized for mobile and tablet devices. Access processes and use the AI 
+                      Responsive redesign optimised for mobile and tablet devices. Access processes and use the AI 
                       assistant from anywhere with fully touch-friendly interfaces. Offline support for critical processes coming soon.
                     </p>
                     <Badge className="mt-3 bg-blue-600">In Development</Badge>
@@ -321,10 +321,10 @@ const DemoPage = async () => {
                       Intelligent background processes powered by AI agents that automatically:
                     </p>
                     <ul className="text-sm text-purple-800 dark:text-purple-200 mt-2 ml-4 list-disc space-y-1">
-                      <li>Analyze and categorize error reports to identify systemic process issues</li>
+                      <li>Analyse and categorise error reports to identify systemic process issues</li>
                       <li>Generate suggested improvements based on error patterns and team feedback</li>
                       <li>Detect anomalies in audit logs and flag suspicious activities</li>
-                      <li>Auto-tag ideas and errors for faster triage and prioritization</li>
+                      <li>Auto-tag ideas and errors for faster triage and prioritisation</li>
                       <li>Suggest process consolidation opportunities to reduce redundancy</li>
                     </ul>
                   </div>
