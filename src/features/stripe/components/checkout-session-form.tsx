@@ -5,6 +5,8 @@ import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import { createCheckoutSession } from "../actions/create-checkout-session";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
+import { TooltipTrigger } from "@/components/ui/tooltip";
 
 type Plan = "business" | "enterprise";
 
@@ -40,13 +42,20 @@ const CheckoutSessionForm = ({
       actionState={actionState}
       className="flex flex-row gap-2"
     >
-      <Button
-        type="submit"
-        disabled={isActivePlan}
-        className="flex flex-col gap-0"
-      >
-        <div>{children}</div>
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type="submit"
+            disabled={isActivePlan}
+            className="flex flex-col gap-0"
+          >
+            <div>{children}</div>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Disabled for MVP</p>
+        </TooltipContent>
+      </Tooltip>
       {isActivePlan && (
         <Badge className="h-9" variant="outline">
           <span className="text-sm">Active</span>
