@@ -39,7 +39,7 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
   return (
     <>
       <Heading
-        title="UserBase"
+        title="Userbase"
         description="View and manage users for your organization"
       />
       <Suspense fallback={<Spinner />} key={search}>
