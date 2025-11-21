@@ -233,13 +233,15 @@ export async function AppSidebar() {
                 </DropdownMenuItem>
                 <Separator />
                 <DropdownMenuItem>
-                  <Button
-                    onClick={signOutAction}
-                    variant="ghost"
-                    className="flex flex-row justify-start w-full h-6"
-                  >
-                    <p className="text-sm font-normal">Logout</p>
-                  </Button>
+                  <form action={signOutAction}>
+                    <Button
+                      variant="ghost"
+                      className="flex flex-row justify-start w-full h-6"
+                      type="submit"
+                    >
+                      <p className="text-sm font-normal">Logout</p>
+                    </Button>
+                  </form>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
