@@ -60,11 +60,11 @@ Modern enterprises face critical challenges with process documentation:
 
 Navis Docs addresses these challenges through:
 
-- **Centralized Repository**: Single source of truth for all organizational processes
+- **Centralised Repository**: Single source of truth for all organisational processes
 - **AI-Powered Search**: Semantic search using vector embeddings (OpenAI) enables natural language queries
 - **Built-in Version Control**: Track every change with automatic versioning
 - **Complete Audit Trail**: Immutable logs of all actions for compliance and accountability
-- **Smart Organization**: Hierarchical structure (Org → Department → Team → Process) mirrors company structure
+- **Smart Organisation**: Hierarchical structure (Org → Department → Team → Process) mirrors company structure
 - **Collaborative Features**: Error reporting, idea submission, and team announcements
 - **Multiple Process Formats**: RAW text, sequential steps, flowcharts, and decision trees
 
@@ -97,7 +97,7 @@ Navis Docs addresses these challenges through:
 - Crowdsource improvements from team members
 - Status pipeline (New → In Progress → Completed → Archived)
 - Integration with process updates
-- Prioritization based on frequency and impact
+- Prioritisation based on frequency and impact
 
 ### **Comprehensive Audit Logging**
 - Immutable record of all system actions
@@ -105,13 +105,13 @@ Navis Docs addresses these challenges through:
 - Filterable by user, action type, entity, and date range
 - Export capabilities for compliance reporting
 
-### **Multi-Tenant Organization Structure**
+### **Multi-Tenant Organisation Structure**
 - Role-based access control (Owner, Admin, Member)
-- Hierarchical organization (Departments → Teams)
+- Hierarchical organisation (Departments → Teams)
 - Invitation system with email verification
 - Team-specific news and announcements
 
-### **Favorites & Personalization**
+### **Favorites & Personalisation**
 - Bookmark frequently-used processes
 - Customizable dashboard
 - Quick access sidebar
@@ -172,38 +172,24 @@ Navis Docs addresses these challenges through:
 ### **Application Architecture**
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     Client (Browser)                    │
-│  Next.js 15 App Router, React 19, TanStack Query        │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────┐
-│                  Vercel Edge Network                    │
-│         Static Generation, ISR, Edge Functions          │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────┐
-│               Next.js Server (Node.js)                  │
-│  ┌────────────────────┐    ┌──────────────────────┐     │
-│  │  Server Components │    │   API Routes & RSC   │     │
-│  └────────────────────┘    └──────────────────────┘     │
-│  ┌────────────────────┐    ┌──────────────────────┐     │
-│  │  Server Actions    │    │   Auth Middleware    │     │
-│  └────────────────────┘    └──────────────────────┘     │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-         ┌────────┴─────────┐
-         │                  │
-┌────────▼─────┐   ┌────────▼─────────┐
-│   Supabase   │   │  External APIs   │
-│  PostgreSQL  │   │ ┌──────────────┐ │
-│  + pgvector  │   │ │ OpenAI       │ │
-│              │   │ │ Anthropic    │ │
-│  ┌────────┐  │   │ │ Stripe       │ │
-│  │ Prisma │  │   │ │ Resend       │ │
-│  └────────┘  │   │ │ Upstash      │ │
-└──────────────┘   │ └──────────────┘ │
-                   └──────────────────┘
+
+Client (Browser)
+Next.js 15 App Router, React 19, TanStack Query
+│
+▼
+Vercel Edge Network
+Static Generation, ISR, Edge Functions
+│
+▼
+Next.js Server (Node.js)
+│
+▼
+Server Components | API Routes & RSC
+Server Actions    | Auth Middleware
+│
+▼
+Supabase                | External Apis
+PostgreSQL + pgVector   | OpenAI, Anthropic, Stripe, Resend, Upstash
 ```
 
 ### **Data Flow: AI Chat Feature**
@@ -515,9 +501,6 @@ const response = await anthropic.messages.create({
 ## Developer
 
 **Eliot Herbert-Byrnes**
-
-Designer turned Full-Stack Software Engineer with expertise in building scalable SaaS applications using modern web technologies.
-
 **Email**: eliott.c.h.byrnes@googlemail.com 
 **GitHub**: [@eliott-herbert-byrnes](https://github.com/eliott-herbert-byrnes)
 
