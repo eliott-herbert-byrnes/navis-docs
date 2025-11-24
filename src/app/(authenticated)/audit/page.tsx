@@ -4,11 +4,11 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
 import { AuditEntityType, getAuditLogs } from "@/features/audit/utils/audit";
 import { AuditSearch } from "@/features/audit/components/audit-search";
 import { JsonObject } from "@prisma/client/runtime/library";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type AuditPageProps = {
   searchParams: Promise<{
@@ -48,7 +48,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
       <div className="px-1 mb-4">
         <AuditSearch />
       </div>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <AuditLogViewer logs={logs} />
       </Suspense>
     </>

@@ -40,7 +40,6 @@ export const deleteError = async (
     });
 
     revalidatePath(errorsPath());
-
     return toActionState("SUCCESS", "Error report deleted", formData);
   } catch (error) {
     return fromErrorToActionState(error, formData);

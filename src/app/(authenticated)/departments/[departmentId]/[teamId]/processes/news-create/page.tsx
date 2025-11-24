@@ -2,10 +2,10 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { signInPath, teamProcessPath } from "@/app/paths";
 import { NewsCreateForm } from "@/features/news/components/news-create-form";
 import { getCachedDepartments } from "@/lib/cache-queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function NewsCreatePage({
   params,
@@ -32,7 +32,7 @@ export default async function NewsCreatePage({
         title={`Create News`}
         description="Create a new news post"
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <NewsCreateForm 
         teamName={teamName ?? "this team"}
         departmentId={departmentId}

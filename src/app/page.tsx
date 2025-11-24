@@ -5,7 +5,7 @@ import { signInPath } from "./paths";
 import { DepartmentList } from "@/features/departments/components/department-list";
 import { DepartmentCreateButton } from "@/features/departments/components/department-buttons/department-create-button";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 7200;
 
@@ -28,7 +28,7 @@ export default async function Home() {
         description="Manage your departments"
         actions={isAdmin ? <DepartmentCreateButton isAdmin={isAdmin} /> : null}
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <DepartmentList orgId={org.id} />
       </Suspense>
     </>

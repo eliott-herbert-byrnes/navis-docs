@@ -1,6 +1,6 @@
 import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -20,7 +20,7 @@ const SettingsPage = async () => {
         title="Settings"
         description="Manage your organization's settings"
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
       <OrganizationOverview org={org}/>
       </Suspense>
     </>

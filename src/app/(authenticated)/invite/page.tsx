@@ -1,6 +1,6 @@
 import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { InvitationCreateButton } from "@/features/invite/components/invitation-create-button";
 import { InvitationList } from "@/features/invite/components/invitation-list";
 import { InvitationSearch } from "@/features/invite/components/invitation-search";
@@ -37,7 +37,7 @@ const InvitationPage = async ({ searchParams }: InvitationPageProps) => {
       <div className="px-1 mb-4">
         <InvitationSearch />
       </div>
-      <Suspense fallback={<Spinner />} key={`${search}-${page}`}>
+      <Suspense fallback={<Skeleton />} key={`${search}-${page}`}>
         <InvitationList orgId={org.id} search={search} page={page} />
       </Suspense>
     </>

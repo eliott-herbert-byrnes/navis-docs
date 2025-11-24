@@ -7,7 +7,7 @@ import { Products } from "@/features/stripe/components/product";
 import { LucideSettings } from "lucide-react";
 import { CustomerPortalForm } from "@/features/stripe/components/customer-portal-form";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SubscriptionPage = async () => {
   const user = await getSessionUser();
@@ -33,7 +33,7 @@ const SubscriptionPage = async () => {
         description="Manage your subscription"
         actions={manageSubscription}
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <Products orgSlug={org.slug} />
       </Suspense>
     </>

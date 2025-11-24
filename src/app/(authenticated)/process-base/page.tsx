@@ -1,6 +1,6 @@
 import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ProcessList } from "@/features/process-base/components/process-list";
 import { getProcesses } from "@/features/process-base/queries/get-processes";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
@@ -41,7 +41,7 @@ const ProcessBasePage = async ({ searchParams }: ProcessBasePageProps) => {
         title="Processbase"
         description="View and manage processes for your organization"
       />
-      <Suspense fallback={<Spinner />} key={search}>
+      <Suspense fallback={<Skeleton />} key={search}>
         <ProcessList 
           data={processes} 
         />

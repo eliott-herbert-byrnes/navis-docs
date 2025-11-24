@@ -2,10 +2,10 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { signInPath, teamProcessPath } from "@/app/paths";
 import { CreateProcessForm } from "@/features/processes/components/process-create-form";
 import { getCategories } from "@/features/processes/queries/get-categories";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function ProcessCreatePage({
   params,
@@ -28,7 +28,7 @@ export default async function ProcessCreatePage({
         title={`Create Process`}
         description="Create a new process and add a category"
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <CreateProcessForm 
         departmentId={departmentId}
         teamId={teamId}

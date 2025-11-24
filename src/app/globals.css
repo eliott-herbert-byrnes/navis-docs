@@ -81,6 +81,34 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  @keyframes fade-from-top {
+    0% {
+      opacity: 0;
+      transform: translateY(-18px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+    @keyframes fade-from-side {
+    0% {
+      opacity: 0;
+      transform: translateX(-80px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  --animate-fade-from-top: fade-from-top 0.5s ease-out;
+  --animate-header-from-top: fade-from-top 0.5s ease-out;
+  --animate-nav-from-side: fade-from-side 0.5s ease-out;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

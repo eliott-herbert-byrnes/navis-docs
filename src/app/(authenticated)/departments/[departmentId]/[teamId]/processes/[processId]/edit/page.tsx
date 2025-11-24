@@ -2,10 +2,10 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { signInPath, teamProcessPath } from "@/app/paths";
 import { getProcessForEdit } from "@/features/processes/queries/get-process-for-edit";
 import { EditProcessForm } from "@/features/processes/components/process-edit-form";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function ProcessEditPage({
   params,
@@ -32,7 +32,7 @@ export default async function ProcessEditPage({
         title={`Edit Process`}
         description="Edit a process and ship to documentation"
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <EditProcessForm
           departmentId={departmentId}
           teamId={teamId}

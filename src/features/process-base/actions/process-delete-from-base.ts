@@ -1,3 +1,5 @@
+"use server";
+import { processBasePath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,
@@ -7,6 +9,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const inputSchema = z.object({
@@ -59,6 +62,8 @@ export const deleteProcessFromBase = async (
       entityType: "PROCESS",
       entityId: processId,
     });
+
+    revalidatePath(processBasePath());
 
     return toActionState("SUCCESS", "Process deleted", formData, {
       process: deleted,

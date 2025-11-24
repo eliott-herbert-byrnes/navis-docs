@@ -1,5 +1,4 @@
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/ui/spinner";
 import { ProcessContent } from "@/features/processes/components/process-content";
 import { ProcessViewActions } from "@/features/processes/components/process-view-actions";
 import { ProcessViewMetadata } from "@/features/processes/components/process-view-metadata";
@@ -11,6 +10,7 @@ import { signInPath } from "@/app/paths";
 import "./print.css";
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
 import { prisma } from "@/lib/prisma";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 1800;
 
@@ -75,10 +75,10 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
       <ProcessViewMetadata process={process} />
 
       {/* Content */}
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <ProcessContent process={process} />
       </Suspense>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <AIChatDrawer teamId={teamId} departmentId={departmentId} />
       </Suspense>
     </div>

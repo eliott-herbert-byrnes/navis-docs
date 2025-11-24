@@ -16,8 +16,8 @@ const inputSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }).max(100),
   address: z.string().min(1, { message: "Address is required" }).max(255),
   phone: z.string().min(1, { message: "Phone is required" }).max(20),
-  email: z.string().email({ message: "Invalid email" }).optional(),
-  website: z.string().url({ message: "Invalid URL" }).optional().or(z.literal("")),
+  email: z.email({ message: "Invalid email" }).optional(),
+  website: z.url({ message: "Invalid URL" }).optional().or(z.literal("")),
 });
 
 export const createAddress = async (

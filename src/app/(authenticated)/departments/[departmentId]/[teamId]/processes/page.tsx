@@ -2,7 +2,6 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { onboardingPath, signInPath } from "@/app/paths";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
@@ -10,6 +9,7 @@ import { FavoriteList } from "@/features/processes/components/favorite/component
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
 import { getCachedDepartments } from "@/lib/cache-queries";
 import { prisma } from "@/lib/prisma";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 3600;
 
@@ -70,10 +70,10 @@ export default async function ProcessPage({
           />
         }
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <FavoriteList departmentId={departmentId} teamId={teamId} />
       </Suspense>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <AIChatDrawer teamId={teamId} departmentId={departmentId} />
       </Suspense>
     </>

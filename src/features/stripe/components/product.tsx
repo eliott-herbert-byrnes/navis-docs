@@ -81,7 +81,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
   const activePlan = stripeCustomer?.plan;
 
   return (
-    <div className="flex justify-center items-center gap-6 mx-auto my-auto">
+    <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mx-auto my-auto">
       {products.data.map((product) => {
         const targetPlan: Plan = product.name
           .toLowerCase()
@@ -90,7 +90,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
           : "business";
 
         return (
-          <Card key={product.id} className="w-[275px] h-full flex flex-col">
+          <Card key={product.id} className="w-[275px] h-full flex">
             <CardHeader>
               <CardTitle>
                 {product.name}

@@ -1,6 +1,6 @@
 import { onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { UserList } from "@/features/user-base/components/user-list";
 import { getOrgMembers, getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -42,7 +42,7 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
         title="Userbase"
         description="View and manage users for your organization"
       />
-      <Suspense fallback={<Spinner />} key={search}>
+      <Suspense fallback={<Skeleton />} key={search}>
         <UserList 
           data={members} 
         />

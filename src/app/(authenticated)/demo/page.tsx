@@ -40,9 +40,10 @@ const DemoPage = async () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm">
+              <p className="text-sm w-8/12">
                 Navis Docs is an enterprise process documentation system designed to help teams maintain, organise, 
-                and share standard operating procedures (SOPs). With built-in AI assistance, version control, and 
+                and share standard operating procedures (SOPs). 
+                With built-in AI assistance, version control, and 
                 comprehensive audit trails, Navis Docs ensures your team always has access to current, accurate processes.
               </p>
               

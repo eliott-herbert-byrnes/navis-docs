@@ -2,7 +2,6 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/empty-state";
 import { signInPath, teamProcessPath } from "@/app/paths";
 import { ProcessBreadcrumbs } from "../_navigation";
@@ -10,6 +9,7 @@ import { NewsCreateButton } from "@/features/news/components/news-create-button"
 import { NewsPostList } from "@/features/news/components/news-list";
 import { getNewsPosts } from "@/features/news/queries/get-news-posts";
 import { getCachedDepartments } from "@/lib/cache-queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function NewsPage({
   params,
@@ -56,7 +56,7 @@ export default async function NewsPage({
           />
         }
       />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
       {newsPosts.length > 0 ? (
         <NewsPostList departmentId={departmentId} teamId={teamId} />
       ) : (

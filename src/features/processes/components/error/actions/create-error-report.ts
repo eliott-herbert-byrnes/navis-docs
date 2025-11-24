@@ -10,7 +10,6 @@ import { getSessionUser, getUserOrg } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import DOMPurify from "dompurify";
 import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 const inputSchema = z.object({
@@ -49,16 +48,11 @@ export const createErrorReport = async (
 
     const { processId, errorReport: errorBody } = parsed;
 
-    const sanitizedBody = DOMPurify.sanitize(errorBody, {
-      ALLOWED_TAGS: [],
-      ALLOWED_ATTR: [],
-    });
-
     await prisma.errorReport.create({
       data: {
         processId,
         createdBy: user.userId,
-        body: sanitizedBody,
+        body: errorBody,
         status: "OPEN",
       },
     });
