@@ -17,8 +17,9 @@ export const deleteInvitation = async ({ email, orgId }: DeleteInviteProps) => {
     return toActionState("ERROR", "Unauthorized");
   }
 
+  const limiter = await deleteLimiter();
   const { success } = await getLimitByUser(
-    deleteLimiter,
+    limiter,
     user.userId,
     "invite-delete"
   );

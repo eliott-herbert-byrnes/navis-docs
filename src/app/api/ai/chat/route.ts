@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { success } = await getLimitByUser(aiLimiter, user.userId, "ai-chat");
+    const limiter = await aiLimiter();
+    const { success } = await getLimitByUser(limiter, user.userId, "ai-chat");
     if (!success) {
       return NextResponse.json(
         { error: "Too many requests. Please wait before sending another." },

@@ -27,8 +27,9 @@ export const createErrorReport = async (
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
+    const limiter = await createLimiter();
     const { success } = await getLimitByUser(
-      createLimiter,
+      limiter,
       user.userId,
       "error-report-create"
     );

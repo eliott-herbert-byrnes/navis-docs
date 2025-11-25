@@ -21,8 +21,9 @@ export const deleteNewsPost = async (
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
+    const limiter = await deleteLimiter();
     const { success } = await getLimitByUser(
-      deleteLimiter,
+      limiter,
       user.userId,
       "news-delete"
     );

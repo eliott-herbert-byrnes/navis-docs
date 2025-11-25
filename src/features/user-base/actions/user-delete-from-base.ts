@@ -1,3 +1,5 @@
+"use server";
+
 import {
     ActionState,
     fromErrorToActionState,
@@ -23,8 +25,9 @@ import { deleteLimiter, getLimitByUser } from "@/lib/rate-limiter";
         return toActionState("ERROR", "Unauthorized", formData);
       }
 
+      const limiter = await deleteLimiter();
       const { success } = await getLimitByUser(
-        deleteLimiter,
+        limiter,
         user.userId,
         "user-base-delete"
       );

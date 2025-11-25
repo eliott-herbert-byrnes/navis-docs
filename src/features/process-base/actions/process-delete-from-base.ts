@@ -26,8 +26,9 @@ export const deleteProcessFromBase = async (
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
+    const limiter = await deleteLimiter();
     const { success } = await getLimitByUser(
-      deleteLimiter,
+      limiter,
       user.userId,
       "process-base-delete"
     );

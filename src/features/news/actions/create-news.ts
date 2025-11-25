@@ -28,8 +28,9 @@ export const createNews = async (
       return toActionState("ERROR", "Unauthorized", formData);
     }
 
+    const limiter = await createLimiter();
     const { success } = await getLimitByUser(
-      createLimiter,
+      limiter,
       user.userId,
       "news-create"
     );
