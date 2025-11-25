@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { BarChart3, Bot, CheckCircle2, Clock, Smartphone, Zap } from "lucide-react";
+import { BarChart3, Bot, CheckCircle2, Clock, Zap } from "lucide-react";
 import { redirect } from "next/navigation";
 
 const DemoPage = async () => {
