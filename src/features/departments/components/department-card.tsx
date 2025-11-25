@@ -112,7 +112,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
   );
 
   return (
-    <Card className="w-full max-w-[250px]">
+    <Card className="w-full max-w-[250px] animate-fade-from-top">
       <CardHeader>
         <CardTitle>
           <Badge className="text-sm">{department.name}</Badge>

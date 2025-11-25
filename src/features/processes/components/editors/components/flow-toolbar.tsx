@@ -20,7 +20,7 @@ export function FlowToolbar({
   className 
 }: FlowToolbarProps) {
   return (
-    <Card className={`p-2 flex gap-2 ${className}`}>
+    <Card className={`p-2 flex gap-2 animate-fade-from-top ${className}`}>
       <Button
         variant="outline"
         size="sm"

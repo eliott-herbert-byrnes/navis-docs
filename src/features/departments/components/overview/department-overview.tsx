@@ -84,7 +84,7 @@ const DepartmentOverview = ({
               </TabsList>
 
               <TabsContent value="Settings">
-                <Card>
+                <Card className="animate-fade-from-top">
                   <CardHeader>
                     <CardTitle>Department Settings</CardTitle>
                     <CardDescription>
@@ -138,7 +138,7 @@ const DepartmentOverview = ({
               </TabsContent>
 
               <TabsContent value="Teams">
-                <Card className="max-w-[450px]">
+                <Card className="max-w-[450px] animate-fade-from-top">
                   <CardHeader>
                     <CardTitle>Teams</CardTitle>
                     <CardDescription>

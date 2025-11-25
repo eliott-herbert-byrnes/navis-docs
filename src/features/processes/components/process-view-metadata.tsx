@@ -27,7 +27,7 @@ export function ProcessViewMetadata({ process }: ProcessViewMetadataProps) {
   };
 
   return (
-    <Card className="p-4 mb-4">
+    <Card className="p-4 mb-4 animate-fade-from-top">
       <div className="flex flex-wrap gap-4 text-sm items-center">
         {/* Published Date */}
         <div className="flex items-center gap-2 text-muted-foreground">

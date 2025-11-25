@@ -28,7 +28,7 @@ export function StepItem({
 }: StepItemProps) {
   if (isPreview) {
     return (
-      <Card className="p-4">
+      <Card className="p-4 animate-fade-from-top">
         <div className="flex gap-3">
           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
             {index + 1}
@@ -47,7 +47,7 @@ export function StepItem({
   }
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 animate-fade-from-top">
       <div className="flex gap-2">
         {/* Step Number */}
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">

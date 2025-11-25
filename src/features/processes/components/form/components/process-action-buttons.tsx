@@ -29,7 +29,7 @@ export function ProcessActionButtons({
   onCancelWithoutChanges,
 }: ProcessActionButtonsProps) {
   return (
-    <Card className="p-4">
+    <Card className="p-4 animate-fade-from-top">
       <div className="flex items-center justify-between">
         <div className="text-sm">
           {hasUnsavedChanges && (

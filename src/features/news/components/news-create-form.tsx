@@ -60,7 +60,7 @@ const NewsCreateForm = ({
 
   return (
     <div className="w-full max-w-[700px] mx-auto my-auto">
-      <Card className="p-6 animate-from-top animate-duration-300">
+      <Card className="p-6 animate-fade-from-top">
         <Form action={action} actionState={actionState}>
           <input type="hidden" name="departmentId" value={departmentId} />
           <input type="hidden" name="teamId" value={teamId} />

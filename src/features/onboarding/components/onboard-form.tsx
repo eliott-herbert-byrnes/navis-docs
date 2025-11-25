@@ -36,7 +36,7 @@ export function OnboardForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="animate-fade-from-top">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create your organization</CardTitle>
           <CardDescription>

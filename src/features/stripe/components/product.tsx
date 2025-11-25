@@ -90,7 +90,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
           : "business";
 
         return (
-          <Card key={product.id} className="w-[275px] h-full flex">
+          <Card key={product.id} className="w-[275px] h-full flex animate-fade-from-top">
             <CardHeader>
               <CardTitle>
                 {product.name}

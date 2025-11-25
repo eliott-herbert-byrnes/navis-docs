@@ -17,7 +17,7 @@ export function ProcessHeader({
   isDisabled,
 }: ProcessHeaderProps) {
   return (
-    <Card className="p-4">
+    <Card className="p-4 animate-fade-from-top">
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold">{process.title}</h2>

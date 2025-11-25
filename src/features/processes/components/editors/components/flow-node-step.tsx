@@ -18,7 +18,7 @@ export function StepNode({
   isConnectable: boolean;
 }) {
   return (
-    <Card className="p-3 min-w-[200px] relative group">
+    <Card className="p-3 min-w-[200px] relative group animate-fade-from-top">
       <Handle
         type="target"
         position={Position.Top}

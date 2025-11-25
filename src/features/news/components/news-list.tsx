@@ -72,7 +72,7 @@ export async function NewsPostList({
         const postUser = userMap[newsPost.createdBy ?? ""];
         return (
           <Fragment key={newsPost.id}>
-            <Card className="hover:border-primary transition-colors flex flex-col h-full">
+            <Card className="hover:border-primary transition-colors flex flex-col h-full animate-fade-from-top">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                   <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">

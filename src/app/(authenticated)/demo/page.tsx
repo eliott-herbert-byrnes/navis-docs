@@ -32,7 +32,7 @@ const DemoPage = async () => {
 
         {/* OVERVIEW TAB */}
         <TabsContent value="overview" className="space-y-6">
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>What is Navis Docs?</CardTitle>
               <CardDescription>
@@ -83,7 +83,7 @@ const DemoPage = async () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>Key Benefits</CardTitle>
             </CardHeader>
@@ -121,7 +121,7 @@ const DemoPage = async () => {
 
         {/* FEATURES TAB */}
         <TabsContent value="features" className="space-y-6">
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>Core Features</CardTitle>
               <CardDescription>Everything you need to manage processes effectively</CardDescription>
@@ -194,7 +194,7 @@ const DemoPage = async () => {
 
         {/* ORGANIZATION TAB */}
         <TabsContent value="organization" className="space-y-6">
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>Organisation Hierarchy</CardTitle>
               <CardDescription>How Navis Docs structures your company</CardDescription>
@@ -213,7 +213,7 @@ const DemoPage = async () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>User Roles & Permissions</CardTitle>
               <CardDescription>Organisation structure and admin features</CardDescription>
@@ -249,7 +249,7 @@ const DemoPage = async () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>How to Get Started</CardTitle>
             </CardHeader>
@@ -294,7 +294,7 @@ const DemoPage = async () => {
 
         {/* ROADMAP TAB */}
         <TabsContent value="roadmap" className="space-y-6">
-          <Card>
+          <Card className="animate-fade-from-top">
             <CardHeader>
               <CardTitle>Product Roadmap</CardTitle>
               <CardDescription>Upcoming features and improvements coming to Navis Docs</CardDescription>
@@ -302,18 +302,6 @@ const DemoPage = async () => {
             <CardContent className="space-y-6">
               
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <Smartphone className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-base text-blue-900 dark:text-blue-100">Mobile-Optimised UI</h3>
-                    <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
-                      Responsive redesign optimised for mobile and tablet devices. Access processes and use the AI 
-                      assistant from anywhere with fully touch-friendly interfaces. Offline support for critical processes coming soon.
-                    </p>
-                    <Badge className="mt-3 bg-blue-600">In Development</Badge>
-                  </div>
-                </div>
-
                 <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
                   <Bot className="h-5 w-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-1" />
                   <div className="flex-1">
@@ -388,16 +376,14 @@ const DemoPage = async () => {
             </CardContent>
           </Card>
 
-          <Card className="border-dashed">
+          <Card className="border-dashed animate-fade-from-top">
             <CardHeader>
               <CardTitle className="text-base">Feedback & Suggestions</CardTitle>
-            </CardHeader>
-            <CardContent>
               <p className="text-sm text-muted-foreground">
                 Have an idea or suggestion? Submit it in the <strong>Ideas</strong> section! Your feedback directly 
                 influences our product roadmap and helps us build features that matter most to your team.
               </p>
-            </CardContent>
+            </CardHeader>
           </Card>
         </TabsContent>
       </Tabs>

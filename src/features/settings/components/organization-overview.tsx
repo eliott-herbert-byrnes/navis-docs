@@ -37,7 +37,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
     >
       <input type="hidden" name="orgId" value={org.id} />
       <div className="flex w-full flex-col">
-        <Card>
+        <Card className="animate-fade-from-top">
           <CardHeader>
             <CardTitle>Organization Settings</CardTitle>
             <CardDescription>

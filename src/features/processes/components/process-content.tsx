@@ -68,13 +68,13 @@ const ProcessContent = ({ process }: ProcessContentProps) => {
 
   if (process.style === "FLOW") {
     return (
-      <Card className="min-h-[600px] overflow-hidden">
+      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top">
         {renderProcessContent()}
       </Card>
     );
   }
 
-  return <Card className="p-6 min-h-[600px]">{renderProcessContent()}</Card>;
+  return <Card className="p-6 min-h-[600px] animate-fade-from-top">{renderProcessContent()}</Card>;
 };
 
 export { ProcessContent };

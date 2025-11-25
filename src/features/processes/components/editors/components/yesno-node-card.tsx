@@ -45,7 +45,7 @@ export function YesNoNodeCard({
 
   if (node.isEndNode) {
     return (
-      <Card className="border-2 border-primary">
+      <Card className="border-2 border-primary animate-fade-from-top">
         <CardHeader>
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-green-600" />
@@ -75,7 +75,7 @@ export function YesNoNodeCard({
   }
 
   return (
-    <Card>
+    <Card className="animate-fade-from-top">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex-1">

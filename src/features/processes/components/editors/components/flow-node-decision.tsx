@@ -35,7 +35,7 @@ export function DecisionNode({
         </Button>
       )}
 
-      <Card className="p-4 rotate-45 w-32 h-32 bg-yellow-50 border-yellow-500">
+      <Card className="p-4 rotate-45 w-32 h-32 bg-yellow-50 border-yellow-500 animate-fade-from-top">
         <div className="-rotate-45 text-center font-semibold text-xs flex items-center justify-center h-full text-black">
           {data.onUpdateData ? (
             <Input
