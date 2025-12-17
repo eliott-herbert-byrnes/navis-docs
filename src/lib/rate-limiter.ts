@@ -1,26 +1,57 @@
+"use server";
 import { Ratelimit } from "@upstash/ratelimit";
-import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { getRedis } from "./redis";
 
 let _ratelimit: Ratelimit | null = null;
 
-export function getRatelimit() {
-  if (!_ratelimit) {
-    _ratelimit = new Ratelimit({
-      redis: getRedis(),
-      limiter: Ratelimit.slidingWindow(10, "1 m"),
-      analytics: true,
-      prefix: "rtlmt",
-    });
-  }
-  return _ratelimit;
+
+export async function authLimiter() {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(10, "10s"),
+    analytics: true,
+    prefix: `rl:${process.env.NODE_ENV}:auth`,
+  });
 }
 
-export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
-  const { success } = await getRatelimit().limit(ip);
+export async function deleteLimiter() {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(10, "30s"),
+    analytics: true,
+    prefix: `rl:${process.env.NODE_ENV}:delete`,
+  });
+}
 
-  if (!success) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
+export async function aiLimiter() {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(10, "1m"),
+    analytics: true,
+    prefix: `rl:${process.env.NODE_ENV}:ai`,
+  });
+}
+
+export async function createLimiter() {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(20, "1m"),
+    analytics: true,
+    prefix: `rl:${process.env.NODE_ENV}:create`,
+  });
+}
+
+export async function getLimitByIp(limiter: Ratelimit, purpose: string) {
+  const h = await headers();
+  const ip = (h.get("x-forwarded-for") ?? "unknown").split(",")[0]!.trim();
+  return limiter.limit(`${purpose}:${ip}`);
+}
+
+export async function getLimitByUser(
+  limiter: Ratelimit,
+  userId: string,
+  purpose: string
+) {
+  return limiter.limit(`${purpose}:${userId}`);
 }
