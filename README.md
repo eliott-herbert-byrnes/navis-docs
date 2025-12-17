@@ -314,10 +314,6 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 UPSTASH_REDIS_REST_URL="https://..."
 UPSTASH_REDIS_REST_TOKEN="..."
 
-# Sentry (optional)
-SENTRY_DSN="https://..."
-```
-
 ### **4. Database Setup**
 
 ```bash
@@ -494,7 +490,6 @@ const response = await anthropic.messages.create({
 - **HTTPS Only**: Enforced via Vercel
 - **Environment Variables**: Secure storage in Vercel/Supabase
 - **Database**: Connection pooling via PgBouncer
-- **Error Tracking**: Sentry (no PII in logs)
 
 ---
 
