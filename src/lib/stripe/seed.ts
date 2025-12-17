@@ -1,5 +1,5 @@
 import { prisma } from "../prisma";
-import { stripe } from "./";
+import { getStripe } from "./index";
 
 const ORG_SLUG = process.env.SEED_ORG_SLUG ?? "demo-organization";
 
@@ -21,7 +21,7 @@ const seed = async () => {
   // clean up stripe
 
   // 1) Fetch products and capture default price IDs
-  const products = await stripe.products.list({ limit: 100 });
+  const products = await getStripe().products.list({ limit: 100 });
   const defaultPriceIds = new Set(
     products.data
       .map((p) =>
@@ -35,22 +35,22 @@ const seed = async () => {
   // 2) Archive products first (this alone usually suffices)
   for (const product of products.data) {
     if (product.active) {
-      await stripe.products.update(product.id, { active: false });
+      await getStripe().products.update(product.id, { active: false });
     }
   }
 
   // 3) Archive non-default prices only
-  for await (const price of stripe.prices.list({ limit: 100 })) {
+  for await (const price of getStripe().prices.list({ limit: 100 })) {
     if (!defaultPriceIds.has(price.id) && price.active) {
-      await stripe.prices.update(price.id, { active: false });
+      await getStripe().prices.update(price.id, { active: false });
     }
   }
 
   // 4) Cancel all active subscriptions first
-  for await (const subscription of stripe.subscriptions.list({ limit: 100, status: 'all' })) {
+  for await (const subscription of getStripe().subscriptions.list({ limit: 100, status: 'all' })) {
     try {
       if (subscription.status === 'active' || subscription.status === 'trialing') {
-        await stripe.subscriptions.cancel(subscription.id);
+        await getStripe().subscriptions.cancel(subscription.id);
         console.log(`Cancelled subscription ${subscription.id}`);
       }
     } catch (e) {
@@ -59,9 +59,9 @@ const seed = async () => {
   }
 
   // 5) Delete customers (auto-paginate)
-  for await (const customer of stripe.customers.list({ limit: 100 })) {
+  for await (const customer of getStripe().customers.list({ limit: 100 })) {
     try {
-      await stripe.customers.del(customer.id);
+      await getStripe().customers.del(customer.id);
       console.log(`Deleted customer ${customer.id}`);
     } catch (e) {
       console.warn(`Could not delete customer ${customer.id}`, e);
@@ -77,11 +77,11 @@ const seed = async () => {
     },
   });
 
-  const testClock = await stripe.testHelpers.testClocks.create({
+  const testClock = await getStripe().testHelpers.testClocks.create({
     frozen_time: Math.round(new Date().getTime() / 1000),
   });
 
-  const customer = await stripe.customers.create({
+  const customer = await getStripe().customers.create({
     email: org.ownerUser.email,
     name: org.name,
     metadata: { orgId: org.id, orgSlug: org.slug, plan: org.plan },
@@ -93,7 +93,7 @@ const seed = async () => {
     data: { stripeCustomerId: customer.id },
   });
 
-  const productOne = await stripe.products.create({
+  const productOne = await getStripe().products.create({
     name: "Navis-docs Business Plan",
     description: "Your business plan.",
     marketing_features: [
@@ -106,7 +106,7 @@ const seed = async () => {
     metadata: { plan: "business" },
   });
 
-  const productTwo = await stripe.products.create({
+  const productTwo = await getStripe().products.create({
     name: "Navis-docs Enterprise Plan",
     description: "Your Enterprise plan.",
     marketing_features: [
@@ -119,7 +119,7 @@ const seed = async () => {
     metadata: { plan: "enterprise" },
   });
 
-  const businessPrice = await stripe.prices.create({
+  const businessPrice = await getStripe().prices.create({
     product: productOne.id,
     unit_amount: 4999,
     currency: "usd",
@@ -129,7 +129,7 @@ const seed = async () => {
     metadata: { plan: "business", allowedProcesses: 100, allowedDepartments: 3, allowedTeamsPerDepartment: 1 },
   });
 
-  const enterprisePrice = await stripe.prices.create({
+  const enterprisePrice = await getStripe().prices.create({
     product: productTwo.id,
     unit_amount: 29999,
     currency: "usd",
@@ -139,15 +139,15 @@ const seed = async () => {
     metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
   });
 
-  const attachedPm = await stripe.paymentMethods.attach("pm_card_visa", {
+  const attachedPm = await getStripe().paymentMethods.attach("pm_card_visa", {
     customer: customer.id,
   });
   
-  await stripe.customers.update(customer.id, {
+  await getStripe().customers.update(customer.id, {
     invoice_settings: { default_payment_method: attachedPm.id },
   });
 
-  const subscription = await stripe.subscriptions.create({
+  const subscription = await getStripe().subscriptions.create({
     customer: customer.id,
     items: [{ price: enterprisePrice.id }, { price: businessPrice.id }],
     automatic_tax: {

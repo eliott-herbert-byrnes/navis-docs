@@ -1,4 +1,4 @@
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Stripe } from "stripe";
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     return new NextResponse("Missing Stripe Signature", { status: 400 });
 
   try {
-    const event = stripe.webhooks.constructEvent(
+    const event = getStripe().webhooks.constructEvent(
       body,
       signature,
       webhookSecret

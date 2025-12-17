@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { Stripe } from "stripe";
 
 export const updateStripeSubscription = async (
@@ -12,7 +12,7 @@ export const updateStripeSubscription = async (
 
   if(priceId){
     try {
-      const price = await stripe.prices.retrieve(priceId, {
+      const price = await getStripe().prices.retrieve(priceId, {
         expand: ["product"],
       });
 
@@ -27,7 +27,7 @@ export const updateStripeSubscription = async (
   let entitlementsJSON = {};
   if (priceId) {
     try {
-      const price = await stripe.prices.retrieve(priceId);
+      const price = await getStripe().prices.retrieve(priceId);
       if (price.metadata){
         const {
           allowedProcesses,
