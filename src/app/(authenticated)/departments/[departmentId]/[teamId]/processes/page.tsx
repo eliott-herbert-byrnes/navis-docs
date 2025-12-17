@@ -8,23 +8,9 @@ import { ProcessCreateButton } from "@/features/processes/components/process-cre
 import { FavoriteList } from "@/features/processes/components/favorite/components/favorite-list";
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
 import { getCachedDepartments } from "@/lib/cache-queries";
-import { prisma } from "@/lib/prisma";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  const teams = await prisma.team.findMany({
-    select: {
-      id: true,
-      departmentId: true,
-    },
-  });
-  return teams.map((team) => ({
-    departmentId: team.departmentId,
-    teamId: team.id,
-  }));
-}
 
 export default async function ProcessPage({
   params,
