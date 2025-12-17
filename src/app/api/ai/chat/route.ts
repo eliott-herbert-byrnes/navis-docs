@@ -1,6 +1,6 @@
 import { viewProcessPath } from "@/app/paths";
 import { searchProcessChunks } from "@/features/ai/queries/search-chunks";
-import { anthropic } from "@/lib/ai/anthropic";
+import { getAnthropic } from "@/lib/ai/anthropic";
 import { getSessionUser, getUserTeamIds } from "@/lib/auth";
 import { aiLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { NextRequest, NextResponse } from "next/server";
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       })
       .join("\n\n---\n\n");
 
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       system: `You are a helpful assistant for an internal process documentation system. 
