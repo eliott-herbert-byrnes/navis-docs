@@ -3,7 +3,7 @@ import { homePath, signInPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { OrgMembershipRole } from "@prisma/client";
 import { redirect } from "next/navigation";
 
@@ -41,7 +41,7 @@ export const createCheckoutSession = async (
 
   let customerId = org.stripeCustomerId;
   if (!customerId) {
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       email: undefined,
       name: org.name,
       metadata: { orgId: org.id, orgSlug: org.slug, plan: org.plan },
@@ -54,7 +54,7 @@ export const createCheckoutSession = async (
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],

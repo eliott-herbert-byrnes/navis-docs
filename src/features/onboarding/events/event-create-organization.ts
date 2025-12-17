@@ -1,6 +1,6 @@
 import { inngest } from "@/inngest/client";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export type EventCreateOrganization = {
   data: {
@@ -25,7 +25,7 @@ export const eventCreateOrganization = inngest.createFunction(
       },
     });
 
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       email: org.ownerUser.email,
       name: org.name,
       metadata: { orgId: org.id, orgSlug: org.slug },

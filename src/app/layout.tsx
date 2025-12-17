@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { getStripeCustomerByOrg } from "@/features/stripe/queries/get-stripe-customer";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,7 +68,7 @@ export default async function RootLayout({
   let subscriptionStatus = stripeCustomer?.stripeSubscriptionStatus ?? null;
   if (stripeCustomer?.stripeSubscriptionId) {
     try {
-      const sub = await stripe.subscriptions.retrieve(
+      const sub = await getStripe().subscriptions.retrieve(
         stripeCustomer.stripeSubscriptionId
       );
       subscriptionStatus = sub.status;

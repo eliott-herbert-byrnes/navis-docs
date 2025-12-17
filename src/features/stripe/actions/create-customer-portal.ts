@@ -3,7 +3,7 @@ import { homePath, signInPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import { Stripe } from "stripe";
 
@@ -32,7 +32,7 @@ export const createCustomerPortal = async (orgSlug: string) => {
 
   let customerId = org.stripeCustomerId;
   if (!customerId) {
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       email: undefined,
       name: org.name,
       metadata: { orgId: org.id, orgSlug: org.slug, plan: org.plan },
@@ -56,9 +56,9 @@ export const createCustomerPortal = async (orgSlug: string) => {
       product: Stripe.Product;
       prices: Stripe.Price[];
     }> = [];
-    const products = await stripe.products.list({ active: true });
+    const products = await getStripe().products.list({ active: true });
     for (const product of products.data) {
-      const prices = await stripe.prices.list({
+      const prices = await getStripe().prices.list({
         active: true,
         product: product.id,
       });
@@ -67,7 +67,7 @@ export const createCustomerPortal = async (orgSlug: string) => {
       }
     }
 
-    const configuration = await stripe.billingPortal.configurations.create({
+    const configuration = await getStripe().billingPortal.configurations.create({
       business_profile: {
         privacy_policy_url: `${baseUrl}/privacy`,
         terms_of_service_url: `${baseUrl}/terms`,
@@ -97,7 +97,7 @@ export const createCustomerPortal = async (orgSlug: string) => {
       },
     });
 
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: `${baseUrl}/subscription`,
     configuration: configuration.id,
