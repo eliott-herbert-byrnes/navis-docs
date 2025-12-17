@@ -25,7 +25,7 @@ export default async function Home() {
     <>
       <Heading
         title="Departments"
-        description="Manage your departments"
+        description="Manage your organization's departments"
         actions={isAdmin ? <DepartmentCreateButton isAdmin={isAdmin} /> : null}
       />
       <Suspense fallback={<Skeleton />}>
