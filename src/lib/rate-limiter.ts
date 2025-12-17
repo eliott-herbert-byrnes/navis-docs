@@ -3,9 +3,6 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { headers } from "next/headers";
 import { getRedis } from "./redis";
 
-let _ratelimit: Ratelimit | null = null;
-
-
 export async function authLimiter() {
   return new Ratelimit({
     redis: getRedis(),
