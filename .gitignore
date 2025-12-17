@@ -50,3 +50,14 @@ next-env.d.ts
 
 # scripts
 /scripts
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+.vercel
+.env*.local

@@ -1,0 +1,78 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy_preview:
+    name: Deploy (Preview)
+    runs-on: ubuntu-latest
+    environment: Preview
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Optional: run quick checks again, or depend on CI via required checks in branch protection
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          SENTRY_TELEMETRY_DISABLED: "1"
+
+      - name: Deploy to Vercel (preview)
+        id: vercel
+        run: |
+          pnpm dlx vercel pull --yes --environment=preview \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }}
+
+          DEPLOY_URL=$(pnpm dlx vercel deploy --yes \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }} \
+            --env NODE_ENV=production \
+            | tail -n 1)
+
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+      - name: Post-deploy smoke check
+        run: |
+          npx wait-on ${{ steps.vercel.outputs.deploy_url }}
+          curl -fsSL ${{ steps.vercel.outputs.deploy_url }} >/dev/null
+
+  deploy_production:
+    name: Deploy (Production)
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: deploy_preview
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel (Production)
+        id: vercel_prod
+        run: |
+          DEPLOY_URL=$(pnpm dlx vercel deploy --prod --yes \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }} \
+            | tail -n 1)
+
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+      - name: Post-deploy smoke check
+        run: |
+          npx wait-on ${{ steps.vercel_prod.outputs.deploy_url }}
+          curl -fsSL ${{ steps.vercel_prod.outputs.deploy_url }} >/dev/null

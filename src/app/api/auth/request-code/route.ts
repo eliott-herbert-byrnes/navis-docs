@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { createOtpFor } from "@/lib/otp";
-import { Resend } from "resend";
 import { limiter } from "@/features/auth/lib/rate-limit";
-
-const resend = new Resend(process.env.RESEND_API_KEY!);
+import { getResend } from "@/lib/resend";
 
 export async function POST(req: Request) {
+  const resend = getResend();
   const ip = req.headers.get("x-forwarded-for") ?? "anon";
   const { success } = await limiter(`otp:${ip}`);
   if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
