@@ -66,7 +66,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
         <div className="flex gap-x-2">
           <Button
             variant="outline"
-            className="w-full w-[96px]"
+            className="w-full"
             onClick={handleViewClick}
             disabled={!selectedTeamId || isPending}
           >

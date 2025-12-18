@@ -39,7 +39,7 @@ jobs:
           NODE_ENV: production
 
       - name: Wait for server
-        run: npx wait-on http://127.0.0.1:3000
+        run: pnpm exec wait-on http://127.0.0.1:3000
 
       - name: Run E2E
         run: pnpm test:e2e
