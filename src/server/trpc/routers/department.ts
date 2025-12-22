@@ -1,30 +1,22 @@
-import { router, adminProcedure, protectedProcedure } from "@/server/trpc/init";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
-import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
+import {
+  router,
+  adminProcedure,
+  protectedProcedure,
+  rateLimitMiddleware,
+  orgProcedure,
+} from "@/server/trpc/init";
+import { departmentExistCheck } from "@/server/utils/department-exists-check";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const nameSchema = z.string().min(1, { message: "Is Required" }).max(28);
 const optionalNameSchema = z.string().max(191);
 
-const createDepartmentSchema = z.object({
-  departmentName: nameSchema,
-  teamName1: nameSchema,
-  teamName2: optionalNameSchema,
-  teamName3: optionalNameSchema,
-});
-
 export const departmentRouter = router({
-  // List departments
-  list: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.org) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "No organization found",
-      });
-    }
-
+  // Query: List departments
+  list: orgProcedure.query(async ({ ctx }) => {
     const [departments, count] = await ctx.db.$transaction([
       ctx.db.department.findMany({
         where: {
@@ -55,30 +47,18 @@ export const departmentRouter = router({
     return { list: departments, metadata: { count } };
   }),
 
-  // Mutation: Create department with teams
+  // Mutation: Create department
   create: adminProcedure
-    .input(createDepartmentSchema)
+    .use(rateLimitMiddleware("department-create"))
+    .input(
+      z.object({
+        departmentName: nameSchema,
+        teamName1: nameSchema,
+        teamName2: optionalNameSchema,
+        teamName3: optionalNameSchema,
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      // Rate limit check
-      const limiter = await createLimiter();
-      if (!ctx.user) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User not found",
-        });
-      }
-      const { success } = await getLimitByUser(
-        limiter,
-        ctx.user.id,
-        "department-create"
-      );
-      if (!success) {
-        throw new TRPCError({
-          code: "TOO_MANY_REQUESTS",
-          message: "Too many requests",
-        });
-      }
-
       // Department exists check
       const existingDepartment = await ctx.db.department.findFirst({
         where: {
@@ -93,7 +73,6 @@ export const departmentRouter = router({
           message: "Department already exists",
         });
       }
-
       // Get Stripe provisioning
       const {
         allowedDepartments,
@@ -118,7 +97,7 @@ export const departmentRouter = router({
 
       await createAuditLog({
         orgId: ctx.org!.id,
-        actorId: ctx.user.id ?? "",
+        actorId: ctx.user?.id ?? "",
         action: "DEPARTMENT_CREATED",
         entityType: "DEPARTMENT",
         entityId: department.id,
@@ -154,7 +133,7 @@ export const departmentRouter = router({
 
         await createAuditLog({
           orgId: ctx.org!.id,
-          actorId: ctx.user.id ?? "",
+          actorId: ctx.user?.id ?? "",
           action: "TEAM_CREATED",
           entityType: "TEAM",
           entityId: team.id,
@@ -170,6 +149,100 @@ export const departmentRouter = router({
       return {
         department,
         teams: createdTeams,
+      };
+    }),
+
+  // Mutation: Delete department
+  delete: adminProcedure
+    .use(rateLimitMiddleware("department-delete"))
+    .input(
+      z.object({
+        departmentId: z.string().min(1, { message: "Invalid department" }),
+        departmentName: z.string().min(1, { message: "Invalid department" }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Department exists check
+      await departmentExistCheck(ctx, input.departmentId);
+
+      // Before state (audit)
+      const beforeState = {
+        id: input.departmentId,
+        name: input.departmentName,
+      };
+
+      // Delete department
+      const deleted = await ctx.db.department.delete({
+        where: {
+          id: input.departmentId,
+        },
+      });
+
+      // Audit log
+      await createAuditLog({
+        orgId: ctx.org!.id,
+        actorId: ctx.user?.id ?? "",
+        action: "DEPARTMENT_DELETED",
+        entityType: "DEPARTMENT",
+        entityId: input.departmentId,
+        beforeJSON: beforeState,
+        afterJSON: {
+          id: deleted.id,
+          name: deleted.name,
+        },
+      });
+
+      return {
+        department: deleted,
+      };
+    }),
+
+  // Mutation: Rename department
+  rename: adminProcedure
+    .use(rateLimitMiddleware("department-rename"))
+    .input(
+      z.object({
+        departmentId: z.string().min(1, { message: "Invalid department" }),
+        oldDepartmentName: nameSchema,
+        newDepartmentName: nameSchema,
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Department exists check
+      await departmentExistCheck(ctx, input.departmentId);
+
+      // Before state (audit)
+      const beforeState = {
+        id: input.departmentId,
+        name: input.oldDepartmentName,
+      };
+
+      // Update department
+      const updatedDepartment = await ctx.db.department.update({
+        where: {
+          id: input.departmentId,
+        },
+        data: {
+          name: input.newDepartmentName,
+        },
+      });
+
+      // Audit log
+      await createAuditLog({
+        orgId: ctx.org!.id,
+        actorId: ctx.user?.id ?? "",
+        action: "DEPARTMENT_RENAMED",
+        entityType: "DEPARTMENT",
+        entityId: input.departmentId,
+        beforeJSON: beforeState,
+        afterJSON: {
+          id: updatedDepartment.id,
+          name: updatedDepartment.name,
+        },
+      });
+
+      return {
+        department: updatedDepartment,
       };
     }),
 });
