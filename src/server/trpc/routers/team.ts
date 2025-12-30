@@ -16,7 +16,6 @@ export const teamRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Department exists check
       await departmentExistCheck(ctx, input.departmentId);
 
       // Team exists check
@@ -143,7 +142,8 @@ export const teamRouter = router({
   // rename team
   rename: adminProcedure
     .use(rateLimitMiddleware("team-rename"))
-    .input(z.object({
+    .input(
+      z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
         oldTeamName: z.string().min(1, { message: "Invalid team" }),
         newTeamName: z.string().min(1, { message: "Is Required" }).max(28),
