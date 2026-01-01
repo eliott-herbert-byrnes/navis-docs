@@ -1,25 +1,20 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
 import { DepartmentDialog } from "./department-create-dialog";
-import { createDepartment } from "../../actions/create-department";
+import { useCreateDepartment } from "../../hooks/use-department-mutations";
 
 const DepartmentCreateButton = ({ isAdmin }: { isAdmin: boolean }) => {
-  const [actionState, action] = useActionState(
-    createDepartment,
-    EMPTY_ACTION_STATE
-  );
-
-  
+ const {createDepartment, isPending, isDialogOpen, setIsDialogOpen} = useCreateDepartment();
 
   return (
     <DepartmentDialog
       title="Create Department"
       description="Create a new department and add teams"
-      action={action}
-      actionState={actionState}
+      onConfirm={createDepartment}
+      isPending={isPending}
       disabled={!isAdmin}
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
     />
   );
 };

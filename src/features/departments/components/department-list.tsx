@@ -2,8 +2,6 @@
 
 import { EmptyState } from "@/components/empty-state";
 import { DepartmentCard } from "./department-card";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
-import { getCachedDepartments } from "@/lib/cache-queries";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
 

@@ -1,9 +1,7 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
 import { DepartmentOverview } from "./department-overview";
-import { overviewDepartment } from "../../actions/overview-department";
+import { useRenameDepartment } from "../../hooks/use-department-mutations";
 
 type DepartmentOverviewButtonProps = {
   departmentId: string;
@@ -16,17 +14,18 @@ const DepartmentOverviewButton = ({
   title,
   isAdmin,
 }: DepartmentOverviewButtonProps) => {
-  const [actionState, action] = useActionState(
-    overviewDepartment,
-    EMPTY_ACTION_STATE
-  );
+  const { renameDepartment, isPending } = useRenameDepartment();
+
+  const handleRename = (oldDepartmentName: string, newDepartmentName: string) => {
+    renameDepartment(departmentId, oldDepartmentName, newDepartmentName);
+  };
 
   return (
     <DepartmentOverview
       title={title}
-      action={action}
-      actionState={actionState}
-      disabled={!isAdmin}
+      onConfirm={handleRename}
+      isPending={isPending}
+      disabled={!isAdmin || isPending}
       departmentId={departmentId}
       isAdmin={isAdmin}
     />

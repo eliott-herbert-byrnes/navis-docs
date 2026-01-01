@@ -3,7 +3,6 @@ import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-pr
 import {
   router,
   adminProcedure,
-  protectedProcedure,
   rateLimitMiddleware,
   orgProcedure,
 } from "@/server/trpc/init";
@@ -12,7 +11,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const nameSchema = z.string().min(1, { message: "Is Required" }).max(28);
-const optionalNameSchema = z.string().max(191);
+const optionalNameSchema = z.string().max(191).optional();
 
 export const departmentRouter = router({
   // Query: List departments
@@ -112,7 +111,7 @@ export const departmentRouter = router({
         input.teamName1,
         input.teamName2,
         input.teamName3,
-      ].filter((name) => name.trim().length > 0);
+      ].filter((name) => name && name.trim().length > 0);
 
       if (teamNames.length > allowedTeamsPerDepartment) {
         throw new TRPCError({
@@ -126,7 +125,7 @@ export const departmentRouter = router({
       for (const teamName of teamNames) {
         const team = await ctx.db.team.create({
           data: {
-            name: teamName,
+            name: teamName as string,
             departmentId: department.id,
           },
         });
@@ -158,6 +157,7 @@ export const departmentRouter = router({
     .input(
       z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
+        departmentName: z.string().min(1, { message: "Invalid department" }),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -167,6 +167,7 @@ export const departmentRouter = router({
       // Before state (audit)
       const beforeState = {
         id: input.departmentId,
+        name: input.departmentName,
       };
 
       // Delete department
