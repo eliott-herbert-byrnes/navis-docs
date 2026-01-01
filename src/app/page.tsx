@@ -29,7 +29,7 @@ export default async function Home() {
         actions={isAdmin ? <DepartmentCreateButton isAdmin={isAdmin} /> : null}
       />
       <Suspense fallback={<Skeleton />}>
-        <DepartmentList orgId={org.id} />
+        <DepartmentList isAdmin={isAdmin} />
       </Suspense>
     </>
   );

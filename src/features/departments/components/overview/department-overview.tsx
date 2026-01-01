@@ -89,7 +89,7 @@ const DepartmentOverview = ({
                     <CardTitle>Department Settings</CardTitle>
                     <CardDescription>
                       Manage the department settings
-                      <p className="text-sm text-muted-foreground text-red-500 mt-2">Export Department disabled for MVP</p>
+                      <p className="text-sm text-red-500 mt-2">Export Department disabled for MVP</p>
                     </CardDescription>
                   </CardHeader>
                   <Separator />
@@ -131,7 +131,7 @@ const DepartmentOverview = ({
                           Delete the department and all its data
                         </CardDescription>
                       </div>
-                      <DepartmentDeleteButton departmentId={departmentId} isAdmin={isAdmin} />
+                      <DepartmentDeleteButton departmentId={departmentId} departmentName={title} isAdmin={isAdmin} />
                     </div>
                   </CardContent>
                 </Card>

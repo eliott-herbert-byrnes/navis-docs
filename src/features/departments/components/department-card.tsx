@@ -102,6 +102,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
             <DropdownMenuItem asChild>
               <DepartmentDeleteButton
                 departmentId={department.id}
+                departmentName={department.name}
                 isAdmin={isAdmin}
               />
             </DropdownMenuItem>

@@ -1,27 +1,42 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
-import { deleteDepartment } from "../../actions/delete-department";
 import { DepartmentDeleteDialog } from "./department-delete-dialog";
+import { trpc } from "@/trpc/client";
+import { toast } from "sonner";
 
+const DepartmentDeleteButton = ({
+  departmentId,
+  departmentName,
+  isAdmin,
+}: {
+  departmentId: string;
+  departmentName: string;
+  isAdmin: boolean;
+}) => {
+  const utils = trpc.useUtils();
+  const deleteDeptartment = trpc.department.delete.useMutation({
+    onSuccess: () => {
+      utils.department.list.invalidate();
+      toast.success("Department deleted successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
-const DepartmentDeleteButton = ({ departmentId, isAdmin }: { departmentId: string, isAdmin: boolean }) => {
-    const [actionState, action] = useActionState(       
-        deleteDepartment,
-        EMPTY_ACTION_STATE,
-    );
+  const handleDelete = () => {
+    deleteDeptartment.mutate({ departmentId, departmentName });
+  };
 
-    return (
-        <DepartmentDeleteDialog 
-        title="Are you sure you want to delete this department?"
-        description="All associated teams and processes will be deleted as well. This action cannot be undone."
-        action={action}
-        actionState={actionState}
-        disabled={!isAdmin}
-        departmentId={departmentId}
-        />
-    );
+  return (
+    <DepartmentDeleteDialog
+      title="Are you sure you want to delete this department?"
+      description="All associated teams and processes will be deleted as well. This action cannot be undone."
+      onConfirm={handleDelete}
+      isPending={deleteDeptartment.isPending}
+      disabled={!isAdmin || deleteDeptartment.isPending}
+    />
+  );
 };
 
 export { DepartmentDeleteButton };

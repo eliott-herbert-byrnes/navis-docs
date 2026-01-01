@@ -158,7 +158,6 @@ export const departmentRouter = router({
     .input(
       z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
-        departmentName: z.string().min(1, { message: "Invalid department" }),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -168,7 +167,6 @@ export const departmentRouter = router({
       // Before state (audit)
       const beforeState = {
         id: input.departmentId,
-        name: input.departmentName,
       };
 
       // Delete department
