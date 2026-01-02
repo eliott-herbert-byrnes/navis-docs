@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { trpc } from "@/trpc/client";
 
 type TeamDropdownProps = {
   department: {
@@ -35,11 +35,10 @@ const TeamDropdown = ({
   onTeamSelect,
 }: TeamDropdownProps) => {
   const [open, setOpen] = React.useState(false);
+  const { data } = trpc.team.list.useQuery({ departmentId: department.id });
 
-  const selectedTeam = department.teams.find(
-    (team) => team.id === selectedTeamId
-  );
-
+  const teams = data?.teams ?? [];
+  const selectedTeam = teams.find((team) => team.id === selectedTeamId);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -59,7 +58,7 @@ const TeamDropdown = ({
           <CommandList>
             <CommandEmpty>No team found.</CommandEmpty>
             <CommandGroup>
-              {department.teams.map((team) => (
+              {teams.map((team) => (
                 <CommandItem
                   key={team.id}
                   value={team.name}
@@ -72,7 +71,7 @@ const TeamDropdown = ({
                   <Check
                     className={cn(
                       "ml-auto",
-                      selectedTeamId === team.name ? "opacity-100" : "opacity-0"
+                      selectedTeamId === team.id ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

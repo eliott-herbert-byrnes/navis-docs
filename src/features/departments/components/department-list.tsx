@@ -10,9 +10,26 @@ type DepartmentListProps = {
 };
 
 const DepartmentList = ({ isAdmin }: DepartmentListProps) => {
-  const { data, isLoading } = trpc.department.list.useQuery();
+  const { data, isLoading, isError } = trpc.department.list.useQuery();
 
-  if (isLoading) return <Skeleton className="h-48 w-1/4 rounded-md" />;
+  if (isLoading) {
+    return (
+      <>
+        <div className="flex flex-row flex-wrap gap-4">
+          <Skeleton className="h-48 w-1/4 rounded-md" />
+          <Skeleton className="h-48 w-1/4 rounded-md" />
+          <Skeleton className="h-48 w-1/4 rounded-md" />
+        </div>
+      </>
+    );
+  } else if (isError) {
+    return (
+      <EmptyState
+        title="Error loading departments"
+        body="Please try again later, or contact support if the problem persists"
+      />
+    );
+  }
 
   const departments = data?.list ?? [];
 

@@ -10,37 +10,33 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Loader2, TrashIcon } from "lucide-react";
-import { useState } from "react";
 
-type DepartmentDeleteDialogProps = {
+type TeamDeleteDialogProps = {
   title: string;
   description: string;
   onConfirm: () => void;
   isPending: boolean;
-  disabled: boolean;
+  isAdmin: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
-const DepartmentDeleteDialog = ({
+const TeamDeleteDialog = ({
   title,
   description,
   onConfirm,
   isPending,
-  disabled,
-}: DepartmentDeleteDialogProps) => {
-  const [open, setOpen] = useState(false);
-
+  isAdmin,
+  open,
+  onOpenChange,
+}: TeamDeleteDialogProps) => {
   const handleConfirm = () => {
     onConfirm();
-    setOpen(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
+        <Button variant="outline" className="w-full max-w-[125px]" disabled={!isAdmin}>
           <TrashIcon className="w-4 h-4" />
           Delete
         </Button>
@@ -48,16 +44,14 @@ const DepartmentDeleteDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="text-red-500">
-            {description}
-          </DialogDescription>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
             className="w-[75px]"
             type="button"
             variant="outline"
-            onClick={() => setOpen(false)}
+            onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
             Cancel
@@ -69,7 +63,11 @@ const DepartmentDeleteDialog = ({
             onClick={handleConfirm}
             disabled={isPending}
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" />: "Delete"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -77,4 +75,4 @@ const DepartmentDeleteDialog = ({
   );
 };
 
-export { DepartmentDeleteDialog };
+export { TeamDeleteDialog };

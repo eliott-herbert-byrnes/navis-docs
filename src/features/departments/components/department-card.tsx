@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DepartmentDeleteButton } from "./department-buttons/department-delete-button";
-import { DepartmentTeamButton } from "./department-buttons/department-team-button";
+import { CreateTeamButton } from "./team-buttons/team-create-button";
 import { DepartmentOverviewButton } from "./overview/department-overview-button";
 import { teamProcessPath } from "@/app/paths";
 import { useState, useTransition } from "react";
@@ -94,7 +94,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
               />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <DepartmentTeamButton
+              <CreateTeamButton
                 departmentId={department.id}
                 isAdmin={isAdmin}
               />
@@ -113,7 +113,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
   );
 
   return (
-    <Card className="w-full max-w-[250px] animate-fade-from-top">
+    <Card className="w-full max-w-[250px] animate-fade-from-top hover:scale-101 transition-all duration-300">
       <CardHeader>
         <CardTitle>
           <Badge className="text-sm">{department.name}</Badge>

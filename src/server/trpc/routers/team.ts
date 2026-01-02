@@ -1,11 +1,34 @@
 import { createAuditLog } from "@/features/audit/utils/audit";
-import { adminProcedure, rateLimitMiddleware, router } from "../init";
+import {
+  adminProcedure,
+  orgProcedure,
+  rateLimitMiddleware,
+  router,
+} from "../init";
 import { TRPCError } from "@trpc/server";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
 import { departmentExistCheck } from "@/server/utils/department-exists-check";
 import { z } from "zod";
 
 export const teamRouter = router({
+  // Query: List teams
+  list: orgProcedure
+    .input(
+      z.object({
+        departmentId: z.string().min(1, { message: "Invalid department" }),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      await departmentExistCheck(ctx, input.departmentId);
+
+      const teams = await ctx.db.team.findMany({
+        where: { departmentId: input.departmentId },
+        select: { id: true, name: true, departmentId: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+      });
+      return { teams };
+    }),
+
   // create team
   create: adminProcedure
     .use(rateLimitMiddleware("team-create"))
@@ -79,7 +102,6 @@ export const teamRouter = router({
     }),
 
   // delete team
-
   delete: adminProcedure
     .use(rateLimitMiddleware("team-delete"))
     .input(

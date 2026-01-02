@@ -142,7 +142,9 @@ const DepartmentOverview = ({
                 <Separator />
 
                 <CardContent className="">
-                  <DepartmentTeamTable departmentId={departmentId} />
+                  <DepartmentTeamTable 
+                  isAdmin={isAdmin}
+                  departmentId={departmentId} />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -166,7 +168,11 @@ const DepartmentOverview = ({
             onClick={handleUpdate}
             disabled={isPending}
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Update"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
