@@ -1,15 +1,13 @@
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/empty-state";
-import { signInPath, teamProcessPath } from "@/app/paths";
 import { ProcessBreadcrumbs } from "../_navigation";
 import { getAddresses } from "@/features/address/queries/get-addresses";
 import { AddressList } from "@/features/address/components/address-list";
 import { AddressCreateButton } from "@/features/address/components/address-create-button";
-import { getCachedDepartments } from "@/lib/cache-queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
 export default async function AddressPage({
   params,
@@ -19,11 +17,10 @@ export default async function AddressPage({
   const { departmentId, teamId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
-  if (!org) redirect(teamProcessPath(departmentId, teamId));
+  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
 
-  const { list: departments } = await getCachedDepartments(org.id);
+  const trpc = await serverTrpc();
+  const { list: departments } = await trpc.department.list();
 
   const departmentName = departments.find(
     (department) => department.id === departmentId
@@ -58,6 +55,5 @@ export default async function AddressPage({
         )}
       </Suspense>
     </>
-
   );
 }

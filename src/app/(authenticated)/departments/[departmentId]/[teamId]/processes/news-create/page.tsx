@@ -2,10 +2,10 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { signInPath, teamProcessPath } from "@/app/paths";
+import { teamProcessPath } from "@/app/paths";
 import { NewsCreateForm } from "@/features/news/components/news-create-form";
-import { getCachedDepartments } from "@/lib/cache-queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
 export default async function NewsCreatePage({
   params,
@@ -15,12 +15,12 @@ export default async function NewsCreatePage({
   const { departmentId, teamId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org || !isAdmin) redirect(teamProcessPath(departmentId, teamId));
+  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  if (!isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
-  const { list: departments } = await getCachedDepartments(org.id);
+  const trpc = await serverTrpc();
+  const { list: departments } = await trpc.department.list();
 
   const teamName = departments
     .find((department) => department.id === departmentId)
@@ -28,15 +28,12 @@ export default async function NewsCreatePage({
 
   return (
     <>
-      <Heading
-        title={`Create News`}
-        description="Create a new news post"
-      />
+      <Heading title={`Create News`} description="Create a new news post" />
       <Suspense fallback={<Skeleton />}>
-        <NewsCreateForm 
-        teamName={teamName ?? "this team"}
-        departmentId={departmentId}
-        teamId={teamId}
+        <NewsCreateForm
+          teamName={teamName ?? "this team"}
+          departmentId={departmentId}
+          teamId={teamId}
         />
       </Suspense>
     </>

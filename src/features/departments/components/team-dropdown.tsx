@@ -39,6 +39,7 @@ const TeamDropdown = ({
 
   const teams = data?.teams ?? [];
   const selectedTeam = teams.find((team) => team.id === selectedTeamId);
+  
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>

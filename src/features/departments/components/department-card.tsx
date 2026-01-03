@@ -55,11 +55,11 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
 
   const handleViewClick = () => {
     if (!selectedTeamId) return;
-
     startTransition(() => {
       router.push(teamProcessPath(department.id, selectedTeamId));
     });
   };
+
   const buttons = (
     <>
       <div className="flex flex-row gap-x-2 gap-y-2 w-full">

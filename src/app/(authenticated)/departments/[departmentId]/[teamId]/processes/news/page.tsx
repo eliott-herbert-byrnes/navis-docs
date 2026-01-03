@@ -1,15 +1,13 @@
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/empty-state";
-import { signInPath, teamProcessPath } from "@/app/paths";
 import { ProcessBreadcrumbs } from "../_navigation";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
 import { NewsPostList } from "@/features/news/components/news-list";
 import { getNewsPosts } from "@/features/news/queries/get-news-posts";
-import { getCachedDepartments } from "@/lib/cache-queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
 export default async function NewsPage({
   params,
@@ -19,12 +17,11 @@ export default async function NewsPage({
   const { departmentId, teamId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org) redirect(teamProcessPath(departmentId, teamId));
+  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
 
-  const { list: departments } = await getCachedDepartments(org.id);
+  const trpc = await serverTrpc();
+  const { list: departments } = await trpc.department.list();
 
   const departmentName = departments.find(
     (department) => department.id === departmentId
@@ -57,11 +54,14 @@ export default async function NewsPage({
         }
       />
       <Suspense fallback={<Skeleton />}>
-      {newsPosts.length > 0 ? (
-        <NewsPostList departmentId={departmentId} teamId={teamId} />
-      ) : (
-        <EmptyState title="No news posts yet" body="Create a news post to get started" />
-      )}
+        {newsPosts.length > 0 ? (
+          <NewsPostList departmentId={departmentId} teamId={teamId} />
+        ) : (
+          <EmptyState
+            title="No news posts yet"
+            body="Create a news post to get started"
+          />
+        )}
       </Suspense>
     </>
   );

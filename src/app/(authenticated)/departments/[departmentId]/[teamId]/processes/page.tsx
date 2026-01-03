@@ -1,14 +1,12 @@
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { onboardingPath, signInPath } from "@/app/paths";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
 import { FavoriteList } from "@/features/processes/components/favorite/components/favorite-list";
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
-import { getCachedDepartments } from "@/lib/cache-queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
 export const revalidate = 3600;
 
@@ -20,13 +18,10 @@ export default async function ProcessPage({
   const { departmentId, teamId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
+  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
 
-  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
-  if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(signInPath());
-
-  const { list: departments } = await getCachedDepartments(org.id);
+  const trpc = await serverTrpc();
+  const { list: departments } = await trpc.department.list();
 
   const departmentName = departments.find(
     (department) => department.id === departmentId
