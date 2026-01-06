@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ProcessForEdit } from "../queries/get-process-for-edit";
 import { useState, useTransition, useCallback, useEffect } from "react";
 import { teamProcessPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import {
   handlePublishProcess,
   handleCancelEdit,
 } from "./form/utils/process-edit-utils";
+import { ProcessForEdit } from "../types/types";
 
 type EditProcessFormProps = {
   departmentId: string;
@@ -37,10 +37,10 @@ export const EditProcessForm = ({
   const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const initialContent =
-    process.pendingVersion?.contentJSON ||
-    process.publishedVersion?.contentJSON ||
-    {};
+  const initialContent: ProcessContent =
+    process.pendingVersion?.contentJSON as ProcessContent ||
+    process.publishedVersion?.contentJSON as ProcessContent ||
+    ({} as ProcessContent);
 
   const [content, setContent] = useState<ProcessContent>(initialContent);
 

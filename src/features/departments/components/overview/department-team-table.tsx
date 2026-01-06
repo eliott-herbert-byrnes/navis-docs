@@ -145,7 +145,7 @@ export function DepartmentTeamTable({
         },
       },
     ] as ColumnDef<Team>[],
-    []
+    [isAdmin]
   );
 
   const table = useReactTable({

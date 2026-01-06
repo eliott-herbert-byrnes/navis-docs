@@ -22,7 +22,6 @@ import {
   teamProcessPath,
   viewProcessPath,
 } from "@/app/paths";
-import { CategoryWithProcesses } from "../queries/get-categories-with-processes";
 import { ProcessSearchButton } from "./process-search-button";
 import { IdeaButton } from "./Idea/components/idea-button";
 import { ProcessStatus } from "@prisma/client";
@@ -34,6 +33,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { CategoryWithProcesses } from "../types/types";
 
 type ProcessSidebarProps = {
   departmentId: string;
@@ -44,7 +44,7 @@ type ProcessSidebarProps = {
     slug: string;
     title: string;
   }[];
-  categories: CategoryWithProcesses[];
+  categories: CategoryWithProcesses;
 };
 
 export function ProcessSidebar({

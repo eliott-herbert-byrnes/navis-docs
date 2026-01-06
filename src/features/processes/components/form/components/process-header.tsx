@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye } from "lucide-react";
-import { ProcessForEdit } from "../../../queries/get-process-for-edit";
+import { ProcessForEdit } from "@/features/processes/types/types";
 
 type ProcessHeaderProps = {
   process: ProcessForEdit;

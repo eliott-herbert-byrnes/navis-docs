@@ -2,10 +2,10 @@ import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { signInPath, teamProcessPath } from "@/app/paths";
-import { getProcessForEdit } from "@/features/processes/queries/get-process-for-edit";
+import { teamProcessPath } from "@/app/paths";
 import { EditProcessForm } from "@/features/processes/components/process-edit-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
 export default async function ProcessEditPage({
   params,
@@ -15,12 +15,11 @@ export default async function ProcessEditPage({
   const { departmentId, teamId, processId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-
-  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
+  const { org, isAdmin } = await getUserOrgWithRole(user!.userId);
   if (!org || !isAdmin) redirect(teamProcessPath(departmentId, teamId));
 
-  const process = await getProcessForEdit(processId);
+  const trpc = await serverTrpc();
+  const { data: process } = await trpc.process.getForEdit({ processId });
 
   if (!process) {
     redirect(teamProcessPath(departmentId, teamId));

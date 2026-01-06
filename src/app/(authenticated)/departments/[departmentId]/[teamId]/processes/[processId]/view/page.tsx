@@ -2,16 +2,11 @@ import { Heading } from "@/components/Heading";
 import { ProcessContent } from "@/features/processes/components/process-content";
 import { ProcessViewActions } from "@/features/processes/components/process-view-actions";
 import { ProcessViewMetadata } from "@/features/processes/components/process-view-metadata";
-import { getProcessForView } from "@/features/processes/queries/get-process-for-view";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
-import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { signInPath } from "@/app/paths";
-import "./print.css";
 import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
-
-export const revalidate = 1800;
+import { serverTrpc } from "@/server/trpc/server";
 
 type ProcessViewPageProps = {
   params: Promise<{ departmentId: string; teamId: string; processId: string }>;
@@ -21,16 +16,12 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
   const { departmentId, teamId, processId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
+  const [canEdit] = await Promise.all([isOrgAdminOrOwner(user!.userId)]);
 
-  const [process, canEdit] = await Promise.all([
-    getProcessForView(processId),
-    isOrgAdminOrOwner(user.userId),
-  ]);
-
-  if (!process) {
-    notFound();
-  }
+  const trpc = await serverTrpc();
+  const { data: process, isFavorite} = await trpc.process.getForView(
+    { processId }
+  );
 
   return (
     <div className="space-y-4">
@@ -43,7 +34,7 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
             teamId={teamId}
             processId={processId}
             canEdit={canEdit}
-            isFavorite={process.isFavorite}
+            isFavorite={isFavorite}
           />
         </div>
       </div>

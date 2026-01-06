@@ -1,12 +1,12 @@
 import { toast } from "sonner";
 import { updateProcessContent } from "../../../actions/update-process-content";
 import { publishProcess } from "../../../actions/publish-process";
-import { ProcessForEdit } from "../../../queries/get-process-for-edit";
 import { JSONContent } from "@tiptap/react";
 import { Step } from "../../editors/steps-editor";
 import { FlowContent } from "../../editors/flow-editor";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { viewProcessPath } from "@/app/paths";
+import { ProcessForEdit } from "@/features/processes/types/types";
 
 
 export type YesNoNode = {

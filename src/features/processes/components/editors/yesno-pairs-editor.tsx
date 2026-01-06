@@ -116,7 +116,6 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
 
   const resetToStart = useCallback(() => {
     setCurrentPath([yesnoContent.startNodeId || "start"]);
-    toast.info("Returned to start");
   }, [yesnoContent.startNodeId]);
 
   const getChild = useCallback(

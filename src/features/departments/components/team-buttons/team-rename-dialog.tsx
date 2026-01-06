@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2, PencilIcon } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 
 type TeamRenameDialogProps = {
   title: string;

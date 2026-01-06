@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { searchProcesses } from "../queries/search-processes";
+import { useCallback, useState } from "react";
 import { viewProcessPath } from "@/app/paths";
 import {
   CommandDialog,
@@ -13,17 +12,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { FileText, FolderIcon } from "lucide-react";
-
-type ProcessSearchResult = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string | null;
-  categoryId: string | null;
-  category: {
-    name: string;
-  } | null;
-};
+import { trpc } from "@/trpc/client";
 
 type ProcessSearchDialogProps = {
   open: boolean;
@@ -40,29 +29,16 @@ export function ProcessSearchDialog({
 }: ProcessSearchDialogProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<ProcessSearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
 
-  useEffect(() => {
-    const searchTimer = setTimeout(async () => {
-      if (query.trim().length > 0) {
-        setIsSearching(true);
-        try {
-          const data = await searchProcesses(teamId, query);
-          setResults(data);
-        } catch (error) {
-          console.error("Error searching processes:", error);
-          setResults([]);
-        } finally {
-          setIsSearching(false);
-        }
-      } else {
-        setResults([]);
-      }
-    }, 300);
+  const { data, isLoading } = trpc.process.searchProcesses.useQuery(
+    { teamId, query },
+    {
+      enabled: query.trim().length > 0,
+      staleTime: 1000 * 60,
+    }
+  );
 
-    return () => clearTimeout(searchTimer);
-  }, [query, teamId]);
+  const results = data?.data ?? [];
 
   const handleSelect = useCallback(
     (processId: string) => {
@@ -70,7 +46,6 @@ export function ProcessSearchDialog({
       router.push(viewProcessPath(departmentId, teamId, processId));
       setTimeout(() => {
         setQuery("");
-        setResults([]);
       }, 100);
     },
     [departmentId, router, teamId, onOpenChange]
@@ -90,7 +65,7 @@ export function ProcessSearchDialog({
         onValueChange={setQuery}
       />
       <CommandList>
-        {isSearching ? (
+        {isLoading ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             Searching...
           </div>
