@@ -1,48 +1,46 @@
 "use client";
 
-import { Form } from "@/components/form/form";
 import { Organization } from "@prisma/client";
-import { Separator } from "@/components/ui/separator";
+import { useRenameOrganization } from "../hooks/use-organization-mutations";
+import React, { useState } from "react";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
 } from "@/components/ui/card";
-import { FieldError } from "@/components/form/field-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { Label } from "@radix-ui/react-dropdown-menu";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { updateOrganization } from "../actions/update-organization";
-import { useActionState } from "react";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Loader2 } from "lucide-react";
 
 type OrganizationOverviewProps = {
   org: Organization;
 };
 
 const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
-  const [actionState, action] = useActionState(
-    updateOrganization,
-    EMPTY_ACTION_STATE
-  );
+  const [orgName, setOrgName] = useState(org.name);
+  const { renameOrganization, isPending } = useRenameOrganization();
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    renameOrganization({ orgId: org.id, orgName: orgName });
+  };
 
   return (
-    <Form
-      action={action}
-      actionState={actionState}
+    <form
       className="flex flex-col gap-4 w-full max-w-[450px] mx-auto"
+      onSubmit={handleUpdate}
     >
-      <input type="hidden" name="orgId" value={org.id} />
       <div className="flex w-full flex-col">
         <Card className="animate-fade-from-top">
           <CardHeader>
             <CardTitle>Organization Settings</CardTitle>
             <CardDescription>
               Manage the organization settings
-              <p className="text-sm text-muted-foreground text-red-500 mt-2">
+              <p className="text-sm text-red-500 mt-2">
                 Export / Delete Organization disabled for MVP
               </p>
             </CardDescription>
@@ -56,9 +54,9 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
                 name="orgName"
                 id="orgName"
                 type="text"
-                defaultValue={org.name}
+                value={orgName}
+                onChange={(e) => setOrgName(e.target.value)}
               />
-              <FieldError actionState={actionState} name="orgName" />
             </div>
             <Separator />
             <div className="grid gap-3">
@@ -90,11 +88,17 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
               </Button>
             </div>
             <Separator />
-            <SubmitButton label="Update" className="w-[75px]" disabled />
+            <Button className="w-[75px]" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Rename"
+              )}
+            </Button>
           </CardContent>
         </Card>
       </div>
-    </Form>
+    </form>
   );
 };
 

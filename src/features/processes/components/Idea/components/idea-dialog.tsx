@@ -41,10 +41,8 @@ const ProcessIdeaDialog = ({
       ideaBody: String(formData.get("ideaBody") ?? "").trim(),
     });
 
-    // Close dialog after submission
     setOpen(false);
     
-    // Reset form
     e.currentTarget.reset();
   };
 
