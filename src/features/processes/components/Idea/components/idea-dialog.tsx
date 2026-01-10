@@ -1,7 +1,4 @@
 "use client";
-import { FieldError } from "@/components/form/field-error";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,28 +11,41 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { Lightbulb } from "lucide-react";
-import { useState } from "react";
+import { Lightbulb, Loader2 } from "lucide-react";
+import { useState, FormEvent } from "react";
 
 type ProcessIdeaDialogProps = {
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
+  onSubmit: (data: { teamId: string; ideaTitle: string; ideaBody: string }) => void;
+  isPending: boolean;
   teamId: string;
 };
+
 const ProcessIdeaDialog = ({
   title,
   description,
-  action,
-  actionState,
+  onSubmit,
+  isPending,
   teamId,
 }: ProcessIdeaDialogProps) => {
   const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    onSubmit({
+      teamId,
+      ideaTitle: String(formData.get("ideaTitle") ?? "").trim(),
+      ideaBody: String(formData.get("ideaBody") ?? "").trim(),
+    });
+
+    // Close dialog after submission
     setOpen(false);
+    
+    // Reset form
+    e.currentTarget.reset();
   };
 
   return (
@@ -47,46 +57,47 @@ const ProcessIdeaDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <Form
-          action={action}
-          actionState={actionState}
-          onSuccess={handleClose}
-          onError={handleClose}
-        >
-          <input type="hidden" name="teamId" value={teamId} />
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>
-              {description}
-            </DialogDescription>
+            <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-4">
-          <Input
-            name="ideaTitle"
-            placeholder="Title of the idea..."
-            required
-          />
-          <FieldError actionState={actionState} name="ideaTitle" />
-          <Textarea
-            name="ideaBody"
-            placeholder="Describe the idea..."
-            required
-              rows={10}
+            <Input
+              name="ideaTitle"
+              placeholder="Title of the idea..."
+              required
+              disabled={isPending}
+              maxLength={100}
             />
-            <FieldError actionState={actionState} name="ideaBody" />
+            <Textarea
+              name="ideaBody"
+              placeholder="Describe the idea..."
+              required
+              rows={10}
+              disabled={isPending}
+              maxLength={1000}
+            />
           </div>
           <DialogFooter className="flex flex-row gap-2 mt-4">
             <Button
               className="w-[75px]"
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={() => setOpen(false)}
+              disabled={isPending}
             >
               Cancel
             </Button>
-            <SubmitButton className="w-[75px]" label="Submit" />
+            <Button className="w-[75px]" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Submit"
+              )}
+            </Button>
           </DialogFooter>
-        </Form>
+        </form>
       </DialogContent>
     </Dialog>
   );

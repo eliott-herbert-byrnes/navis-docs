@@ -68,8 +68,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
-import { updateIdeaStatus } from "../actions/update-idea-status";
 import { IdeaDeleteButton } from "./idea-delete-button";
+import { useUpdateIdeaStatus } from "../hooks/use-ideas-mutations";
 
 export const schema = z.object({
   id: z.string(),
@@ -85,23 +85,13 @@ export const schema = z.object({
 type Idea = z.infer<typeof schema>;
 
 function TableCellViewer({ item }: { item: Idea }) {
-  const router = useRouter();
   const isMobile = useIsMobile();
-  const [isUpdating, setIsUpdating] = React.useState(false);
+  const { updateIdeaStatus, isPending: isUpdating } = useUpdateIdeaStatus();
 
-  const handleStatusChange = async (
+  const handleStatusChange = (
     status: "IN_PROGRESS" | "COMPLETED" | "ARCHIVED"
   ) => {
-    setIsUpdating(true);
-    const result = await updateIdeaStatus(item.id, status);
-    setIsUpdating(false);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
+    updateIdeaStatus(item.id, status);
   };
 
   return (
@@ -230,7 +220,7 @@ function TableCellViewer({ item }: { item: Idea }) {
 }
 
 export function IdeaList({ data: initialData }: { data: Idea[] }) {
-  const router = useRouter();
+  const { updateIdeaStatus } = useUpdateIdeaStatus();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -244,18 +234,11 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
   });
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
 
-  const handleStatusUpdate = async (
+  const handleStatusUpdate = (
     ideaId: string,
     status: "IN_PROGRESS" | "COMPLETED" | "ARCHIVED"
   ) => {
-    const result = await updateIdeaStatus(ideaId, status);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
+    updateIdeaStatus(ideaId, status);
   };
 
   const handleStatusFilterChange = (value: string) => {

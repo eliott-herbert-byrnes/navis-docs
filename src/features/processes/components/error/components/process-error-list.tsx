@@ -70,10 +70,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateErrorStatus } from "../actions/update-error-status";
 import { viewProcessPath } from "@/app/paths";
-import { useRouter } from "next/navigation";
 import { ProcessErrorDeleteButton } from "./process-error-delete-button";
+import { useUpdateErrorStatus } from "../hooks/use-errors-mutations";
 
 export const schema = z.object({
   id: z.string(),
@@ -91,21 +90,11 @@ export const schema = z.object({
 type ErrorReport = z.infer<typeof schema>;
 
 function TableCellViewer({ item }: { item: ErrorReport }) {
-  const router = useRouter();
   const isMobile = useIsMobile();
-  const [isUpdating, setIsUpdating] = React.useState(false);
+  const { updateErrorStatus, isPending: isUpdating } = useUpdateErrorStatus();
 
-  const handleStatusChange = async (status: "RESOLVED" | "ARCHIVED") => {
-    setIsUpdating(true);
-    const result = await updateErrorStatus(item.id, status);
-    setIsUpdating(false);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
+  const handleStatusChange = (status: "RESOLVED" | "ARCHIVED") => {
+    updateErrorStatus(item.id, status);
   };
 
 
@@ -212,7 +201,7 @@ export function ProcessErrorList({
 }: {
   data: ErrorReport[];
 }) {
-  const router = useRouter();
+  const { updateErrorStatus } = useUpdateErrorStatus();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -226,18 +215,11 @@ export function ProcessErrorList({
   });
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
 
-  const handleStatusUpdate = async (
+  const handleStatusUpdate = (
     errorId: string,
     status: "RESOLVED" | "ARCHIVED"
   ) => {
-    const result = await updateErrorStatus(errorId, status);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
+    updateErrorStatus(errorId, status);
   };
 
   const handleStatusFilterChange = (value: string) => {

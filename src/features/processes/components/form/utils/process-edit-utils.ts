@@ -1,13 +1,9 @@
 import { toast } from "sonner";
-import { updateProcessContent } from "../../../actions/update-process-content";
-import { publishProcess } from "../../../actions/publish-process";
 import { JSONContent } from "@tiptap/react";
 import { Step } from "../../editors/steps-editor";
 import { FlowContent } from "../../editors/flow-editor";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { viewProcessPath } from "@/app/paths";
 import { ProcessForEdit } from "@/features/processes/types/types";
-
 
 export type YesNoNode = {
   id: string;
@@ -17,12 +13,12 @@ export type YesNoNode = {
   noNodeId?: string;
   isEndNode?: boolean;
   endMessage?: string;
-}
+};
 
 export type YesNoContent = {
   nodes: YesNoNode[];
   startNodeId?: string;
-}
+};
 
 export type ProcessContent = {
   tiptap?: JSONContent;
@@ -35,6 +31,16 @@ type SaveProcessParams = {
   process: ProcessForEdit;
   processId: string;
   content: ProcessContent;
+  updateFn: (
+    processId: string,
+    versionId: string,
+    contentJSON: unknown,
+    options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+      silent?: boolean;
+    }
+  ) => void;
   setIsSaving: (value: boolean) => void;
   setHasUnsavedChanges: (value: boolean) => void;
   silent?: boolean;
@@ -43,16 +49,14 @@ type SaveProcessParams = {
 type PublishProcessParams = {
   processId: string;
   hasUnsavedChanges: boolean;
-  setIsPublishing: (value: boolean) => void;
-  router: AppRouterInstance;
-  departmentId: string;
-  teamId: string;
+  publishFn: (processId: string) => void;
 };
 
 export const handleSaveProcess = async ({
   process,
   processId,
   content,
+  updateFn,
   setIsSaving,
   setHasUnsavedChanges,
   silent = false,
@@ -63,75 +67,31 @@ export const handleSaveProcess = async ({
   }
 
   setIsSaving(true);
-  try {
-    const formData = new FormData();
-    formData.append("processId", processId);
-    formData.append("versionId", process.pendingVersion.id);
-    formData.append("contentJSON", JSON.stringify(content));
-
-    const result = await updateProcessContent(
-      {
-        message: "",
-        fieldErrors: {},
-        timestamp: Date.now(),
-      },
-      formData
-    );
-
-    if (result.status === "SUCCESS") {
+  
+  updateFn(processId, process.pendingVersion.id, content, {
+    onSuccess: () => {
       setHasUnsavedChanges(false);
-      if (!silent) toast.success("Changes saved successfully");
-    } else {
-      toast.error(result.message || "Failed to save");
-    }
-  } catch (error) {
-    toast.error("An error occurred while saving");
-    console.error(error);
-  } finally {
-    setIsSaving(false);
-  }
+      setIsSaving(false);
+    },
+    onError: (error) => {
+      setIsSaving(false);
+      console.error(error);
+    },
+    silent,
+  });
 };
 
-export const handlePublishProcess = async ({
+export const handlePublishProcess = ({
   processId,
   hasUnsavedChanges,
-  setIsPublishing,
-  router,
-  departmentId,
-  teamId,
+  publishFn,
 }: PublishProcessParams) => {
-
   if (hasUnsavedChanges) {
     toast.error("Please save your changes before publishing");
     return;
   }
 
-  setIsPublishing(true);
-  try {
-    const formData = new FormData();
-    formData.append("processId", processId);
-
-    const result = await publishProcess(
-      {
-        message: "",
-        fieldErrors: {},
-        timestamp: Date.now(),
-      },
-      formData
-    );
-
-    if (result.status === "SUCCESS") {
-      toast.success("Process published successfully");
-      router.push(viewProcessPath(departmentId, teamId, processId));
-    } else {
-      toast.error(result.message || "Failed to publish");
-    }
-  } catch (error) {
-    toast.error("An error occurred while publishing");
-    console.error(error);
-  } finally {
-    setIsPublishing(false);
-  }
+  publishFn(processId);
 };
 
 export const handleCancelEdit = (

@@ -62,7 +62,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProcessDeleteButton } from "./process-delete-button";
+import { ProcessBaseDeleteButton } from "./process-base-delete-button";
 
 export const schema = z.object({
   id: z.string(),
@@ -248,7 +248,7 @@ export function ProcessList({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <ProcessDeleteButton processId={row.original.id} />
+              <ProcessBaseDeleteButton processId={row.original.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

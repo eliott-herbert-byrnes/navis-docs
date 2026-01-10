@@ -15,20 +15,20 @@ import { SubmitButton } from "@/features/invite/components/submit-button";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 
-type ProcessDeleteDialogProps = {
+type ProcessBaseDeleteDialogProps = {
   title: string;
   description: string;
   action: (payload: FormData) => void;
   actionState: ActionState;
   processId: string;
 };
-const ProcessDeleteDialog = ({
+const ProcessBaseDeleteDialog = ({
   title,
   description,
   action,
   actionState,
   processId,
-}: ProcessDeleteDialogProps) => {
+}: ProcessBaseDeleteDialogProps) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -74,4 +74,4 @@ const ProcessDeleteDialog = ({
   );
 };
 
-export { ProcessDeleteDialog };
+export { ProcessBaseDeleteDialog };

@@ -1,9 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { toggleFavorite } from "../actions/toggle-favorite";
-import { toast } from "sonner";
+import { useToggleFavorite } from "../hooks/use-favorites-mutations";
 import { Button } from "@/components/ui/button";
 import { Loader2, Star } from "lucide-react";
 
@@ -20,28 +18,17 @@ export function ProcessFavoriteButton({
   showLabel = false,
   size = "sm",
 }: ProcessFavoriteButtonProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const { toggleFavorite, isPending } = useToggleFavorite();
   const [optimisticIsFavorite, setOptimisticIsFavorite] =
     useOptimistic(initialIsFavorite);
+  const [pending, startTransition] = useTransition();
 
   const handleToggle = () => {
-    startTransition(async () => {
+    startTransition(() => {
       setOptimisticIsFavorite(!optimisticIsFavorite);
-
-      const result = await toggleFavorite({
-        processId,
-        isFavorited: optimisticIsFavorite,
-      });
-
-      if (result.status === "SUCCESS") {
-        toast.success(result.message);
-        router.refresh();
-      } else {
-        setOptimisticIsFavorite(optimisticIsFavorite);
-        toast.error(result.message || "Failed to toggle favorite");
-      }
     });
+
+    toggleFavorite(processId, optimisticIsFavorite);
   };
 
   return (

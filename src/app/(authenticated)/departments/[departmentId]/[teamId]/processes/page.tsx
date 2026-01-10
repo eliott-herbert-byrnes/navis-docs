@@ -51,9 +51,7 @@ export default async function ProcessPage({
           />
         }
       />
-      <Suspense fallback={<Skeleton />}>
-        <FavoriteList departmentId={departmentId} teamId={teamId} />
-      </Suspense>
+      <FavoriteList departmentId={departmentId} teamId={teamId} />
       <Suspense fallback={<Skeleton />}>
         <AIChatDrawer teamId={teamId} departmentId={departmentId} />
       </Suspense>

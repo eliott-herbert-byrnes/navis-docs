@@ -33,6 +33,7 @@ export default async function ProcessEditPage({
       />
       <Suspense fallback={<Skeleton />}>
         <EditProcessForm
+          isAdmin={isAdmin}
           departmentId={departmentId}
           teamId={teamId}
           processId={processId}

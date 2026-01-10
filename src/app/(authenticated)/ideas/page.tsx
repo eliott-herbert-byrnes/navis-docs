@@ -1,9 +1,9 @@
-import { onboardingPath, signInPath } from "@/app/paths";
+import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IdeaList } from "@/features/processes/components/Idea/components/idea-list";
-import { getOrgIdeas } from "@/features/processes/components/Idea/queries/get-ideas";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { serverTrpc } from "@/server/trpc/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -15,16 +15,15 @@ type IdeasPageProps = {
 
 const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(signInPath());
+  if (!isAdmin) redirect(homePath());
 
   const params = await searchParams;
   const search = params.search;
 
-  const ideas = await getOrgIdeas(org.id, search);
+  const trpc = await serverTrpc();
+  const { data: ideas } = await trpc.ideas.getOrgIdeas({search})
 
   return (
     <>
