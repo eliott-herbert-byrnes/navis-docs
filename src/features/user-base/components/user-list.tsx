@@ -251,7 +251,10 @@ export function UserList({ data: initialData }: { data: User[] }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <UserRoleChangeButton userId={row.original.user.id} />
+              <UserRoleChangeButton
+                userId={row.original.user.id}
+                role={row.original.role}
+              />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

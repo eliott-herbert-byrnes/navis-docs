@@ -429,6 +429,7 @@ export const processRouter = router({
       try {
         await generateProcessEmbeddings(input.processId);
       } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: "NOT_IMPLEMENTED",
           message: "Failed to embed process, contact customer support",

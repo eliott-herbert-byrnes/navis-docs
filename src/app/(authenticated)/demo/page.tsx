@@ -1,4 +1,4 @@
-import { onboardingPath, signInPath } from "@/app/paths";
+import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,11 +9,10 @@ import { redirect } from "next/navigation";
 
 const DemoPage = async () => {
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(signInPath()); 
+  if (!isAdmin) redirect(homePath()); 
 
   return (
     <>

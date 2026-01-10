@@ -28,7 +28,6 @@ import {
   Eye,
   MoreVertical,
 } from "lucide-react";
-import { toast } from "sonner";
 import { z } from "zod";
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-mobile";

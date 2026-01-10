@@ -80,7 +80,6 @@ export function usePublishProcess(departmentId: string, teamId: string) {
 export function useUpdateProcessContent(
 ) {
   const utils = trpc.useUtils();
-  const router = useRouter();
   const mutation = trpc.process.updateProcessContent.useMutation({
     onSuccess: (data) => {
       if (data?.data?.id) {

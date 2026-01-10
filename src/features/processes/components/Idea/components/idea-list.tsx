@@ -26,7 +26,6 @@ import {
   Archive,
   MoreVertical,
 } from "lucide-react";
-import { toast } from "sonner";
 import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
@@ -67,7 +66,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useRouter } from "next/navigation";
 import { IdeaDeleteButton } from "./idea-delete-button";
 import { useUpdateIdeaStatus } from "../hooks/use-ideas-mutations";
 

@@ -1,4 +1,4 @@
-import { onboardingPath, signInPath } from "@/app/paths";
+import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProcessList } from "@/features/process-base/components/process-list";
@@ -16,11 +16,10 @@ type ProcessBasePageProps = {
 
 const ProcessBasePage = async ({ searchParams }: ProcessBasePageProps) => {
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(signInPath());
+  if (!isAdmin) redirect(homePath());
 
   const params = await searchParams;
   const search = params.search;

@@ -1,6 +1,5 @@
 "use client";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,29 +10,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { UserIcon } from "lucide-react";
+import { OrgMembershipRole } from "@prisma/client";
+import { Loader2, UserIcon } from "lucide-react";
 import { useState } from "react";
 
 type UserRoleChangeDialogProps = {
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
-  userId: string;
+  currentRole: OrgMembershipRole;
+  onConfirm: (newRole: OrgMembershipRole) => void;
+  isPending: boolean;
 };
 const UserRoleChangeDialog = ({
   title,
   description,
-  action,
-  actionState,
-  userId,
+  currentRole,
+  onConfirm,
+  isPending,
 }: UserRoleChangeDialogProps) => {
   const [open, setOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string>(
+    currentRole.toLowerCase()
+  );
 
   const handleClose = () => {
+    const newRole = selectedRole.toUpperCase() as OrgMembershipRole;
+    onConfirm(newRole);
     setOpen(false);
   };
 
@@ -46,42 +56,48 @@ const UserRoleChangeDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <Form
-          action={action}
-          actionState={actionState}
-          onSuccess={handleClose}
-          onError={handleClose}
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <Separator />
+        <Select
+          name="role"
+          defaultValue="member"
+          onValueChange={setSelectedRole}
         >
-          <input type="hidden" name="userId" value={userId} />
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>
-              {description}
-            </DialogDescription>
-          </DialogHeader>
-          <Separator className="my-4"/>
-          <Select name="role" defaultValue="member" >
-            <SelectTrigger className="mt-4">
-              <SelectValue placeholder="Select a role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="member">Member</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button
-              className="w-[75px]"
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <SubmitButton label="Change Role" />
-          </DialogFooter>
-        </Form>
+          <SelectTrigger className="mt-4">
+            <SelectValue placeholder="Select a role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="member">Member</SelectItem>
+          </SelectContent>
+        </Select>
+        <DialogFooter className="flex flex-row gap-2 mt-4">
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="default"
+            onClick={handleClose}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Change"
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

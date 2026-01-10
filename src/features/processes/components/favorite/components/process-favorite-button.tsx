@@ -21,7 +21,7 @@ export function ProcessFavoriteButton({
   const { toggleFavorite, isPending } = useToggleFavorite();
   const [optimisticIsFavorite, setOptimisticIsFavorite] =
     useOptimistic(initialIsFavorite);
-  const [pending, startTransition] = useTransition();
+  const [,startTransition] = useTransition();
 
   const handleToggle = () => {
     startTransition(() => {
