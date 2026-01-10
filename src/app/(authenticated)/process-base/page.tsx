@@ -1,37 +1,15 @@
-import { homePath, onboardingPath } from "@/app/paths";
+"use client";
+
 import { Heading } from "@/components/Heading";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ProcessList } from "@/features/process-base/components/process-list";
-import { getProcesses } from "@/features/process-base/queries/get-processes";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
+import { trpc } from "@/trpc/client";
+import { ListSkeleton } from "@/components/list-skeleton";
 
-type ProcessBasePageProps = {
-  searchParams: Promise<{
-    search?: string;
-    page?: string;
-  }>;
-};
-
-const ProcessBasePage = async ({ searchParams }: ProcessBasePageProps) => {
-  const user = await getSessionUser();
-
-  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
-  if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
-
-  const params = await searchParams;
-  const search = params.search;
-  const page = params.page ? parseInt(params.page, 10) : 1;
-  const limit = 10;
-  const offset = (page - 1) * limit;
-
-  const { processes} = await getProcesses({
-    orgId: org.id,
-    search,
-    limit,
-    offset,
+const ProcessBasePage = () => {
+  const { data, isLoading } = trpc.process.getProcessesForBase.useQuery({
+    search: "",
+    limit: 10,
+    offset: 0,
   });
 
   return (
@@ -40,11 +18,11 @@ const ProcessBasePage = async ({ searchParams }: ProcessBasePageProps) => {
         title="Processbase"
         description="View and manage processes for your organization"
       />
-      <Suspense fallback={<Skeleton />} key={search}>
-        <ProcessList 
-          data={processes} 
-        />
-      </Suspense>
+      {isLoading ? (
+        <ListSkeleton />
+      ) : (
+        <ProcessList data={data?.processes ?? []} />
+      )}
     </>
   );
 };

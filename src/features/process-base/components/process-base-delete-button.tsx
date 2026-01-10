@@ -1,23 +1,21 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
+import { useDeleteProcessFromBase } from "./hook/use-process-base-mutations";
 import { ProcessBaseDeleteDialog } from "./process-base-delete-dialog";
-import { deleteProcessFromBase } from "../actions/process-delete-from-base";
 
 const ProcessBaseDeleteButton = ({ processId }: { processId: string }) => {
-  const [actionState, action] = useActionState(
-    deleteProcessFromBase,
-    EMPTY_ACTION_STATE
-  );
+  const { deleteProcess, isPending } = useDeleteProcessFromBase();
+
+  const handleDelete = () => {
+    deleteProcess(processId);
+  };
 
   return (
     <ProcessBaseDeleteDialog
       title="Are you sure you want to delete this process?"
       description="This action cannot be undone."
-      action={action}
-      actionState={actionState}
-      processId={processId}
+      onConfirm={handleDelete}
+      isPending={isPending}
     />
   );
 };

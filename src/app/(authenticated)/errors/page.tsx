@@ -1,6 +1,6 @@
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ListSkeleton } from "@/components/list-skeleton";
 import { ProcessErrorList } from "@/features/processes/components/error/components/process-error-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
@@ -32,7 +32,7 @@ const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
         title="Error Reports"
         description="View and manage error reports for processes"
       />
-      <Suspense fallback={<Skeleton />} key={search}>
+      <Suspense fallback={<ListSkeleton />} key={search}>
         <ProcessErrorList data={errors} />
       </Suspense>
     </>

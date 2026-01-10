@@ -1,6 +1,6 @@
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ListSkeleton } from "@/components/list-skeleton";
 import { IdeaList } from "@/features/processes/components/Idea/components/idea-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
@@ -31,7 +31,7 @@ const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
         title="Ideas"
         description="View and manage ideas for this organization"
       />
-      <Suspense fallback={<Skeleton />} key={search}>
+      <Suspense fallback={<ListSkeleton />} key={search}>
         <IdeaList data={ideas} />
       </Suspense>
     </>
