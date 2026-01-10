@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeleteProcessFromBase } from "./hook/use-process-base-mutations";
+import { useDeleteProcessFromBase } from "../hook/use-process-base-mutations";
 import { ProcessBaseDeleteDialog } from "./process-base-delete-dialog";
 
 const ProcessBaseDeleteButton = ({ processId }: { processId: string }) => {

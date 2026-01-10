@@ -1,4 +1,5 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,29 +11,23 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
-import { useActionState } from "@/components/form/hooks/use-action-state";
-import { createOrganization } from "../actions/create-organization";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useEffect } from "react";
-import { Form } from "@/components/form/form";
-import { FieldError } from "@/components/form/field-error";
+import { useCreateOrganization } from "../hooks/use-onboarding-mutations";
+import { useState } from "react";
 
 export function OnboardForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter();
-  const [actionState, action, isPending] = useActionState(
-    createOrganization,
-    EMPTY_ACTION_STATE
-  );
+  const [name, setName] = useState("");
+  const { createOrganization, isPending, error } = useCreateOrganization();
 
-  useEffect(() => {
-    if (actionState.status !== "SUCCESS") return;
-    const to = actionState.data?.redirect;
-    if (to) router.replace(to);
-  }, [actionState.status, actionState.data?.redirect, router]);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim().length < 6) {
+      return;
+    }
+    createOrganization(name.trim());
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -44,7 +39,7 @@ export function OnboardForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form action={action} actionState={actionState}>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <Input
@@ -52,17 +47,26 @@ export function OnboardForm({
                   name="name"
                   type="text"
                   placeholder="Terra Nova Inc."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
+                  minLength={6}
+                  maxLength={191}
+                  disabled={isPending}
                 />
-                <FieldError actionState={actionState} name="name" />
+                {error && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {error.message}
+                  </p>
+                )}
               </Field>
               <Field>
-                <Button type="submit" disabled={isPending}>
-                  Create Organization
+                <Button type="submit" disabled={isPending || name.trim().length < 6}>
+                  {isPending ? "Creating..." : "Create Organization"}
                 </Button>
               </Field>
             </FieldGroup>
-          </Form>
+          </form>
         </CardContent>
       </Card>
     </div>

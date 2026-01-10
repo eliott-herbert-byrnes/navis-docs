@@ -70,9 +70,11 @@ export const schema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   categoryId: z.string().nullable(),
-  category: z.object({
-    name: z.string().nullable(),
-  }).nullable(),
+  category: z
+    .object({
+      name: z.string().nullable(),
+    })
+    .nullable(),
   createdAt: z.date(),
 });
 
@@ -154,11 +156,7 @@ function TableCellViewer({ item }: { item: Process }) {
   );
 }
 
-export function ProcessList({
-  data: initialData,
-}: {
-  data: Process[];
-}) {
+export function ProcessList({ data: initialData }: { data: Process[] }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -288,9 +286,7 @@ export function ProcessList({
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by process name..."
-            value={
-              (table.getColumn("title")?.getFilterValue() as string) ?? ""
-            }
+            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }
