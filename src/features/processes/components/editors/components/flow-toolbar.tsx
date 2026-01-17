@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Circle, Square, Diamond, CircleDot, Network, Download, AlertCircle } from "lucide-react";
+import {
+  Circle,
+  Square,
+  Diamond,
+  CircleDot,
+  Network,
+  Download,
+  AlertCircle,
+} from "lucide-react";
 import { FlowNodeType } from "../flow-editor";
 
 type FlowToolbarProps = {
@@ -12,12 +20,12 @@ type FlowToolbarProps = {
   className?: string;
 };
 
-export function FlowToolbar({ 
-  onAddNode, 
-  onAutoLayout, 
-  onExport, 
+export function FlowToolbar({
+  onAddNode,
+  onAutoLayout,
+  onExport,
   onValidate,
-  className 
+  className,
 }: FlowToolbarProps) {
   return (
     <Card className={`p-2 flex gap-2 animate-fade-from-top ${className}`}>

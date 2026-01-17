@@ -1,6 +1,5 @@
 "use client";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,31 +10,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 type NewsDeleteDialogProps = {
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
-  newsPostId: string;
-  departmentId: string;
-  teamId: string;
+  onConfirm: () => void;
+  isPending: boolean;
 };
 const NewsDeleteDialog = ({
   title,
   description,
-  action,
-  actionState,
-  newsPostId,
-  departmentId,
-  teamId,
+  isPending,
+  onConfirm
 }: NewsDeleteDialogProps) => {
   const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
+  const handleConfirm = () => {
+    onConfirm();
     setOpen(false);
   };
 
@@ -47,33 +40,34 @@ const NewsDeleteDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <Form
-          action={action}
-          actionState={actionState}
-          onSuccess={handleClose}
-          onError={handleClose}
-        >
-          <input type="hidden" name="newsPostId" value={newsPostId} />
-          <input type="hidden" name="departmentId" value={departmentId} />
-          <input type="hidden" name="teamId" value={teamId} />
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription className="text-red-500">
-              {description}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button
-              className="w-[75px]"
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <SubmitButton className="w-[75px]" label="Delete" />
-          </DialogFooter>
-        </Form>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="text-red-500">
+            {description}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex flex-row gap-2 mt-4">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleConfirm}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Delete"
+            )}
+          </Button>
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

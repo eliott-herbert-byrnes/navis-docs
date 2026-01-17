@@ -28,7 +28,6 @@ import {
   Eye,
   MoreVertical,
 } from "lucide-react";
-import { toast } from "sonner";
 import { z } from "zod";
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -70,10 +69,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateErrorStatus } from "../actions/update-error-status";
 import { viewProcessPath } from "@/app/paths";
-import { useRouter } from "next/navigation";
 import { ProcessErrorDeleteButton } from "./process-error-delete-button";
+import { useUpdateErrorStatus } from "../hooks/use-errors-mutations";
 
 export const schema = z.object({
   id: z.string(),
@@ -91,23 +89,12 @@ export const schema = z.object({
 type ErrorReport = z.infer<typeof schema>;
 
 function TableCellViewer({ item }: { item: ErrorReport }) {
-  const router = useRouter();
   const isMobile = useIsMobile();
-  const [isUpdating, setIsUpdating] = React.useState(false);
+  const { updateErrorStatus, isPending: isUpdating } = useUpdateErrorStatus();
 
-  const handleStatusChange = async (status: "RESOLVED" | "ARCHIVED") => {
-    setIsUpdating(true);
-    const result = await updateErrorStatus(item.id, status);
-    setIsUpdating(false);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
+  const handleStatusChange = (status: "RESOLVED" | "ARCHIVED") => {
+    updateErrorStatus(item.id, status);
   };
-
 
   return (
     <div className="w-full">
@@ -212,12 +199,12 @@ export function ProcessErrorList({
 }: {
   data: ErrorReport[];
 }) {
-  const router = useRouter();
+  const { updateErrorStatus } = useUpdateErrorStatus();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -226,18 +213,11 @@ export function ProcessErrorList({
   });
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
 
-  const handleStatusUpdate = async (
+  const handleStatusUpdate = (
     errorId: string,
-    status: "RESOLVED" | "ARCHIVED"
+    status: "RESOLVED" | "ARCHIVED",
   ) => {
-    const result = await updateErrorStatus(errorId, status);
-
-    if (result.status === "SUCCESS") {
-      toast.success(result.message);
-      router.refresh();
-    } else {
-      toast.error(result.message);
-    }
+    updateErrorStatus(errorId, status);
   };
 
   const handleStatusFilterChange = (value: string) => {
@@ -353,7 +333,7 @@ export function ProcessErrorList({
                 href={viewProcessPath(
                   row.original.departmentId,
                   row.original.teamId,
-                  row.original.processId
+                  row.original.processId,
                 )}
               >
                 <Eye className="ml-1 mr-2 h-4 w-4" />
@@ -456,7 +436,7 @@ export function ProcessErrorList({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -475,7 +455,7 @@ export function ProcessErrorList({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

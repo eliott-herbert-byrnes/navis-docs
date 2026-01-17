@@ -2,8 +2,7 @@
 
 import { ProcessSidebar } from "@/features/processes/components/process-sidebar";
 import { Providers } from "@/app/providers";
-import { prisma } from "@/lib/prisma";
-import { getCategoriesWithProcesses } from "@/features/processes/queries/get-categories-with-processes";
+import { serverTrpc } from "@/server/trpc/server";
 
 export default async function ProcessLayout({
   children,
@@ -14,24 +13,11 @@ export default async function ProcessLayout({
 }) {
   const { departmentId, teamId } = await params;
 
-  const uncategorizedProcesses = await prisma.process.findMany({
-    where: {
-      teamId,
-      categoryId: null,
-      status: "PUBLISHED",
-    },
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      status: true,
-    },
-    orderBy: {
-      title: "asc",
-    },
+  const trpc = await serverTrpc();
+  const { data: processes } = await trpc.process.list({ teamId });
+  const { data: categories } = await trpc.process.categoriesWithProcesses({
+    teamId,
   });
-
-  const categories = await getCategoriesWithProcesses(teamId);
 
   return (
     <Providers>
@@ -39,7 +25,7 @@ export default async function ProcessLayout({
         <ProcessSidebar
           departmentId={departmentId}
           teamId={teamId}
-          uncategorizedProcesses={uncategorizedProcesses}
+          uncategorizedProcesses={processes}
           categories={categories}
         />
         <main className="flex-1 overflow-auto p-4">{children}</main>

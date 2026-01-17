@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DepartmentDeleteButton } from "./department-buttons/department-delete-button";
-import { DepartmentTeamButton } from "./department-buttons/department-team-button";
+import { CreateTeamButton } from "./team-buttons/team-create-button";
 import { DepartmentOverviewButton } from "./overview/department-overview-button";
 import { teamProcessPath } from "@/app/paths";
 import { useState, useTransition } from "react";
@@ -50,23 +50,23 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
 
   const totalProcesses = department.teams.reduce(
     (sum, team) => sum + team._count.process,
-    0
+    0,
   );
 
   const handleViewClick = () => {
     if (!selectedTeamId) return;
-
     startTransition(() => {
       router.push(teamProcessPath(department.id, selectedTeamId));
     });
   };
+
   const buttons = (
     <>
       <div className="flex flex-row gap-x-2 gap-y-2 w-full">
         <div className="flex gap-x-2">
           <Button
             variant="outline"
-            className="w-full w-[96px]"
+            className="w-full"
             onClick={handleViewClick}
             disabled={!selectedTeamId || isPending}
           >
@@ -94,7 +94,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
               />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <DepartmentTeamButton
+              <CreateTeamButton
                 departmentId={department.id}
                 isAdmin={isAdmin}
               />
@@ -102,6 +102,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
             <DropdownMenuItem asChild>
               <DepartmentDeleteButton
                 departmentId={department.id}
+                departmentName={department.name}
                 isAdmin={isAdmin}
               />
             </DropdownMenuItem>
@@ -112,7 +113,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
   );
 
   return (
-    <Card className="w-full max-w-[250px] animate-fade-from-top">
+    <Card className="w-full max-w-[250px] animate-fade-from-top hover:scale-101 transition-all duration-300">
       <CardHeader>
         <CardTitle>
           <Badge className="text-sm">{department.name}</Badge>

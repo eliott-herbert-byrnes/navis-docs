@@ -13,7 +13,7 @@ export const requestDemoOtpAction = async () => {
     const { code, expiresAt } = await createOtpFor(DEMO_EMAIL);
 
     console.log(
-      `[DEMO] Demo account OTP: ${code} (expires at ${expiresAt.toISOString()})`
+      `[DEMO] Demo account OTP: ${code} (expires at ${expiresAt.toISOString()})`,
     );
 
     return { ok: true, message: "Demo code generated", code };

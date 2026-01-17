@@ -27,9 +27,9 @@ const seed = async () => {
       .map((p) =>
         typeof p.default_price === "string"
           ? p.default_price
-          : p.default_price?.id
+          : p.default_price?.id,
       )
-      .filter(Boolean) as string[]
+      .filter(Boolean) as string[],
   );
 
   // 2) Archive products first (this alone usually suffices)
@@ -47,9 +47,15 @@ const seed = async () => {
   }
 
   // 4) Cancel all active subscriptions first
-  for await (const subscription of getStripe().subscriptions.list({ limit: 100, status: 'all' })) {
+  for await (const subscription of getStripe().subscriptions.list({
+    limit: 100,
+    status: "all",
+  })) {
     try {
-      if (subscription.status === 'active' || subscription.status === 'trialing') {
+      if (
+        subscription.status === "active" ||
+        subscription.status === "trialing"
+      ) {
         await getStripe().subscriptions.cancel(subscription.id);
         console.log(`Cancelled subscription ${subscription.id}`);
       }
@@ -126,7 +132,12 @@ const seed = async () => {
     recurring: {
       interval: "month",
     },
-    metadata: { plan: "business", allowedProcesses: 100, allowedDepartments: 3, allowedTeamsPerDepartment: 1 },
+    metadata: {
+      plan: "business",
+      allowedProcesses: 100,
+      allowedDepartments: 3,
+      allowedTeamsPerDepartment: 1,
+    },
   });
 
   const enterprisePrice = await getStripe().prices.create({
@@ -136,13 +147,18 @@ const seed = async () => {
     recurring: {
       interval: "month",
     },
-    metadata: { plan: "enterprise", allowedProcesses: 1000, allowedDepartments: 1000, allowedTeamsPerDepartment: 1000 },
+    metadata: {
+      plan: "enterprise",
+      allowedProcesses: 1000,
+      allowedDepartments: 1000,
+      allowedTeamsPerDepartment: 1000,
+    },
   });
 
   const attachedPm = await getStripe().paymentMethods.attach("pm_card_visa", {
     customer: customer.id,
   });
-  
+
   await getStripe().customers.update(customer.id, {
     invoice_settings: { default_payment_method: attachedPm.id },
   });
@@ -156,8 +172,8 @@ const seed = async () => {
   });
 
   const currentPeriodEnd = subscription.items.data[0]?.current_period_end
-  ? new Date(subscription.items.data[0]?.current_period_end * 1000)
-  : null;
+    ? new Date(subscription.items.data[0]?.current_period_end * 1000)
+    : null;
 
   await prisma.organization.update({
     where: { id: org.id },
@@ -172,9 +188,13 @@ const seed = async () => {
   const t1 = performance.now();
   console.log(`\n✅ Stripe Seed: Finished (${Math.round(t1 - t0)}ms)`);
   console.log(`   - Created products: Business & Enterprise`);
-  console.log(`   - Created prices: Business ($49.99/mo) & Enterprise ($299.99/mo)`);
+  console.log(
+    `   - Created prices: Business ($49.99/mo) & Enterprise ($299.99/mo)`,
+  );
   console.log(`   - Created customer: ${customer.email}`);
-  console.log(`   - Created subscription: ${subscription.id} (${subscription.status})`);
+  console.log(
+    `   - Created subscription: ${subscription.id} (${subscription.status})`,
+  );
   console.log(`   - Organization updated with Stripe IDs\n`);
 };
 

@@ -1,6 +1,4 @@
 "use client";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,27 +9,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { TrashIcon } from "lucide-react";
+import { TrashIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 type IdeaDeleteDialogProps = {
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
-  ideaId: string;
+  onConfirm: () => void;
+  isPending: boolean;
 };
+
 const IdeaDeleteDialog = ({
   title,
   description,
-  action,
-  actionState,
-  ideaId,
+  onConfirm,
+  isPending,
 }: IdeaDeleteDialogProps) => {
   const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
+  const handleConfirm = () => {
+    onConfirm();
     setOpen(false);
   };
 
@@ -44,31 +41,34 @@ const IdeaDeleteDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <Form
-          action={action}
-          actionState={actionState}
-          onSuccess={handleClose}
-          onError={handleClose}
-        >
-          <input type="hidden" name="ideaId" value={ideaId} />
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription className="text-red-500">
-              {description}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button
-              className="w-[75px]"
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <SubmitButton className="w-[75px]" label="Delete" />
-          </DialogFooter>
-        </Form>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="text-red-500">
+            {description}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex flex-row gap-2 mt-4">
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="w-[75px]"
+            onClick={handleConfirm}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "Delete"
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

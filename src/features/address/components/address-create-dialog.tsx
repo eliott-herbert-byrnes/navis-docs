@@ -1,6 +1,5 @@
 "use client";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,50 +12,50 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { FieldError } from "@/components/form/field-error";
+import { LucideLoaderCircle, Plus } from "lucide-react";
+import { FormEvent, useState } from "react";
+import { useCreateAddress } from "../hook/use-address-mutations";
 
 type AddressCreateDialogProps = {
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
+  isAdmin: boolean;
 };
 
 const AddressCreateDialog = ({
   title,
   description,
-  action,
-  actionState,
+  isAdmin,
 }: AddressCreateDialogProps) => {
   const [open, setOpen] = useState(false);
+  const { createAddress, isPending } = useCreateAddress(() => setOpen(false));
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    createAddress({
+      name: String(formData.get("name") ?? "").trim(),
+      address: String(formData.get("address") ?? "").trim(),
+      phone: String(formData.get("phone") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      website: String(formData.get("website") ?? "").trim(),
+    });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" variant="outline">
           <Plus className="w-4 h-4" />
           Add Address
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <Form
-          action={action}
-          actionState={actionState}
-          onSuccess={handleClose}
-          onError={handleClose}
-        >
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>
-              {description}
-            </DialogDescription>
+            <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-4">
@@ -67,8 +66,9 @@ const AddressCreateDialog = ({
                 name="name"
                 placeholder="Address name"
                 maxLength={100}
+                required
+                disabled={isPending}
               />
-              <FieldError actionState={actionState} name="name" />
             </div>
 
             <div className="grid gap-2">
@@ -78,19 +78,20 @@ const AddressCreateDialog = ({
                 name="address"
                 placeholder="Street address"
                 maxLength={255}
+                required
+                disabled={isPending}
               />
-              <FieldError actionState={actionState} name="address" />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="phone">Phone *</Label>
+              <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
                 name="phone"
                 placeholder="Phone number"
                 maxLength={20}
+                disabled={isPending}
               />
-              <FieldError actionState={actionState} name="phone" />
             </div>
 
             <div className="grid gap-2">
@@ -100,8 +101,8 @@ const AddressCreateDialog = ({
                 name="email"
                 placeholder="Email address"
                 type="email"
+                disabled={isPending}
               />
-              <FieldError actionState={actionState} name="email" />
             </div>
 
             <div className="grid gap-2">
@@ -109,25 +110,32 @@ const AddressCreateDialog = ({
               <Input
                 id="website"
                 name="website"
-                placeholder="https://example.com"
-                type="url"
+                placeholder="https://navisdocs.com"
+                disabled={isPending}
               />
-              <FieldError actionState={actionState} name="website" />
             </div>
           </div>
 
           <DialogFooter className="flex flex-row gap-2">
+            <Button type="submit" disabled={!isAdmin || isPending}>
+              {isPending ? (
+                <>
+                  <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
+                </>
+              ) : (
+                "Create"
+              )}
+            </Button>
             <Button
               className="w-[75px]"
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
-            <SubmitButton label="Add Address" />
           </DialogFooter>
-        </Form>
+        </form>
       </DialogContent>
     </Dialog>
   );

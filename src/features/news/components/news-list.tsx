@@ -1,35 +1,92 @@
+"use client";
+
 import { EmptyState } from "@/components/empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PinIcon } from "lucide-react";
-import { getNewsPosts } from "../queries/get-news-posts";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react";
-import { getSessionUser, getUserById, isOrgAdminOrOwner } from "@/lib/auth";
 import { NewsDeleteButton } from "./news-delete-button";
-import { signInPath } from "@/app/paths";
-import { redirect } from "next/navigation";
 import { JsonObject } from "@prisma/client/runtime/library";
+import { trpc } from "@/trpc/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type NewsPostListProps = {
   departmentId: string;
   teamId: string;
+  isAdmin: boolean;
+  userMap: Record<string, { id: string; name: string | null } | null>;
 };
 
-export async function NewsPostList({
-  departmentId,
-  teamId,
-}: NewsPostListProps) {
-  const user = await getSessionUser();
-  if (!user) {
-    redirect(signInPath());
+const getTextFromBodyJSON = (json: JsonObject): string => {
+  if (!json) return "";
+
+  if (json.type === "text" && typeof json.text === "string") {
+    return json.text;
   }
 
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
+  if (Array.isArray(json.content)) {
+    return json.content
+      .map((item) =>
+        item && typeof item === "object"
+          ? getTextFromBodyJSON(item as JsonObject)
+          : "",
+      )
+      .join(" ");
+  }
 
-  const newsPosts = await getNewsPosts(departmentId, teamId);
+  return "";
+};
 
-  const pinnedNewsPosts = newsPosts.filter((newsPost) => newsPost.pinned);
-  const unpinnedNewsPosts = newsPosts.filter((newsPost) => !newsPost.pinned);
+function NewsListSkeleton() {
+  return (
+    <div className="flex flex-col px-4 gap-4">
+      {[1, 2, 3].map((i) => (
+        <Card key={i} className="flex flex-col h-full">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between gap-2 min-h-[3rem]">
+              <Skeleton className="h-6 w-3/4" />
+            </div>
+            <Skeleton className="h-4 w-full mt-2" />
+            <Skeleton className="h-4 w-2/3" />
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col justify-between">
+            <Separator className="my-3" />
+            <div className="flex items-center justify-between gap-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+export function NewsPostList({
+  departmentId,
+  teamId,
+  isAdmin,
+  userMap,
+}: NewsPostListProps) {
+  const { data, isLoading, error } = trpc.news.getNews.useQuery({
+    departmentId,
+    teamId,
+  });
+
+  if (isLoading) {
+    return <NewsListSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <EmptyState
+        title="Error loading news posts"
+        body={error.message || "Failed to load news posts"}
+      />
+    );
+  }
+
+  const newsPosts = data?.data ?? [];
 
   if (!newsPosts.length) {
     return (
@@ -40,31 +97,8 @@ export async function NewsPostList({
     );
   }
 
-  const uniqueUserIds = [...new Set(newsPosts.map((post) => post.createdBy))];
-  const users = await Promise.all(
-    uniqueUserIds.map((userId) => getUserById(userId ?? ""))
-  );
-  const userMap = Object.fromEntries(users.map((user) => [user?.id, user]));
-
-  const getTextFromBodyJSON = (json: JsonObject): string => {
-    if (!json) return "";
-
-    if (json.type === "text" && typeof json.text === "string") {
-      return json.text;
-    }
-
-    if (Array.isArray(json.content)) {
-      return json.content
-        .map((item) =>
-          item && typeof item === "object"
-            ? getTextFromBodyJSON(item as JsonObject)
-            : ""
-        )
-        .join(" ");
-    }
-
-    return "";
-  };
+  const pinnedNewsPosts = newsPosts.filter((newsPost) => newsPost.pinned);
+  const unpinnedNewsPosts = newsPosts.filter((newsPost) => !newsPost.pinned);
 
   return (
     <div className="flex flex-col px-4 gap-4">
@@ -85,8 +119,6 @@ export async function NewsPostList({
                     {isAdmin ? (
                       <NewsDeleteButton
                         newsPostId={newsPost.id}
-                        departmentId={departmentId}
-                        teamId={teamId}
                       />
                     ) : null}
                   </div>
@@ -131,8 +163,6 @@ export async function NewsPostList({
                 {isAdmin ? (
                   <NewsDeleteButton
                     newsPostId={newsPost.id}
-                    departmentId={departmentId}
-                    teamId={teamId}
                   />
                 ) : null}
               </div>

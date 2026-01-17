@@ -16,10 +16,10 @@ export const InvitationSearch = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      
+
       if (search) {
         params.set("search", search);
-        params.set("page", "1"); 
+        params.set("page", "1");
       } else {
         params.delete("search");
       }
@@ -27,7 +27,7 @@ export const InvitationSearch = () => {
       startTransition(() => {
         router.push(`${pathname}?${params.toString()}`);
       });
-    }, 300); 
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [search, pathname, router, searchParams]);
@@ -46,4 +46,3 @@ export const InvitationSearch = () => {
     </div>
   );
 };
-

@@ -1,23 +1,29 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
+import { OrgMembershipRole } from "@prisma/client";
+import { useChangeRole } from "../hooks/use-user-mutations";
 import { UserRoleChangeDialog } from "./user-role-change-dialog";
-import { changeUserRole } from "../actions/user-change-role";
 
-const UserRoleChangeButton = ({ userId }: { userId: string }) => {
-  const [actionState, action] = useActionState(
-    changeUserRole,
-    EMPTY_ACTION_STATE
-  );
+const UserRoleChangeButton = ({
+  userId,
+  role,
+}: {
+  userId: string;
+  role: OrgMembershipRole;
+}) => {
+  const { changeUserRole, isPending } = useChangeRole();
+
+  const handleDelete = (newRole: OrgMembershipRole) => {
+    changeUserRole(userId, newRole);
+  };
 
   return (
     <UserRoleChangeDialog
       title="Are you sure you want to change the role of this user?"
       description="Changing a user's role will affect their access permissions within the organization."
-      action={action}
-      actionState={actionState}
-      userId={userId}
+      currentRole={role}
+      onConfirm={handleDelete}
+      isPending={isPending}
     />
   );
 };

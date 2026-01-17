@@ -1,6 +1,6 @@
-import { PrismaClient, ProcessStatus } from '@prisma/client';
-import { generateEmbedding } from '../src/lib/ai/embeddings';
-import { chunkProcessContent } from '../src/features/ai/utils/chunk-content';
+import { PrismaClient, ProcessStatus } from "@prisma/client";
+import { generateEmbedding } from "../src/lib/ai/embeddings";
+import { chunkProcessContent } from "../src/features/ai/utils/chunk-content";
 
 const prisma = new PrismaClient();
 
@@ -13,7 +13,9 @@ async function generateProcessEmbeddings(processId: string) {
   });
 
   if (!process?.publishedVersion?.contentText) {
-    console.log(`⚠️  Skipping ${process?.title || processId} - no published content`);
+    console.log(
+      `⚠️  Skipping ${process?.title || processId} - no published content`,
+    );
     return;
   }
 
@@ -44,7 +46,10 @@ async function generateProcessEmbeddings(processId: string) {
         )
       `;
     } catch (error) {
-      console.error(`❌ Failed embedding for ${process.title}, chunk ${chunk.chunkIndex}:`, error);
+      console.error(
+        `❌ Failed embedding for ${process.title}, chunk ${chunk.chunkIndex}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -53,8 +58,8 @@ async function generateProcessEmbeddings(processId: string) {
 }
 
 async function main() {
-  console.log('🔍 Finding published processes without embeddings...\n');
-  
+  console.log("🔍 Finding published processes without embeddings...\n");
+
   const publishedProcesses = await prisma.process.findMany({
     where: {
       status: ProcessStatus.PUBLISHED,

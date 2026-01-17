@@ -5,7 +5,7 @@ export interface ProcessChunk {
 
 export function chunkProcessContent(
   contentText: string,
-  maxChunkSize: number = 600
+  maxChunkSize: number = 600,
 ): ProcessChunk[] {
   const chunks: ProcessChunk[] = [];
 

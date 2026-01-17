@@ -33,11 +33,13 @@ export type AuditAction =
   // Organization actions
   | "ORGANIZATION_UPDATED"
   | "ORGANIZATION_DELETED"
-// Address actions
-| "ADDRESS_CREATED"
-| "ADDRESS_UPDATED"
-| "ADDRESS_DELETED";
-// TODO: IngestionJob actions
+  // Address actions
+  | "ADDRESS_CREATED"
+  | "ADDRESS_UPDATED"
+  | "ADDRESS_DELETED"
+  // TODO: IngestionJob actions
+  | "NEWS_CREATED"
+  | "NEWS_DELETED";
 
 export type AuditEntityType =
   | "DEPARTMENT"
@@ -47,7 +49,8 @@ export type AuditEntityType =
   | "USER"
   | "USER_ROLE"
   | "ORGANIZATION"
-  | "ADDRESS";
+  | "ADDRESS"
+  | "NEWS";
 
 type AuditLogData = {
   orgId: string;
@@ -96,7 +99,7 @@ export async function getAuditLogs(
     entityId?: string;
     limit?: number;
     offset?: number;
-  }
+  },
 ) {
   return await prisma.auditLog.findMany({
     where: {

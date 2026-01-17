@@ -11,7 +11,7 @@ export function getOpenAI() {
 
   if (!_client) _client = new OpenAI({ apiKey });
   return _client;
-};
+}
 
 export async function generateEmbedding(text: string): Promise<number[]> {
   const response = await getOpenAI().embeddings.create({

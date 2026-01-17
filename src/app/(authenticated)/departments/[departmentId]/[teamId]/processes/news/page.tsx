@@ -1,15 +1,11 @@
 import { Heading } from "@/components/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { getSessionUser, getUserById, getUserOrgWithRole } from "@/lib/auth";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/empty-state";
-import { signInPath, teamProcessPath } from "@/app/paths";
-import { ProcessBreadcrumbs } from "../_navigation";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
 import { NewsPostList } from "@/features/news/components/news-list";
-import { getNewsPosts } from "@/features/news/queries/get-news-posts";
-import { getCachedDepartments } from "@/lib/cache-queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
 export default async function NewsPage({
   params,
@@ -19,27 +15,30 @@ export default async function NewsPage({
   const { departmentId, teamId } = await params;
 
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
-  if (!org) redirect(teamProcessPath(departmentId, teamId));
+  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
 
-  const { list: departments } = await getCachedDepartments(org.id);
-
-  const departmentName = departments.find(
-    (department) => department.id === departmentId
-  )?.name;
+  const trpc = await serverTrpc();
+  const { list: departments } = await trpc.department.list();
 
   const teamName = departments
     .find((department) => department.id === departmentId)
     ?.teams.find((team) => team.id === teamId)?.name;
 
-  const newsPosts = await getNewsPosts(departmentId, teamId);
+  const newsData = await trpc.news.getNews({ departmentId, teamId });
+  const newsPosts = newsData.data;
+
+  const uniqueUserIds = [...new Set(newsPosts.map((post) => post.createdBy))];
+  const users = await Promise.all(
+    uniqueUserIds.map((userId) => getUserById(userId ?? "")),
+  );
+  const userMap = Object.fromEntries(users.map((user) => [user?.id, user]));
 
   return (
     <>
       <Heading
         title={`${teamName} News`}
+        description="View and manage news for your department"
         actions={
           isAdmin ? (
             <NewsCreateButton
@@ -49,19 +48,22 @@ export default async function NewsPage({
             />
           ) : null
         }
-        breadcrumbs={
-          <ProcessBreadcrumbs
-            teamName={teamName}
-            departmentName={departmentName}
-          />
-        }
+
       />
       <Suspense fallback={<Skeleton />}>
-      {newsPosts.length > 0 ? (
-        <NewsPostList departmentId={departmentId} teamId={teamId} />
-      ) : (
-        <EmptyState title="No news posts yet" body="Create a news post to get started" />
-      )}
+        {newsPosts.length > 0 ? (
+          <NewsPostList 
+            departmentId={departmentId} 
+            teamId={teamId} 
+            isAdmin={isAdmin}
+            userMap={userMap}
+          />
+        ) : (
+          <EmptyState
+            title="No news posts yet"
+            body="Create a news post to get started"
+          />
+        )}
       </Suspense>
     </>
   );

@@ -1,13 +1,17 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye } from "lucide-react";
-import { ProcessForEdit } from "../../../queries/get-process-for-edit";
+import { ProcessForEdit } from "@/features/processes/types/types";
+import { ProcessDeleteButton } from "../../process-delete-button";
 
 type ProcessHeaderProps = {
   process: ProcessForEdit;
   viewMode: "edit" | "preview";
   onViewModeChange: (mode: "edit" | "preview") => void;
   isDisabled: boolean;
+  isAdmin: boolean;
+  departmentId: string;
+  teamId: string;
 };
 
 export function ProcessHeader({
@@ -15,6 +19,9 @@ export function ProcessHeader({
   viewMode,
   onViewModeChange,
   isDisabled,
+  isAdmin,
+  departmentId,
+  teamId,
 }: ProcessHeaderProps) {
   return (
     <Card className="p-4 animate-fade-from-top">
@@ -48,6 +55,12 @@ export function ProcessHeader({
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
+          <ProcessDeleteButton
+            isAdmin={isAdmin}
+            processId={process.id}
+            departmentId={departmentId}
+            teamId={teamId}
+          />
           <Button
             variant={viewMode === "preview" ? "default" : "outline"}
             size="sm"
@@ -62,4 +75,3 @@ export function ProcessHeader({
     </Card>
   );
 }
-

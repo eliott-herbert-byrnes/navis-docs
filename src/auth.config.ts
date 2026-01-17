@@ -26,8 +26,14 @@ export const {
         code: { label: "Code", type: "text" },
       },
       async authorize(credentials) {
-        const email = typeof credentials?.email === "string" ? credentials.email.trim().toLowerCase() : undefined;
-        const code = typeof credentials?.code === "string" ? credentials.code.trim() : undefined;
+        const email =
+          typeof credentials?.email === "string"
+            ? credentials.email.trim().toLowerCase()
+            : undefined;
+        const code =
+          typeof credentials?.code === "string"
+            ? credentials.code.trim()
+            : undefined;
         if (!email || !code) return null;
 
         const ok = await verifyOtpAndConsume(email, code);

@@ -6,13 +6,13 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ departmentId: string }> }
+  { params }: { params: Promise<{ departmentId: string }> },
 ) {
   try {
     const user = await getSessionUser();
     if (!user) return new Response("Unauthorized", { status: 401 });
 
-    const {org} = await getUserOrgWithRole(user.userId);
+    const { org } = await getUserOrgWithRole(user.userId);
     if (!org) return new Response("No organization found", { status: 404 });
 
     const { departmentId } = await params;
@@ -21,7 +21,8 @@ export async function GET(
       where: { id: departmentId, orgId: org.id },
       select: { id: true },
     });
-    if (!department) return new Response("Department not found", { status: 404 });
+    if (!department)
+      return new Response("Department not found", { status: 404 });
 
     const teams = await prisma.team.findMany({
       where: { departmentId },
@@ -29,7 +30,10 @@ export async function GET(
       orderBy: { createdAt: "desc" },
     });
 
-    return new Response(JSON.stringify({ teams }), { status: 200, headers: { "content-type": "application/json" } });
+    return new Response(JSON.stringify({ teams }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
   } catch {
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,

@@ -15,7 +15,7 @@ export interface ChunkResult {
 export async function searchProcessChunks(
   query: string,
   teamId: string,
-  limit: number = 5
+  limit: number = 5,
 ): Promise<ChunkResult[]> {
   const queryEmbedding = await generateEmbedding(query);
 

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 export const createCheckoutSession = async (
   orgSlug: string | null | undefined,
-  priceId: string
+  priceId: string,
 ) => {
   const user = await getSessionUser();
   if (!user) {

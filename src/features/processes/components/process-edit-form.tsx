@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ProcessForEdit } from "../queries/get-process-for-edit";
 import { useState, useTransition, useCallback, useEffect } from "react";
 import { teamProcessPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
@@ -16,12 +15,18 @@ import {
   handlePublishProcess,
   handleCancelEdit,
 } from "./form/utils/process-edit-utils";
+import { ProcessForEdit } from "../types/types";
+import {
+  usePublishProcess,
+  useUpdateProcessContent,
+} from "../hooks/use-process-mutations";
 
 type EditProcessFormProps = {
   departmentId: string;
   teamId: string;
   processId: string;
   process: ProcessForEdit;
+  isAdmin: boolean;
 };
 
 export const EditProcessForm = ({
@@ -29,20 +34,23 @@ export const EditProcessForm = ({
   teamId,
   processId,
   process,
+  isAdmin,
 }: EditProcessFormProps) => {
   const router = useRouter();
   const [isCancelling, startTransition] = useTransition();
   const [isSaving, setIsSaving] = useState(false);
-  const [isPublishing, setIsPublishing] = useState(false);
   const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const initialContent =
-    process.pendingVersion?.contentJSON ||
-    process.publishedVersion?.contentJSON ||
-    {};
+  const initialContent: ProcessContent =
+    (process.pendingVersion?.contentJSON as ProcessContent) ||
+    (process.publishedVersion?.contentJSON as ProcessContent) ||
+    ({} as ProcessContent);
 
   const [content, setContent] = useState<ProcessContent>(initialContent);
+
+  const { updateProcessContent } = useUpdateProcessContent();
+  const { publishProcess, isPending } = usePublishProcess(departmentId, teamId);
 
   const [cancelTrigger, cancelDialog] = useConfirmDialog({
     title: "Discard unsaved changes?",
@@ -59,7 +67,7 @@ export const EditProcessForm = ({
     trigger: (isLoading) => (
       <Button
         variant="outline"
-        disabled={isLoading || isCancelling || isSaving || isPublishing}
+        disabled={isLoading || isCancelling || isSaving || isPending}
       >
         {isLoading || isCancelling ? (
           <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
@@ -73,7 +81,7 @@ export const EditProcessForm = ({
         departmentId,
         teamId,
         startTransition,
-        teamProcessPath
+        teamProcessPath,
       );
     },
   });
@@ -84,7 +92,7 @@ export const EditProcessForm = ({
       departmentId,
       teamId,
       startTransition,
-      teamProcessPath
+      teamProcessPath,
     );
   };
 
@@ -94,17 +102,18 @@ export const EditProcessForm = ({
   }, []);
 
   const handleSave = useCallback(
-    async (silent = false) => {
-      await handleSaveProcess({
+    (silent = false) => {
+      handleSaveProcess({
         process,
         processId,
         content,
+        updateFn: updateProcessContent,
         setIsSaving,
         setHasUnsavedChanges,
         silent,
       });
     },
-    [process, processId, content]
+    [process, processId, content, updateProcessContent],
   );
 
   useEffect(() => {
@@ -117,14 +126,11 @@ export const EditProcessForm = ({
     return () => clearTimeout(autoSaveTimer);
   }, [content, hasUnsavedChanges, handleSave]);
 
-  const handlePublish = async () => {
-    await handlePublishProcess({
+  const handlePublish = () => {
+    handlePublishProcess({
       processId,
       hasUnsavedChanges,
-      setIsPublishing,
-      router,
-      departmentId,
-      teamId,
+      publishFn: publishProcess,
     });
   };
 
@@ -134,7 +140,10 @@ export const EditProcessForm = ({
         process={process}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
-        isDisabled={isSaving || isCancelling || isPublishing}
+        isAdmin={isAdmin}
+        isDisabled={isSaving || isCancelling || isPending}
+        departmentId={departmentId}
+        teamId={teamId}
       />
 
       <ProcessEditorSelector
@@ -148,7 +157,7 @@ export const EditProcessForm = ({
         hasUnsavedChanges={hasUnsavedChanges}
         isSaving={isSaving}
         isCancelling={isCancelling}
-        isPublishing={isPublishing}
+        isPublishing={isPending}
         process={process}
         onSave={() => handleSave(false)}
         onPublish={handlePublish}

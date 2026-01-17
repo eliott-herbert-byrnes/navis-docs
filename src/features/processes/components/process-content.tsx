@@ -1,7 +1,10 @@
 "use client";
 
 import { EmptyState } from "@/components/empty-state";
-import { ProcessForViewWithRelations, ProcessContentType } from "../types/types";
+import {
+  ProcessForViewWithRelations,
+  ProcessContentType,
+} from "../types/types";
 import { RawTextEditor } from "./editors/raw-text-editor";
 import { StepsEditor } from "./editors/steps-editor";
 import { FlowEditor } from "./editors/flow-editor";
@@ -74,7 +77,11 @@ const ProcessContent = ({ process }: ProcessContentProps) => {
     );
   }
 
-  return <Card className="p-6 min-h-[600px] animate-fade-from-top">{renderProcessContent()}</Card>;
+  return (
+    <Card className="p-6 min-h-[600px] animate-fade-from-top">
+      {renderProcessContent()}
+    </Card>
+  );
 };
 
 export { ProcessContent };

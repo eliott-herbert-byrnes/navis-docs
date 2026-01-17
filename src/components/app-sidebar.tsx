@@ -168,7 +168,7 @@ export async function AppSidebar() {
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  )
+                  ),
                 )}
             </SidebarMenu>
           </SidebarGroupContent>

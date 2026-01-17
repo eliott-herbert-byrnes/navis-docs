@@ -1,40 +1,27 @@
-import { onboardingPath, signInPath } from "@/app/paths";
+"use client";
+import { homePath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ListSkeleton } from "@/components/list-skeleton";
 import { UserList } from "@/features/user-base/components/user-list";
-import { getOrgMembers, getSessionUser, getUserOrg, isOrgAdminOrOwner } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
+import { trpc } from "@/trpc/client";
+import { redirect, useSearchParams } from "next/navigation";
 
-type UserBasePageProps = {
-  searchParams: Promise<{
-    search?: string;
-    page?: string;
-  }>;
-};
-
-const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
-  const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-
-  const org = await getUserOrg(user.userId);
-  if (!org.org) redirect(onboardingPath());
-
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
-  if (!isAdmin) redirect(signInPath());
-
-  const params = await searchParams;
-  const search = params.search;
-  const page = params.page ? parseInt(params.page, 10) : 1;
+export default function UserBasePage() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || undefined;
+  const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const { members } = await getOrgMembers(
-    org.org?.id ?? "",
+  const { data, isLoading, error } = trpc.users.getOrgMembers.useQuery({
     search,
     limit,
-    offset
-  );
+    offset,
+  });
+
+  if (error?.data?.code === "FORBIDDEN") {
+    redirect(homePath());
+  }
 
   return (
     <>
@@ -42,13 +29,7 @@ const UserBasePage = async ({ searchParams }: UserBasePageProps) => {
         title="Userbase"
         description="View and manage users for your organization"
       />
-      <Suspense fallback={<Skeleton />} key={search}>
-        <UserList 
-          data={members} 
-        />
-      </Suspense>
+      {isLoading ? <ListSkeleton /> : <UserList data={data?.members ?? []} />}
     </>
   );
-};
-
-export default UserBasePage;
+}

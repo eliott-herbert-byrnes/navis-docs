@@ -1,6 +1,5 @@
 "use client";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { Form } from "@/components/form/form";
+
 import {
   Field,
   FieldDescription,
@@ -13,15 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { useActionState } from "@/components/form/hooks/use-action-state";
 import { Card } from "@/components/ui/card";
-import { FieldError } from "@/components/form/field-error";
-import {  newsPath } from "@/app/paths";
-import { useEffect, useState, useTransition } from "react";
+import { newsPath } from "@/app/paths";
+import {  FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { createNews } from "../actions/create-news";
+
+import { useNewsCreate } from "../hook/use-news-mutations";
 
 type NewsCreateFormProps = {
   departmentId: string;
@@ -34,23 +32,28 @@ const NewsCreateForm = ({
   teamId,
   teamName,
 }: NewsCreateFormProps) => {
-  const [actionState, action, isPending] = useActionState(
-    createNews,
-    EMPTY_ACTION_STATE
-  );
   const [isCancelPending, startTransition] = useTransition();
   const router = useRouter();
   const [pinned, setPinned] = useState(false);
+  
+  const { createNews, isPending } = useNewsCreate(() => {
+    router.replace(newsPath(departmentId, teamId));
+  });
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    createNews({
+      teamId, 
+      newsPostTitle: String(formData.get("newsPostTitle") ?? "").trim(),
+      newsPostBody: String(formData.get("newsPostBody") ?? "").trim(),
+      pinned,
+    })
+  }
 
   const handlePinnedChange = (checked: boolean) => {
     setPinned(checked);
   };
-
-  useEffect(() => {
-    if (actionState.status !== "SUCCESS") return;
-    const to = actionState.data?.redirect;
-    if (to) router.push(to);
-  }, [actionState.status, actionState.data?.redirect, router]);
 
   const handleCancel = () => {
     startTransition(() => {
@@ -61,9 +64,7 @@ const NewsCreateForm = ({
   return (
     <div className="w-full max-w-[700px] mx-auto my-auto">
       <Card className="p-6 animate-fade-from-top">
-        <Form action={action} actionState={actionState}>
-          <input type="hidden" name="departmentId" value={departmentId} />
-          <input type="hidden" name="teamId" value={teamId} />
+        <form onSubmit={handleSubmit}>
           <FieldGroup>
             <FieldSet>
               <FieldLegend>Create a news post for {teamName}</FieldLegend>
@@ -81,12 +82,9 @@ const NewsCreateForm = ({
                     required
                     disabled={isPending}
                   />
-                  <FieldError actionState={actionState} name="newsPostTitle" />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="newsPostBody">
-                    Body
-                  </FieldLabel>
+                  <FieldLabel htmlFor="newsPostBody">Body</FieldLabel>
                   <Textarea
                     id="newsPostBody"
                     name="newsPostBody"
@@ -95,10 +93,6 @@ const NewsCreateForm = ({
                     required
                     disabled={isPending}
                   />
-                  <FieldError
-                    actionState={actionState}
-                    name="newsPostBody"
-                  />
                 </Field>
               </FieldGroup>
             </FieldSet>
@@ -106,7 +100,8 @@ const NewsCreateForm = ({
             <FieldSet>
               <FieldLegend>Pinned</FieldLegend>
               <FieldDescription>
-                Select if the news post should be pinned to the top of the news feed.
+                Select if the news post should be pinned to the top of the news
+                feed.
               </FieldDescription>
               <FieldGroup>
                 <Field orientation="horizontal">
@@ -117,10 +112,7 @@ const NewsCreateForm = ({
                     onCheckedChange={handlePinnedChange}
                     disabled={isPending}
                   />
-                  <FieldLabel
-                    htmlFor="pinned"
-                    className="font-normal"
-                  >
+                  <FieldLabel htmlFor="pinned" className="font-normal">
                     Pin to the top of the news feed
                   </FieldLabel>
                 </Field>
@@ -151,7 +143,7 @@ const NewsCreateForm = ({
               </Button>
             </Field>
           </FieldGroup>
-        </Form>
+        </form>
       </Card>
     </div>
   );

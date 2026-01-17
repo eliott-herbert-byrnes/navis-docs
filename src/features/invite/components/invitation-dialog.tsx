@@ -17,7 +17,11 @@ import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitButton } from "./submit-button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type InvitationDialogProps = {
   title: string;
@@ -49,17 +53,16 @@ const InvitationDialog = ({
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
-            <Button variant="outline" disabled>
-              <PlusIcon className="w-4 h-4" />
-              Invite Team Member
-            </Button>
+              <Button variant="outline" disabled>
+                <PlusIcon className="w-4 h-4" />
+                Invite Team Member
+              </Button>
             </div>
           </TooltipTrigger>
           <TooltipContent>
             <p>Disabled for MVP</p>
           </TooltipContent>
-          </Tooltip>
-
+        </Tooltip>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -1,6 +1,4 @@
 "use client";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { Form } from "@/components/form/form";
 import {
   Field,
   FieldContent,
@@ -15,16 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { createProcess } from "../actions/create-process";
-import { useActionState } from "@/components/form/hooks/use-action-state";
 import { Card } from "@/components/ui/card";
-import { FieldError } from "@/components/form/field-error";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { homePath } from "@/app/paths";
-import { useEffect, useState, useTransition } from "react";
+import { FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { ProcessSelectCategories } from "./process-select-categories";
+import { useCreateProcess } from "../hooks/use-process-mutations";
 
 type CreateProcessFormProps = {
   departmentId: string;
@@ -37,21 +33,13 @@ const CreateProcessForm = ({
   teamId,
   categories,
 }: CreateProcessFormProps) => {
-  const [actionState, action, isPending] = useActionState(
-    createProcess,
-    EMPTY_ACTION_STATE
-  );
+  const router = useRouter();
   const [isCancelPending, startTransition] = useTransition();
   const [createNewCategory, setCreateNewCategory] = useState(
-    categories.length === 0
+    categories.length === 0,
   );
-  const router = useRouter();
 
-  useEffect(() => {
-    if (actionState.status !== "SUCCESS") return;
-    const to = actionState.data?.redirect;
-    if (to) router.push(to);
-  }, [actionState.status, actionState.data?.redirect, router]);
+  const { createProcess, isPending } = useCreateProcess(departmentId, teamId);
 
   const handleCancel = () => {
     startTransition(() => {
@@ -63,12 +51,35 @@ const CreateProcessForm = ({
     setCreateNewCategory(checked);
   };
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    createProcess({
+      processTitle: String(formData.get("processTitle") ?? "").trim(),
+      processDescription: String(
+        formData.get("processDescription") ?? "",
+      ).trim(),
+      processCategoryId: createNewCategory
+        ? undefined
+        : String(formData.get("processCategoryId") ?? "").trim() || undefined,
+      newProcessCategory: createNewCategory || undefined,
+      newProcessCategoryName: createNewCategory
+        ? String(formData.get("newProcessCategoryName") ?? "").trim() ||
+          undefined
+        : undefined,
+      processStyle: String(formData.get("processStyle") ?? "raw").trim() as
+        | "raw"
+        | "steps"
+        | "flow"
+        | "yesno",
+    });
+  };
+
   return (
     <div className="w-full max-w-[700px] mx-auto my-auto">
       <Card className="p-6 animate-fade-from-top">
-        <Form action={action} actionState={actionState}>
-          <input type="hidden" name="departmentId" value={departmentId} />
-          <input type="hidden" name="teamId" value={teamId} />
+        <form onSubmit={handleSubmit}>
           <FieldGroup>
             <FieldSet>
               <FieldLegend>Create a new process </FieldLegend>
@@ -86,7 +97,6 @@ const CreateProcessForm = ({
                     required
                     disabled={isPending}
                   />
-                  <FieldError actionState={actionState} name="processTitle" />
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="processDescription">
@@ -99,10 +109,6 @@ const CreateProcessForm = ({
                     className="resize-none"
                     required
                     disabled={isPending}
-                  />
-                  <FieldError
-                    actionState={actionState}
-                    name="processDescription"
                   />
                 </Field>
               </FieldGroup>
@@ -148,10 +154,6 @@ const CreateProcessForm = ({
                       name="newProcessCategoryName"
                       required
                       disabled={isPending}
-                    />
-                    <FieldError
-                      actionState={actionState}
-                      name="newProcessCategoryName"
                     />
                   </Field>
                 )}
@@ -243,7 +245,7 @@ const CreateProcessForm = ({
               </Button>
             </Field>
           </FieldGroup>
-        </Form>
+        </form>
       </Card>
     </div>
   );

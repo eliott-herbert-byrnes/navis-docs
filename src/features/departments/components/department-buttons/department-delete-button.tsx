@@ -1,27 +1,32 @@
 "use client";
 
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "react";
-import { deleteDepartment } from "../../actions/delete-department";
 import { DepartmentDeleteDialog } from "./department-delete-dialog";
+import { useDeleteDepartment } from "../../hooks/use-department-mutations";
 
+const DepartmentDeleteButton = ({
+  isAdmin,
+  departmentId,
+  departmentName,
+}: {
+  isAdmin: boolean;
+  departmentId: string;
+  departmentName: string;
+}) => {
+  const { deleteDepartment, isPending } = useDeleteDepartment();
 
-const DepartmentDeleteButton = ({ departmentId, isAdmin }: { departmentId: string, isAdmin: boolean }) => {
-    const [actionState, action] = useActionState(       
-        deleteDepartment,
-        EMPTY_ACTION_STATE,
-    );
+  const handleDelete = () => {
+    deleteDepartment({ departmentId, departmentName });
+  };
 
-    return (
-        <DepartmentDeleteDialog 
-        title="Are you sure you want to delete this department?"
-        description="All associated teams and processes will be deleted as well. This action cannot be undone."
-        action={action}
-        actionState={actionState}
-        disabled={!isAdmin}
-        departmentId={departmentId}
-        />
-    );
+  return (
+    <DepartmentDeleteDialog
+      title="Are you sure you want to delete this department?"
+      description="All associated teams and processes will be deleted as well. This action cannot be undone."
+      onConfirm={handleDelete}
+      isPending={isPending}
+      disabled={!isAdmin || isPending}
+    />
+  );
 };
 
 export { DepartmentDeleteButton };

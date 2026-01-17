@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle, Save } from "lucide-react";
-import { ProcessForEdit } from "../../../queries/get-process-for-edit";
+import { ProcessForEdit } from "@/features/processes/types/types";
 
 type ProcessActionButtonsProps = {
   hasUnsavedChanges: boolean;
@@ -83,7 +83,7 @@ export function ProcessActionButtons({
             ) : (
               <>
                 <Save className="h-4 w-4 mr-2" />
-                Save 
+                Save
               </>
             )}
           </Button>
@@ -110,4 +110,3 @@ export function ProcessActionButtons({
     </Card>
   );
 }
-

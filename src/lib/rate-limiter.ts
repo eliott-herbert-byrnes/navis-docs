@@ -47,8 +47,8 @@ export async function getLimitByIp(limiter: Ratelimit, purpose: string) {
 
 export async function getLimitByUser(
   limiter: Ratelimit,
-  userId: string,
-  purpose: string
+  userId: string | undefined,
+  purpose: string,
 ) {
   return limiter.limit(`${purpose}:${userId}`);
 }

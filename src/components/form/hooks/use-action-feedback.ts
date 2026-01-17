@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useEffect, useRef } from "react";
 import { ActionState } from "@/components/form/utils/to-action-state";
 
@@ -13,10 +13,10 @@ type UseActionFeedbackOptions = {
 
 const useActionFeedback = (
   actionState: ActionState,
-  options: UseActionFeedbackOptions
+  options: UseActionFeedbackOptions,
 ) => {
   const prevTimestamp = useRef(actionState.timestamp);
-  const {onSuccess, onError} = options;
+  const { onSuccess, onError } = options;
   // const isUpdate = prevTimestamp.current !== actionState.timestamp;
 
   useEffect(() => {
@@ -32,7 +32,14 @@ const useActionFeedback = (
     }
 
     prevTimestamp.current = actionState.timestamp;
-  }, [actionState, options, actionState.timestamp, actionState.status, onSuccess, onError]);
+  }, [
+    actionState,
+    options,
+    actionState.timestamp,
+    actionState.status,
+    onSuccess,
+    onError,
+  ]);
 };
 
 export { useActionFeedback };

@@ -1,7 +1,4 @@
 "use client";
-import { FieldError } from "@/components/form/field-error";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -18,33 +15,69 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { SubmitButton } from "@/features/invite/components/submit-button";
 import { ChevronsUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { validateDepartmentForm } from "../../utils/validate-department";
 
 type DepartmentDialogProps = {
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
   disabled: boolean;
+  onConfirm: (
+    departmentName: string,
+    teamName1: string,
+    teamName2?: string,
+    teamName3?: string,
+  ) => void;
+  isPending: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 const DepartmentDialog = ({
   title,
   description,
-  action,
-  actionState,
+  onConfirm,
+  isPending,
   disabled,
+  open,
+  onOpenChange,
 }: DepartmentDialogProps) => {
-  const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [departmentName, setDepartmentName] = useState("");
+  const [teamName1, setTeamName1] = useState("");
+  const [teamName2, setTeamName2] = useState("");
+  const [teamName3, setTeamName3] = useState("");
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCreate = () => {
+    const validation = validateDepartmentForm({
+      departmentName,
+      teamName1,
+      teamName2,
+      teamName3,
+    });
+    if (!validation.valid) {
+      toast.error(validation.error);
+      return;
+    }
+    onConfirm(departmentName, teamName1, teamName2, teamName3);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    onOpenChange(open);
+    if (!open) {
+      setDepartmentName("");
+      setTeamName1("");
+      setTeamName2("");
+      setTeamName3("");
+    }
+  };
+
+  const isValid =
+    departmentName.trim().length > 0 && teamName1.trim().length > 0;
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" disabled={disabled}>
           <PlusIcon className="w-4 h-4" />
@@ -56,77 +89,83 @@ const DepartmentDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Form
-          action={action}
-          actionState={actionState}
-          onSuccess={handleClose}
-          onError={handleClose}
+        <Input
+          id="departmentName"
+          name="departmentName"
+          type="text"
+          placeholder="Department Name"
+          required
+          value={departmentName}
+          onChange={(e) => setDepartmentName(e.target.value)}
+        />
+        <Collapsible
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          className="flex w-full flex-col gap-2 mt-2"
         >
-          <Input
-            id="departmentName"
-            name="departmentName"
-            type="text"
-            placeholder="Department Name"
-            required
-          />
-          <FieldError actionState={actionState} name="departmentName" />
-          <Collapsible
-            open={isOpen}
-            onOpenChange={setIsOpen}
-            className="flex w-full flex-col gap-2 mt-2"
-          >
-            <div className="flex items-center justify-between gap-4 w-full ">
-              <h4 className="text-sm font-semibold">Add team</h4>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="icon" className="size-10">
-                  <ChevronsUpDown />
-                  <span className="sr-only">Toggle</span>
-                </Button>
-              </CollapsibleTrigger>
+          <div className="flex items-center justify-between gap-4 w-full ">
+            <h4 className="text-sm font-semibold">Add team</h4>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="icon" className="size-10">
+                <ChevronsUpDown />
+                <span className="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm">
+            <Input
+              id="teamName1"
+              name="teamName1"
+              type="text"
+              placeholder="Team Name"
+              required
+              value={teamName1}
+              onChange={(e) => setTeamName1(e.target.value)}
+            />
+          </div>
+          <CollapsibleContent className="flex flex-col gap-2">
+            <div className="rounded-md border px-4 py-2 font-mono text-sm">
+              <Input
+                id="teamName2"
+                name="teamName2"
+                type="text"
+                placeholder="Team Name"
+                value={teamName2}
+                onChange={(e) => setTeamName2(e.target.value)}
+              />
             </div>
             <div className="rounded-md border px-4 py-2 font-mono text-sm">
               <Input
-                id="teamName1"
-                name="teamName1"
+                id="teamName3"
+                name="teamName3"
                 type="text"
                 placeholder="Team Name"
-                required
+                value={teamName3}
+                onChange={(e) => setTeamName3(e.target.value)}
               />
-              <FieldError actionState={actionState} name="teamName1" />
             </div>
-            <CollapsibleContent className="flex flex-col gap-2">
-              <div className="rounded-md border px-4 py-2 font-mono text-sm">
-                <Input
-                  id="teamName2"
-                  name="teamName2"
-                  type="text"
-                  placeholder="Team Name"
-                />
-                <FieldError actionState={actionState} name="teamName2" />
-              </div>
-              <div className="rounded-md border px-4 py-2 font-mono text-sm">
-                <Input
-                  id="teamName3"
-                  name="teamName3"
-                  type="text"
-                  placeholder="Team Name"
-                />
-                <FieldError actionState={actionState} name="teamName3" />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-          <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button
-              className="w-[75px]"
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <SubmitButton className="w-[75px]" label="Create" />
-          </DialogFooter>
-        </Form>
+          </CollapsibleContent>
+        </Collapsible>
+        <DialogFooter className="flex flex-row gap-2 mt-4">
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="default"
+            onClick={handleCreate}
+            disabled={isPending || !isValid}
+          >
+            Create
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

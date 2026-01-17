@@ -1,6 +1,4 @@
-import { FieldError } from "@/components/form/field-error";
-import { Form } from "@/components/form/form";
-import { ActionState } from "@/components/form/utils/to-action-state";
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,40 +10,38 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { SubmitButton } from "@/features/invite/components/submit-button";
-import { Flag } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Flag, Loader2 } from "lucide-react";
+import { useState, FormEvent } from "react";
 
 type ProcessErrorDialogProps = {
   processId: string;
   title: string;
   description: string;
-  action: (payload: FormData) => void;
-  actionState: ActionState;
+  onSubmit: (data: { processId: string; errorReport: string }) => void;
+  isPending: boolean;
 };
 
 export const ProcessErrorDialog = ({
   processId,
   title,
   description,
-  action,
-  actionState,
+  onSubmit,
+  isPending,
 }: ProcessErrorDialogProps) => {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [key, setKey] = useState(0);
 
-  const handleClose = () => {
-    console.log("Closing dialog");
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    onSubmit({
+      processId,
+      errorReport: String(formData.get("errorReport") ?? "").trim(),
+    });
+
     setOpen(false);
-  };
 
-  const handleSuccess = () => {
-    console.log("Success callback triggered!");
-    handleClose();
-    setKey((prev) => prev + 1);
-    router.refresh();
+    e.currentTarget.reset();
   };
 
   return (
@@ -60,33 +56,34 @@ export const ProcessErrorDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Form
-          key={key}
-          action={action}
-          actionState={actionState}
-          onSuccess={handleSuccess}
-          onError={handleClose}
-        >
-          <input type="hidden" name="processId" value={processId} />
+        <form onSubmit={handleSubmit}>
           <Textarea
             name="errorReport"
             placeholder="Describe the issue with this process..."
             required
             rows={10}
+            disabled={isPending}
+            maxLength={1000}
           />
-          <FieldError actionState={actionState} name="errorReport" />
           <DialogFooter className="flex flex-row gap-2 mt-4">
             <Button
               className="w-[75px]"
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={() => setOpen(false)}
+              disabled={isPending}
             >
               Cancel
             </Button>
-            <SubmitButton className="w-[75px]" label="Report" />
+            <Button className="w-[75px]" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Report"
+              )}
+            </Button>
           </DialogFooter>
-        </Form>
+        </form>
       </DialogContent>
     </Dialog>
   );

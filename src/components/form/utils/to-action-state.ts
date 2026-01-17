@@ -18,7 +18,7 @@ export const EMPTY_ACTION_STATE: ActionState = {
 
 export const fromErrorToActionState = (
   error: unknown,
-  formData?: FormData
+  formData?: FormData,
 ): ActionState => {
   if (error instanceof ZodError) {
     return {
@@ -51,7 +51,7 @@ export const toActionState = (
   status: ActionState["status"],
   message: string,
   formData?: FormData,
-  data?: unknown
+  data?: unknown,
 ): ActionState => {
   return {
     status,

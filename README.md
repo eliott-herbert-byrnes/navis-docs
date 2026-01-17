@@ -1,4 +1,4 @@
-# Navis Docs 
+# Navis Docs
 
 **Enterprise Process Documentation & Knowledge Management Platform**
 
@@ -36,6 +36,7 @@ A full-stack SaaS application that centralises organisational process documentat
 Navis Docs is a modern enterprise SaaS platform designed to solve the critical challenge of process documentation management in organisations. Built with a focus on scalability, user experience, and AI-powered intelligence, it serves as a centralised knowledge repository where teams can create, manage, version, and search their standard operating procedures (SOPs).
 
 **Core Value Proposition:**
+
 - Eliminates scattered documentation across multiple platforms
 - Provides instant access to procedures through AI semantic search
 - Ensures compliance with immutable audit trails
@@ -75,12 +76,14 @@ Navis Docs addresses these challenges through:
 ## Key Features
 
 ### **Multi-Format Process Editor**
+
 - **RAW**: Rich text editor powered by TipTap for flexible documentation
 - **STEPS**: Linear step-by-step procedures with expandable sections
 - **FLOW**: Visual flowchart builder using ReactFlow for complex workflows
 - **YES/NO**: Interactive decision trees for guided troubleshooting
 
 ### **AI Chat Assistant**
+
 - Semantic search using OpenAI embeddings (text-embedding-3-small)
 - PostgreSQL pgvector for similarity matching
 - Claude 3.5 Haiku for conversational responses
@@ -88,35 +91,41 @@ Navis Docs addresses these challenges through:
 - Context-aware answers based on published documentation
 
 ### **Error Tracking & Management**
+
 - In-context error reporting directly from process pages
 - Status tracking (Open → Resolved → Archived)
 - Analytics dashboard for identifying problematic processes
 - Priority assignment and resolution workflow
 
 ### **Idea & Improvement System**
+
 - Crowdsource improvements from team members
 - Status pipeline (New → In Progress → Completed → Archived)
 - Integration with process updates
 - Prioritisation based on frequency and impact
 
 ### **Comprehensive Audit Logging**
+
 - Immutable record of all system actions
 - Track who, what, when, and where for compliance
 - Filterable by user, action type, entity, and date range
 - Export capabilities for compliance reporting
 
 ### **Multi-Tenant Organisation Structure**
+
 - Role-based access control (Owner, Admin, Member)
 - Hierarchical organisation (Departments → Teams)
 - Invitation system with email verification
 - Team-specific news and announcements
 
 ### **Favorites & Personalisation**
+
 - Bookmark frequently-used processes
 - Customizable dashboard
 - Quick access sidebar
 
 ### **Subscription Management**
+
 - Stripe integration for payments
 - Business ($49/mo) and Enterprise ($299/mo) tiers
 - Customer portal for subscription management
@@ -127,6 +136,7 @@ Navis Docs addresses these challenges through:
 ## 🛠️ Technology Stack
 
 ### **Frontend**
+
 - **Framework**: Next.js 15.5 (App Router, Server Components, Server Actions)
 - **Language**: TypeScript 5
 - **UI Library**: React 19.1
@@ -137,6 +147,7 @@ Navis Docs addresses these challenges through:
 - **Drag & Drop**: dnd-kit
 
 ### **Backend**
+
 - **Runtime**: Node.js
 - **Framework**: Next.js API Routes & Server Actions
 - **Database**: PostgreSQL with pgvector extension
@@ -146,12 +157,14 @@ Navis Docs addresses these challenges through:
 - **Email**: Resend (transactional emails)
 
 ### **AI & Machine Learning**
+
 - **LLM**: Claude 3.5 Haiku (Anthropic)
 - **Embeddings**: OpenAI text-embedding-3-small (1536 dimensions)
 - **Vector Database**: PostgreSQL pgvector
 - **Semantic Search**: Cosine similarity with threshold filtering
 
 ### **Infrastructure & DevOps**
+
 - **Hosting**: Vercel (Edge Functions, ISR, SSR)
 - **Database**: Supabase (managed PostgreSQL)
 - **Rate Limiting**: Upstash Redis
@@ -159,6 +172,7 @@ Navis Docs addresses these challenges through:
 - **CDN**: Vercel Edge Network
 
 ### **Developer Tools**
+
 - **Package Manager**: pnpm
 - **Code Quality**: ESLint, Prettier
 - **Type Safety**: TypeScript strict mode
@@ -195,7 +209,7 @@ PostgreSQL + pgVector   | OpenAI, Anthropic, Stripe, Resend, Upstash
 ### **Data Flow: AI Chat Feature**
 
 ```
-User Query 
+User Query
     ↓
 Embedding Generation (OpenAI)
     ↓
@@ -219,8 +233,9 @@ User Interface
 ### **1. Process Management**
 
 **Publishing Workflow:**
+
 ```
-Create Process (Draft) 
+Create Process (Draft)
     ↓
 Edit Content
     ↓
@@ -234,6 +249,7 @@ Update Audit Log
 ```
 
 **Technical Implementation:**
+
 - Server Actions for mutations
 - Optimistic UI updates with React Query
 - Automatic plain text extraction from TipTap JSON
@@ -243,6 +259,7 @@ Update Audit Log
 ### **2. AI Search Pipeline**
 
 **Vector Similarity Search:**
+
 ```sql
 SELECT * FROM match_process_chunks(
   query_embedding::vector(1536),
@@ -253,6 +270,7 @@ SELECT * FROM match_process_chunks(
 ```
 
 **Implementation Details:**
+
 - Cosine similarity threshold: 0.5
 - Returns top 5 most relevant chunks
 - Includes process metadata (title, teamId, processId)
@@ -289,7 +307,7 @@ pnpm install
 
 Create `.env` file:
 
-```env
+````env
 # Database
 DATABASE_URL="postgresql://user:password@host:5432/navis_docs?pgbouncer=true"
 
@@ -325,7 +343,7 @@ pnpm prisma migrate deploy
 
 # Seed demo data
 pnpm seed
-```
+````
 
 ### **5. Run Development Server**
 
@@ -398,6 +416,7 @@ AuditLog {
 ```
 
 **Key Relationships:**
+
 - Organization → Departments → Teams → Processes
 - Process → ProcessVersions (1:many)
 - Process → ProcessChunks (1:many, for AI search)
@@ -410,12 +429,14 @@ AuditLog {
 ### **Embedding Generation**
 
 **Process:**
+
 1. Extract plain text from TipTap JSON on publish
 2. Chunk content (600 chars, preserving sentence boundaries)
 3. Generate embeddings via OpenAI API
 4. Store in PostgreSQL with pgvector
 
 **Code:**
+
 ```typescript
 const embedding = await openai.embeddings.create({
   model: "text-embedding-3-small",
@@ -431,6 +452,7 @@ await prisma.$executeRaw`
 ### **Search Implementation**
 
 **PostgreSQL Function:**
+
 ```sql
 CREATE FUNCTION match_process_chunks(
   query_embedding vector(1536),
@@ -496,7 +518,7 @@ const response = await anthropic.messages.create({
 ## Developer
 
 **Eliot Herbert-Byrnes**
-**Email**: eliott.c.h.byrnes@googlemail.com 
+**Email**: eliott.c.h.byrnes@googlemail.com
 **GitHub**: [@eliott-herbert-byrnes](https://github.com/eliott-herbert-byrnes)
 
 ### **About This Project**
@@ -524,6 +546,3 @@ This project is private and proprietary. All rights reserved.
 
 - Next.js team for the incredible framework
 - The open-source community
-
-
-

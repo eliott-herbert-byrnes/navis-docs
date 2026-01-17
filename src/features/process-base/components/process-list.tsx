@@ -62,7 +62,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProcessDeleteButton } from "./process-delete-button";
+import { ProcessBaseDeleteButton } from "./process-base-delete-button";
 
 export const schema = z.object({
   id: z.string(),
@@ -70,9 +70,11 @@ export const schema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   categoryId: z.string().nullable(),
-  category: z.object({
-    name: z.string().nullable(),
-  }).nullable(),
+  category: z
+    .object({
+      name: z.string().nullable(),
+    })
+    .nullable(),
   createdAt: z.date(),
 });
 
@@ -154,16 +156,12 @@ function TableCellViewer({ item }: { item: Process }) {
   );
 }
 
-export function ProcessList({
-  data: initialData,
-}: {
-  data: Process[];
-}) {
+export function ProcessList({ data: initialData }: { data: Process[] }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -248,7 +246,7 @@ export function ProcessList({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <ProcessDeleteButton processId={row.original.id} />
+              <ProcessBaseDeleteButton processId={row.original.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -288,9 +286,7 @@ export function ProcessList({
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by process name..."
-            value={
-              (table.getColumn("title")?.getFilterValue() as string) ?? ""
-            }
+            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }
@@ -311,7 +307,7 @@ export function ProcessList({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -330,7 +326,7 @@ export function ProcessList({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

@@ -11,7 +11,7 @@ function isNextRedirectError(e: unknown): e is { digest: string } {
 
 export function useActionState<T extends ActionState>(
   action: (state: T, formData: FormData) => Promise<T | undefined>,
-  initialState: T
+  initialState: T,
 ): [T, (formData: FormData) => void, boolean] {
   const [actionState, setActionState] = useState<T>(initialState);
   const [isPending, startTransition] = useTransition();
@@ -21,14 +21,14 @@ export function useActionState<T extends ActionState>(
       startTransition(async () => {
         try {
           const nextState = await action(actionState, formData);
-          if(nextState) setActionState(nextState);
+          if (nextState) setActionState(nextState);
         } catch (err: unknown) {
-            if(isNextRedirectError(err)) return;
-            throw err;
+          if (isNextRedirectError(err)) return;
+          throw err;
         }
       });
     },
-    [action, actionState]
+    [action, actionState],
   );
 
   return [actionState, formAction, isPending];

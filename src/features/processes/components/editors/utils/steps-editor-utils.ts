@@ -23,7 +23,7 @@ export const updateSteps = (
 export const addStep = (
   steps: Step[],
   updateSteps: (steps: Step[]) => void,
-  afterIndex?: number
+  afterIndex?: number,
 ) => {
   const newStep = createEmptyStep();
   const newSteps = [...steps];
@@ -52,7 +52,7 @@ export const updateStepTitle = (
   updateSteps: (steps: Step[]) => void,
 ) => {
   const newSteps = steps.map((step) =>
-    step.id === stepId ? { ...step, title } : step
+    step.id === stepId ? { ...step, title } : step,
   );
   updateSteps(newSteps);
 };
@@ -64,7 +64,7 @@ export const updateStepDescription = (
   updateSteps: (steps: Step[]) => void,
 ) => {
   const newSteps = steps.map((step) =>
-    step.id === stepId ? { ...step, description } : step
+    step.id === stepId ? { ...step, description } : step,
   );
   updateSteps(newSteps);
 };
@@ -75,7 +75,7 @@ export const toggleStepExpand = (
   updateSteps: (steps: Step[]) => void,
 ) => {
   const newSteps = steps.map((step) =>
-    step.id === stepId ? { ...step, isExpanded: !step.isExpanded } : step
+    step.id === stepId ? { ...step, isExpanded: !step.isExpanded } : step,
   );
   updateSteps(newSteps);
 };

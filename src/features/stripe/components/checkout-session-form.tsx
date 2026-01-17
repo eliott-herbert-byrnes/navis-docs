@@ -29,7 +29,7 @@ const CheckoutSessionForm = ({
 }: CheckoutSessionFormProps) => {
   const [actionState, action] = useActionState(
     createCheckoutSession.bind(null, orgSlug, priceId),
-    EMPTY_ACTION_STATE
+    EMPTY_ACTION_STATE,
   );
 
   const normalizedActivePlan = (activePlan ?? "").toLowerCase() as Plan | "";

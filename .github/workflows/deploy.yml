@@ -50,7 +50,7 @@ jobs:
 
       - name: Post-deploy smoke check
         run: |
-          npx wait-on ${{ steps.vercel.outputs.deploy_url }}
+          pnpm exec wait-on ${{ steps.vercel.outputs.deploy_url }}
           curl -fsSL ${{ steps.vercel.outputs.deploy_url }} >/dev/null
 
   deploy_production:
@@ -73,5 +73,5 @@ jobs:
 
       - name: Post-deploy smoke check
         run: |
-          npx wait-on ${{ steps.vercel_prod.outputs.deploy_url }}
+          pnpm exec wait-on ${{ steps.vercel_prod.outputs.deploy_url }}
           curl -fsSL ${{ steps.vercel_prod.outputs.deploy_url }} >/dev/null

@@ -1,23 +1,48 @@
+"use client";
+
 import { EmptyState } from "@/components/empty-state";
 import { DepartmentCard } from "./department-card";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
-import { getCachedDepartments } from "@/lib/cache-queries";
+import { trpc } from "@/trpc/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type DepartmentListProps = {
-  orgId: string;
+  isAdmin: boolean;
 };
 
-const DepartmentList = async ({ orgId }: DepartmentListProps) => {
-  const { list: departments } = await getCachedDepartments(orgId);
-  const user = await getSessionUser();
-  const isAdmin = user ? await isOrgAdminOrOwner(user.userId) : false;
+const DepartmentList = ({ isAdmin }: DepartmentListProps) => {
+  const { data, isLoading, isError } = trpc.department.list.useQuery();
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="flex flex-row flex-wrap gap-4">
+          <Skeleton className="h-48 w-1/4 rounded-md" />
+          <Skeleton className="h-48 w-1/4 rounded-md" />
+          <Skeleton className="h-48 w-1/4 rounded-md" />
+        </div>
+      </>
+    );
+  } else if (isError) {
+    return (
+      <EmptyState
+        title="Error loading departments"
+        body="Please try again later, or contact support if the problem persists"
+      />
+    );
+  }
+
+  const departments = data?.list ?? [];
 
   return (
     <>
       {departments.length ? (
         <div className="flex flex-row flex-wrap gap-4">
           {departments.map((department) => (
-            <DepartmentCard key={department.id} department={department} isAdmin={isAdmin} />
+            <DepartmentCard
+              key={department.id}
+              department={department}
+              isAdmin={isAdmin}
+            />
           ))}
         </div>
       ) : (

@@ -1,5 +1,5 @@
 "use server";
-import { onboardingPath, signInPath } from "@/app/paths";
+import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -19,11 +19,10 @@ type AuditPageProps = {
 
 const AuditPage = async ({ searchParams }: AuditPageProps) => {
   const user = await getSessionUser();
-  if (!user) redirect(signInPath());
 
-  const {org, isAdmin} = await getUserOrgWithRole(user.userId);
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(signInPath());
+  if (!isAdmin) redirect(homePath());
 
   const params = await searchParams;
   const search = params.search;
@@ -31,11 +30,15 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   const rawLogs = await getAuditLogs(org.id, undefined, search, {
     entityType,
   });
-  
-  const logs = rawLogs.map(log => ({
+
+  const logs = rawLogs.map((log) => ({
     ...log,
-    beforeJSON: (typeof log.beforeJSON === 'object' ? log.beforeJSON : null) as JsonObject | null,
-    afterJSON: (typeof log.afterJSON === 'object' ? log.afterJSON : null) as JsonObject | null,
+    beforeJSON: (typeof log.beforeJSON === "object"
+      ? log.beforeJSON
+      : null) as JsonObject | null,
+    afterJSON: (typeof log.afterJSON === "object"
+      ? log.afterJSON
+      : null) as JsonObject | null,
   }));
 
   return (

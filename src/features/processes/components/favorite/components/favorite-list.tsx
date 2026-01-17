@@ -1,21 +1,55 @@
+"use client";
+
 import { EmptyState } from "@/components/empty-state";
-import { getFavorites } from "../queries/get-favorites";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { viewProcessPath } from "@/app/paths";
 import { ProcessFavoriteButton } from "./process-favorite-button";
 import { FileText, Folder } from "lucide-react";
+import { trpc } from "@/trpc/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type FavoriteListProps = {
   departmentId: string;
   teamId: string;
 };
 
-export async function FavoriteList({
-  departmentId,
-  teamId,
-}: FavoriteListProps) {
-  const favorites = await getFavorites(teamId);
+export function FavoriteList({ departmentId, teamId }: FavoriteListProps) {
+  const { data, isLoading, error } = trpc.favorites.getFavorites.useQuery({
+    teamId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-wrap gap-4">
+        {[1, 2, 3].map((i) => (
+          <Card
+            key={i}
+            className="flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6"
+          >
+            <CardHeader className="pb-3">
+              <Skeleton className="h-6 w-full" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <EmptyState
+        title="Error loading favorites"
+        body={error.message || "Failed to load your favorite processes"}
+      />
+    );
+  }
+
+  const favorites = data?.data ?? [];
 
   if (!favorites.length) {
     return (
@@ -31,7 +65,7 @@ export async function FavoriteList({
       {favorites.map((process) => (
         <Card
           key={process.id}
-          className="hover:border-primary transition-colors flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top"
+          className="hover:scale-101 transition-all duration-300 flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top"
         >
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between gap-2 min-h-[3rem]">

@@ -1,7 +1,5 @@
 "use client";
-import {
-  homePath,
-} from "@/app/paths";
+import { homePath } from "@/app/paths";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
 type ProcessBreadcrumbsProps = {
@@ -13,7 +11,6 @@ const ProcessBreadcrumbs = ({
   teamName,
   departmentName,
 }: ProcessBreadcrumbsProps) => {
-
   if (!departmentName || !teamName) {
     return null;
   }

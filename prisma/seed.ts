@@ -1366,7 +1366,7 @@ async function main() {
     } catch (error) {
       console.log(
         `⚠️  Failed to generate embeddings for ${process.title}:`,
-        error
+        error,
       );
     }
   }

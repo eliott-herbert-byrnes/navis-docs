@@ -11,7 +11,10 @@ const schema = z.object({
   code: z.string().length(5),
 });
 
-export const verifyOtpAction = async (input: { email: string; code: string }) => {
+export const verifyOtpAction = async (input: {
+  email: string;
+  code: string;
+}) => {
   const { success } = await limiter("otp:verify");
   if (!success) return { ok: false, message: "Too many attempts. Try later" };
 
