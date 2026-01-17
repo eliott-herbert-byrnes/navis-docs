@@ -47,105 +47,114 @@ export function DepartmentTeamTable({
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const { data, isLoading, isError } = trpc.team.list.useQuery({ departmentId });
+  const { data, isLoading, isError } = trpc.team.list.useQuery({
+    departmentId,
+  });
 
   const teams = data?.teams ?? [];
 
   const columnsWithRefetch = React.useMemo(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        accessorKey: "name",
-        header: "Name",
-        cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
-      },
-      {
-        accessorKey: "departmentId",
-        header: "ID",
-        cell: ({ row }) => (
-          <div className="lowercase">{row.getValue("departmentId")}</div>
-        ),
-      },
-      {
-        accessorKey: "createdAt",
-        header: () => <div className="text-left">Created At</div>,
-        cell: ({ row }) => {
-          const value = row.getValue("createdAt") as
-            | Date
-            | string
-            | number
-            | undefined;
-          const d = value instanceof Date ? value : new Date(value ?? "");
-          return (
-            <div className="text-left font-medium">
-              {isNaN(d.getTime()) ? "-" : d.toLocaleString()}
-            </div>
-          );
+    () =>
+      [
+        {
+          id: "select",
+          header: ({ table }) => (
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
+              aria-label="Select all"
+            />
+          ),
+          cell: ({ row }) => (
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          ),
+          enableSorting: false,
+          enableHiding: false,
         },
-      },
-      {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 flex justify-center">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <div className="flex flex-col gap-1">
-
-                <DropdownMenuItem asChild>
-                <TeamDeleteButton
-                  departmentId={row.getValue("departmentId") as string}
-                  teamName={row.getValue("name") as string}
-                  isAdmin={isAdmin}
-                  />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                <TeamRenameButton
-                  departmentId={row.getValue("departmentId") as string}
-                  teamName={row.getValue("name") as string}
-                  />
-                  </DropdownMenuItem>
+        {
+          accessorKey: "name",
+          header: "Name",
+          cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("name")}</div>
+          ),
+        },
+        {
+          accessorKey: "departmentId",
+          header: "ID",
+          cell: ({ row }) => (
+            <div className="lowercase">{row.getValue("departmentId")}</div>
+          ),
+        },
+        {
+          accessorKey: "createdAt",
+          header: () => <div className="text-left">Created At</div>,
+          cell: ({ row }) => {
+            const value = row.getValue("createdAt") as
+              | Date
+              | string
+              | number
+              | undefined;
+            const d = value instanceof Date ? value : new Date(value ?? "");
+            return (
+              <div className="text-left font-medium">
+                {isNaN(d.getTime()) ? "-" : d.toLocaleString()}
+              </div>
+            );
+          },
+        },
+        {
+          id: "actions",
+          enableHiding: false,
+          cell: ({ row }) => {
+            return (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-8 w-8 p-0 flex justify-center"
+                  >
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <div className="flex flex-col gap-1">
+                    <DropdownMenuItem asChild>
+                      <TeamDeleteButton
+                        departmentId={row.getValue("departmentId") as string}
+                        teamName={row.getValue("name") as string}
+                        isAdmin={isAdmin}
+                      />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <TeamRenameButton
+                        departmentId={row.getValue("departmentId") as string}
+                        teamName={row.getValue("name") as string}
+                      />
+                    </DropdownMenuItem>
                   </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          },
         },
-      },
-    ] as ColumnDef<Team>[],
-    [isAdmin]
+      ] as ColumnDef<Team>[],
+    [isAdmin],
   );
 
   const table = useReactTable({
@@ -214,7 +223,7 @@ export function DepartmentTeamTable({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -251,7 +260,7 @@ export function DepartmentTeamTable({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

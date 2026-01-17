@@ -51,15 +51,6 @@ const UserDeleteDialog = ({
           <Button
             className="w-[75px]"
             type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
-            type="button"
             variant="default"
             onClick={handleClose}
             disabled={isPending}
@@ -69,6 +60,15 @@ const UserDeleteDialog = ({
             ) : (
               "Delete"
             )}
+          </Button>
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

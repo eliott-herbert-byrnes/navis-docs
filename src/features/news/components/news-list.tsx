@@ -42,7 +42,7 @@ export async function NewsPostList({
 
   const uniqueUserIds = [...new Set(newsPosts.map((post) => post.createdBy))];
   const users = await Promise.all(
-    uniqueUserIds.map((userId) => getUserById(userId ?? ""))
+    uniqueUserIds.map((userId) => getUserById(userId ?? "")),
   );
   const userMap = Object.fromEntries(users.map((user) => [user?.id, user]));
 
@@ -58,7 +58,7 @@ export async function NewsPostList({
         .map((item) =>
           item && typeof item === "object"
             ? getTextFromBodyJSON(item as JsonObject)
-            : ""
+            : "",
         )
         .join(" ");
     }

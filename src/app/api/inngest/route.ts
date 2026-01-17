@@ -4,7 +4,5 @@ import { eventCreateOrganization } from "@/features/onboarding/events/event-crea
 
 export const { GET, PUT, POST } = serve({
   client: inngest,
-  functions: [
-    eventCreateOrganization
-  ],
+  functions: [eventCreateOrganization],
 });

@@ -65,9 +65,16 @@ export function ProcessEditorSelector({
   };
 
   if (processStyle === "FLOW") {
-    return <Card className="min-h-[600px] overflow-hidden animate-fade-from-top">{renderEditor()}</Card>;
+    return (
+      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top">
+        {renderEditor()}
+      </Card>
+    );
   }
 
-  return <Card className="p-6 min-h-[600px] animate-fade-from-top">{renderEditor()}</Card>;
+  return (
+    <Card className="p-6 min-h-[600px] animate-fade-from-top">
+      {renderEditor()}
+    </Card>
+  );
 }
-

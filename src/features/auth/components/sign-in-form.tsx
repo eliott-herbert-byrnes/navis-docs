@@ -104,23 +104,26 @@ export function SignInForm({
       } else {
         toast.error(res.message ?? "Failed to load demo credentials");
       }
-    })
-  }
+    });
+  };
 
   const verifyDemoCode = async (demoCodeValue: string) => {
     startTransition(async () => {
-      const res = await verifyOtpAction({ email: "demo@navisdocs.com", code: demoCodeValue });
-      if(res.ok) {
+      const res = await verifyOtpAction({
+        email: "demo@navisdocs.com",
+        code: demoCodeValue,
+      });
+      if (res.ok) {
         toast.success("Demo code verified. Redirecting...");
         const cb =
-        new URLSearchParams(window.location.search).get("callbackUrl") ||
-        demoPath();
+          new URLSearchParams(window.location.search).get("callbackUrl") ||
+          demoPath();
         window.location.assign(cb);
       } else {
         toast.error(res.message ?? "Demo verification failed");
       }
-    })
-  }
+    });
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -203,21 +206,21 @@ export function SignInForm({
                 </Field> */}
                 {process.env.NEXT_PUBLIC_DEMO_MODE === "true" && (
                   <>
-                  <Field>
-                    <Button
-                    variant="default"
-                    className="w-full cursor-pointer"
-                    onClick={signInWithDemo}
-                    disabled={pending}
-                    type="button"
-                    >
-                      {pending ? (
-                        <LucideLoaderCircle className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "🚀 Sign in with Demo"
-                      )}
-                    </Button>
-                  </Field>
+                    <Field>
+                      <Button
+                        variant="default"
+                        className="w-full cursor-pointer"
+                        onClick={signInWithDemo}
+                        disabled={pending}
+                        type="button"
+                      >
+                        {pending ? (
+                          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "🚀 Sign in with Demo"
+                        )}
+                      </Button>
+                    </Field>
                   </>
                 )}
               </FieldGroup>

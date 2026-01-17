@@ -57,14 +57,14 @@ export function DecisionNode({
         position={Position.Right}
         id="yes"
         isConnectable={isConnectable}
-        style={{ right: '-4px' }}
+        style={{ right: "-4px" }}
       />
       <Handle
         type="source"
         position={Position.Left}
         id="no"
         isConnectable={isConnectable}
-        style={{ left: '-4px' }}
+        style={{ left: "-4px" }}
       />
     </div>
   );

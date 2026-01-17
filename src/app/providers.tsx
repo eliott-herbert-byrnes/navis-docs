@@ -23,7 +23,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             staleTime: 1000 * 60 * 2.5,
           },
         },
-      })
+      }),
   );
 
   const [trpcClient] = useState(() =>
@@ -34,7 +34,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
           transformer: superjson,
         }),
       ],
-    })
+    }),
   );
 
   return (

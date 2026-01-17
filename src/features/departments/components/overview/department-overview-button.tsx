@@ -16,7 +16,10 @@ const DepartmentOverviewButton = ({
 }: DepartmentOverviewButtonProps) => {
   const { renameDepartment, isPending } = useRenameDepartment();
 
-  const handleRename = (oldDepartmentName: string, newDepartmentName: string) => {
+  const handleRename = (
+    oldDepartmentName: string,
+    newDepartmentName: string,
+  ) => {
     renameDepartment(departmentId, oldDepartmentName, newDepartmentName);
   };
 

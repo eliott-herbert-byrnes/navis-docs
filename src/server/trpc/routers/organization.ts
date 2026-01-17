@@ -23,7 +23,7 @@ export const organizationRouter = router({
           .max(100, {
             message: "Organization name must be less than 100 characters",
           }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (ctx.membership?.role !== "ADMIN" || !ctx.org) {
@@ -60,7 +60,7 @@ export const organizationRouter = router({
         data: updatedOrg,
       };
     }),
-    createOrganization: protectedProcedure
+  createOrganization: protectedProcedure
     .use(rateLimitMiddleware("organization-create"))
     .input(
       z.object({
@@ -72,7 +72,7 @@ export const organizationRouter = router({
           .max(191, {
             message: "Organization name must be less than 191 characters",
           }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -81,36 +81,36 @@ export const organizationRouter = router({
           message: "You must be logged in",
         });
       }
-  
+
       const userId = ctx.user.id;
-  
+
       const existingMembership = await ctx.db.orgMembership.findFirst({
         where: { userId },
       });
-  
+
       if (existingMembership) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "You already belong to an organization",
         });
       }
-  
+
       const slug = input.name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
-  
+
       const existingOrg = await ctx.db.organization.findFirst({
         where: { slug },
       });
-  
+
       if (existingOrg) {
         throw new TRPCError({
           code: "CONFLICT",
           message: "Organization with this name already exists",
         });
       }
-  
+
       const org = await ctx.db.organization.create({
         data: {
           name: input.name,
@@ -124,15 +124,15 @@ export const organizationRouter = router({
           },
         },
       });
-  
+
       await ctx.db.orgMembership.create({
         data: {
           orgId: org.id,
-          userId: userId as string ,
+          userId: userId as string,
           role: OrgMembershipRole.OWNER,
         },
       });
-  
+
       try {
         await inngest.send({
           name: "onboarding/create-organization",
@@ -146,7 +146,7 @@ export const organizationRouter = router({
       } catch (inngestError) {
         console.warn("Failed to send Inngest event:", inngestError);
       }
-  
+
       return {
         data: org,
         message: "Organization created successfully",

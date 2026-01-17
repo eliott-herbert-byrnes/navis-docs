@@ -15,7 +15,7 @@ type IdeasPageProps = {
 
 const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   const user = await getSessionUser();
-  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
@@ -23,7 +23,7 @@ const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   const search = params.search;
 
   const trpc = await serverTrpc();
-  const { data: ideas } = await trpc.ideas.getOrgIdeas({search})
+  const { data: ideas } = await trpc.ideas.getOrgIdeas({ search });
 
   return (
     <>

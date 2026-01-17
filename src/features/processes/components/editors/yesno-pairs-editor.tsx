@@ -5,7 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Home, MoveRight, PlusCircle, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Home,
+  MoveRight,
+  PlusCircle,
+  CheckCircle,
+} from "lucide-react";
 import {
   ProcessContent,
   YesNoContent,
@@ -18,7 +24,11 @@ type YesNoPairsEditorProps = {
   isPreview: boolean;
 };
 
-export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEditorProps) {
+export function YesNoPairsEditor({
+  content,
+  onChange,
+  isPreview,
+}: YesNoPairsEditorProps) {
   const initialContent: YesNoContent = content?.yesno || {
     nodes: [
       {
@@ -30,8 +40,11 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
     startNodeId: "start",
   };
 
-  const [yesnoContent, setYesnoContent] = useState<YesNoContent>(initialContent);
-  const [currentPath, setCurrentPath] = useState<string[]>([initialContent.startNodeId || "start"]);
+  const [yesnoContent, setYesnoContent] =
+    useState<YesNoContent>(initialContent);
+  const [currentPath, setCurrentPath] = useState<string[]>([
+    initialContent.startNodeId || "start",
+  ]);
 
   const syncToParent = useCallback(
     (newContent: YesNoContent) => {
@@ -40,25 +53,25 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
         yesno: newContent,
       });
     },
-    [content, onChange]
+    [content, onChange],
   );
 
   const currentNodeId = currentPath[currentPath.length - 1];
   const currentNode = useMemo(
     () => yesnoContent.nodes.find((node) => node.id === currentNodeId),
-    [yesnoContent.nodes, currentNodeId]
+    [yesnoContent.nodes, currentNodeId],
   );
 
   const updateNode = useCallback(
     (nodeId: string, updates: Partial<YesNoNode>) => {
       const newNodes = yesnoContent.nodes.map((node) =>
-        node.id === nodeId ? { ...node, ...updates } : node
+        node.id === nodeId ? { ...node, ...updates } : node,
       );
       const newContent = { ...yesnoContent, nodes: newNodes };
       setYesnoContent(newContent);
       syncToParent(newContent);
     },
-    [yesnoContent, syncToParent]
+    [yesnoContent, syncToParent],
   );
 
   const createChildNode = useCallback(
@@ -78,40 +91,39 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
             description: "Add a short description",
           };
 
-      const updatedNodes = yesnoContent.nodes
-        .map((n) =>
-          n.id === parentId
-            ? {
-                ...n,
-                [branch === "yes" ? "yesNodeId" : "noNodeId"]: newNodeId,
-              }
-            : n
-        );
+      const updatedNodes = yesnoContent.nodes.map((n) =>
+        n.id === parentId
+          ? {
+              ...n,
+              [branch === "yes" ? "yesNodeId" : "noNodeId"]: newNodeId,
+            }
+          : n,
+      );
 
       const newContent = { ...yesnoContent, nodes: [...updatedNodes, newNode] };
       setYesnoContent(newContent);
       syncToParent(newContent);
       toast.success("Card added");
     },
-    [yesnoContent, syncToParent]
+    [yesnoContent, syncToParent],
   );
 
   const createEndNode = useCallback(
     (parentId: string, branch: "yes" | "no") => {
       createChildNode(parentId, branch, true);
     },
-    [createChildNode]
+    [createChildNode],
   );
 
   const navigateToNode = useCallback(
     (nodeId: string, isBack: boolean = false) => {
       if (isBack) {
-        setCurrentPath((prev) => prev.slice(0, - 1));
+        setCurrentPath((prev) => prev.slice(0, -1));
       } else {
         setCurrentPath((prev) => [...prev, nodeId]);
       }
     },
-    []
+    [],
   );
 
   const resetToStart = useCallback(() => {
@@ -125,13 +137,15 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
       if (!id) return null;
       return yesnoContent.nodes.find((n) => n.id === id) || null;
     },
-    [yesnoContent.nodes]
+    [yesnoContent.nodes],
   );
 
   if (!currentNode) {
     return (
       <Card className="p-8 text-center">
-        <p className="text-muted-foreground">No content found. Please refresh.</p>
+        <p className="text-muted-foreground">
+          No content found. Please refresh.
+        </p>
       </Card>
     );
   }
@@ -139,17 +153,20 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
   const leftChild = getChild(currentNode, "yes");
   const rightChild = getChild(currentNode, "no");
 
-  const renderChildEditor = (
-    child: YesNoNode | null,
-    branch: "yes" | "no"
-  ) => {
+  const renderChildEditor = (child: YesNoNode | null, branch: "yes" | "no") => {
     if (!child) {
       return (
         <div className="flex flex-col gap-2">
-          <Button variant="outline" onClick={() => createChildNode(currentNode.id, branch)}>
+          <Button
+            variant="outline"
+            onClick={() => createChildNode(currentNode.id, branch)}
+          >
             <PlusCircle className="w-4 h-4 mr-2" /> Add card
           </Button>
-          <Button variant="outline" onClick={() => createEndNode(currentNode.id, branch)}>
+          <Button
+            variant="outline"
+            onClick={() => createEndNode(currentNode.id, branch)}
+          >
             <CheckCircle className="w-4 h-4 mr-2" /> Add end card
           </Button>
         </div>
@@ -166,12 +183,17 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
           />
           <Textarea
             value={child.endMessage || ""}
-            onChange={(e) => updateNode(child.id, { endMessage: e.target.value })}
+            onChange={(e) =>
+              updateNode(child.id, { endMessage: e.target.value })
+            }
             placeholder="End description"
             rows={3}
           />
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => navigateToNode(child.id)}>
+            <Button
+              variant="secondary"
+              onClick={() => navigateToNode(child.id)}
+            >
               View end
             </Button>
           </div>
@@ -188,7 +210,9 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
         />
         <Textarea
           value={child.description || ""}
-          onChange={(e) => updateNode(child.id, { description: e.target.value })}
+          onChange={(e) =>
+            updateNode(child.id, { description: e.target.value })
+          }
           placeholder="Card description"
           rows={3}
         />
@@ -213,18 +237,26 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
     }
     if (child.isEndNode) {
       return (
-        <Card className="cursor-pointer hover:border-primary" onClick={() => navigateToNode(child.id)}>
+        <Card
+          className="cursor-pointer hover:border-primary"
+          onClick={() => navigateToNode(child.id)}
+        >
           <CardHeader>
             <CardTitle>{child.question || "End of process"}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">{child.endMessage || ""}</p>
+            <p className="text-sm text-muted-foreground">
+              {child.endMessage || ""}
+            </p>
           </CardContent>
         </Card>
       );
     }
     return (
-      <Card className="cursor-pointer hover:border-primary" onClick={() => navigateToNode(child.id)}>
+      <Card
+        className="cursor-pointer hover:border-primary"
+        onClick={() => navigateToNode(child.id)}
+      >
         <CardHeader>
           <CardTitle>{child.question}</CardTitle>
         </CardHeader>
@@ -240,7 +272,11 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
       <Card className="p-8 text-center">
         <div className="mb-4 flex items-center justify-center gap-2">
           {currentPath.length > 1 && (
-            <Button variant="ghost" size="sm" onClick={() => navigateToNode("", true)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigateToNode("", true)}
+            >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
           )}
@@ -250,19 +286,27 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
         </div>
         {isPreview ? (
           <>
-            <h3 className="text-xl font-semibold mb-2">{currentNode.question || "End of process"}</h3>
-            <p className="text-muted-foreground max-w-xl mx-auto">{currentNode.endMessage}</p>
+            <h3 className="text-xl font-semibold mb-2">
+              {currentNode.question || "End of process"}
+            </h3>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              {currentNode.endMessage}
+            </p>
           </>
         ) : (
           <div className="space-y-3 max-w-xl mx-auto">
             <Input
               value={currentNode.question}
-              onChange={(e) => updateNode(currentNode.id, { question: e.target.value })}
+              onChange={(e) =>
+                updateNode(currentNode.id, { question: e.target.value })
+              }
               placeholder="End title"
             />
             <Textarea
               value={currentNode.endMessage || ""}
-              onChange={(e) => updateNode(currentNode.id, { endMessage: e.target.value })}
+              onChange={(e) =>
+                updateNode(currentNode.id, { endMessage: e.target.value })
+              }
               placeholder="End description"
               rows={3}
             />
@@ -276,7 +320,11 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         {currentPath.length > 1 && (
-          <Button variant="ghost" size="sm" onClick={() => navigateToNode("", true)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigateToNode("", true)}
+          >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
         )}
@@ -284,7 +332,9 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
           <Home className="w-4 h-4 mr-2" /> Start
         </Button>
         {!isPreview && (
-          <span className="text-sm text-muted-foreground">Depth: {currentPath.length - 1}</span>
+          <span className="text-sm text-muted-foreground">
+            Depth: {currentPath.length - 1}
+          </span>
         )}
       </div>
 
@@ -292,20 +342,16 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left card */}
         <Card className="p-4">
-          {!isPreview ? (
-            renderChildEditor(leftChild, "yes")
-          ) : (
-            renderChildPreview(leftChild)
-          )}
+          {!isPreview
+            ? renderChildEditor(leftChild, "yes")
+            : renderChildPreview(leftChild)}
         </Card>
 
         {/* Right card */}
         <Card className="p-4">
-          {!isPreview ? (
-            renderChildEditor(rightChild, "no")
-          ) : (
-            renderChildPreview(rightChild)
-          )}
+          {!isPreview
+            ? renderChildEditor(rightChild, "no")
+            : renderChildPreview(rightChild)}
         </Card>
       </div>
 
@@ -317,5 +363,3 @@ export function YesNoPairsEditor({ content, onChange, isPreview }: YesNoPairsEdi
     </div>
   );
 }
-
-

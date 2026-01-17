@@ -38,7 +38,7 @@ const ProcessDeleteButtonDialog = ({
       <DialogTrigger asChild>
         <Button variant="destructive" size="sm" disabled={!isAdmin}>
           <TrashIcon className="h-4 w-4 mr-2" />
-          {isPending ? <Loader2 className="w-4 h-4 animate-spin" />: "Delete"}
+          {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete"}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -63,7 +63,11 @@ const ProcessDeleteButtonDialog = ({
             onClick={handleConfirm}
             disabled={isPending}
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" />: "Delete"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

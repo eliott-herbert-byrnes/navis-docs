@@ -1,6 +1,6 @@
-import { ImageResponse } from 'next/og';
+import { ImageResponse } from "next/og";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export default function favicon() {
   return new ImageResponse(
@@ -8,12 +8,12 @@ export default function favicon() {
       <div
         style={{
           fontSize: 24,
-          background: 'white',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          background: "white",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           padding: 0,
         }}
       >

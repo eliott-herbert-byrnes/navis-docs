@@ -23,7 +23,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import {
@@ -43,12 +44,14 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { AddressDeleteButton } from "./address-delete-button";
+import { trpc } from "@/trpc/client";
+import { ListSkeleton } from "@/components/list-skeleton";
 
 export const schema = z.object({
   id: z.string(),
   name: z.string(),
   address: z.string(),
-  phone: z.string(),
+  phone: z.string().nullable(),
   email: z.string().nullable(),
   website: z.string().nullable(),
   createdAt: z.date(),
@@ -56,11 +59,7 @@ export const schema = z.object({
 
 type AddressType = z.infer<typeof schema>;
 
-export function AddressList({
-  data: initialData,
-}: {
-  data: AddressType[];
-}) {
+export function AddressList({ isAdmin }: { isAdmin: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -69,13 +68,15 @@ export function AddressList({
     pageSize: 10,
   });
 
+  const { data, isLoading } = trpc.address.listAddress.useQuery();
+
+  const addresses = data?.data ?? [];
+
   const columns: ColumnDef<AddressType>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.name}</div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
     },
     {
       accessorKey: "address",
@@ -131,15 +132,6 @@ export function AddressList({
       ),
     },
     {
-      accessorKey: "createdAt",
-      header: "Created",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {format(new Date(row.original.createdAt), "MMM dd, yyyy")}
-        </div>
-      ),
-    },
-    {
       id: "actions",
       cell: ({ row }) => (
         <DropdownMenu>
@@ -155,7 +147,10 @@ export function AddressList({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <AddressDeleteButton addressId={row.original.id} />
+              <AddressDeleteButton
+                addressId={row.original.id}
+                isAdmin={isAdmin}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -164,7 +159,7 @@ export function AddressList({
   ];
 
   const table = useReactTable({
-    data: initialData,
+    data: addresses,
     columns,
     state: {
       sorting,
@@ -178,6 +173,10 @@ export function AddressList({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  if (isLoading) {
+    return <ListSkeleton />;
+  }
 
   return (
     <div className="flex w-full flex-col gap-4 px-1">
@@ -193,7 +192,7 @@ export function AddressList({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -209,7 +208,7 @@ export function AddressList({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

@@ -11,7 +11,7 @@ export const favoritesRouter = router({
     .input(
       z.object({
         teamId: teamSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -62,7 +62,7 @@ export const favoritesRouter = router({
       z.object({
         processId: processIdSchema,
         isFavorited: z.boolean(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -113,7 +113,9 @@ export const favoritesRouter = router({
           processId: input.processId,
           isFavorited: !input.isFavorited,
         },
-        message: input.isFavorited ? "Removed from favorites" : "Added to favorites",
+        message: input.isFavorited
+          ? "Removed from favorites"
+          : "Added to favorites",
       };
     }),
 });

@@ -5,7 +5,7 @@ import { useRenameTeam } from "../../hooks/use-team-mutations";
 
 const TeamRenameButton = ({
   departmentId,
-  teamName
+  teamName,
 }: {
   departmentId: string;
   teamName: string;

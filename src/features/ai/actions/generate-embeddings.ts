@@ -45,7 +45,7 @@ export async function generateProcessEmbeddings(processId: string) {
     } catch (error) {
       console.error(
         `Failed to generate embedding for chunk ${chunk.chunkIndex}:`,
-        error
+        error,
       );
       throw error;
     }

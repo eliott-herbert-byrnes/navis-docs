@@ -35,7 +35,7 @@ export function ProcessSearchDialog({
     {
       enabled: query.trim().length > 0,
       staleTime: 1000 * 60,
-    }
+    },
   );
 
   const results = data?.data ?? [];
@@ -48,7 +48,7 @@ export function ProcessSearchDialog({
         setQuery("");
       }, 100);
     },
-    [departmentId, router, teamId, onOpenChange]
+    [departmentId, router, teamId, onOpenChange],
   );
 
   return (

@@ -4,7 +4,8 @@ import { DepartmentDialog } from "./department-create-dialog";
 import { useCreateDepartment } from "../../hooks/use-department-mutations";
 
 const DepartmentCreateButton = ({ isAdmin }: { isAdmin: boolean }) => {
- const {createDepartment, isPending, isDialogOpen, setIsDialogOpen} = useCreateDepartment();
+  const { createDepartment, isPending, isDialogOpen, setIsDialogOpen } =
+    useCreateDepartment();
 
   return (
     <DepartmentDialog

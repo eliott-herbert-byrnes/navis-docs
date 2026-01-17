@@ -11,9 +11,9 @@ export function useCreateErrorReport() {
   const mutation = trpc.errors.createErrorReport.useMutation({
     onSuccess: (data) => {
       utils.errors.getErrors.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {
@@ -41,9 +41,9 @@ export function useUpdateErrorStatus() {
   const mutation = trpc.errors.updateErrorStatus.useMutation({
     onSuccess: (data) => {
       utils.errors.getErrors.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {
@@ -53,7 +53,7 @@ export function useUpdateErrorStatus() {
 
   const updateErrorStatus = (
     errorId: string,
-    status: "OPEN" | "RESOLVED" | "ARCHIVED"
+    status: "OPEN" | "RESOLVED" | "ARCHIVED",
   ) => {
     mutation.mutate({
       errorId,
@@ -74,9 +74,9 @@ export function useDeleteError() {
   const mutation = trpc.errors.deleteError.useMutation({
     onSuccess: (data) => {
       utils.errors.getErrors.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {

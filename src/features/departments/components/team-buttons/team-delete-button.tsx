@@ -13,7 +13,8 @@ const TeamDeleteButton = ({
   isAdmin: boolean;
   onSuccess?: () => void;
 }) => {
-  const { deleteTeam, isPending, isDialogOpen, setIsDialogOpen } = useDeleteTeam();
+  const { deleteTeam, isPending, isDialogOpen, setIsDialogOpen } =
+    useDeleteTeam();
 
   const handleDelete = () => {
     deleteTeam(departmentId, teamName);

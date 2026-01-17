@@ -1,17 +1,23 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  ThumbsUp, 
-  ThumbsDown, 
-  Plus, 
-  ArrowLeft, 
+import {
+  ThumbsUp,
+  ThumbsDown,
+  Plus,
+  ArrowLeft,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { YesNoNode, YesNoContent } from "../../form/utils/process-edit-utils";
 
@@ -101,7 +107,9 @@ export function YesNoNodeCard({
           )}
         </div>
         {isPreview ? (
-          node.description && <CardDescription>{node.description}</CardDescription>
+          node.description && (
+            <CardDescription>{node.description}</CardDescription>
+          )
         ) : (
           <Textarea
             value={node.description || ""}
@@ -118,7 +126,11 @@ export function YesNoNodeCard({
           <div className="flex items-center gap-2">
             <ThumbsUp className="w-4 h-4 text-green-600" />
             <span className="font-medium">Yes Path</span>
-            {yesNode && <Badge variant="outline">{yesNode.isEndNode ? "End" : "Question"}</Badge>}
+            {yesNode && (
+              <Badge variant="outline">
+                {yesNode.isEndNode ? "End" : "Question"}
+              </Badge>
+            )}
           </div>
           {yesNode ? (
             <Card className="bg-green-50/50 border-green-200">
@@ -167,7 +179,11 @@ export function YesNoNodeCard({
           <div className="flex items-center gap-2">
             <ThumbsDown className="w-4 h-4 text-red-600" />
             <span className="font-medium">No Path</span>
-            {noNode && <Badge variant="outline">{noNode.isEndNode ? "End" : "Question"}</Badge>}
+            {noNode && (
+              <Badge variant="outline">
+                {noNode.isEndNode ? "End" : "Question"}
+              </Badge>
+            )}
           </div>
           {noNode ? (
             <Card className="bg-red-50/50 border-red-200">

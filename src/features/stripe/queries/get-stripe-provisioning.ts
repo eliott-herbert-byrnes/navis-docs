@@ -10,7 +10,7 @@ export type OrgProvisioning = {
 };
 
 export const getStripeProvisionByOrg = async (
-  orgSlug: string
+  orgSlug: string,
 ): Promise<OrgProvisioning> => {
   const org = await prisma.organization.findUnique({
     where: { slug: orgSlug },
@@ -47,13 +47,13 @@ export const getStripeProvisionByOrg = async (
     typeof ent.maxDepartments === "number" ||
       typeof ent.maxDepartments === "string"
       ? ent.maxDepartments
-      : defaults[planKey].departments
+      : defaults[planKey].departments,
   );
   const allowedTeamsPerDepartment = Number(
     typeof ent.maxTeamsPerDepartment === "number" ||
       typeof ent.maxTeamsPerDepartment === "string"
       ? ent.maxTeamsPerDepartment
-      : defaults[planKey].teamsPerDepartment
+      : defaults[planKey].teamsPerDepartment,
   );
 
   const [currentDepartments, currentTeams] = await prisma.$transaction([

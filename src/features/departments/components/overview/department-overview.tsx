@@ -142,9 +142,10 @@ const DepartmentOverview = ({
                 <Separator />
 
                 <CardContent className="">
-                  <DepartmentTeamTable 
-                  isAdmin={isAdmin}
-                  departmentId={departmentId} />
+                  <DepartmentTeamTable
+                    isAdmin={isAdmin}
+                    departmentId={departmentId}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

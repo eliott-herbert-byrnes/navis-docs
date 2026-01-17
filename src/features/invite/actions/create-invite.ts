@@ -22,7 +22,7 @@ const schema = z.object({
 
 export const createInvitation = async (
   _actionState: ActionState,
-  formData: FormData
+  formData: FormData,
 ) => {
   try {
     const user = await getSessionUser();
@@ -71,7 +71,7 @@ export const createInvitation = async (
       return toActionState(
         "ERROR",
         "Invite already pending for this email",
-        formData
+        formData,
       );
     }
 

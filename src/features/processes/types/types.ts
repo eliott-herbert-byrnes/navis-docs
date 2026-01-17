@@ -11,30 +11,30 @@ export type ProcessForEdit = inferProcedureOutput<
 >["data"];
 
 export type CategoryWithProcesses = inferProcedureOutput<
-AppRouter["process"]["categoriesWithProcesses"]>["data"]
+  AppRouter["process"]["categoriesWithProcesses"]
+>["data"];
 
 // export type ProcessForView = inferProcedureOutput<
 //   AppRouter["process"]["getForView"]
 // >["data"];
 
-
 export type ProcessForView = Prisma.ProcessGetPayload<{
-    include: {
-        publishedVersion: true;
-    }
+  include: {
+    publishedVersion: true;
+  };
 }>;
 
 export type ProcessForViewWithRelations = Prisma.ProcessGetPayload<{
-    include: {
-        publishedVersion: true;
-        team: true;
-        category: true;
-    }
+  include: {
+    publishedVersion: true;
+    team: true;
+    category: true;
+  };
 }>;
 
 export type ProcessContentType = {
-    tiptap?: JSONContent;
-    steps?: Step[];
-    flow?: FlowContent;
-    yesno?: YesNoContent;
-}
+  tiptap?: JSONContent;
+  steps?: Step[];
+  flow?: FlowContent;
+  yesno?: YesNoContent;
+};

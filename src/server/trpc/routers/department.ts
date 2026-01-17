@@ -55,7 +55,7 @@ export const departmentRouter = router({
         teamName1: nameSchema,
         teamName2: optionalNameSchema,
         teamName3: optionalNameSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Department exists check
@@ -158,7 +158,7 @@ export const departmentRouter = router({
       z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
         departmentName: z.string().min(1, { message: "Invalid department" }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Department exists check
@@ -204,7 +204,7 @@ export const departmentRouter = router({
         departmentId: z.string().min(1, { message: "Invalid department" }),
         oldDepartmentName: nameSchema,
         newDepartmentName: nameSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Department exists check

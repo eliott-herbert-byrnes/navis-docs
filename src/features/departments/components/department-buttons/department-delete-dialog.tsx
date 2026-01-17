@@ -69,7 +69,11 @@ const DepartmentDeleteDialog = ({
             onClick={handleConfirm}
             disabled={isPending}
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" />: "Delete"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

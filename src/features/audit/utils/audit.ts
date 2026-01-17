@@ -33,10 +33,10 @@ export type AuditAction =
   // Organization actions
   | "ORGANIZATION_UPDATED"
   | "ORGANIZATION_DELETED"
-// Address actions
-| "ADDRESS_CREATED"
-| "ADDRESS_UPDATED"
-| "ADDRESS_DELETED";
+  // Address actions
+  | "ADDRESS_CREATED"
+  | "ADDRESS_UPDATED"
+  | "ADDRESS_DELETED";
 // TODO: IngestionJob actions
 
 export type AuditEntityType =
@@ -96,7 +96,7 @@ export async function getAuditLogs(
     entityId?: string;
     limit?: number;
     offset?: number;
-  }
+  },
 ) {
   return await prisma.auditLog.findMany({
     where: {

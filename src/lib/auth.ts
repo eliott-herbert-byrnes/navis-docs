@@ -12,13 +12,13 @@ export const getUserOrgWithRole = async (userId: string) => {
     where: { userId },
     include: { org: true },
   });
-  
+
   if (!membership) {
     return { org: null, isAdmin: false, role: null };
   }
-  
+
   const isAdmin = membership.role === "ADMIN" || membership.role === "OWNER";
-  
+
   return {
     org: membership.org,
     isAdmin,
@@ -29,7 +29,10 @@ export const getUserOrgWithRole = async (userId: string) => {
 export const getUserOrg = async (userId: string) => {
   const membership = await prisma.orgMembership.findFirst({
     where: { userId },
-    include: { org: true, user: { select: { memberships: { select: { role: true } } } } },
+    include: {
+      org: true,
+      user: { select: { memberships: { select: { role: true } } } },
+    },
   });
   return {
     org: membership?.org ?? null,
@@ -52,10 +55,10 @@ export const getUserById = async (userId: string) => {
 };
 
 export const getOrgMembers = async (
-  orgId: string, 
+  orgId: string,
   search?: string,
   limit = 10,
-  offset = 0
+  offset = 0,
 ) => {
   const where = {
     orgId,
@@ -96,7 +99,7 @@ export const getOrgMembers = async (
         },
       },
       take: limit,
-      skip: offset,  
+      skip: offset,
     }),
     prisma.orgMembership.count({ where }),
   ]);
@@ -129,6 +132,6 @@ export async function getUserTeamIds(userId: string): Promise<string[]> {
   });
 
   return memberships.flatMap((m) =>
-    m.org.departments.flatMap((d) => d.teams.map((t) => t.id))
+    m.org.departments.flatMap((d) => d.teams.map((t) => t.id)),
   );
 }

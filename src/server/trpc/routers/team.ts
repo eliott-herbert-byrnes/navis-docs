@@ -16,7 +16,7 @@ export const teamRouter = router({
     .input(
       z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       await departmentExistCheck(ctx, input.departmentId);
@@ -36,7 +36,7 @@ export const teamRouter = router({
       z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
         teamName: z.string().min(1, { message: "Is Required" }).max(28),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       await departmentExistCheck(ctx, input.departmentId);
@@ -58,7 +58,7 @@ export const teamRouter = router({
 
       // Get Stripe provisioning
       const { allowedTeamsPerDepartment } = await getStripeProvisionByOrg(
-        ctx.org!.slug
+        ctx.org!.slug,
       );
 
       // Check if team count is within limit
@@ -108,7 +108,7 @@ export const teamRouter = router({
       z.object({
         departmentId: z.string().min(1, { message: "Invalid department" }),
         teamName: z.string().min(1, { message: "Invalid team" }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Department exists check
@@ -169,7 +169,7 @@ export const teamRouter = router({
         departmentId: z.string().min(1, { message: "Invalid department" }),
         oldTeamName: z.string().min(1, { message: "Invalid team" }),
         newTeamName: z.string().min(1, { message: "Is Required" }).max(28),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Department exists check

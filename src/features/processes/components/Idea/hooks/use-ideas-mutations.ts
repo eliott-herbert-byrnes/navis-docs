@@ -12,9 +12,9 @@ export function useCreateIdea() {
     onSuccess: (data) => {
       utils.ideas.getIdeas.invalidate();
       utils.ideas.getOrgIdeas.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {
@@ -44,9 +44,9 @@ export function useUpdateIdeaStatus() {
     onSuccess: (data) => {
       utils.ideas.getIdeas.invalidate();
       utils.ideas.getOrgIdeas.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {
@@ -56,7 +56,7 @@ export function useUpdateIdeaStatus() {
 
   const updateIdeaStatus = (
     ideaId: string,
-    status: "NEW" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED"
+    status: "NEW" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED",
   ) => {
     mutation.mutate({
       ideaId,
@@ -78,9 +78,9 @@ export function useDeleteIdea() {
     onSuccess: (data) => {
       utils.ideas.getIdeas.invalidate();
       utils.ideas.getOrgIdeas.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {

@@ -38,7 +38,7 @@ const UserRoleChangeDialog = ({
 }: UserRoleChangeDialogProps) => {
   const [open, setOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string>(
-    currentRole.toLowerCase()
+    currentRole.toLowerCase(),
   );
 
   const handleClose = () => {

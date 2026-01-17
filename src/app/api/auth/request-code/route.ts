@@ -7,10 +7,12 @@ export async function POST(req: Request) {
   const resend = getResend();
   const ip = req.headers.get("x-forwarded-for") ?? "anon";
   const { success } = await limiter(`otp:${ip}`);
-  if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  if (!success)
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const { email } = await req.json();
-  if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
+  if (!email)
+    return NextResponse.json({ error: "Email required" }, { status: 400 });
 
   const { code, expiresAt } = await createOtpFor(email);
 

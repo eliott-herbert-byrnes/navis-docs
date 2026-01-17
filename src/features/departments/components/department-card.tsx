@@ -50,7 +50,7 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
 
   const totalProcesses = department.teams.reduce(
     (sum, team) => sum + team._count.process,
-    0
+    0,
   );
 
   const handleViewClick = () => {

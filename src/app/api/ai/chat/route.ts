@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     if (!success) {
       return NextResponse.json(
         { error: "Too many requests. Please wait before sending another." },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (!message || !teamId || !departmentId) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,8 +90,8 @@ export async function POST(req: NextRequest) {
             title: chunk.title,
             url: viewProcessPath(departmentId, teamId, chunk.processId),
           },
-        ])
-      ).values()
+        ]),
+      ).values(),
     );
 
     return NextResponse.json({
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
     console.error("Chat API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

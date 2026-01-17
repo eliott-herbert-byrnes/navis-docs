@@ -1,4 +1,9 @@
-import { router, orgProcedure, adminProcedure, rateLimitMiddleware } from "@/server/trpc/init";
+import {
+  router,
+  orgProcedure,
+  adminProcedure,
+  rateLimitMiddleware,
+} from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { IdeaStatus } from "@prisma/client";
@@ -18,7 +23,7 @@ export const ideasRouter = router({
       z.object({
         teamId: teamSchema,
         search: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -71,7 +76,7 @@ export const ideasRouter = router({
     .input(
       z.object({
         search: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.user || !ctx.org) {
@@ -159,7 +164,7 @@ export const ideasRouter = router({
       z.object({
         ideaId: ideaIdSchema,
         status: z.enum(["NEW", "IN_PROGRESS", "COMPLETED", "ARCHIVED"]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -189,8 +194,8 @@ export const ideasRouter = router({
         input.status === "COMPLETED"
           ? "completed"
           : input.status === "ARCHIVED"
-          ? "archived"
-          : "updated";
+            ? "archived"
+            : "updated";
 
       return {
         data: { ideaId: input.ideaId, status: input.status },
@@ -204,7 +209,7 @@ export const ideasRouter = router({
     .input(
       z.object({
         ideaId: ideaIdSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {

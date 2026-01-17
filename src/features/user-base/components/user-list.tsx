@@ -83,7 +83,7 @@ export const schema = z.object({
     memberships: z.array(
       z.object({
         role: z.nativeEnum(OrgMembershipRole),
-      })
+      }),
     ),
   }),
 });
@@ -151,7 +151,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -319,7 +319,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -338,7 +338,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

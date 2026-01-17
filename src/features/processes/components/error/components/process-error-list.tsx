@@ -96,7 +96,6 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
     updateErrorStatus(item.id, status);
   };
 
-
   return (
     <div className="w-full">
       <Sheet>
@@ -205,7 +204,7 @@ export function ProcessErrorList({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -216,7 +215,7 @@ export function ProcessErrorList({
 
   const handleStatusUpdate = (
     errorId: string,
-    status: "RESOLVED" | "ARCHIVED"
+    status: "RESOLVED" | "ARCHIVED",
   ) => {
     updateErrorStatus(errorId, status);
   };
@@ -334,7 +333,7 @@ export function ProcessErrorList({
                 href={viewProcessPath(
                   row.original.departmentId,
                   row.original.teamId,
-                  row.original.processId
+                  row.original.processId,
                 )}
               >
                 <Eye className="ml-1 mr-2 h-4 w-4" />
@@ -437,7 +436,7 @@ export function ProcessErrorList({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -456,7 +455,7 @@ export function ProcessErrorList({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

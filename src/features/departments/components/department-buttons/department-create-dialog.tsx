@@ -29,7 +29,7 @@ type DepartmentDialogProps = {
     teamName1: string,
     teamName2?: string,
     teamName3?: string,
-  ) => void
+  ) => void;
   isPending: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -50,12 +50,17 @@ const DepartmentDialog = ({
   const [teamName3, setTeamName3] = useState("");
 
   const handleCreate = () => {
-    const validation = validateDepartmentForm({ departmentName, teamName1, teamName2, teamName3 });
+    const validation = validateDepartmentForm({
+      departmentName,
+      teamName1,
+      teamName2,
+      teamName3,
+    });
     if (!validation.valid) {
       toast.error(validation.error);
       return;
     }
-    onConfirm( departmentName, teamName1, teamName2, teamName3 );
+    onConfirm(departmentName, teamName1, teamName2, teamName3);
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -68,7 +73,8 @@ const DepartmentDialog = ({
     }
   };
 
-  const isValid = departmentName.trim().length > 0 && teamName1.trim().length > 0;
+  const isValid =
+    departmentName.trim().length > 0 && teamName1.trim().length > 0;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

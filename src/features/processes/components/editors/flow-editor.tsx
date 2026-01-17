@@ -71,16 +71,15 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       newData: Partial<FlowNode["data"]>,
       currentNodes: Node[],
       // currentEdges: Edge[]
-
     ) => {
       const newNodes = currentNodes.map((node) =>
         node.id === nodeId
           ? { ...node, data: { ...node.data, ...newData } }
-          : node
+          : node,
       );
       return newNodes;
     },
-    []
+    [],
   );
 
   const initialFlow = content?.flow || {
@@ -108,7 +107,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
         },
       });
     },
-    [content, onChange]
+    [content, onChange],
   );
 
   const onConnect = useCallback(
@@ -132,7 +131,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       setEdges(newEdges);
       syncToParent(nodes, newEdges);
     },
-    [edges, nodes, setEdges, syncToParent]
+    [edges, nodes, setEdges, syncToParent],
   );
 
   const addNode = useCallback(
@@ -152,20 +151,20 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       setNodes(newNodes);
       syncToParent(newNodes, edges);
     },
-    [nodes, edges, setNodes, syncToParent]
+    [nodes, edges, setNodes, syncToParent],
   );
 
   const deleteNode = useCallback(
     (nodeId: string) => {
       const newNodes = nodes.filter((n) => n.id !== nodeId);
       const newEdges = edges.filter(
-        (e) => e.source !== nodeId && e.target !== nodeId
+        (e) => e.source !== nodeId && e.target !== nodeId,
       );
       setNodes(newNodes);
       setEdges(newEdges);
       syncToParent(newNodes, newEdges);
     },
-    [nodes, edges, setNodes, setEdges, syncToParent]
+    [nodes, edges, setNodes, setEdges, syncToParent],
   );
 
   const handleNodeDataUpdate = useCallback(
@@ -174,14 +173,14 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       setNodes(updatedNodes);
       syncToParent(updatedNodes, edges);
     },
-    [nodes, edges, setNodes, syncToParent, updateNodeData]
+    [nodes, edges, setNodes, syncToParent, updateNodeData],
   );
 
   const handleAutoLayout = useCallback(() => {
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       nodes,
       edges,
-      "TB"
+      "TB",
     );
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
@@ -201,7 +200,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     });
 
     const disconnectedNodes = nodes.filter(
-      (node) => !connectedNodeIds.has(node.id) && nodes.length > 1
+      (node) => !connectedNodeIds.has(node.id) && nodes.length > 1,
     );
 
     if (disconnectedNodes.length > 0) {
@@ -221,7 +220,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
     }
 
     const unlabeledNodes = nodes.filter(
-      (n) => !n.data.label || n.data.label.trim() === ""
+      (n) => !n.data.label || n.data.label.trim() === "",
     );
     if (unlabeledNodes.length > 0) {
       issues.push(`${unlabeledNodes.length} node(s) without labels`);
@@ -239,7 +238,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
             ))}
           </ul>
         </div>,
-        { duration: 5000 }
+        { duration: 5000 },
       );
     }
   }, [nodes, edges]);
@@ -251,11 +250,11 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
       nodesBounds.width,
       nodesBounds.height,
       0.5,
-      2
+      2,
     );
 
     const viewport = document.querySelector(
-      ".react-flow__viewport"
+      ".react-flow__viewport",
     ) as HTMLElement;
 
     if (!viewport) {

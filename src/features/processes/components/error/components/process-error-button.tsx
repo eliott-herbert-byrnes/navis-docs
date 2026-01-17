@@ -16,4 +16,3 @@ export const ProcessErrorButton = ({ processId }: { processId: string }) => {
     />
   );
 };
-

@@ -16,7 +16,7 @@ const DepartmentDeleteButton = ({
 
   const handleDelete = () => {
     deleteDepartment({ departmentId, departmentName });
-  }
+  };
 
   return (
     <DepartmentDeleteDialog

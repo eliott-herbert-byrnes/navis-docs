@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const SubscriptionPage = async () => {
   const user = await getSessionUser();
 
-  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

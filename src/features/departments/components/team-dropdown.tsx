@@ -39,7 +39,7 @@ const TeamDropdown = ({
 
   const teams = data?.teams ?? [];
   const selectedTeam = teams.find((team) => team.id === selectedTeamId);
-  
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -72,7 +72,7 @@ const TeamDropdown = ({
                   <Check
                     className={cn(
                       "ml-auto",
-                      selectedTeamId === team.id ? "opacity-100" : "opacity-0"
+                      selectedTeamId === team.id ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

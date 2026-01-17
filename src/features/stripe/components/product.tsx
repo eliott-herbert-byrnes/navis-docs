@@ -73,7 +73,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
   if (stripeCustomer?.stripeSubscriptionId) {
     try {
       const sub = await getStripe().subscriptions.retrieve(
-        stripeCustomer.stripeSubscriptionId
+        stripeCustomer.stripeSubscriptionId,
       );
       subscriptionStatus = sub.status;
     } catch {}
@@ -109,7 +109,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
                     <LucideCheck className="flex-shrink-0 mt-1" />
                     <span className="text-sm">{feature.name}</span>
                   </div>
-                )
+                ),
               )}
             </CardContent>
             <CardFooter className="mt-auto">

@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 
 export const acceptInvite = async (
   _prev: ActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionState | undefined> => {
   const raw = (formData.get("token") as string | null)?.trim();
   if (!raw) redirect(signInPath());
@@ -21,7 +21,7 @@ export const acceptInvite = async (
   const user = await getSessionUser();
   if (!user) {
     redirect(
-      `${signInPath()}?callbackUrl=${encodeURIComponent(acceptInvitePath(raw))}`
+      `${signInPath()}?callbackUrl=${encodeURIComponent(acceptInvitePath(raw))}`,
     );
   }
 
@@ -48,7 +48,7 @@ export const acceptInvite = async (
     return toActionState(
       "ERROR",
       "User already belongs to an organization",
-      formData
+      formData,
     );
   }
 

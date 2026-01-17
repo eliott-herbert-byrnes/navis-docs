@@ -78,7 +78,7 @@ export function ProcessSidebar({
         <Link href={addressPath(departmentId, teamId)}>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <BookOpen className="h-4 w-4" />
-            Addresses
+            Address Book
           </Button>
         </Link>
 

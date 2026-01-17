@@ -20,7 +20,7 @@ const createNewsSchema = z.object({
 
 export const createNews = async (
   _actionState: ActionState,
-  formData: FormData
+  formData: FormData,
 ) => {
   try {
     const user = await getSessionUser();
@@ -32,7 +32,7 @@ export const createNews = async (
     const { success } = await getLimitByUser(
       limiter,
       user.userId,
-      "news-create"
+      "news-create",
     );
     if (!success) {
       return toActionState("ERROR", "Too many requests", formData);
@@ -59,7 +59,6 @@ export const createNews = async (
 
     const { teamId, newsPostTitle, newsPostBody, pinned } = parsed;
 
-
     await prisma.newsPost.create({
       data: {
         teamId,
@@ -82,7 +81,7 @@ export const createNews = async (
     const successState = toActionState(
       "SUCCESS",
       "News post created successfully",
-      formData
+      formData,
     );
     successState.data = {
       ...successState.data,

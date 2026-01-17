@@ -40,7 +40,7 @@ export const processRouter = router({
     .input(
       z.object({
         teamId: teamSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const processes = await ctx.db.process.findMany({
@@ -62,79 +62,79 @@ export const processRouter = router({
       return { data: processes };
     }),
 
-   // Query: GET processes for process-base
-   getProcessesForBase: adminProcedure
-   .input(
-     z.object({
-       search: z.string().optional(),
-       limit: z.number().default(10),
-       offset: z.number().default(0),
-     })
-   )
-   .query(async ({ ctx, input }) => {
-     if (!ctx.org) {
-       throw new TRPCError({
-         code: "FORBIDDEN",
-         message: "No organization found",
-       });
-     }
- 
-     const where = {
-       team: {
-         department: {
-           orgId: ctx.org.id,
-         },
-       },
-       ...(input.search
-         ? {
-             title: {
-               contains: input.search,
-               mode: "insensitive" as const,
-             },
-           }
-         : {}),
-     };
- 
-     const [processes, total] = await Promise.all([
-       ctx.db.process.findMany({
-         where,
-         select: {
-           id: true,
-           slug: true,
-           title: true,
-           description: true,
-           categoryId: true,
-           category: {
-             select: {
-               name: true,
-             },
-           },
-           createdAt: true,
-         },
-         orderBy: {
-           title: "asc",
-         },
-         take: input.limit,
-         skip: input.offset,
-       }),
-       ctx.db.process.count({ where }),
-     ]);
- 
-     return {
-       processes: processes ?? [],
-       total,
-       hasMore: input.offset + input.limit < total,
-       currentPage: Math.floor(input.offset / input.limit) + 1,
-       totalPages: Math.ceil(total / input.limit),
-     };
-   }),
+  // Query: GET processes for process-base
+  getProcessesForBase: adminProcedure
+    .input(
+      z.object({
+        search: z.string().optional(),
+        limit: z.number().default(10),
+        offset: z.number().default(0),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found",
+        });
+      }
+
+      const where = {
+        team: {
+          department: {
+            orgId: ctx.org.id,
+          },
+        },
+        ...(input.search
+          ? {
+              title: {
+                contains: input.search,
+                mode: "insensitive" as const,
+              },
+            }
+          : {}),
+      };
+
+      const [processes, total] = await Promise.all([
+        ctx.db.process.findMany({
+          where,
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            description: true,
+            categoryId: true,
+            category: {
+              select: {
+                name: true,
+              },
+            },
+            createdAt: true,
+          },
+          orderBy: {
+            title: "asc",
+          },
+          take: input.limit,
+          skip: input.offset,
+        }),
+        ctx.db.process.count({ where }),
+      ]);
+
+      return {
+        processes: processes ?? [],
+        total,
+        hasMore: input.offset + input.limit < total,
+        currentPage: Math.floor(input.offset / input.limit) + 1,
+        totalPages: Math.ceil(total / input.limit),
+      };
+    }),
 
   // Query: GET-categories with processes
   categoriesWithProcesses: orgProcedure
     .input(
       z.object({
         teamId: teamSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const categories = await ctx.db.category.findMany({
@@ -170,7 +170,7 @@ export const processRouter = router({
     .input(
       z.object({
         teamId: teamSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const [categories, count] = await ctx.db.$transaction([
@@ -191,7 +191,7 @@ export const processRouter = router({
     .input(
       z.object({
         processId: processSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const process = await ctx.db.process.findUnique({
@@ -251,7 +251,7 @@ export const processRouter = router({
     .input(
       z.object({
         processId: processSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const [process, favorite] = await ctx.db.$transaction([
@@ -293,7 +293,7 @@ export const processRouter = router({
       z.object({
         teamId: teamSchema,
         query: querySchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!input.query || input.query.length === 0) {
@@ -449,7 +449,7 @@ export const processRouter = router({
     .input(
       z.object({
         processId: processIdSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const process = await ctx.db.process.findUnique({
@@ -475,7 +475,7 @@ export const processRouter = router({
       }
 
       const contentText = generatePlainTextFromTiptap(
-        process.pendingVersion.contentJSON as JsonObject
+        process.pendingVersion.contentJSON as JsonObject,
       );
 
       await ctx.db.processVersion.update({
@@ -528,7 +528,7 @@ export const processRouter = router({
     .input(
       z.object({
         processId: processIdSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const process = await ctx.db.process.findUnique({

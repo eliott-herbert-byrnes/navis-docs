@@ -16,7 +16,7 @@ const NewsDeleteButton = ({
 }) => {
   const [actionState, action] = useActionState(
     deleteNewsPost,
-    EMPTY_ACTION_STATE
+    EMPTY_ACTION_STATE,
   );
 
   return (

@@ -37,5 +37,5 @@ export const eventCreateOrganization = inngest.createFunction(
     });
 
     return { event, body: true };
-  }
+  },
 );

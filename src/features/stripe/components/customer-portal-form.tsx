@@ -18,7 +18,7 @@ type CustomerPortalFormProps = {
 const CustomerPortalForm = ({ orgSlug, children }: CustomerPortalFormProps) => {
   const [actionState, action] = useActionState(
     createCustomerPortal.bind(null, orgSlug),
-    EMPTY_ACTION_STATE
+    EMPTY_ACTION_STATE,
   );
 
   return (

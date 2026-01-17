@@ -42,10 +42,10 @@ const InvitationList = async ({
   }
 
   const invitedByUsers = await Promise.all(
-    invites.map((invitation) => getUserById(invitation.invitedByUserId ?? ""))
+    invites.map((invitation) => getUserById(invitation.invitedByUserId ?? "")),
   );
   const invitedByUserMap = Object.fromEntries(
-    invitedByUsers.map((user) => [user?.id, user])
+    invitedByUsers.map((user) => [user?.id, user]),
   );
 
   return (
@@ -79,7 +79,10 @@ const InvitationList = async ({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Invited By</span>
-                  <span>{invitedByUserMap[inv.invitedByUserId ?? ""]?.name ?? "Deleted User"}</span>
+                  <span>
+                    {invitedByUserMap[inv.invitedByUserId ?? ""]?.name ??
+                      "Deleted User"}
+                  </span>
                 </div>
               </div>
             }

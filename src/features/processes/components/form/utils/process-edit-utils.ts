@@ -39,7 +39,7 @@ type SaveProcessParams = {
       onSuccess?: () => void;
       onError?: (error: Error) => void;
       silent?: boolean;
-    }
+    },
   ) => void;
   setIsSaving: (value: boolean) => void;
   setHasUnsavedChanges: (value: boolean) => void;
@@ -67,7 +67,7 @@ export const handleSaveProcess = async ({
   }
 
   setIsSaving(true);
-  
+
   updateFn(processId, process.pendingVersion.id, content, {
     onSuccess: () => {
       setHasUnsavedChanges(false);
@@ -99,7 +99,7 @@ export const handleCancelEdit = (
   departmentId: string,
   teamId: string,
   startTransition: React.TransitionStartFunction,
-  teamProcessPath: (departmentId: string, teamId: string) => string
+  teamProcessPath: (departmentId: string, teamId: string) => string,
 ) => {
   startTransition(() => {
     router.push(teamProcessPath(departmentId, teamId));

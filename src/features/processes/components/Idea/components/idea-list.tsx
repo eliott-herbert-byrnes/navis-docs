@@ -87,7 +87,7 @@ function TableCellViewer({ item }: { item: Idea }) {
   const { updateIdeaStatus, isPending: isUpdating } = useUpdateIdeaStatus();
 
   const handleStatusChange = (
-    status: "IN_PROGRESS" | "COMPLETED" | "ARCHIVED"
+    status: "IN_PROGRESS" | "COMPLETED" | "ARCHIVED",
   ) => {
     updateIdeaStatus(item.id, status);
   };
@@ -181,13 +181,13 @@ function TableCellViewer({ item }: { item: Idea }) {
                   >
                     Complete
                   </Button>
-                <Button
-                  onClick={() => handleStatusChange("ARCHIVED")}
-                  disabled={isUpdating}
-                  className="flex-1"
-                >
-                  Archive
-                </Button>
+                  <Button
+                    onClick={() => handleStatusChange("ARCHIVED")}
+                    disabled={isUpdating}
+                    className="flex-1"
+                  >
+                    Archive
+                  </Button>
                 </div>
               </>
             )}
@@ -195,13 +195,13 @@ function TableCellViewer({ item }: { item: Idea }) {
               <>
                 <Separator />
                 <div className="flex gap-2">
-                <Button
-                  onClick={() => handleStatusChange("ARCHIVED")}
-                  disabled={isUpdating}
-                  className="flex-1"
-                >
-                  Archive
-                </Button>
+                  <Button
+                    onClick={() => handleStatusChange("ARCHIVED")}
+                    disabled={isUpdating}
+                    className="flex-1"
+                  >
+                    Archive
+                  </Button>
                 </div>
               </>
             )}
@@ -223,7 +223,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -234,7 +234,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
 
   const handleStatusUpdate = (
     ideaId: string,
-    status: "IN_PROGRESS" | "COMPLETED" | "ARCHIVED"
+    status: "IN_PROGRESS" | "COMPLETED" | "ARCHIVED",
   ) => {
     updateIdeaStatus(ideaId, status);
   };
@@ -425,7 +425,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -444,7 +444,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

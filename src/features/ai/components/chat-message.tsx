@@ -13,13 +13,13 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
     <div
       className={cn(
         "flex gap-3 p-4",
-        role === "user" ? "bg-muted/50" : "bg-background"
+        role === "user" ? "bg-muted/50" : "bg-background",
       )}
     >
       <div
         className={cn(
           "flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md",
-          role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+          role === "user" ? "bg-primary text-primary-foreground" : "bg-muted",
         )}
       >
         {role === "user" ? (

@@ -13,7 +13,7 @@ import { revalidatePath } from "next/cache";
 
 export const deleteNewsPost = async (
   _actionState: ActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionState> => {
   try {
     const user = await getSessionUser();
@@ -25,7 +25,7 @@ export const deleteNewsPost = async (
     const { success } = await getLimitByUser(
       limiter,
       user.userId,
-      "news-delete"
+      "news-delete",
     );
     if (!success) {
       return toActionState("ERROR", "Too many requests", formData);
@@ -36,7 +36,7 @@ export const deleteNewsPost = async (
       return toActionState(
         "ERROR",
         "Only admins can delete news posts",
-        formData
+        formData,
       );
     }
 

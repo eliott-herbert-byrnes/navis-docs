@@ -1,4 +1,9 @@
-import { router, orgProcedure, adminProcedure, rateLimitMiddleware } from "@/server/trpc/init";
+import {
+  router,
+  orgProcedure,
+  adminProcedure,
+  rateLimitMiddleware,
+} from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ErrorReportStatus } from "@prisma/client";
@@ -15,7 +20,7 @@ export const errorsRouter = router({
     .input(
       z.object({
         search: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.user || !ctx.org) {
@@ -111,7 +116,7 @@ export const errorsRouter = router({
       z.object({
         errorId: errorIdSchema,
         status: z.enum(["OPEN", "RESOLVED", "ARCHIVED"]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -141,8 +146,8 @@ export const errorsRouter = router({
         input.status === "RESOLVED"
           ? "completed"
           : input.status === "ARCHIVED"
-          ? "archived"
-          : "updated";
+            ? "archived"
+            : "updated";
 
       return {
         data: { errorId: input.errorId, status: input.status },
@@ -156,7 +161,7 @@ export const errorsRouter = router({
     .input(
       z.object({
         errorId: errorIdSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {

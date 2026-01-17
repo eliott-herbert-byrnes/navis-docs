@@ -29,17 +29,17 @@ const TeamRenameDialog = ({
   isPending,
   teamName,
   open,
-  onOpenChange
+  onOpenChange,
 }: TeamRenameDialogProps) => {
   const [newTeamName, setnewTeamName] = useState("");
 
   const handleConfirm = () => {
     const trimmedNewTeamName = newTeamName.trim();
     if (!trimmedNewTeamName) {
-      return; 
+      return;
     }
     if (trimmedNewTeamName === teamName) {
-      return; 
+      return;
     }
     onConfirm(trimmedNewTeamName);
   };
@@ -53,35 +53,32 @@ const TeamRenameDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-full max-w-[125px]"
-        >
+        <Button variant="outline" className="w-full max-w-[125px]">
           <PencilIcon className="w-4 h-4" />
           Rename
         </Button>
       </DialogTrigger>
       <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-            <Input
-              id="newTeamName"
-              name="newTeamName"
-              type="text"
-              placeholder={teamName}
-              value={newTeamName}
-              onChange={(e) => setnewTeamName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !isPending) {
-                  handleConfirm();
-                }
-              }}
-              disabled={isPending}
-              required
-            />
-          </DialogHeader>
-          <DialogFooter className="flex flex-row gap-2 mt-4">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+          <Input
+            id="newTeamName"
+            name="newTeamName"
+            type="text"
+            placeholder={teamName}
+            value={newTeamName}
+            onChange={(e) => setnewTeamName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !isPending) {
+                handleConfirm();
+              }
+            }}
+            disabled={isPending}
+            required
+          />
+        </DialogHeader>
+        <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
             className="w-[75px]"
             type="button"
@@ -96,11 +93,17 @@ const TeamRenameDialog = ({
             type="button"
             variant="default"
             onClick={handleConfirm}
-            disabled={isPending || !teamName.trim() || newTeamName.trim() === teamName}
+            disabled={
+              isPending || !teamName.trim() || newTeamName.trim() === teamName
+            }
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Rename"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Rename"
+            )}
           </Button>
-          </DialogFooter>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

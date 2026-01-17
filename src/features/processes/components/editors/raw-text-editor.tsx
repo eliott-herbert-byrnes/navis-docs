@@ -35,7 +35,6 @@ export function RawTextEditor({
   onChange,
   isPreview,
 }: RawTextEditorProps) {
-  
   const initialContent = content?.tiptap || {
     type: "doc",
     content: [{ type: "paragraph" }],

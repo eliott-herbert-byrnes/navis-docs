@@ -21,7 +21,7 @@ export const deleteInvitation = async ({ email, orgId }: DeleteInviteProps) => {
   const { success } = await getLimitByUser(
     limiter,
     user.userId,
-    "invite-delete"
+    "invite-delete",
   );
   if (!success) {
     return toActionState("ERROR", "Too many requests");

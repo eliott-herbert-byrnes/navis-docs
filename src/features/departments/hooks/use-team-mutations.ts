@@ -42,8 +42,8 @@ export function useCreateTeam() {
       setIsDialogOpen(false);
     },
     onError: (error) => {
-        toast.error(error.message);
-      },
+      toast.error(error.message);
+    },
   });
 
   const createTeam = (departmentId: string, teamName: string) => {
@@ -70,14 +70,14 @@ export function useRenameTeam() {
       setIsDialogOpen(false);
     },
     onError: (error) => {
-        toast.error(error.message);
-      },
+      toast.error(error.message);
+    },
   });
 
   const renameTeam = (
     departmentId: string,
     oldTeamName: string,
-    newTeamName: string
+    newTeamName: string,
   ) => {
     mutation.mutate({ departmentId, oldTeamName, newTeamName });
   };

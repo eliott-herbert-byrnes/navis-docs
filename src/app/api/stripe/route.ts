@@ -32,23 +32,23 @@ export async function POST(req: Request) {
     const event = getStripe().webhooks.constructEvent(
       body,
       signature,
-      webhookSecret
+      webhookSecret,
     );
 
     switch (event.type) {
       case "customer.subscription.created":
         await handleSubscriptionCreated(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
       case "customer.subscription.updated":
         await handleSubscriptionUpdated(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
       case "customer.subscription.deleted":
         await handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
       default:

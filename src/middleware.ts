@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
 
   response.headers.set(
     "Content-Security-Policy",
-    cspHeader.replace(/\s+/g, " ").trim()
+    cspHeader.replace(/\s+/g, " ").trim(),
   );
 
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -41,7 +41,7 @@ export async function middleware(req: NextRequest) {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
     "Permissions-Policy",
-    "geolocation=(), microphone=(), camera=()"
+    "geolocation=(), microphone=(), camera=()",
   );
 
   return response;

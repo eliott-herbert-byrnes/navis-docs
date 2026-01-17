@@ -55,13 +55,14 @@ export function OnboardForm({
                   disabled={isPending}
                 />
                 {error && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {error.message}
-                  </p>
+                  <p className="text-sm text-red-500 mt-1">{error.message}</p>
                 )}
               </Field>
               <Field>
-                <Button type="submit" disabled={isPending || name.trim().length < 6}>
+                <Button
+                  type="submit"
+                  disabled={isPending || name.trim().length < 6}
+                >
                   {isPending ? "Creating..." : "Create Organization"}
                 </Button>
               </Field>

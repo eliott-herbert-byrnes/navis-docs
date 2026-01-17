@@ -9,9 +9,9 @@ import { Suspense } from "react";
 const SettingsPage = async () => {
   const user = await getSessionUser();
 
-  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath()); 
+  if (!isAdmin) redirect(homePath());
 
   return (
     <>
@@ -20,7 +20,7 @@ const SettingsPage = async () => {
         description="Manage your organization's settings"
       />
       <Suspense fallback={<Skeleton />}>
-      <OrganizationOverview org={org}/>
+        <OrganizationOverview org={org} />
       </Suspense>
     </>
   );

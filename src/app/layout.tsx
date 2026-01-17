@@ -39,9 +39,7 @@ export default async function RootLayout({
     return (
       <html lang="en" suppressHydrationWarning>
         <body className={`${GeistSans.variable} antialiased min-h-screen`}>
-          <Providers>
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
           <Toaster />
         </body>
       </html>
@@ -54,9 +52,7 @@ export default async function RootLayout({
     return (
       <html lang="en" suppressHydrationWarning>
         <body className={`${GeistSans.variable} antialiased min-h-screen`}>
-          <Providers>
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
           <Toaster />
         </body>
       </html>
@@ -69,7 +65,7 @@ export default async function RootLayout({
   if (stripeCustomer?.stripeSubscriptionId) {
     try {
       const sub = await getStripe().subscriptions.retrieve(
-        stripeCustomer.stripeSubscriptionId
+        stripeCustomer.stripeSubscriptionId,
       );
       subscriptionStatus = sub.status;
     } catch (error) {
@@ -95,9 +91,7 @@ export default async function RootLayout({
                 <div className="flex h-full w-full flex-col rounded-lg p-4">
                   <div className="flex flex-row items-center justify-between">
                     <SidebarTrigger />
-                    {isAdmin && (
-                      <Badge variant="outline">{planLabel}</Badge>
-                    )}
+                    {isAdmin && <Badge variant="outline">{planLabel}</Badge>}
                   </div>
                   <Separator className="my-2" />
                   {children}

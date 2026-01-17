@@ -36,7 +36,7 @@ const CreateProcessForm = ({
   const router = useRouter();
   const [isCancelPending, startTransition] = useTransition();
   const [createNewCategory, setCreateNewCategory] = useState(
-    categories.length === 0
+    categories.length === 0,
   );
 
   const { createProcess, isPending } = useCreateProcess(departmentId, teamId);
@@ -58,7 +58,7 @@ const CreateProcessForm = ({
     createProcess({
       processTitle: String(formData.get("processTitle") ?? "").trim(),
       processDescription: String(
-        formData.get("processDescription") ?? ""
+        formData.get("processDescription") ?? "",
       ).trim(),
       processCategoryId: createNewCategory
         ? undefined

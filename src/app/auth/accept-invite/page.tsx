@@ -15,7 +15,7 @@ const AcceptInvitePage = () => {
   const token = searchParams.get("token") ?? "";
   const [actionState, action] = useActionState(
     acceptInvite,
-    EMPTY_ACTION_STATE
+    EMPTY_ACTION_STATE,
   );
   const router = useRouter();
 

@@ -19,9 +19,9 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
   const [canEdit] = await Promise.all([isOrgAdminOrOwner(user!.userId)]);
 
   const trpc = await serverTrpc();
-  const { data: process, isFavorite} = await trpc.process.getForView(
-    { processId }
-  );
+  const { data: process, isFavorite } = await trpc.process.getForView({
+    processId,
+  });
 
   return (
     <div className="space-y-4">

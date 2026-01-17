@@ -29,7 +29,7 @@ export const AuditSearch = () => {
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [entityType, setEntityType] = useState(
-    searchParams.get("entityType") || ""
+    searchParams.get("entityType") || "",
   );
 
   useEffect(() => {

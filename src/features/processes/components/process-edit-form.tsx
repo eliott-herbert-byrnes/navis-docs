@@ -16,7 +16,10 @@ import {
   handleCancelEdit,
 } from "./form/utils/process-edit-utils";
 import { ProcessForEdit } from "../types/types";
-import { usePublishProcess, useUpdateProcessContent } from "../hooks/use-process-mutations";
+import {
+  usePublishProcess,
+  useUpdateProcessContent,
+} from "../hooks/use-process-mutations";
 
 type EditProcessFormProps = {
   departmentId: string;
@@ -31,7 +34,7 @@ export const EditProcessForm = ({
   teamId,
   processId,
   process,
-  isAdmin
+  isAdmin,
 }: EditProcessFormProps) => {
   const router = useRouter();
   const [isCancelling, startTransition] = useTransition();
@@ -78,7 +81,7 @@ export const EditProcessForm = ({
         departmentId,
         teamId,
         startTransition,
-        teamProcessPath
+        teamProcessPath,
       );
     },
   });
@@ -89,7 +92,7 @@ export const EditProcessForm = ({
       departmentId,
       teamId,
       startTransition,
-      teamProcessPath
+      teamProcessPath,
     );
   };
 
@@ -110,7 +113,7 @@ export const EditProcessForm = ({
         silent,
       });
     },
-    [process, processId, content, updateProcessContent]
+    [process, processId, content, updateProcessContent],
   );
 
   useEffect(() => {

@@ -77,8 +77,7 @@ export function usePublishProcess(departmentId: string, teamId: string) {
   };
 }
 
-export function useUpdateProcessContent(
-) {
+export function useUpdateProcessContent() {
   const utils = trpc.useUtils();
   const mutation = trpc.process.updateProcessContent.useMutation({
     onSuccess: (data) => {
@@ -101,7 +100,7 @@ export function useUpdateProcessContent(
       onSuccess?: () => void;
       onError?: (error: Error) => void;
       silent?: boolean;
-    }
+    },
   ) => {
     mutation.mutate(
       {
@@ -119,7 +118,7 @@ export function useUpdateProcessContent(
         onError: (error) => {
           options?.onError?.(error as unknown as Error);
         },
-      }
+      },
     );
   };
 

@@ -24,7 +24,7 @@ export default async function ProcessPage({
   const { list: departments } = await trpc.department.list();
 
   const departmentName = departments.find(
-    (department) => department.id === departmentId
+    (department) => department.id === departmentId,
   )?.name;
 
   const teamName = departments

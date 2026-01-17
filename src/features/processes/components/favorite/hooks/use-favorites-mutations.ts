@@ -12,9 +12,9 @@ export function useToggleFavorite() {
     onSuccess: (data) => {
       utils.favorites.getFavorites.invalidate();
       utils.process.getForView.invalidate();
-      
+
       toast.success(data.message);
-      
+
       router.refresh();
     },
     onError: (error) => {

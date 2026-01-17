@@ -17,7 +17,7 @@ export const usersRouter = router({
         search: z.string().optional(),
         limit: z.number().default(10),
         offset: z.number().default(0),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.org) {
@@ -96,7 +96,7 @@ export const usersRouter = router({
     .input(
       z.object({
         userId: z.string().min(1, { message: "User ID is required" }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user || !ctx.org) {
@@ -141,8 +141,8 @@ export const usersRouter = router({
     .input(
       z.object({
         userId: z.string().min(1, { message: "User ID is required" }),
-        role: z.nativeEnum(OrgMembershipRole)
-      })
+        role: z.nativeEnum(OrgMembershipRole),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user || !ctx.org) {

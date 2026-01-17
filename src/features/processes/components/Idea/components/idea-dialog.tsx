@@ -17,7 +17,11 @@ import { useState, FormEvent } from "react";
 type ProcessIdeaDialogProps = {
   title: string;
   description: string;
-  onSubmit: (data: { teamId: string; ideaTitle: string; ideaBody: string }) => void;
+  onSubmit: (data: {
+    teamId: string;
+    ideaTitle: string;
+    ideaBody: string;
+  }) => void;
   isPending: boolean;
   teamId: string;
 };
@@ -42,7 +46,7 @@ const ProcessIdeaDialog = ({
     });
 
     setOpen(false);
-    
+
     e.currentTarget.reset();
   };
 

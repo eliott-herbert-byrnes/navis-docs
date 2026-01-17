@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { headers } from "next/headers";
@@ -12,7 +12,7 @@ function getBase() {
       redis: getRedis(),
       limiter: Ratelimit.slidingWindow(10, "10s"),
       analytics: true,
-      prefix: `rl:${process.env.NODE_ENV === 'production' ? 'prod' : 'dev'}:auth`,
+      prefix: `rl:${process.env.NODE_ENV === "production" ? "prod" : "dev"}:auth`,
     });
   }
   return _base;
@@ -20,6 +20,6 @@ function getBase() {
 
 export async function limiter(scope: string) {
   const h = await headers();
-  const ip = (h.get('x-forwarded-for') ?? 'unknown').split(',')[0]!.trim();
+  const ip = (h.get("x-forwarded-for") ?? "unknown").split(",")[0]!.trim();
   return getBase().limit(`${scope}:${ip}`);
 }

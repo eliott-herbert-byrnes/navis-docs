@@ -16,7 +16,7 @@ type ErrorsPageProps = {
 const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
   const user = await getSessionUser();
 
-  const {org, isAdmin} = await getUserOrgWithRole(user?.userId ?? "");
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
@@ -24,7 +24,7 @@ const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
   const search = params.search;
 
   const trpc = await serverTrpc();
-  const { data: errors } = await trpc.errors.getErrors({search})
+  const { data: errors } = await trpc.errors.getErrors({ search });
 
   return (
     <>

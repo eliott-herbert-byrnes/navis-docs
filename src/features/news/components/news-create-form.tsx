@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useActionState } from "@/components/form/hooks/use-action-state";
 import { Card } from "@/components/ui/card";
 import { FieldError } from "@/components/form/field-error";
-import {  newsPath } from "@/app/paths";
+import { newsPath } from "@/app/paths";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
@@ -36,7 +36,7 @@ const NewsCreateForm = ({
 }: NewsCreateFormProps) => {
   const [actionState, action, isPending] = useActionState(
     createNews,
-    EMPTY_ACTION_STATE
+    EMPTY_ACTION_STATE,
   );
   const [isCancelPending, startTransition] = useTransition();
   const router = useRouter();
@@ -84,9 +84,7 @@ const NewsCreateForm = ({
                   <FieldError actionState={actionState} name="newsPostTitle" />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="newsPostBody">
-                    Body
-                  </FieldLabel>
+                  <FieldLabel htmlFor="newsPostBody">Body</FieldLabel>
                   <Textarea
                     id="newsPostBody"
                     name="newsPostBody"
@@ -95,10 +93,7 @@ const NewsCreateForm = ({
                     required
                     disabled={isPending}
                   />
-                  <FieldError
-                    actionState={actionState}
-                    name="newsPostBody"
-                  />
+                  <FieldError actionState={actionState} name="newsPostBody" />
                 </Field>
               </FieldGroup>
             </FieldSet>
@@ -106,7 +101,8 @@ const NewsCreateForm = ({
             <FieldSet>
               <FieldLegend>Pinned</FieldLegend>
               <FieldDescription>
-                Select if the news post should be pinned to the top of the news feed.
+                Select if the news post should be pinned to the top of the news
+                feed.
               </FieldDescription>
               <FieldGroup>
                 <Field orientation="horizontal">
@@ -117,10 +113,7 @@ const NewsCreateForm = ({
                     onCheckedChange={handlePinnedChange}
                     disabled={isPending}
                   />
-                  <FieldLabel
-                    htmlFor="pinned"
-                    className="font-normal"
-                  >
+                  <FieldLabel htmlFor="pinned" className="font-normal">
                     Pin to the top of the news feed
                   </FieldLabel>
                 </Field>

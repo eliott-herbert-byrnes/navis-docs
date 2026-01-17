@@ -13,7 +13,9 @@
   --space-4: 1rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
-  --font-sans: ui-sans-serif, system-ui, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans","Segoe UI Emoji";
+  --font-sans:
+    ui-sans-serif, system-ui, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial,
+    "Noto Sans", "Segoe UI Emoji";
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -94,7 +96,7 @@
     }
   }
 
-    @keyframes fade-from-side {
+  @keyframes fade-from-side {
     0% {
       opacity: 0;
       transform: translateX(-80px);
