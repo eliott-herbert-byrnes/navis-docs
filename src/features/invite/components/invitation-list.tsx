@@ -1,5 +1,6 @@
+"use client";
+
 import { EmptyState } from "@/components/empty-state";
-import { getInvites } from "../queries/get-invites";
 import { CardCompact } from "@/components/auth-card";
 import { InvitationDeleteButton } from "./invitation-delete-button";
 import { InvitationPagination } from "./invitation-pagination";
@@ -12,7 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getUserById } from "@/lib/auth";
+import { useGetInvites } from "../hooks/use-invite-queries";
+import { trpc } from "@/trpc/client";
+import { Loader2 } from "lucide-react";
 
 type InvitationListProps = {
   orgId: string;
@@ -20,17 +23,31 @@ type InvitationListProps = {
   page?: number;
 };
 
-const InvitationList = async ({
+const InvitationList = ({
   orgId,
   search,
   page = 1,
 }: InvitationListProps) => {
-  const { invites, pagination } = await getInvites({
-    orgId,
-    search,
-    page,
-    pageSize: 10,
-  });
+  const { data, isLoading } = useGetInvites(orgId, search, page, 10);
+  const { data: usersData } = trpc.users.getUsersByIds.useQuery(
+    {
+      userIds: data?.data.invites.map((inv) => inv.invitedByUserId ?? "") ?? [],
+    },
+    {
+      enabled: !!data?.data.invites.length,
+    }
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  const invites = data?.data.invites ?? [];
+  const pagination = data?.data.pagination ?? { page: 1, totalPages: 1, total: 0 };
 
   if (!invites.length) {
     return (
@@ -41,11 +58,8 @@ const InvitationList = async ({
     );
   }
 
-  const invitedByUsers = await Promise.all(
-    invites.map((invitation) => getUserById(invitation.invitedByUserId ?? "")),
-  );
   const invitedByUserMap = Object.fromEntries(
-    invitedByUsers.map((user) => [user?.id, user]),
+    (usersData?.data ?? []).map((user) => [user.id, user])
   );
 
   return (

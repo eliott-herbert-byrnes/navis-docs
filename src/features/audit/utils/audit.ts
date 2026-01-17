@@ -36,8 +36,10 @@ export type AuditAction =
   // Address actions
   | "ADDRESS_CREATED"
   | "ADDRESS_UPDATED"
-  | "ADDRESS_DELETED";
-// TODO: IngestionJob actions
+  | "ADDRESS_DELETED"
+  // TODO: IngestionJob actions
+  | "NEWS_CREATED"
+  | "NEWS_DELETED";
 
 export type AuditEntityType =
   | "DEPARTMENT"
@@ -47,7 +49,8 @@ export type AuditEntityType =
   | "USER"
   | "USER_ROLE"
   | "ORGANIZATION"
-  | "ADDRESS";
+  | "ADDRESS"
+  | "NEWS";
 
 type AuditLogData = {
   orgId: string;

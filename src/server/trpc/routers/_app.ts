@@ -8,6 +8,9 @@ import { errorsRouter } from "./errors";
 import { usersRouter } from "./users";
 import { organizationRouter } from "./organization";
 import { addressRouter } from "./address";
+import { newsRouter } from "./news";
+import { invitesRouter } from "./invites";
+import { aiRouter } from "./ai";
 
 export const appRouter = router({
   department: departmentRouter,
@@ -19,6 +22,9 @@ export const appRouter = router({
   users: usersRouter,
   organization: organizationRouter,
   address: addressRouter,
+  news: newsRouter,
+  invites: invitesRouter,
+  ai: aiRouter,
 });
 
 export type AppRouter = typeof appRouter;

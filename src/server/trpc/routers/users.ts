@@ -10,6 +10,32 @@ import { OrgMembershipRole } from "@prisma/client";
 import { getUserOrg } from "@/lib/auth";
 
 export const usersRouter = router({
+  // Query: Get users by IDs
+  getUsersByIds: adminProcedure
+    .input(
+      z.object({
+        userIds: z.array(z.string()),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const users = await ctx.db.user.findMany({
+        where: {
+          id: {
+            in: input.userIds.filter(Boolean),
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
+      return {
+        data: users,
+      };
+    }),
+
   // Query: Get org members
   getOrgMembers: adminProcedure
     .input(
