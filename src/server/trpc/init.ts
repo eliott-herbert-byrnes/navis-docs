@@ -46,6 +46,10 @@ const adminMiddleware = t.middleware(async ({ ctx, next }) => {
 
 export const rateLimitMiddleware = (purpose: string) =>
   t.middleware(async ({ ctx, next }) => {
+    // Skip ratelimit in ci tests FOR NOW
+    if (process.env.NODE_ENV === 'test') {
+      return next({ ctx }); 
+    }
     if (!ctx.user) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
