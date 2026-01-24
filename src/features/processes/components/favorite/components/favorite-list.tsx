@@ -8,13 +8,10 @@ import { ProcessFavoriteButton } from "./process-favorite-button";
 import { FileText, Folder } from "lucide-react";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
-type FavoriteListProps = {
-  departmentId: string;
-  teamId: string;
-};
-
-export function FavoriteList({ departmentId, teamId }: FavoriteListProps) {
+export function FavoriteList() {
+  const { departmentId, teamId } = useProcessRouteContext();
   const { data, isLoading, error } = trpc.favorites.getFavorites.useQuery({
     teamId,
   });

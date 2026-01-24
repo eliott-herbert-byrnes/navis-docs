@@ -40,9 +40,7 @@ import { TeamRenameButton } from "../team-buttons/team-rename-button";
 
 export function DepartmentTeamTable({
   departmentId,
-  isAdmin,
 }: {
-  isAdmin: boolean;
   departmentId: string;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -138,7 +136,6 @@ export function DepartmentTeamTable({
                       <TeamDeleteButton
                         departmentId={row.getValue("departmentId") as string}
                         teamName={row.getValue("name") as string}
-                        isAdmin={isAdmin}
                       />
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -154,7 +151,7 @@ export function DepartmentTeamTable({
           },
         },
       ] as ColumnDef<Team>[],
-    [isAdmin],
+    [],
   );
 
   const table = useReactTable({

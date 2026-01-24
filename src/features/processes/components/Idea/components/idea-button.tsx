@@ -3,7 +3,7 @@
 import { ProcessIdeaDialog } from "./idea-dialog";
 import { useCreateIdea } from "../hooks/use-ideas-mutations";
 
-export const IdeaButton = ({ teamId }: { teamId: string }) => {
+export const IdeaButton = () => {
   const { createIdea, isPending } = useCreateIdea();
 
   return (
@@ -12,7 +12,6 @@ export const IdeaButton = ({ teamId }: { teamId: string }) => {
       description="Submit an idea for this teams docs"
       onSubmit={createIdea}
       isPending={isPending}
-      teamId={teamId}
     />
   );
 };

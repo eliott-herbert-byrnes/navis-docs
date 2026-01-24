@@ -15,20 +15,20 @@ import { Label } from "@/components/ui/label";
 import { LucideLoaderCircle, Plus } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useCreateAddress } from "../hook/use-address-mutations";
+import { useAuthContext } from "@/contexts/auth-context";
 
 type AddressCreateDialogProps = {
   title: string;
   description: string;
-  isAdmin: boolean;
 };
 
 const AddressCreateDialog = ({
   title,
   description,
-  isAdmin,
 }: AddressCreateDialogProps) => {
   const [open, setOpen] = useState(false);
   const { createAddress, isPending } = useCreateAddress(() => setOpen(false));
+  const { isAdmin } = useAuthContext();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

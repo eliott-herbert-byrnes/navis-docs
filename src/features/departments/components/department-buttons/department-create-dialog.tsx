@@ -19,11 +19,11 @@ import { ChevronsUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { validateDepartmentForm } from "../../utils/validate-department";
+import { useAuthContext } from "@/contexts/auth-context";
 
 type DepartmentDialogProps = {
   title: string;
   description: string;
-  disabled: boolean;
   onConfirm: (
     departmentName: string,
     teamName1: string,
@@ -39,7 +39,6 @@ const DepartmentDialog = ({
   description,
   onConfirm,
   isPending,
-  disabled,
   open,
   onOpenChange,
 }: DepartmentDialogProps) => {
@@ -48,6 +47,7 @@ const DepartmentDialog = ({
   const [teamName1, setTeamName1] = useState("");
   const [teamName2, setTeamName2] = useState("");
   const [teamName3, setTeamName3] = useState("");
+  const { isAdmin } = useAuthContext();
 
   const handleCreate = () => {
     const validation = validateDepartmentForm({
@@ -79,7 +79,7 @@ const DepartmentDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" disabled={disabled}>
+        <Button variant="outline" disabled={!isAdmin}>
           <PlusIcon className="w-4 h-4" />
           Create Department
         </Button>

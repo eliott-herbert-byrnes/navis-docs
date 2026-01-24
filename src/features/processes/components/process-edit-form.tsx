@@ -20,27 +20,23 @@ import {
   usePublishProcess,
   useUpdateProcessContent,
 } from "../hooks/use-process-mutations";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type EditProcessFormProps = {
-  departmentId: string;
-  teamId: string;
   processId: string;
   process: ProcessForEdit;
-  isAdmin: boolean;
 };
 
 export const EditProcessForm = ({
-  departmentId,
-  teamId,
   processId,
   process,
-  isAdmin,
 }: EditProcessFormProps) => {
   const router = useRouter();
   const [isCancelling, startTransition] = useTransition();
   const [isSaving, setIsSaving] = useState(false);
   const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const { departmentId, teamId } = useProcessRouteContext();
 
   const initialContent: ProcessContent =
     (process.pendingVersion?.contentJSON as ProcessContent) ||
@@ -140,10 +136,7 @@ export const EditProcessForm = ({
         process={process}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
-        isAdmin={isAdmin}
         isDisabled={isSaving || isCancelling || isPending}
-        departmentId={departmentId}
-        teamId={teamId}
       />
 
       <ProcessEditorSelector

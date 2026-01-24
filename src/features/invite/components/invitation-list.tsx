@@ -23,11 +23,7 @@ type InvitationListProps = {
   page?: number;
 };
 
-const InvitationList = ({
-  orgId,
-  search,
-  page = 1,
-}: InvitationListProps) => {
+const InvitationList = ({ orgId, search, page = 1 }: InvitationListProps) => {
   const { data, isLoading } = useGetInvites(orgId, search, page, 10);
   const { data: usersData } = trpc.users.getUsersByIds.useQuery(
     {
@@ -35,7 +31,7 @@ const InvitationList = ({
     },
     {
       enabled: !!data?.data.invites.length,
-    }
+    },
   );
 
   if (isLoading) {
@@ -47,7 +43,11 @@ const InvitationList = ({
   }
 
   const invites = data?.data.invites ?? [];
-  const pagination = data?.data.pagination ?? { page: 1, totalPages: 1, total: 0 };
+  const pagination = data?.data.pagination ?? {
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  };
 
   if (!invites.length) {
     return (
@@ -59,7 +59,7 @@ const InvitationList = ({
   }
 
   const invitedByUserMap = Object.fromEntries(
-    (usersData?.data ?? []).map((user) => [user.id, user])
+    (usersData?.data ?? []).map((user) => [user.id, user]),
   );
 
   return (

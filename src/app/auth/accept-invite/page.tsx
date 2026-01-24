@@ -31,14 +31,12 @@ const AcceptInvitePage = () => {
         className="flex flex-col gap-3 mt-3 w-full"
         content={
           <div className="flex flex-col gap-3">
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <p className="text-sm text-muted-foreground">
               You have been invited to join an organization
             </p>
-            <Button 
-              onClick={handleAccept} 
+            <Button
+              onClick={handleAccept}
               disabled={isPending || !token}
               className="w-full"
             >

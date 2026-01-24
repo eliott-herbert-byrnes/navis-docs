@@ -14,28 +14,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { newsPath } from "@/app/paths";
-import {  FormEvent, useState, useTransition } from "react";
+import { FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useNewsCreate } from "../hook/use-news-mutations";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type NewsCreateFormProps = {
-  departmentId: string;
-  teamId: string;
   teamName: string;
 };
 
-const NewsCreateForm = ({
-  departmentId,
-  teamId,
-  teamName,
-}: NewsCreateFormProps) => {
+const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
   const [isCancelPending, startTransition] = useTransition();
   const router = useRouter();
   const [pinned, setPinned] = useState(false);
-  
+  const { departmentId, teamId } = useProcessRouteContext();
+
   const { createNews, isPending } = useNewsCreate(() => {
     router.replace(newsPath(departmentId, teamId));
   });
@@ -44,12 +40,12 @@ const NewsCreateForm = ({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     createNews({
-      teamId, 
+      teamId,
       newsPostTitle: String(formData.get("newsPostTitle") ?? "").trim(),
       newsPostBody: String(formData.get("newsPostBody") ?? "").trim(),
       pinned,
-    })
-  }
+    });
+  };
 
   const handlePinnedChange = (checked: boolean) => {
     setPinned(checked);

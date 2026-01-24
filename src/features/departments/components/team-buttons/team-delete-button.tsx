@@ -6,11 +6,9 @@ import { useDeleteTeam } from "../../hooks/use-team-mutations";
 const TeamDeleteButton = ({
   departmentId,
   teamName,
-  isAdmin,
 }: {
   departmentId: string;
   teamName: string;
-  isAdmin: boolean;
   onSuccess?: () => void;
 }) => {
   const { deleteTeam, isPending, isDialogOpen, setIsDialogOpen } =
@@ -26,7 +24,6 @@ const TeamDeleteButton = ({
       description="This action cannot be undone."
       onConfirm={handleDelete}
       isPending={isPending}
-      isAdmin={isAdmin}
       open={isDialogOpen}
       onOpenChange={setIsDialogOpen}
     />

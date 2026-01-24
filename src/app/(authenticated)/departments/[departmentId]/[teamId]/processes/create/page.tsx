@@ -30,11 +30,7 @@ export default async function ProcessCreatePage({
         description="Create a new process and add a category"
       />
       <Suspense fallback={<Skeleton />}>
-        <CreateProcessForm
-          departmentId={departmentId}
-          teamId={teamId}
-          categories={categories}
-        />
+        <CreateProcessForm categories={categories} />
       </Suspense>
     </>
   );

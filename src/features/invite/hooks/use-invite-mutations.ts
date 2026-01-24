@@ -5,74 +5,74 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export function useCreateInvitation(onSuccessCallback?: () => void) {
-    const utils = trpc.useUtils();
+  const utils = trpc.useUtils();
 
-    const mutation = trpc.invites.createInvitation.useMutation({
-        onSuccess: (data) => {
-            utils.invites.getInvites.invalidate();
-            toast.success(data.message || "Invite created");
-            onSuccessCallback?.();
-        },
-        onError: (error) => {
-            toast.error(error.message || "Failed to create invitation");
-        },
-    });
+  const mutation = trpc.invites.createInvitation.useMutation({
+    onSuccess: (data) => {
+      utils.invites.getInvites.invalidate();
+      toast.success(data.message || "Invite created");
+      onSuccessCallback?.();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create invitation");
+    },
+  });
 
-    const createInvitation = (email: string) => {
-        mutation.mutate({ email });
-    };
+  const createInvitation = (email: string) => {
+    mutation.mutate({ email });
+  };
 
-    return {
-        createInvitation,
-        isPending: mutation.isPending,
-    };
+  return {
+    createInvitation,
+    isPending: mutation.isPending,
+  };
 }
 
 export function useDeleteInvitation(onSuccessCallback?: () => void) {
-    const utils = trpc.useUtils();
+  const utils = trpc.useUtils();
 
-    const mutation = trpc.invites.deleteInvitation.useMutation({
-        onSuccess: (data) => {
-            utils.invites.getInvites.invalidate();
-            toast.success(data.message || "Invite deleted");
-            onSuccessCallback?.();
-        },
-        onError: (error) => {
-            toast.error(error.message || "Failed to delete invitation");
-        },
-    });
+  const mutation = trpc.invites.deleteInvitation.useMutation({
+    onSuccess: (data) => {
+      utils.invites.getInvites.invalidate();
+      toast.success(data.message || "Invite deleted");
+      onSuccessCallback?.();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete invitation");
+    },
+  });
 
-    const deleteInvitation = (email: string, orgId: string) => {
-        mutation.mutate({ email, orgId });
-    };
+  const deleteInvitation = (email: string, orgId: string) => {
+    mutation.mutate({ email, orgId });
+  };
 
-    return {
-        deleteInvitation,
-        isPending: mutation.isPending,
-    };
+  return {
+    deleteInvitation,
+    isPending: mutation.isPending,
+  };
 }
 
 export function useAcceptInvitation() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const mutation = trpc.invites.acceptInvitation.useMutation({
-        onSuccess: (data) => {
-            toast.success(data.message || "Invite accepted successfully");
-            // Redirect to home page
-            router.push("/");
-            router.refresh();
-        },
-        onError: (error) => {
-            toast.error(error.message || "Failed to accept invitation");
-        },
-    });
+  const mutation = trpc.invites.acceptInvitation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "Invite accepted successfully");
+      // Redirect to home page
+      router.push("/");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to accept invitation");
+    },
+  });
 
-    const acceptInvitation = (token: string) => {
-        mutation.mutate({ token });
-    };
+  const acceptInvitation = (token: string) => {
+    mutation.mutate({ token });
+  };
 
-    return {
-        acceptInvitation,
-        isPending: mutation.isPending,
-    };
+  return {
+    acceptInvitation,
+    isPending: mutation.isPending,
+  };
 }

@@ -34,10 +34,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { CategoryWithProcesses } from "../types/types";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type ProcessSidebarProps = {
-  departmentId: string;
-  teamId: string;
   uncategorizedProcesses: {
     id: string;
     status: ProcessStatus;
@@ -48,17 +47,16 @@ type ProcessSidebarProps = {
 };
 
 export function ProcessSidebar({
-  departmentId,
-  teamId,
   uncategorizedProcesses,
   categories,
 }: ProcessSidebarProps) {
   const [open, setOpen] = useState(false);
+  const { departmentId, teamId } = useProcessRouteContext();
 
   const SidebarContent = () => (
     <nav className="flex-1 overflow-y-auto p-2">
       <div className="space-y-1">
-        {/* All your existing navigation items */}
+        {/* Navigation Items */}
         <Link href={teamProcessPath(departmentId, teamId)}>
           <Button
             variant="ghost"
@@ -82,7 +80,7 @@ export function ProcessSidebar({
           </Button>
         </Link>
 
-        <IdeaButton teamId={teamId} />
+        <IdeaButton />
 
         <Separator className="my-2" />
 
@@ -206,10 +204,7 @@ export function ProcessSidebar({
               <SheetTitle>Navigation</SheetTitle>
             </SheetHeader>
             <div className="p-4 border-b">
-              <ProcessSearchButton
-                departmentId={departmentId}
-                teamId={teamId}
-              />
+              <ProcessSearchButton />
             </div>
             <SidebarContent />
           </SheetContent>
@@ -219,7 +214,7 @@ export function ProcessSidebar({
       {/* Desktop: Regular Sidebar */}
       <aside className="hidden sm:flex w-64 border-r bg-background flex-col h-full">
         <div className="p-4 border-b">
-          <ProcessSearchButton departmentId={departmentId} teamId={teamId} />
+          <ProcessSearchButton />
         </div>
         <SidebarContent />
       </aside>

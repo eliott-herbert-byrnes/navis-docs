@@ -6,13 +6,11 @@ import { useRenameDepartment } from "../../hooks/use-department-mutations";
 type DepartmentOverviewButtonProps = {
   departmentId: string;
   title: string;
-  isAdmin: boolean;
 };
 
 const DepartmentOverviewButton = ({
   departmentId,
   title,
-  isAdmin,
 }: DepartmentOverviewButtonProps) => {
   const { renameDepartment, isPending } = useRenameDepartment();
 
@@ -28,9 +26,8 @@ const DepartmentOverviewButton = ({
       title={title}
       onConfirm={handleRename}
       isPending={isPending}
-      disabled={!isAdmin || isPending}
+      disabled={isPending}
       departmentId={departmentId}
-      isAdmin={isAdmin}
     />
   );
 };

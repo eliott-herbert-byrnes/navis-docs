@@ -5,15 +5,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ProcessSearchDialog } from "./process-search-dialog";
 
-type ProcessSearchButtonProps = {
-  departmentId: string;
-  teamId: string;
-};
-
-export function ProcessSearchButton({
-  departmentId,
-  teamId,
-}: ProcessSearchButtonProps) {
+export function ProcessSearchButton() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -41,12 +33,7 @@ export function ProcessSearchButton({
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
-      <ProcessSearchDialog
-        open={open}
-        onOpenChange={setOpen}
-        departmentId={departmentId}
-        teamId={teamId}
-      />
+      <ProcessSearchDialog open={open} onOpenChange={setOpen} />
     </>
   );
 }

@@ -2,16 +2,12 @@
 
 import { CreateTeamDialog } from "./team-create-dialog";
 import { useCreateTeam } from "../../hooks/use-team-mutations";
+import { useAuthContext } from "@/contexts/auth-context";
 
-const CreateTeamButton = ({
-  departmentId,
-  isAdmin,
-}: {
-  departmentId: string;
-  isAdmin: boolean;
-}) => {
+const CreateTeamButton = ({ departmentId }: { departmentId: string }) => {
   const { createTeam, isPending, isDialogOpen, setIsDialogOpen } =
     useCreateTeam();
+  const { isAdmin } = useAuthContext();
 
   const handleCreateTeam = (teamName: string) => {
     createTeam(departmentId, teamName);

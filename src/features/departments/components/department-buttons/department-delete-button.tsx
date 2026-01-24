@@ -2,17 +2,17 @@
 
 import { DepartmentDeleteDialog } from "./department-delete-dialog";
 import { useDeleteDepartment } from "../../hooks/use-department-mutations";
+import { useAuthContext } from "@/contexts/auth-context";
 
 const DepartmentDeleteButton = ({
-  isAdmin,
   departmentId,
   departmentName,
 }: {
-  isAdmin: boolean;
   departmentId: string;
   departmentName: string;
 }) => {
   const { deleteDepartment, isPending } = useDeleteDepartment();
+  const { isAdmin } = useAuthContext();
 
   const handleDelete = () => {
     deleteDepartment({ departmentId, departmentName });

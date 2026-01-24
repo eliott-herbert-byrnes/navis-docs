@@ -5,18 +5,15 @@ import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle, PlusIcon } from "lucide-react";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/auth-context";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
-const NewsCreateButton = ({
-  departmentId,
-  teamId,
-  isAdmin,
-}: {
-  departmentId: string;
-  teamId: string;
-  isAdmin: boolean;
-}) => {
+const NewsCreateButton = () => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { isAdmin } = useAuthContext();
+  const { departmentId, teamId } = useProcessRouteContext();
+
   const handleCreateNews = () => {
     startTransition(() => {
       router.push(newsCreatePath(departmentId, teamId));

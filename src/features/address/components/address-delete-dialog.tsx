@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuthContext } from "@/contexts/auth-context";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -18,7 +19,6 @@ type AddressDeleteDialogProps = {
   description: string;
   onConfirm: () => void;
   isPending: boolean;
-  isAdmin: boolean;
 };
 
 const AddressDeleteDialog = ({
@@ -26,9 +26,9 @@ const AddressDeleteDialog = ({
   description,
   onConfirm,
   isPending,
-  isAdmin,
 }: AddressDeleteDialogProps) => {
   const [open, setOpen] = useState(false);
+  const { isAdmin } = useAuthContext();
 
   const handleSubmit = () => {
     onConfirm();

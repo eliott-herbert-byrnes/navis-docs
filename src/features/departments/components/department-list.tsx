@@ -5,11 +5,7 @@ import { DepartmentCard } from "./department-card";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type DepartmentListProps = {
-  isAdmin: boolean;
-};
-
-const DepartmentList = ({ isAdmin }: DepartmentListProps) => {
+const DepartmentList = () => {
   const { data, isLoading, isError } = trpc.department.list.useQuery();
 
   if (isLoading) {
@@ -38,11 +34,7 @@ const DepartmentList = ({ isAdmin }: DepartmentListProps) => {
       {departments.length ? (
         <div className="flex flex-row flex-wrap gap-4">
           {departments.map((department) => (
-            <DepartmentCard
-              key={department.id}
-              department={department}
-              isAdmin={isAdmin}
-            />
+            <DepartmentCard key={department.id} department={department} />
           ))}
         </div>
       ) : (

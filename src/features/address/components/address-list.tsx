@@ -42,7 +42,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format } from "date-fns";
 import { AddressDeleteButton } from "./address-delete-button";
 import { trpc } from "@/trpc/client";
 import { ListSkeleton } from "@/components/list-skeleton";
@@ -59,7 +58,7 @@ export const schema = z.object({
 
 type AddressType = z.infer<typeof schema>;
 
-export function AddressList({ isAdmin }: { isAdmin: boolean }) {
+export function AddressList() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -147,10 +146,7 @@ export function AddressList({ isAdmin }: { isAdmin: boolean }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <AddressDeleteButton
-                addressId={row.original.id}
-                isAdmin={isAdmin}
-              />
+              <AddressDeleteButton addressId={row.original.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

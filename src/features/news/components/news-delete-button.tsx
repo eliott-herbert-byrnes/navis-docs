@@ -3,16 +3,12 @@
 import { NewsDeleteDialog } from "./news-delete-dialog";
 import { useDeleteNews } from "../hook/use-news-mutations";
 
-const NewsDeleteButton = ({
-  newsPostId,
-}: {
-  newsPostId: string;
-}) => {
+const NewsDeleteButton = ({ newsPostId }: { newsPostId: string }) => {
   const { deleteNews, isPending } = useDeleteNews();
 
   const handleDelete = () => {
-    deleteNews(newsPostId)
-  }
+    deleteNews(newsPostId);
+  };
 
   return (
     <NewsDeleteDialog

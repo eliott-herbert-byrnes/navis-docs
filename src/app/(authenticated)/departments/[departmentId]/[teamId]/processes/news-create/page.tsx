@@ -30,11 +30,7 @@ export default async function NewsCreatePage({
     <>
       <Heading title={`Create News`} description="Create a new news post" />
       <Suspense fallback={<Skeleton />}>
-        <NewsCreateForm
-          teamName={teamName ?? "this team"}
-          departmentId={departmentId}
-          teamId={teamId}
-        />
+        <NewsCreateForm teamName={teamName ?? "this team"} />
       </Suspense>
     </>
   );

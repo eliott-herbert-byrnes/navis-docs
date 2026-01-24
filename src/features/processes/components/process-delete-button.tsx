@@ -1,19 +1,11 @@
 "use client";
 
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 import { useDeleteProcess } from "../hooks/use-process-mutations";
 import { ProcessDeleteButtonDialog } from "./process-delete-button-dialog";
 
-const ProcessDeleteButton = ({
-  processId,
-  isAdmin,
-  departmentId,
-  teamId,
-}: {
-  processId: string;
-  isAdmin: boolean;
-  departmentId: string;
-  teamId: string;
-}) => {
+const ProcessDeleteButton = ({ processId }: { processId: string }) => {
+  const { departmentId, teamId } = useProcessRouteContext();
   const { deleteProcess, isPending } = useDeleteProcess(departmentId, teamId);
 
   const handleDelete = () => {
@@ -26,7 +18,6 @@ const ProcessDeleteButton = ({
       description="This action cannot be undone."
       isPending={isPending}
       onConfirm={handleDelete}
-      isAdmin={isAdmin}
     />
   );
 };

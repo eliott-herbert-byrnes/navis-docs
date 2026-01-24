@@ -9,11 +9,10 @@ import { NewsDeleteButton } from "./news-delete-button";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuthContext } from "@/contexts/auth-context";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type NewsPostListProps = {
-  departmentId: string;
-  teamId: string;
-  isAdmin: boolean;
   userMap: Record<string, { id: string; name: string | null } | null>;
 };
 
@@ -62,12 +61,9 @@ function NewsListSkeleton() {
   );
 }
 
-export function NewsPostList({
-  departmentId,
-  teamId,
-  isAdmin,
-  userMap,
-}: NewsPostListProps) {
+export function NewsPostList({ userMap }: NewsPostListProps) {
+  const { isAdmin } = useAuthContext();
+  const { departmentId, teamId } = useProcessRouteContext();
   const { data, isLoading, error } = trpc.news.getNews.useQuery({
     departmentId,
     teamId,
@@ -117,9 +113,7 @@ export function NewsPostList({
                       <PinIcon className="w-4 h-4" /> Pinned
                     </p>
                     {isAdmin ? (
-                      <NewsDeleteButton
-                        newsPostId={newsPost.id}
-                      />
+                      <NewsDeleteButton newsPostId={newsPost.id} />
                     ) : null}
                   </div>
                 </div>
@@ -160,11 +154,7 @@ export function NewsPostList({
                 <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
                   {newsPost.title}
                 </CardTitle>
-                {isAdmin ? (
-                  <NewsDeleteButton
-                    newsPostId={newsPost.id}
-                  />
-                ) : null}
+                {isAdmin ? <NewsDeleteButton newsPostId={newsPost.id} /> : null}
               </div>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">
