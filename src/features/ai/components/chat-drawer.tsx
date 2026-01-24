@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Brain, Loader2, MessageCircle, Send } from "lucide-react";
+import { Brain, Loader2, MessageCircle, Send, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./chat-message";
 import { ChatSources } from "./chat-sources";
@@ -15,24 +15,19 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useProcessRouteContext } from "@/contexts/process-route-context";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-  sources?: Array<{
-    processId: string;
-    title: string;
-    url: string;
-  }>;
-}
+import { usePersistedChatState } from "../hooks/use-persisted-chat-state";
+import { ChatDeleteButton } from "./chat-delete-button";
 
 export function AIChatDrawer() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { departmentId, teamId } = useProcessRouteContext();
+  const [messages, setMessages, clearMessages] = usePersistedChatState(
+    departmentId,
+    teamId
+  );
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { departmentId, teamId } = useProcessRouteContext();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -162,6 +157,7 @@ export function AIChatDrawer() {
               >
                 <Send className="h-4 w-4" />
               </Button>
+              <ChatDeleteButton isLoading={isLoading} clearMessage={clearMessages} />
             </div>
           </form>
         </SheetContent>
