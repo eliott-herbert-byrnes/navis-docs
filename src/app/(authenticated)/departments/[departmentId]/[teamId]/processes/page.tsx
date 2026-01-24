@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { ProcessBreadcrumbs } from "./_navigation";
 import { ProcessCreateButton } from "@/features/processes/components/process-create-button";
 import { FavoriteList } from "@/features/processes/components/favorite/components/favorite-list";
-import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
+import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 

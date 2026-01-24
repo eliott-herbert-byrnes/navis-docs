@@ -4,7 +4,7 @@ import { ProcessViewActions } from "@/features/processes/components/process-view
 import { ProcessViewMetadata } from "@/features/processes/components/process-view-metadata";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { Suspense } from "react";
-import { AIChatDrawer } from "@/features/ai/components/ai-chat-drawer";
+import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 
