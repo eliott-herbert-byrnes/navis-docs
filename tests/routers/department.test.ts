@@ -1,7 +1,6 @@
 // tests/routers/department.test.ts
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { departmentRouter } from "@/server/trpc/routers/department";
-import { type Context } from "@/server/trpc/context";
 
 describe("Department Router", () => {
   let mockContext: any;
@@ -27,6 +26,7 @@ describe("Department Router", () => {
       user: { id: "user123", email: "test@example.com" },
       org: { id: "org123", name: "Test Org", slug: "test" },
       membership: { role: "ADMIN" },
+      isAdmin: true,
     };
   });
 

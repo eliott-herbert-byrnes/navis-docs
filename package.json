@@ -24,8 +24,6 @@
     "email": "email dev --dir src/emails",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:e2e": "playwright test",
-    "test:e2e:report": "playwright show-report",
     "formatCheck": "next lint && tsc --noEmit && prettier --write ."
   },
   "dependencies": {
@@ -94,7 +92,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
-    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@types/big.js": "^6.2.2",
     "@types/node": "^20",
