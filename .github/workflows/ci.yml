@@ -34,7 +34,7 @@ jobs:
         run: pnpm typecheck
 
       - name: Unit tests
-        run: pnpm test --if-present
+        run: pnpm test
 
       - name: Prisma generate
         run: pnpm prisma generate
