@@ -12,15 +12,12 @@ interface Message {
   }>;
 }
 
-export function usePersistedChatState(
-  departmentId: string,
-  teamId: string
-) {
+export function usePersistedChatState(departmentId: string, teamId: string) {
   const storageKey = `chat-${departmentId}-${teamId}`;
-  
+
   const [messages, setMessages] = useState<Message[]>(() => {
-    if (typeof window === "undefined") return []; 
-    
+    if (typeof window === "undefined") return [];
+
     try {
       const stored = sessionStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : [];

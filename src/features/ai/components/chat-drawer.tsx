@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Brain, Loader2, MessageCircle, Send, Trash2 } from "lucide-react";
+import { Brain, Loader2, MessageCircle, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./chat-message";
 import { ChatSources } from "./chat-sources";
@@ -53,6 +53,10 @@ export function AIChatDrawer() {
           message: userMessage,
           teamId,
           departmentId,
+          conversationHistory: messages.map(m => ({
+            role: m.role,
+            content: m.content
+          })).slice(-6)
         }),
       });
 
@@ -107,13 +111,16 @@ export function AIChatDrawer() {
           {/* Messages */}
           <ScrollArea className="flex-1 overflow-y-auto" ref={scrollRef}>
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+              <div className="flex flex-col items-center justify-center h-full p-8 ">
                 <MessageCircle className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="font-medium mb-2">Ask me anything</h3>
                 <p className="text-sm text-muted-foreground">
                   I can help you find processes and answer questions about them.
                 </p>
                 <Separator className="my-4" />
+                <p className="text-sm text-muted-foreground">
+                  The assistants context will reset every 6 messages.
+                </p>
               </div>
             ) : (
               <div className="flex flex-col">
@@ -142,6 +149,7 @@ export function AIChatDrawer() {
 
           {/* Input */}
           <form onSubmit={handleSubmit} className="p-4 border-t">
+
             <div className="flex gap-2">
               <Input
                 value={input}

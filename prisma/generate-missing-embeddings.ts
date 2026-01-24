@@ -1,6 +1,8 @@
 import { PrismaClient, ProcessStatus } from "@prisma/client";
 import { generateEmbedding } from "../src/lib/ai/embeddings";
 import { chunkProcessContent } from "../src/features/ai/utils/chunk-content";
+import { generatePlainTextFromTiptap } from "../src/features/processes/utils/generate-plain-text-from-tiptap";
+import { JsonObject } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
@@ -12,20 +14,36 @@ async function generateProcessEmbeddings(processId: string) {
     },
   });
 
-  if (!process?.publishedVersion?.contentText) {
+  if (!process?.publishedVersion) {
     console.log(
-      `⚠️  Skipping ${process?.title || processId} - no published content`,
+      `Skipping ${process?.title || processId} - no published version`,
     );
     return;
   }
 
-  // Delete any existing chunks
+  const contentText = generatePlainTextFromTiptap(
+    process.publishedVersion.contentJSON as JsonObject,
+  );
+
+  if (!contentText || contentText.trim().length === 0) {
+    console.log(`Skipping ${process.title} - contentJSON produced no text`);
+    return;
+  }
+
+  await prisma.processVersion.update({
+    where: { id: process.publishedVersion.id },
+    data: { contentText },
+  });
+
+  console.log(
+    `Regenerated contentText for ${process.title}: ${contentText.length} chars`,
+  );
+
   await prisma.processChunk.deleteMany({
     where: { processId },
   });
 
-  const chunks = chunkProcessContent(process.publishedVersion.contentText);
-
+  const chunks = chunkProcessContent(contentText);
   for (const chunk of chunks) {
     try {
       const embedding = await generateEmbedding(chunk.chunkText);
@@ -47,18 +65,18 @@ async function generateProcessEmbeddings(processId: string) {
       `;
     } catch (error) {
       console.error(
-        `❌ Failed embedding for ${process.title}, chunk ${chunk.chunkIndex}:`,
+        `Failed embedding for ${process.title}, chunk ${chunk.chunkIndex}:`,
         error,
       );
       throw error;
     }
   }
 
-  console.log(`✅ Generated ${chunks.length} chunks for: ${process.title}`);
+  console.log(`Generated ${chunks.length} chunks for: ${process.title}`);
 }
 
 async function main() {
-  console.log("🔍 Finding published processes without embeddings...\n");
+  console.log("Finding published processes without embeddings...\n");
 
   const publishedProcesses = await prisma.process.findMany({
     where: {
@@ -79,12 +97,11 @@ async function main() {
       await generateProcessEmbeddings(process.id);
     } catch (error) {
       console.error(`Failed to process ${process.title}:`, error);
-      // Continue with other processes
     }
   }
 
   const chunkCount = await prisma.processChunk.count();
-  console.log(`\n✨ Complete! Total chunks in database: ${chunkCount}`);
+  console.log(`\nComplete! Total chunks in database: ${chunkCount}`);
 }
 
 main()

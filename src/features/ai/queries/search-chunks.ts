@@ -16,6 +16,7 @@ export async function searchProcessChunks(
   query: string,
   teamId: string,
   limit: number = 5,
+  threshold: number = 0.5,
 ): Promise<ChunkResult[]> {
   const queryEmbedding = await generateEmbedding(query);
 
@@ -33,7 +34,7 @@ export async function searchProcessChunks(
   >`
         SELECT * FROM match_process_chunks(
             ${queryEmbeddingString}::vector(1536),
-            0.5::float,
+            ${threshold}::float,
             ${limit}::int,
             ${teamId}::text
         )
