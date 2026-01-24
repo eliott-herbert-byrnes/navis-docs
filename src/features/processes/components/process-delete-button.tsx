@@ -5,12 +5,10 @@ import { ProcessDeleteButtonDialog } from "./process-delete-button-dialog";
 
 const ProcessDeleteButton = ({
   processId,
-  isAdmin,
   departmentId,
   teamId,
 }: {
   processId: string;
-  isAdmin: boolean;
   departmentId: string;
   teamId: string;
 }) => {
@@ -26,7 +24,6 @@ const ProcessDeleteButton = ({
       description="This action cannot be undone."
       isPending={isPending}
       onConfirm={handleDelete}
-      isAdmin={isAdmin}
     />
   );
 };

@@ -26,7 +26,6 @@ type EditProcessFormProps = {
   teamId: string;
   processId: string;
   process: ProcessForEdit;
-  isAdmin: boolean;
 };
 
 export const EditProcessForm = ({
@@ -34,7 +33,6 @@ export const EditProcessForm = ({
   teamId,
   processId,
   process,
-  isAdmin,
 }: EditProcessFormProps) => {
   const router = useRouter();
   const [isCancelling, startTransition] = useTransition();
@@ -140,7 +138,6 @@ export const EditProcessForm = ({
         process={process}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
-        isAdmin={isAdmin}
         isDisabled={isSaving || isCancelling || isPending}
         departmentId={departmentId}
         teamId={teamId}

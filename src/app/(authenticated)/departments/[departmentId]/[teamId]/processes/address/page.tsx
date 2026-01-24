@@ -12,10 +12,10 @@ export default async function AddressPage() {
       <Heading
         title="Address Book"
         description="Manage or create a new address"
-        actions={isAdmin ? <AddressCreateButton isAdmin={isAdmin} /> : null}
+        actions={isAdmin ? <AddressCreateButton /> : null}
       />
 
-      <AddressList isAdmin={isAdmin} />
+      <AddressList />
     </>
   );
 }

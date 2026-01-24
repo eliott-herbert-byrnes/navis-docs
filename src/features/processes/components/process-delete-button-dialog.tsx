@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuthContext } from "@/contexts/auth-context";
 import { Loader2, TrashIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -17,16 +18,15 @@ type ProcessDeleteButtonDialogProps = {
   description: string;
   isPending: boolean;
   onConfirm: () => void;
-  isAdmin: boolean;
 };
 const ProcessDeleteButtonDialog = ({
   title,
   description,
-  isAdmin,
   isPending,
   onConfirm,
 }: ProcessDeleteButtonDialogProps) => {
   const [open, setOpen] = useState(false);
+  const { isAdmin } = useAuthContext();
 
   const handleConfirm = () => {
     onConfirm();

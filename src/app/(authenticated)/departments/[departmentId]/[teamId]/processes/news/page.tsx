@@ -41,21 +41,15 @@ export default async function NewsPage({
         description="View and manage news for your department"
         actions={
           isAdmin ? (
-            <NewsCreateButton
-              departmentId={departmentId}
-              teamId={teamId}
-              isAdmin={isAdmin}
-            />
+            <NewsCreateButton departmentId={departmentId} teamId={teamId} />
           ) : null
         }
-
       />
       <Suspense fallback={<Skeleton />}>
         {newsPosts.length > 0 ? (
-          <NewsPostList 
-            departmentId={departmentId} 
-            teamId={teamId} 
-            isAdmin={isAdmin}
+          <NewsPostList
+            departmentId={departmentId}
+            teamId={teamId}
             userMap={userMap}
           />
         ) : (

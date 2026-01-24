@@ -25,10 +25,10 @@ export default async function Home() {
       <Heading
         title="Departments"
         description="Manage your organization's departments"
-        actions={isAdmin ? <DepartmentCreateButton isAdmin={isAdmin} /> : null}
+        actions={isAdmin ? <DepartmentCreateButton /> : null}
       />
       <Suspense fallback={<Skeleton />}>
-        <DepartmentList isAdmin={isAdmin} />
+        <DepartmentList />
       </Suspense>
     </>
   );

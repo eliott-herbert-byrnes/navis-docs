@@ -28,7 +28,6 @@ type DepartmentOverviewProps = {
   title: string;
   disabled: boolean;
   departmentId: string;
-  isAdmin: boolean;
   onConfirm: (oldDepartmentName: string, newDepartmentName: string) => void;
   isPending: boolean;
 };
@@ -36,7 +35,6 @@ const DepartmentOverview = ({
   title,
   disabled,
   departmentId,
-  isAdmin,
   onConfirm,
   isPending,
 }: DepartmentOverviewProps) => {
@@ -124,7 +122,6 @@ const DepartmentOverview = ({
                     <DepartmentDeleteButton
                       departmentId={departmentId}
                       departmentName={title}
-                      isAdmin={isAdmin}
                     />
                   </div>
                 </CardContent>
@@ -142,10 +139,7 @@ const DepartmentOverview = ({
                 <Separator />
 
                 <CardContent className="">
-                  <DepartmentTeamTable
-                    isAdmin={isAdmin}
-                    departmentId={departmentId}
-                  />
+                  <DepartmentTeamTable departmentId={departmentId} />
                 </CardContent>
               </Card>
             </TabsContent>

@@ -9,7 +9,6 @@ type ProcessHeaderProps = {
   viewMode: "edit" | "preview";
   onViewModeChange: (mode: "edit" | "preview") => void;
   isDisabled: boolean;
-  isAdmin: boolean;
   departmentId: string;
   teamId: string;
 };
@@ -19,7 +18,6 @@ export function ProcessHeader({
   viewMode,
   onViewModeChange,
   isDisabled,
-  isAdmin,
   departmentId,
   teamId,
 }: ProcessHeaderProps) {
@@ -56,7 +54,6 @@ export function ProcessHeader({
             Edit
           </Button>
           <ProcessDeleteButton
-            isAdmin={isAdmin}
             processId={process.id}
             departmentId={departmentId}
             teamId={teamId}

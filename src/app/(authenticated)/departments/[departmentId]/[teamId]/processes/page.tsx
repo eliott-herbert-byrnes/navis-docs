@@ -37,11 +37,7 @@ export default async function ProcessPage({
         title={`${teamName} Docs`}
         actions={
           isAdmin ? (
-            <ProcessCreateButton
-              departmentId={departmentId}
-              teamId={teamId}
-              isAdmin={isAdmin}
-            />
+            <ProcessCreateButton departmentId={departmentId} teamId={teamId} />
           ) : null
         }
         breadcrumbs={

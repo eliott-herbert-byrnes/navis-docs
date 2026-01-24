@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuthContext } from "@/contexts/auth-context";
 import { Loader2, TrashIcon } from "lucide-react";
 
 type TeamDeleteDialogProps = {
@@ -16,7 +17,6 @@ type TeamDeleteDialogProps = {
   description: string;
   onConfirm: () => void;
   isPending: boolean;
-  isAdmin: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -25,13 +25,13 @@ const TeamDeleteDialog = ({
   description,
   onConfirm,
   isPending,
-  isAdmin,
   open,
   onOpenChange,
 }: TeamDeleteDialogProps) => {
   const handleConfirm = () => {
     onConfirm();
   };
+  const { isAdmin } = useAuthContext();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

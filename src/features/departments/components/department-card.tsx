@@ -40,10 +40,9 @@ type DepartmentCardProps = {
       _count: { process: number };
     }[];
   };
-  isAdmin: boolean;
 };
 
-const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
+const DepartmentCard = ({ department }: DepartmentCardProps) => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -88,22 +87,17 @@ const DepartmentCard = ({ department, isAdmin }: DepartmentCardProps) => {
           <DropdownMenuContent className="flex flex-col gap-1.5">
             <DropdownMenuItem asChild>
               <DepartmentOverviewButton
-                isAdmin={isAdmin}
                 title={department.name}
                 departmentId={department.id}
               />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <CreateTeamButton
-                departmentId={department.id}
-                isAdmin={isAdmin}
-              />
+              <CreateTeamButton departmentId={department.id} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <DepartmentDeleteButton
                 departmentId={department.id}
                 departmentName={department.name}
-                isAdmin={isAdmin}
               />
             </DropdownMenuItem>
           </DropdownMenuContent>

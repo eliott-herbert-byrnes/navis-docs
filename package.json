@@ -25,7 +25,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "formatCheck": "next lint && tsc --noEmit && prettier --write ."
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

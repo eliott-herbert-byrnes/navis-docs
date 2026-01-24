@@ -47,7 +47,9 @@ const InvitationDeleteButton = ({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to delete this invitation?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Are you sure you want to delete this invitation?
+          </AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone.
           </AlertDialogDescription>
@@ -55,7 +57,9 @@ const InvitationDeleteButton = ({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete} disabled={isPending}>
-            {isPending && <LucideLoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && (
+              <LucideLoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+            )}
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

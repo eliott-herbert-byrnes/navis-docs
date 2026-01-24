@@ -3,13 +3,7 @@
 import { useDeleteAddress } from "../hook/use-address-mutations";
 import { AddressDeleteDialog } from "./address-delete-dialog";
 
-const AddressDeleteButton = ({
-  addressId,
-  isAdmin,
-}: {
-  addressId: string;
-  isAdmin: boolean;
-}) => {
+const AddressDeleteButton = ({ addressId }: { addressId: string }) => {
   const { deleteAddress, isPending } = useDeleteAddress();
 
   const handleDelete = () => {
@@ -22,7 +16,6 @@ const AddressDeleteButton = ({
       description="This action cannot be undone."
       onConfirm={handleDelete}
       isPending={isPending}
-      isAdmin={isAdmin}
     />
   );
 };

@@ -78,11 +78,7 @@ const InvitationCreateButton = () => {
             >
               Cancel
             </Button>
-            <Button
-              className="w-[75px]"
-              type="submit"
-              disabled={isPending}
-            >
+            <Button className="w-[75px]" type="submit" disabled={isPending}>
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Invite
             </Button>

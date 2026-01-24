@@ -23,7 +23,7 @@ const NewsDeleteDialog = ({
   title,
   description,
   isPending,
-  onConfirm
+  onConfirm,
 }: NewsDeleteDialogProps) => {
   const [open, setOpen] = useState(false);
 
