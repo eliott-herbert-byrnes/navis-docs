@@ -21,23 +21,19 @@ import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { ProcessSelectCategories } from "./process-select-categories";
 import { useCreateProcess } from "../hooks/use-process-mutations";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type CreateProcessFormProps = {
-  departmentId: string;
-  teamId: string;
   categories: { id: string; name: string }[];
 };
 
-const CreateProcessForm = ({
-  departmentId,
-  teamId,
-  categories,
-}: CreateProcessFormProps) => {
+const CreateProcessForm = ({ categories }: CreateProcessFormProps) => {
   const router = useRouter();
   const [isCancelPending, startTransition] = useTransition();
   const [createNewCategory, setCreateNewCategory] = useState(
     categories.length === 0,
   );
+  const { departmentId, teamId } = useProcessRouteContext();
 
   const { createProcess, isPending } = useCreateProcess(departmentId, teamId);
 

@@ -9,11 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 
 type ProcessViewPageProps = {
-  params: Promise<{ departmentId: string; teamId: string; processId: string }>;
+  params: Promise<{ processId: string }>;
 };
 
 const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
-  const { departmentId, teamId, processId } = await params;
+  const { processId } = await params;
 
   const user = await getSessionUser();
   const [canEdit] = await Promise.all([isOrgAdminOrOwner(user!.userId)]);
@@ -30,8 +30,6 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="process-view-actions" data-print-hide>
           <ProcessViewActions
-            departmentId={departmentId}
-            teamId={teamId}
             processId={processId}
             canEdit={canEdit}
             isFavorite={isFavorite}
@@ -47,7 +45,7 @@ const ProcessViewPage = async ({ params }: ProcessViewPageProps) => {
         <ProcessContent process={process} />
       </Suspense>
       <Suspense fallback={<Skeleton />}>
-        <AIChatDrawer teamId={teamId} departmentId={departmentId} />
+        <AIChatDrawer />
       </Suspense>
     </div>
   );

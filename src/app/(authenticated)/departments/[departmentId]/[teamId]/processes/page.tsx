@@ -35,11 +35,7 @@ export default async function ProcessPage({
     <>
       <Heading
         title={`${teamName} Docs`}
-        actions={
-          isAdmin ? (
-            <ProcessCreateButton departmentId={departmentId} teamId={teamId} />
-          ) : null
-        }
+        actions={isAdmin ? <ProcessCreateButton /> : null}
         breadcrumbs={
           <ProcessBreadcrumbs
             teamName={teamName}
@@ -47,9 +43,9 @@ export default async function ProcessPage({
           />
         }
       />
-      <FavoriteList departmentId={departmentId} teamId={teamId} />
+      <FavoriteList />
       <Suspense fallback={<Skeleton />}>
-        <AIChatDrawer teamId={teamId} departmentId={departmentId} />
+        <AIChatDrawer />
       </Suspense>
     </>
   );

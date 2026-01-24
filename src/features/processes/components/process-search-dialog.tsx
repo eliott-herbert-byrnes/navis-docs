@@ -13,22 +13,20 @@ import {
 } from "@/components/ui/command";
 import { FileText, FolderIcon } from "lucide-react";
 import { trpc } from "@/trpc/client";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type ProcessSearchDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  departmentId: string;
-  teamId: string;
 };
 
 export function ProcessSearchDialog({
   open,
   onOpenChange,
-  departmentId,
-  teamId,
 }: ProcessSearchDialogProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const { departmentId, teamId } = useProcessRouteContext();
 
   const { data, isLoading } = trpc.process.searchProcesses.useQuery(
     { teamId, query },

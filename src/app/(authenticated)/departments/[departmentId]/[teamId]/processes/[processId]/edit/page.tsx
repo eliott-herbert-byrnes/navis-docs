@@ -32,12 +32,7 @@ export default async function ProcessEditPage({
         description="Edit a process and ship to documentation"
       />
       <Suspense fallback={<Skeleton />}>
-        <EditProcessForm
-          departmentId={departmentId}
-          teamId={teamId}
-          processId={processId}
-          process={process}
-        />
+        <EditProcessForm processId={processId} process={process} />
       </Suspense>
     </>
   );

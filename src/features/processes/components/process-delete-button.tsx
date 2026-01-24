@@ -1,17 +1,11 @@
 "use client";
 
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 import { useDeleteProcess } from "../hooks/use-process-mutations";
 import { ProcessDeleteButtonDialog } from "./process-delete-button-dialog";
 
-const ProcessDeleteButton = ({
-  processId,
-  departmentId,
-  teamId,
-}: {
-  processId: string;
-  departmentId: string;
-  teamId: string;
-}) => {
+const ProcessDeleteButton = ({ processId }: { processId: string }) => {
+  const { departmentId, teamId } = useProcessRouteContext();
   const { deleteProcess, isPending } = useDeleteProcess(departmentId, teamId);
 
   const handleDelete = () => {

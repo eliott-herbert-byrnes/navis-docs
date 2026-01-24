@@ -20,21 +20,17 @@ import { LucideLoaderCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useNewsCreate } from "../hook/use-news-mutations";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type NewsCreateFormProps = {
-  departmentId: string;
-  teamId: string;
   teamName: string;
 };
 
-const NewsCreateForm = ({
-  departmentId,
-  teamId,
-  teamName,
-}: NewsCreateFormProps) => {
+const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
   const [isCancelPending, startTransition] = useTransition();
   const router = useRouter();
   const [pinned, setPinned] = useState(false);
+  const { departmentId, teamId } = useProcessRouteContext();
 
   const { createNews, isPending } = useNewsCreate(() => {
     router.replace(newsPath(departmentId, teamId));

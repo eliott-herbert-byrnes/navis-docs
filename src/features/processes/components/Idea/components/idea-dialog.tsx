@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 import { Lightbulb, Loader2 } from "lucide-react";
 import { useState, FormEvent } from "react";
 
@@ -23,7 +24,6 @@ type ProcessIdeaDialogProps = {
     ideaBody: string;
   }) => void;
   isPending: boolean;
-  teamId: string;
 };
 
 const ProcessIdeaDialog = ({
@@ -31,9 +31,9 @@ const ProcessIdeaDialog = ({
   description,
   onSubmit,
   isPending,
-  teamId,
 }: ProcessIdeaDialogProps) => {
   const [open, setOpen] = useState(false);
+  const { teamId } = useProcessRouteContext();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -16,24 +16,22 @@ import {
 import { MoreVertical } from "lucide-react";
 import { ProcessFavoriteButton } from "./favorite/components/process-favorite-button";
 import { ProcessErrorButton } from "./error/components/process-error-button";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type ProcessViewActionsProps = {
-  departmentId: string;
-  teamId: string;
   processId: string;
   canEdit: boolean;
   isFavorite: boolean;
 };
 
 export function ProcessViewActions({
-  departmentId,
-  teamId,
   processId,
   canEdit,
   isFavorite,
 }: ProcessViewActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { departmentId, teamId } = useProcessRouteContext();
 
   const handleEdit = () => {
     startTransition(() => {

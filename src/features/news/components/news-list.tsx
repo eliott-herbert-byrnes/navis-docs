@@ -10,10 +10,9 @@ import { JsonObject } from "@prisma/client/runtime/library";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthContext } from "@/contexts/auth-context";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 type NewsPostListProps = {
-  departmentId: string;
-  teamId: string;
   userMap: Record<string, { id: string; name: string | null } | null>;
 };
 
@@ -62,12 +61,9 @@ function NewsListSkeleton() {
   );
 }
 
-export function NewsPostList({
-  departmentId,
-  teamId,
-  userMap,
-}: NewsPostListProps) {
+export function NewsPostList({ userMap }: NewsPostListProps) {
   const { isAdmin } = useAuthContext();
+  const { departmentId, teamId } = useProcessRouteContext();
   const { data, isLoading, error } = trpc.news.getNews.useQuery({
     departmentId,
     teamId,

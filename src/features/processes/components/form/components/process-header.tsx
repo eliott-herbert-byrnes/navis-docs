@@ -9,8 +9,6 @@ type ProcessHeaderProps = {
   viewMode: "edit" | "preview";
   onViewModeChange: (mode: "edit" | "preview") => void;
   isDisabled: boolean;
-  departmentId: string;
-  teamId: string;
 };
 
 export function ProcessHeader({
@@ -18,8 +16,6 @@ export function ProcessHeader({
   viewMode,
   onViewModeChange,
   isDisabled,
-  departmentId,
-  teamId,
 }: ProcessHeaderProps) {
   return (
     <Card className="p-4 animate-fade-from-top">
@@ -53,11 +49,7 @@ export function ProcessHeader({
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
-          <ProcessDeleteButton
-            processId={process.id}
-            departmentId={departmentId}
-            teamId={teamId}
-          />
+          <ProcessDeleteButton processId={process.id} />
           <Button
             variant={viewMode === "preview" ? "default" : "outline"}
             size="sm"

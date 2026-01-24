@@ -14,6 +14,7 @@ import { ChatSources } from "./chat-sources";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { useProcessRouteContext } from "@/contexts/process-route-context";
 
 interface Message {
   role: "user" | "assistant";
@@ -25,17 +26,13 @@ interface Message {
   }>;
 }
 
-interface AIChatDrawerProps {
-  teamId: string;
-  departmentId: string;
-}
-
-export function AIChatDrawer({ teamId, departmentId }: AIChatDrawerProps) {
+export function AIChatDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { departmentId, teamId } = useProcessRouteContext();
 
   useEffect(() => {
     if (scrollRef.current) {

@@ -39,19 +39,11 @@ export default async function NewsPage({
       <Heading
         title={`${teamName} News`}
         description="View and manage news for your department"
-        actions={
-          isAdmin ? (
-            <NewsCreateButton departmentId={departmentId} teamId={teamId} />
-          ) : null
-        }
+        actions={isAdmin ? <NewsCreateButton /> : null}
       />
       <Suspense fallback={<Skeleton />}>
         {newsPosts.length > 0 ? (
-          <NewsPostList
-            departmentId={departmentId}
-            teamId={teamId}
-            userMap={userMap}
-          />
+          <NewsPostList userMap={userMap} />
         ) : (
           <EmptyState
             title="No news posts yet"
