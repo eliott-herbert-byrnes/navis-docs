@@ -93,8 +93,8 @@ export async function createAuditLog(data: AuditLogData) {
 export async function getAuditLogsWithCount(
   orgId: string,
   options?: {
-    actorId?: string,
-    search?: string,
+    actorId?: string;
+    search?: string;
     entityType?: AuditEntityType;
     entityId?: string;
     startDate?: Date;
@@ -110,13 +110,15 @@ export async function getAuditLogsWithCount(
     ...(options?.entityType && { entityType: options.entityType }),
     ...(options?.entityId && { entityId: options.entityId }),
 
-    // Date filtering 
-    ...(options?.startDate || options?.endDate ? {
-      at: {
-        ...(options.startDate && { gte: options.startDate }),
-        ...(options.endDate && { lte: options.endDate }),
-      }
-    } : {}),
+    // Date filtering
+    ...(options?.startDate || options?.endDate
+      ? {
+          at: {
+            ...(options.startDate && { gte: options.startDate }),
+            ...(options.endDate && { lte: options.endDate }),
+          },
+        }
+      : {}),
 
     // Search across multiple fields
     ...(options?.search && {
@@ -139,5 +141,4 @@ export async function getAuditLogsWithCount(
   ]);
 
   return { logs, totalCount };
-
 }

@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon, X } from "lucide-react"  // Added X icon
-import { type DateRange } from "react-day-picker"
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { CalendarIcon, X } from "lucide-react"; // Added X icon
+import { type DateRange } from "react-day-picker";
 
 interface DatePickerWithRangeProps {
   date: DateRange | undefined;
@@ -21,7 +21,7 @@ interface DatePickerWithRangeProps {
 export function DatePickerWithRange({
   date,
   onDateChange,
-  disabled
+  disabled,
 }: DatePickerWithRangeProps) {
   // Track if popover is open
   const [isOpen, setIsOpen] = React.useState(false);
@@ -31,7 +31,7 @@ export function DatePickerWithRange({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="justify-start px-2.5 font-normal "  // Fixed width
+          className="justify-start px-2.5 font-normal " // Fixed width
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date?.from ? (
@@ -39,7 +39,8 @@ export function DatePickerWithRange({
               <span className="flex-1 text-left">
                 {date.to ? (
                   <>
-                    {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+                    {format(date.from, "LLL dd, y")} -{" "}
+                    {format(date.to, "LLL dd, y")}
                   </>
                 ) : (
                   format(date.from, "LLL dd, y")
@@ -77,5 +78,5 @@ export function DatePickerWithRange({
         )}
       </PopoverContent>
     </Popover>
-  )
+  );
 }

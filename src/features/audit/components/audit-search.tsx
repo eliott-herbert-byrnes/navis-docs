@@ -37,7 +37,7 @@ export const AuditSearch = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
-    
+
     if (startDate || endDate) {
       return {
         from: startDate ? new Date(startDate) : undefined,
@@ -50,9 +50,9 @@ export const AuditSearch = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-  
+
       let filterChanged = false;
-  
+
       // Search filter
       const currentSearch = searchParams.get("search");
       if (search) {
@@ -62,7 +62,7 @@ export const AuditSearch = () => {
         if (currentSearch) filterChanged = true;
         params.delete("search");
       }
-  
+
       // Entity type filter
       const currentEntityType = searchParams.get("entityType");
       if (entityType && entityType !== "all") {
@@ -72,10 +72,10 @@ export const AuditSearch = () => {
         if (currentEntityType) filterChanged = true;
         params.delete("entityType");
       }
-  
+
       // Date range filter
       const currentStartDate = searchParams.get("startDate");
-      const newStartDate = dateRange?.from?.toISOString().split('T')[0];
+      const newStartDate = dateRange?.from?.toISOString().split("T")[0];
       if (newStartDate) {
         if (newStartDate !== currentStartDate) filterChanged = true;
         params.set("startDate", newStartDate);
@@ -83,9 +83,9 @@ export const AuditSearch = () => {
         if (currentStartDate) filterChanged = true;
         params.delete("startDate");
       }
-  
+
       const currentEndDate = searchParams.get("endDate");
-      const newEndDate = dateRange?.to?.toISOString().split('T')[0];
+      const newEndDate = dateRange?.to?.toISOString().split("T")[0];
       if (newEndDate) {
         if (newEndDate !== currentEndDate) filterChanged = true;
         params.set("endDate", newEndDate);
@@ -93,16 +93,16 @@ export const AuditSearch = () => {
         if (currentEndDate) filterChanged = true;
         params.delete("endDate");
       }
-  
+
       if (filterChanged) {
         params.set("page", "1");
       }
-  
+
       startTransition(() => {
         router.push(`${pathname}?${params.toString()}`);
       });
     }, 300);
-  
+
     return () => clearTimeout(timer);
   }, [search, pathname, router, searchParams, entityType, dateRange]);
 
@@ -122,11 +122,11 @@ export const AuditSearch = () => {
 
       {/* filter */}
       <div className="flex items-center gap-2">
-      <DatePickerWithRange
-        date={dateRange}
-        onDateChange={setDateRange}
-        disabled={isPending}
-      />
+        <DatePickerWithRange
+          date={dateRange}
+          onDateChange={setDateRange}
+          disabled={isPending}
+        />
 
         <Select value={entityType} onValueChange={setEntityType}>
           <SelectTrigger className="w-30">

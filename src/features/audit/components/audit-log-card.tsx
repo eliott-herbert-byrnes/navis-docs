@@ -16,7 +16,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { formatDistanceToNow, format } from "date-fns";
-import { ChevronDown, ChevronUp, MoreHorizontal, MoreVertical } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  MoreHorizontal,
+  MoreVertical,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -83,14 +88,15 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
         after: log.afterJSON,
       },
       null,
-      2
+      2,
     );
   };
 
   // Copy to clipboard with toast notification
   const handleExport = async (format: "markdown" | "json") => {
     try {
-      const content = format === "markdown" ? generateMarkdown() : generateJSON();
+      const content =
+        format === "markdown" ? generateMarkdown() : generateJSON();
       await navigator.clipboard.writeText(content);
       toast.success(`Copied as ${format.toUpperCase()}`);
     } catch (error) {
@@ -105,7 +111,6 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
         <CardHeader className="py-0">
           <div className="flex items-center justify-between gap-1 mt-1">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-
               {/* Action Title */}
               <span className="font-semibold text-md truncate">
                 {formatAction(log.action)}
@@ -171,7 +176,9 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
           <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden mt-1 ml-11">
             <span>{userName}</span>
             <span>•</span>
-            <span>{formatDistanceToNow(new Date(log.at), { addSuffix: true })}</span>
+            <span>
+              {formatDistanceToNow(new Date(log.at), { addSuffix: true })}
+            </span>
           </div>
         </CardHeader>
 
