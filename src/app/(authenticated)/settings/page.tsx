@@ -1,5 +1,5 @@
 import { homePath, onboardingPath } from "@/app/paths";
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";

@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyState } from "@/components/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DepartmentCard } from "./department-card";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";

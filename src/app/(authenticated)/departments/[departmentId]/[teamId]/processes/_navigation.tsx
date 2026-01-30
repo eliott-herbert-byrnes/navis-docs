@@ -1,6 +1,6 @@
 "use client";
 import { homePath } from "@/app/paths";
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 type ProcessBreadcrumbsProps = {
   teamName?: string;

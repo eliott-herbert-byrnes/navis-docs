@@ -1,7 +1,7 @@
 "use client";
 import { homePath } from "@/app/paths";
-import { Heading } from "@/components/Heading";
-import { ListSkeleton } from "@/components/list-skeleton";
+import { Heading } from "@/components/ui/Heading";
+import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { UserList } from "@/features/user-base/components/user-list";
 import { trpc } from "@/trpc/client";
 import { redirect, useSearchParams } from "next/navigation";

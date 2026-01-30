@@ -1,5 +1,5 @@
 import { homePath, onboardingPath } from "@/app/paths";
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,

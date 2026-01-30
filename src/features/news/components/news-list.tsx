@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyState } from "@/components/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PinIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";

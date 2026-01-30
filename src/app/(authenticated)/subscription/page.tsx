@@ -1,6 +1,6 @@
 "use server";
 import { homePath, onboardingPath } from "@/app/paths";
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Products } from "@/features/stripe/components/product";

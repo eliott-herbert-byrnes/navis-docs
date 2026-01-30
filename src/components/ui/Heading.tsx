@@ -1,4 +1,4 @@
-import { Separator } from "./ui/separator";
+import { Separator } from "./separator";
 
 type HeadingProps = {
   title: string;

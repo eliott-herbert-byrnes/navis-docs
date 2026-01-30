@@ -5,8 +5,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
+} from "./dialog";
+import { Button } from "./button";
 
 export const useConfirm = () => {
   const [state, setState] = useState<{

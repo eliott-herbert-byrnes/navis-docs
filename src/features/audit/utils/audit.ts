@@ -90,33 +90,54 @@ export async function createAuditLog(data: AuditLogData) {
   }
 }
 
-export async function getAuditLogs(
+export async function getAuditLogsWithCount(
   orgId: string,
-  actorId?: string,
-  search?: string,
   options?: {
+    actorId?: string,
+    search?: string,
     entityType?: AuditEntityType;
     entityId?: string;
+    startDate?: Date;
+    endDate?: Date;
     limit?: number;
     offset?: number;
   },
 ) {
-  return await prisma.auditLog.findMany({
-    where: {
-      orgId,
-      ...(actorId && { actorId }),
-      ...(options?.entityType && { entityType: options.entityType }),
-      ...(options?.entityId && { entityId: options.entityId }),
-      ...(search && {
-        OR: [
-          { entityId: { contains: search, mode: "insensitive" as const } },
-          { action: { contains: search, mode: "insensitive" as const } },
-          { actorId: { contains: search, mode: "insensitive" as const } },
-        ],
-      }),
-    },
-    orderBy: { at: "desc" },
-    take: options?.limit ?? 50,
-    skip: options?.offset ?? 0,
-  });
+  const where: Prisma.AuditLogWhereInput = {
+    orgId,
+    // filter by user / entity
+    ...(options?.actorId && { actorId: options.actorId }),
+    ...(options?.entityType && { entityType: options.entityType }),
+    ...(options?.entityId && { entityId: options.entityId }),
+
+    // Date filtering 
+    ...(options?.startDate || options?.endDate ? {
+      at: {
+        ...(options.startDate && { gte: options.startDate }),
+        ...(options.endDate && { lte: options.endDate }),
+      }
+    } : {}),
+
+    // Search across multiple fields
+    ...(options?.search && {
+      OR: [
+        { entityId: { contains: options.search, mode: "insensitive" } },
+        { action: { contains: options.search, mode: "insensitive" } },
+        { actorId: { contains: options.search, mode: "insensitive" } },
+      ],
+    }),
+  };
+
+  const [logs, totalCount] = await prisma.$transaction([
+    prisma.auditLog.findMany({
+      where,
+      orderBy: { at: "desc" },
+      take: options?.limit ?? 50,
+      skip: options?.offset ?? 0,
+    }),
+    prisma.auditLog.count({ where }),
+  ]);
+
+  return { logs, totalCount };
+
 }

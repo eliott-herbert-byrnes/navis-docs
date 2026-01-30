@@ -1,4 +1,4 @@
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { Suspense } from "react";
 import { ProcessBreadcrumbs } from "./_navigation";

@@ -1,4 +1,4 @@
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { AddressList } from "@/features/address/components/address-list";
 import { AddressCreateButton } from "@/features/address/components/address-create-button";
