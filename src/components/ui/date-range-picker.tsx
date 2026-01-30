@@ -32,7 +32,6 @@ export function DatePickerWithRange({
         <Button
           variant="outline"
           className="justify-start px-2.5 font-normal "  // Fixed width
-          disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date?.from ? (
