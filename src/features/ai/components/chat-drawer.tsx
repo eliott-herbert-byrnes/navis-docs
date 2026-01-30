@@ -23,7 +23,7 @@ export function AIChatDrawer() {
   const { departmentId, teamId } = useProcessRouteContext();
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
-    teamId
+    teamId,
   );
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -53,10 +53,12 @@ export function AIChatDrawer() {
           message: userMessage,
           teamId,
           departmentId,
-          conversationHistory: messages.map(m => ({
-            role: m.role,
-            content: m.content
-          })).slice(-6)
+          conversationHistory: messages
+            .map((m) => ({
+              role: m.role,
+              content: m.content,
+            }))
+            .slice(-6),
         }),
       });
 
@@ -149,7 +151,6 @@ export function AIChatDrawer() {
 
           {/* Input */}
           <form onSubmit={handleSubmit} className="p-4 border-t">
-
             <div className="flex gap-2">
               <Input
                 value={input}
@@ -165,7 +166,10 @@ export function AIChatDrawer() {
               >
                 <Send className="h-4 w-4" />
               </Button>
-              <ChatDeleteButton isLoading={isLoading} clearMessage={clearMessages} />
+              <ChatDeleteButton
+                isLoading={isLoading}
+                clearMessage={clearMessages}
+              />
             </div>
           </form>
         </SheetContent>

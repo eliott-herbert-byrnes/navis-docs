@@ -4,9 +4,9 @@ import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
-import { 
-  AuditEntityType, 
-  getAuditLogsWithCount  // Changed from getAuditLogs
+import {
+  AuditEntityType,
+  getAuditLogsWithCount, // Changed from getAuditLogs
 } from "@/features/audit/utils/audit";
 import { AuditSearch } from "@/features/audit/components/audit-search";
 import { AuditPagination } from "@/features/audit/components/audit-pagination";
@@ -18,10 +18,10 @@ type AuditPageProps = {
   searchParams: Promise<{
     search?: string;
     entityType?: AuditEntityType;
-    startDate?: string;     // NEW
-    endDate?: string;       // NEW
-    page?: string;          // NEW
-    pageSize?: string;      // NEW
+    startDate?: string; // NEW
+    endDate?: string; // NEW
+    page?: string; // NEW
+    pageSize?: string; // NEW
   }>;
 };
 
@@ -29,27 +29,23 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   // Authentication & authorization
   const user = await getSessionUser();
   const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
-  
+
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
   // Parse all search params
   const params = await searchParams;
-  
+
   // Filter params
   const search = params.search;
   const entityType = params.entityType;
-  
+
   // Date range params - convert ISO strings to Date objects
-  const startDate = params.startDate 
-    ? new Date(params.startDate) 
-    : undefined;
-  const endDate = params.endDate 
-    ? new Date(params.endDate) 
-    : undefined;
-  
+  const startDate = params.startDate ? new Date(params.startDate) : undefined;
+  const endDate = params.endDate ? new Date(params.endDate) : undefined;
+
   // Pagination params - validate and provide defaults
-  const page = Math.max(1, Number(params.page) || 1);  // Ensure minimum page 1
+  const page = Math.max(1, Number(params.page) || 1); // Ensure minimum page 1
   const pageSize = Number(params.pageSize) || 10;
 
   // Fetch audit logs with count
@@ -89,7 +85,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
       <Suspense fallback={<Skeleton className="h-96" />}>
         <div className="space-y-4">
           <AuditLogViewer logs={logs} />
-          
+
           {/* Only show pagination if there are logs */}
           {totalCount > 0 && (
             <AuditPagination

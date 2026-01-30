@@ -50,7 +50,11 @@ const UserRoleChangeDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="w-full flex justify-start gap-4">
+        <Button
+          variant="ghost"
+          className="w-full flex justify-start gap-4"
+          disabled={currentRole === "OWNER"}
+        >
           <UserIcon className="w-4 h-4 text-muted-foreground" />
           <span className="font-normal">Change Role</span>
         </Button>
@@ -63,7 +67,7 @@ const UserRoleChangeDialog = ({
         <Separator />
         <Select
           name="role"
-          defaultValue="member"
+          defaultValue={selectedRole}
           onValueChange={setSelectedRole}
         >
           <SelectTrigger className="mt-4">

@@ -73,7 +73,7 @@ export const schema = z.object({
   createdAt: z.date(),
   orgId: z.string(),
   userId: z.string(),
-  role: z.nativeEnum(OrgMembershipRole),
+  role: z.enum(OrgMembershipRole),
   user: z.object({
     id: z.string(),
     name: z.string().nullable(),
@@ -82,7 +82,7 @@ export const schema = z.object({
     createdAt: z.date(),
     memberships: z.array(
       z.object({
-        role: z.nativeEnum(OrgMembershipRole),
+        role: z.enum(OrgMembershipRole),
       }),
     ),
   }),
@@ -240,14 +240,16 @@ export function UserList({ data: initialData }: { data: User[] }) {
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-              size="icon"
-            >
-              <MoreVertical />
-              <span className="sr-only">Open menu</span>
-            </Button>
+            {row.original.role !== "OWNER" ? (
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                size="icon"
+              >
+                <MoreVertical />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            ) : null}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
