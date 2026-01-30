@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/table";
 import { AddressDeleteButton } from "./address-delete-button";
 import { trpc } from "@/trpc/client";
-import { ListSkeleton } from "@/components/list-skeleton";
+import { ListSkeleton } from "@/components/ui/list-skeleton";
 
 export const schema = z.object({
   id: z.string(),

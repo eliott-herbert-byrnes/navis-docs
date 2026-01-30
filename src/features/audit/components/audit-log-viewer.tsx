@@ -1,8 +1,8 @@
-import { EmptyState } from "@/components/empty-state";
-import { Separator } from "@/components/ui/separator";
 import { getUserById } from "@/lib/auth";
 import { JsonObject } from "@prisma/client/runtime/library";
-import { formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
+import { AuditLogCard } from "./audit-log-card";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type AuditLog = {
   id: string;
@@ -19,7 +19,24 @@ type AuditLogViewerProps = {
   logs: AuditLog[];
 };
 
+// Date separator component
+function DateSeparator({ date }: { date: string }) {
+  const dateObj = new Date(date);
+  
+  return (
+    <div className="flex items-center gap-4 my-6 pt-3 first:mt-0">
+      <div className="flex-shrink-0">
+        <h3 className="text-sm font-semibold text-foreground">
+          {format(dateObj, "MMMM dd, yyyy")}
+        </h3>
+      </div>
+      <div className="flex-1 h-px bg-border" />
+    </div>
+  );
+}
+
 export async function AuditLogViewer({ logs }: AuditLogViewerProps) {
+  // Handle empty state
   if (logs.length === 0) {
     return (
       <EmptyState
@@ -29,60 +46,52 @@ export async function AuditLogViewer({ logs }: AuditLogViewerProps) {
     );
   }
 
-  const users = await Promise.all(logs.map((log) => getUserById(log.actorId)));
+  // Fetch users efficiently - only unique actors
+  const uniqueActorIds = Array.from(new Set(logs.map((log) => log.actorId)));
+  const users = await Promise.all(
+    uniqueActorIds.map((id) => getUserById(id))
+  );
+
+  // Create a lookup map for O(1) access
+  const userMap = new Map(
+    users.map((user) => [user?.id, user?.name ?? "Unknown"])
+  );
+
+  // Group logs by date (YYYY-MM-DD)
+  const groupedLogs = logs.reduce((groups, log) => {
+    const dateKey = format(new Date(log.at), "yyyy-MM-dd");
+    
+    if (!groups[dateKey]) {
+      groups[dateKey] = [];
+    }
+    
+    groups[dateKey].push(log);
+    
+    return groups;
+  }, {} as Record<string, AuditLog[]>);
+
+  // Get sorted date keys (newest first)
+  const sortedDates = Object.keys(groupedLogs).sort((a, b) => 
+    new Date(b).getTime() - new Date(a).getTime()
+  );
 
   return (
-    <div className="space-y-4">
-      {logs.map((log) => (
-        <div key={log.id} className="border rounded-lg p-4 space-y-2">
-          <div className="flex justify-between items-start">
-            <div>
-              <span className="font-semibold">{log.action}</span>
-              <span className="text-sm text-muted-foreground ml-2">
-                {log.entityType}
-              </span>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {formatDistanceToNow(new Date(log.at), { addSuffix: true })}
-            </span>
+    <div className="space-y-2">
+      {sortedDates.map((dateKey) => (
+        <div key={dateKey}>
+          {/* Date separator header */}
+          <DateSeparator date={dateKey} />
+          
+          {/* All logs for this date */}
+          <div className="space-y-3">
+            {groupedLogs[dateKey].map((log) => (
+              <AuditLogCard
+                key={log.id}
+                log={log}
+                userName={userMap.get(log.actorId) ?? "Unknown"}
+              />
+            ))}
           </div>
-          <Separator />
-          <div className="flex flex-col text-sm justify-between items-start">
-            <span className="text-muted-foreground">
-              <strong>User:</strong>{" "}
-              {users.find((user) => user?.id === log.actorId)?.name ??
-                "Unknown"}
-            </span>
-            <span className="text-muted-foreground">
-              <strong>UserId:</strong> {log.actorId}
-            </span>
-            <span className="text-muted-foreground">
-              <strong>Entity:</strong> {log.entityType}
-            </span>
-            <span className="text-muted-foreground">
-              <strong>Action:</strong> {log.action}
-            </span>
-          </div>
-
-          {log.beforeJSON && (
-            <div>
-              <p className="text-sm font-medium">Before:</p>
-              <pre className="text-xs bg-muted p-2 rounded overflow-auto line-clamp-15 max-w-[975px]">
-                {JSON.stringify(log.beforeJSON, null, 2)}
-              </pre>
-            </div>
-          )}
-
-          <Separator />
-
-          {log.afterJSON && (
-            <div>
-              <p className="text-sm font-medium">After:</p>
-              <pre className="text-xs bg-muted p-2 rounded overflow-auto line-clamp-15 max-w-[975px]">
-                {JSON.stringify(log.afterJSON, null, 2)}
-              </pre>
-            </div>
-          )}
         </div>
       ))}
     </div>

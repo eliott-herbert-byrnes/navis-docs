@@ -1,7 +1,7 @@
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { getSessionUser, getUserById, getUserOrgWithRole } from "@/lib/auth";
 import { Suspense } from "react";
-import { EmptyState } from "@/components/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
 import { NewsPostList } from "@/features/news/components/news-list";
 import { Skeleton } from "@/components/ui/skeleton";

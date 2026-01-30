@@ -1,4 +1,4 @@
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { homePath, signInPath } from "./paths";

@@ -1,7 +1,7 @@
 "use client";
 
-import { EmptyState } from "@/components/empty-state";
-import { CardCompact } from "@/components/auth-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CardCompact } from "@/components/ui/auth-card";
 import { InvitationDeleteButton } from "./invitation-delete-button";
 import { InvitationPagination } from "./invitation-pagination";
 import { format } from "date-fns/format";

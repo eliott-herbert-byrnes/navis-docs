@@ -1,4 +1,4 @@
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { ProcessContent } from "@/features/processes/components/process-content";
 import { ProcessViewActions } from "@/features/processes/components/process-view-actions";
 import { ProcessViewMetadata } from "@/features/processes/components/process-view-metadata";

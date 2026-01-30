@@ -1,6 +1,6 @@
 import { homePath, onboardingPath } from "@/app/paths";
-import { Heading } from "@/components/Heading";
-import { ListSkeleton } from "@/components/list-skeleton";
+import { Heading } from "@/components/ui/Heading";
+import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { ProcessErrorList } from "@/features/processes/components/error/components/process-error-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";

@@ -1,6 +1,6 @@
 import { homePath, onboardingPath } from "@/app/paths";
-import { Heading } from "@/components/Heading";
-import { ListSkeleton } from "@/components/list-skeleton";
+import { Heading } from "@/components/ui/Heading";
+import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { InvitationCreateButton } from "@/features/invite/components/invitation-create-button";
 import { InvitationList } from "@/features/invite/components/invitation-list";
 import { InvitationSearch } from "@/features/invite/components/invitation-search";

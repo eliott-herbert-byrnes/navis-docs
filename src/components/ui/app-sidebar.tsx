@@ -25,14 +25,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Separator } from "./ui/separator";
+import { Separator } from "./separator";
 import { Fragment } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "./dropdown-menu";
 import {
   auditPath,
   demoPath,
@@ -48,9 +48,9 @@ import {
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
-import { ThemeSwitcher } from "./theme/theme-switcher";
+import { ThemeSwitcher } from "../theme/theme-switcher";
 import { OrgBadge } from "@/features/org/components/org-badge";
-import { Button } from "./ui/button";
+import { Button } from "./button";
 import Link from "next/link";
 
 const items = [

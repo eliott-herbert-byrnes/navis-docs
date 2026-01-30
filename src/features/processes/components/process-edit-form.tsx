@@ -5,7 +5,7 @@ import { useState, useTransition, useCallback, useEffect } from "react";
 import { teamProcessPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle } from "lucide-react";
-import { useConfirmDialog } from "@/components/confirm-dialog";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProcessHeader } from "./form/components/process-header";
 import { ProcessActionButtons } from "./form/components/process-action-buttons";
 import { ProcessEditorSelector } from "./form/components/process-editor-selector";

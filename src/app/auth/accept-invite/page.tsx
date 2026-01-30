@@ -1,5 +1,5 @@
 "use client";
-import { CardCompact } from "@/components/auth-card";
+import { CardCompact } from "@/components/ui/auth-card";
 import { Button } from "@/components/ui/button";
 import { useAcceptInvitation } from "@/features/invite/hooks/use-invite-mutations";
 import { useSearchParams } from "next/navigation";

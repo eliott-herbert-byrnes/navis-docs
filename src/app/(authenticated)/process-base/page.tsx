@@ -1,9 +1,9 @@
 "use client";
 
-import { Heading } from "@/components/Heading";
+import { Heading } from "@/components/ui/Heading";
 import { ProcessList } from "@/features/process-base/components/process-list";
 import { trpc } from "@/trpc/client";
-import { ListSkeleton } from "@/components/list-skeleton";
+import { ListSkeleton } from "@/components/ui/list-skeleton";
 
 const ProcessBasePage = () => {
   const { data, isLoading } = trpc.process.getProcessesForBase.useQuery({
