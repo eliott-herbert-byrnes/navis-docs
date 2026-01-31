@@ -9,6 +9,15 @@ import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { inngest } from "@/inngest/client";
 import { OrgMembershipRole } from "@prisma/client";
+import { getStripe } from "@/lib/stripe";
+
+function isStripeResourceGone(error: unknown): boolean {
+  if (error && typeof error === "object" && "code" in error) {
+    const code = (error as { code?: string }).code;
+    return code === "resource_missing";
+  }
+  return false;
+}
 
 export const organizationRouter = router({
   //Mutate: Update organization
@@ -156,4 +165,58 @@ export const organizationRouter = router({
         message: "Organization created successfully",
       };
     }),
+  // Mutation: Delete Organization
+  deleteOrganization: adminProcedure
+    .use(rateLimitMiddleware("organization-delete"))
+    .input(z.void().optional())
+    .mutation(async ({ ctx }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found",
+        });
+      }
+
+      if (ctx.org.stripeSubscriptionId) {
+        try {
+          await getStripe().subscriptions.cancel(ctx.org.stripeSubscriptionId);
+        } catch (error) {
+          if (isStripeResourceGone(error)) {
+            // Subscription already canceled – proceed with org delete
+          } else {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to cancel subscription. Please try again or contact support.",
+              cause: error,
+            });
+          }
+        }
+      }
+  
+      if (ctx.org.stripeCustomerId) {
+        try {
+          await getStripe().customers.del(ctx.org.stripeCustomerId);
+        } catch (error) {
+          if (isStripeResourceGone(error)) {
+            // Customer already deleted – proceed
+          } else {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to delete billing account. Please contact support.",
+              cause: error,
+            });
+          }
+        }
+      }
+
+      const deleted = await ctx.db.organization.delete({
+        where: {
+          id: ctx.org.id,
+        },
+      });
+
+      return {
+        data: deleted,
+      }
+    })
 });

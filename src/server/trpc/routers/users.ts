@@ -70,6 +70,7 @@ export const usersRouter = router({
           user: {
             select: {
               name: true,
+              email: true,
             }
           },
           id: true,

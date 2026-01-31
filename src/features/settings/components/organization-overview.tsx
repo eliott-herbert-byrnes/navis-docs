@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
 import { ExportProcedureOrgDataButton } from "./export-procedure-org-data-button";
 import { ExportUserOrgDataButton } from "./export-user-org-data-button";
+import { OrganizationDeleteButton } from "@/features/org/components/org-delete-button-dialog";
 
 type OrganizationOverviewProps = {
   org: Organization;
@@ -71,14 +72,11 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
               <div className="flex flex-col gap-1">
                 <CardTitle>Delete Organization</CardTitle>
                 <CardDescription>
-                  Delete the organization and all its data
+                  Delete the organization and all its data. This action will also automatically cancel any active subscriptions.
                 </CardDescription>
               </div>
               {/* TODO: Implement OrganizationDeleteButton component */}
-              {/* <OrganizationDeleteButton orgId={org.id} /> */}
-              <Button className="max-w-[150px]" disabled>
-                Delete Organization
-              </Button>
+              <OrganizationDeleteButton />
             </div>
             <Separator />
             <Button className="w-[75px]" type="submit" disabled={isPending}>

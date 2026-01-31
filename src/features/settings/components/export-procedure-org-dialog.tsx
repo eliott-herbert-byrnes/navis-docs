@@ -46,7 +46,7 @@ const ExportProcedureOrgDataButtonDialog = ({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="secondary" className="w-full flex justify-start gap-4">
+                <Button variant="outline" className="w-full flex justify-start gap-4">
                     <FileInput className="w-4 h-4 text-muted-foreground" />
                     <span className="font-semibold">Export Org Procedure Data</span>
                 </Button>
