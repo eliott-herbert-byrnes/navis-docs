@@ -71,7 +71,7 @@ export const usersRouter = router({
             select: {
               name: true,
               email: true,
-            }
+            },
           },
           id: true,
           orgId: true,
@@ -79,19 +79,19 @@ export const usersRouter = router({
           createdAt: true,
           role: true,
         },
-        orderBy: [{
-          user: {
-            name: "asc",
+        orderBy: [
+          {
+            user: {
+              name: "asc",
+            },
           },
-        }, { role: "asc" }
+          { role: "asc" },
         ],
         take: 5000,
-      })
+      });
 
       return users ?? [];
-
     }),
-
 
   // Query: Get org members
   getOrgMembers: adminProcedure
@@ -115,23 +115,23 @@ export const usersRouter = router({
         orgId: ctx.org.id,
         ...(input.search
           ? {
-            user: {
-              OR: [
-                {
-                  name: {
-                    contains: input.search,
-                    mode: "insensitive" as const,
+              user: {
+                OR: [
+                  {
+                    name: {
+                      contains: input.search,
+                      mode: "insensitive" as const,
+                    },
                   },
-                },
-                {
-                  email: {
-                    contains: input.search,
-                    mode: "insensitive" as const,
+                  {
+                    email: {
+                      contains: input.search,
+                      mode: "insensitive" as const,
+                    },
                   },
-                },
-              ],
-            },
-          }
+                ],
+              },
+            }
           : {}),
       };
 

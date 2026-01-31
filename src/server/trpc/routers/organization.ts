@@ -186,13 +186,14 @@ export const organizationRouter = router({
           } else {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to cancel subscription. Please try again or contact support.",
+              message:
+                "Failed to cancel subscription. Please try again or contact support.",
               cause: error,
             });
           }
         }
       }
-  
+
       if (ctx.org.stripeCustomerId) {
         try {
           await getStripe().customers.del(ctx.org.stripeCustomerId);
@@ -202,7 +203,8 @@ export const organizationRouter = router({
           } else {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to delete billing account. Please contact support.",
+              message:
+                "Failed to delete billing account. Please contact support.",
               cause: error,
             });
           }
@@ -217,6 +219,6 @@ export const organizationRouter = router({
 
       return {
         data: deleted,
-      }
-    })
+      };
+    }),
 });

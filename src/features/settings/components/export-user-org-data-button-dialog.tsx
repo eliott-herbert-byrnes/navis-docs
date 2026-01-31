@@ -20,9 +20,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { FileInput, Loader2 } from "lucide-react";
 import { useState } from "react";
-import {
-  ExportFormat,
-} from "../hooks/use-export-procedure-data";
+import { ExportFormat } from "../hooks/use-export-procedure-data";
 import { useExportUserData } from "../hooks/use-export-user-data";
 
 type ExportUserOrgDataButtonDialogProps = {
@@ -35,8 +33,7 @@ const ExportUserOrgDataButtonDialog = ({
 }: ExportUserOrgDataButtonDialogProps) => {
   const [open, setOpen] = useState(false);
   const [format, setFormat] = useState("json");
-  const { isLoading, exportWithFormat } =
-    useExportUserData(open);
+  const { isLoading, exportWithFormat } = useExportUserData(open);
 
   const handleExport = () => {
     exportWithFormat(format as ExportFormat);

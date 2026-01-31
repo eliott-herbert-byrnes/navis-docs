@@ -89,20 +89,19 @@ export function useExportUserData(dialogOpen: boolean) {
 
       if (format === "markdown") {
         const headers = [
-            "Name",
-            "Email",
-            "Id",
-            "OrgId",
-            "UserId",
-            "Role",
-            "CreatedAt",
+          "Name",
+          "Email",
+          "Id",
+          "OrgId",
+          "UserId",
+          "Role",
+          "CreatedAt",
         ];
         const headerRow =
           "| " + headers.map(escapeMarkdownCell).join(" | ") + " |";
         const separator = "| " + headers.map(() => "---").join(" | ") + " |";
         const bodyRows = users.map((u) =>
           [
-
             u.user.name,
             u.user.email,
             u.id,

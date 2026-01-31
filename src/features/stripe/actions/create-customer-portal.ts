@@ -1,36 +1,32 @@
 "use server";
 import { homePath, signInPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import {
+  getSessionUser,
+  getUserOrgWithRole,
+  isOrgAdminOrOwner,
+} from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import { Stripe } from "stripe";
 
-export const createCustomerPortal = async (orgSlug: string) => {
+export const createCustomerPortal = async () => {
   const user = await getSessionUser();
   if (!user) {
     redirect(signInPath());
   }
 
-  if (!orgSlug) {
-    redirect(homePath());
-  }
-
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!isAdmin) {
     redirect(homePath());
   }
-
-  const org = await prisma.organization.findUnique({
-    where: { slug: orgSlug },
-  });
-
   if (!org) {
-    return toActionState("ERROR", "Organization not found");
+    redirect(homePath());
   }
 
   let customerId = org.stripeCustomerId;
+
   if (!customerId) {
     const customer = await getStripe().customers.create({
       email: undefined,
@@ -105,7 +101,7 @@ export const createCustomerPortal = async (orgSlug: string) => {
   });
 
   if (!session.url) {
-    return toActionState("ERROR", "Session URL could not be created");
+    redirect(homePath());
   }
 
   redirect(session.url);

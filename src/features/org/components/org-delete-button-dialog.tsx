@@ -17,8 +17,7 @@ import { useDeleteOrg } from "../hooks/use-org-mutations";
 
 const OrganizationDeleteButton = () => {
   // const [open, setOpen] = useState(false);
-  const { open, setOpen, deleteOrganization, isPending } =
-    useDeleteOrg();
+  const { open, setOpen, deleteOrganization, isPending } = useDeleteOrg();
 
   const handleDelete = () => {
     deleteOrganization();
@@ -35,7 +34,9 @@ const OrganizationDeleteButton = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Organization</DialogTitle>
-          <DialogDescription className="text-red-600">Are you sure you want to complete this action? It cannot be undone.</DialogDescription>
+          <DialogDescription className="text-red-600">
+            Are you sure you want to complete this action? It cannot be undone.
+          </DialogDescription>
         </DialogHeader>
         <Separator />
         <DialogFooter className="flex flex-row gap-2 mt-4">

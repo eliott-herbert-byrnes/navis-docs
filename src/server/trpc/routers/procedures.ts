@@ -37,7 +37,7 @@ const updateProcedureContentSchema = z.object({
 export const procedureRouter = router({
   // Query: GET-all procedures for export
   listForExport: adminProcedure
-  .use(rateLimitMiddleware("procedure-get-procedures-for-export"))
+    .use(rateLimitMiddleware("procedure-get-procedures-for-export"))
     .input(z.void().optional())
     .query(async ({ ctx }) => {
       if (!ctx.org) {

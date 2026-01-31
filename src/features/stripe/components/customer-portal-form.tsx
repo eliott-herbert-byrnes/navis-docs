@@ -15,9 +15,9 @@ type CustomerPortalFormProps = {
   children: React.ReactNode;
 };
 
-const CustomerPortalForm = ({ orgSlug, children }: CustomerPortalFormProps) => {
+const CustomerPortalForm = ({ children }: CustomerPortalFormProps) => {
   const [actionState, action] = useActionState(
-    createCustomerPortal.bind(null, orgSlug),
+    createCustomerPortal.bind(null),
     EMPTY_ACTION_STATE,
   );
 
