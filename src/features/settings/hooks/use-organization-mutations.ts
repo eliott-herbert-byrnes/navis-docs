@@ -24,6 +24,6 @@ export function useRenameOrganization() {
 
   return {
     renameOrganization,
-    isPending: mutation.isPending,
+    isLoading: mutation.isPending,
   };
 }
