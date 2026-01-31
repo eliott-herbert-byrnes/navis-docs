@@ -59,14 +59,14 @@ export const departmentRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // Department exists check
-      const existingDepartment = await ctx.db.department.findFirst({
+      const existingDepartment = await ctx.db.department.count({
         where: {
           orgId: ctx.org!.id,
           name: input.departmentName,
         },
       });
 
-      if (existingDepartment) {
+      if (existingDepartment > 0) {
         throw new TRPCError({
           code: "CONFLICT",
           message: "Department already exists",

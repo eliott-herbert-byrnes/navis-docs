@@ -1,8 +1,8 @@
 import { getUserById } from "@/lib/auth";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { format } from "date-fns";
 import { AuditLogCard } from "./audit-log-card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 type AuditLog = {
   id: string;

@@ -42,8 +42,8 @@ export function useDeleteInvitation(onSuccessCallback?: () => void) {
     },
   });
 
-  const deleteInvitation = (email: string, orgId: string) => {
-    mutation.mutate({ email, orgId });
+  const deleteInvitation = (email: string) => {
+    mutation.mutate({ email });
   };
 
   return {

@@ -17,9 +17,9 @@ export const aiRouter = router({
     .use(rateLimitMiddleware("ai-search"))
     .input(
       z.object({
-        query: z.string().min(1, { message: "Query is required" }),
+        query: z.string().min(1, { message: "Query is required" }).max(280),
         teamId: z.string().min(1, { message: "Team ID is required" }),
-        limit: z.number().default(5),
+        limit: z.number().min(1).max(50).default(5),
       }),
     )
     .query(async ({ ctx, input }) => {

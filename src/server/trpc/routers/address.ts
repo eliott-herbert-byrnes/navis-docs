@@ -11,6 +11,9 @@ import { z } from "zod";
 export const addressRouter = router({
   listAddress: orgProcedure.query(async ({ ctx }) => {
     const addresses = await ctx.db.address.findMany({
+      where: {
+        orgId: ctx.org.id,
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -41,6 +44,7 @@ export const addressRouter = router({
     .mutation(async ({ ctx, input }) => {
       const newAddress = await ctx.db.address.create({
         data: {
+          orgId: ctx.org?.id ?? "",
           name: input.name,
           address: input.address,
           phone: input.phone ?? "",
@@ -73,7 +77,7 @@ export const addressRouter = router({
       const currentAddress = await ctx.db.address.findUnique({
         where: { id: input.addressId },
       });
-      if (!currentAddress) {
+      if (!currentAddress || currentAddress.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Address not found",

@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { formatDistanceToNow, format } from "date-fns";
 import {
   ChevronDown,
@@ -24,6 +23,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 type AuditLog = {
   id: string;

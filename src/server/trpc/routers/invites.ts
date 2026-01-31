@@ -151,14 +151,13 @@ export const invitesRouter = router({
     .input(
       z.object({
         email: z.string(),
-        orgId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const invite = await ctx.db.invitation.findUnique({
         where: {
           invitationId: {
-            orgId: input.orgId,
+            orgId: ctx.org?.id ?? "",
             email: input.email,
           },
         },
@@ -173,7 +172,7 @@ export const invitesRouter = router({
 
       await ctx.db.invitation.delete({
         where: {
-          invitationId: { orgId: input.orgId, email: input.email },
+          invitationId: { orgId: ctx.org?.id ?? "", email: input.email },
         },
       });
 
@@ -245,6 +244,14 @@ export const invitesRouter = router({
         throw new TRPCError({
           code: "CONFLICT",
           message: "User already belongs to an organization",
+        });
+      }
+
+      // After finding invite, verify email matches
+      if (invite.email.toLowerCase() !== ctx.user!.email?.toLowerCase()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "This invitation is for a different email address",
         });
       }
 

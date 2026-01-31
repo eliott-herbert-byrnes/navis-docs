@@ -72,8 +72,15 @@ export const favoritesRouter = router({
         });
       }
 
-      const process = await ctx.db.process.findUnique({
-        where: { id: input.processId },
+      const process = await ctx.db.process.findFirst({
+        where: {
+          id: input.processId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
       });
 
       if (!process) {

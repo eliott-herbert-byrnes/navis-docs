@@ -10,9 +10,9 @@ import {
 } from "@/features/audit/utils/audit";
 import { AuditSearch } from "@/features/audit/components/audit-search";
 import { AuditPagination } from "@/features/audit/components/audit-pagination";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/ui/Heading";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 type AuditPageProps = {
   searchParams: Promise<{

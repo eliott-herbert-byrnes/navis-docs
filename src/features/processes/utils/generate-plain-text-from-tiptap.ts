@@ -1,4 +1,4 @@
-import { JsonObject } from "@prisma/client/runtime/library";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 export function generatePlainTextFromTiptap(contentJSON: JsonObject): string {
   if (!contentJSON || typeof contentJSON !== "object") {
