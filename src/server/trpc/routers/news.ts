@@ -5,6 +5,7 @@ import {
   adminProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const newsRouter = router({
@@ -105,6 +106,26 @@ export const newsRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const newsPost = await ctx.db.newsPost.findUnique({
+        where: { id: input.newsPostId },
+        include: {
+          team: {
+            include: {
+              department: {
+                select: { orgId: true },
+              },
+            },
+          },
+        },
+      });
+
+      if (!newsPost || newsPost.team.department.orgId !== ctx.org!.id) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "News post not found",
+        });
+      }
+
       const deletedNews = await ctx.db.newsPost.delete({
         where: { id: input.newsPostId },
       });

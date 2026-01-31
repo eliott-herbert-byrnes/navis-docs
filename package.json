@@ -9,7 +9,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "postinstall": "prisma generate",
     "migrate": "prisma migrate dev",
@@ -21,7 +20,7 @@
     "email": "email dev --dir src/emails",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "formatCheck": "next lint && tsc --noEmit && prettier --write ."
+    "formatCheck": "tsc --noEmit && prettier --write ."
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

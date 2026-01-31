@@ -128,11 +128,32 @@ export const errorsRouter = router({
 
       const error = await ctx.db.errorReport.findUnique({
         where: { id: input.errorId },
+        include: {
+          process: {
+            include: {
+              team: {
+                include: {
+                  department: {
+                    select: { orgId: true },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!error) {
         throw new TRPCError({
           code: "NOT_FOUND",
+          message: "Error report not found",
+        });
+      }
+
+      // Verify belongs to org
+      if (error.process.team.department.orgId !== ctx.org!.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
           message: "Error report not found",
         });
       }
@@ -173,11 +194,32 @@ export const errorsRouter = router({
 
       const error = await ctx.db.errorReport.findUnique({
         where: { id: input.errorId },
+        include: {
+          process: {
+            include: {
+              team: {
+                include: {
+                  department: {
+                    select: { orgId: true },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!error) {
         throw new TRPCError({
           code: "NOT_FOUND",
+          message: "Error report not found",
+        });
+      }
+
+      // Verify belongs to org
+      if (error.process.team.department.orgId !== ctx.org!.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
           message: "Error report not found",
         });
       }

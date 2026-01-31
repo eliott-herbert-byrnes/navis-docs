@@ -26,7 +26,11 @@ export const organizationRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (ctx.membership?.role !== "ADMIN" || !ctx.org) {
+      if (
+        !ctx.membership ||
+        !["ADMIN", "OWNER"].includes(ctx.membership.role) ||
+        !ctx.org
+      ) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Unauthorized",

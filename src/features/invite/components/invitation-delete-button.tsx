@@ -31,7 +31,7 @@ const InvitationDeleteButton = ({
   });
 
   const handleDelete = () => {
-    deleteInvitation(email, orgId);
+    deleteInvitation(email);
   };
 
   return (

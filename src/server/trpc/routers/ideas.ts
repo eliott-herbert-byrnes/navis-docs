@@ -176,9 +176,18 @@ export const ideasRouter = router({
 
       const idea = await ctx.db.idea.findUnique({
         where: { id: input.ideaId },
+        include: {
+          team: {
+            include: {
+              department: {
+                select: { orgId: true },
+              },
+            },
+          },
+        },
       });
 
-      if (!idea) {
+      if (!idea || idea.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Idea not found",
@@ -221,9 +230,18 @@ export const ideasRouter = router({
 
       const idea = await ctx.db.idea.findUnique({
         where: { id: input.ideaId },
+        include: {
+          team: {
+            include: {
+              department: {
+                select: { orgId: true },
+              },
+            },
+          },
+        },
       });
 
-      if (!idea) {
+      if (!idea || idea.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Idea not found",

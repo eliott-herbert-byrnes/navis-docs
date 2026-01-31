@@ -11,8 +11,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ProcessStatus, ProcessStyle } from "@prisma/client";
 import { generatePlainTextFromTiptap } from "@/features/processes/utils/generate-plain-text-from-tiptap";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { generateProcessEmbeddings } from "@/features/ai/actions/generate-embeddings";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -66,8 +66,8 @@ export const processRouter = router({
   getProcessesForBase: adminProcedure
     .input(
       z.object({
-        search: z.string().optional(),
-        limit: z.number().default(10),
+        search: z.string().max(100).optional(),
+        limit: z.number().min(1).max(100).default(10),
         offset: z.number().default(0),
       }),
     )
@@ -194,8 +194,15 @@ export const processRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const process = await ctx.db.process.findUnique({
-        where: { id: input.processId },
+      const process = await ctx.db.process.findFirst({
+        where: {
+          id: input.processId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
         include: {
           category: {
             select: {
@@ -255,8 +262,15 @@ export const processRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const [process, favorite] = await ctx.db.$transaction([
-        ctx.db.process.findUnique({
-          where: { id: input.processId },
+        ctx.db.process.findFirst({
+          where: {
+            id: input.processId,
+            team: {
+              department: {
+                orgId: ctx.org!.id,
+              },
+            },
+          },
           include: {
             publishedVersion: true,
             team: true,
@@ -453,7 +467,14 @@ export const processRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const process = await ctx.db.process.findUnique({
-        where: { id: input.processId },
+        where: {
+          id: input.processId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
         include: {
           pendingVersion: true,
           publishedVersion: true,
@@ -532,7 +553,14 @@ export const processRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const process = await ctx.db.process.findUnique({
-        where: { id: input.processId },
+        where: {
+          id: input.processId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
         include: {
           pendingVersion: true,
           publishedVersion: true,
@@ -568,7 +596,14 @@ export const processRouter = router({
     .input(updateProcessContentSchema)
     .mutation(async ({ ctx, input }) => {
       const process = await ctx.db.process.findUnique({
-        where: { id: input.processId },
+        where: {
+          id: input.processId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
         include: { pendingVersion: true },
       });
       if (!process) {

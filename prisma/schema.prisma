@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model User {
@@ -13,11 +13,11 @@ model User {
   image         String?
   emailVerified DateTime?       @map("emailVerifiedAt")
   createdAt     DateTime        @default(now())
-  memberships   OrgMembership[]
   accounts      Account[]
-  invitations   Invitation[]
-  organizations Organization[]
   favorites     Favorite[]
+  invitations   Invitation[]
+  memberships   OrgMembership[]
+  organizations Organization[]
 }
 
 model Account {
@@ -26,15 +26,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -46,6 +45,7 @@ model Address {
   phone     String
   email     String?
   website   String?
+  orgId     String
   createdAt DateTime @default(now())
 }
 
@@ -61,13 +61,6 @@ model EmailOTP {
   @@index([email, expiresAt])
 }
 
-enum InvitationStatus {
-  PENDING
-  ACCEPTED
-  EXPIRED
-  REVOKED
-}
-
 model Invitation {
   orgId           String
   email           String
@@ -79,11 +72,10 @@ model Invitation {
   acceptedAt      DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  invitedByUser   User?            @relation(fields: [invitedByUserId], references: [id])
+  org             Organization     @relation(fields: [orgId], references: [id], onDelete: Cascade)
 
-  org           Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  invitedByUser User?        @relation(fields: [invitedByUserId], references: [id], onDelete: SetNull)
-
-  @@id(name: "invitationId", [orgId, email])
+  @@id([orgId, email], name: "invitationId")
   @@index([orgId, email, status])
 }
 
@@ -100,46 +92,28 @@ model Organization {
   name                     String
   slug                     String                    @unique
   ownerUserId              String
-  ownerUser                User                      @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
-  plan                     String                    @default("business") // "business" | "enterprise"
+  plan                     String                    @default("business")
   entitlementsJSON         Json                      @default("{}")
+  createdAt                DateTime                  @default(now())
+  currentPeriodEnd         DateTime?
   stripeCustomerId         String?                   @unique
   stripeSubscriptionId     String?                   @unique
   stripeSubscriptionStatus StripeSubscriptionStatus?
-  currentPeriodEnd         DateTime?
-  createdAt                DateTime                  @default(now())
-  memberships              OrgMembership[]
-  ingestionJobs            IngestionJob[]
   departments              Department[]
+  ingestionJobs            IngestionJob[]
   invitations              Invitation[]
-}
-
-enum StripeSubscriptionStatus {
-  active
-  incomplete
-  incomplete_expired
-  past_due
-  canceled
-  unpaid
-  trialing
-  paused
-}
-
-enum OrgMembershipRole {
-  OWNER
-  ADMIN
-  MEMBER
+  memberships              OrgMembership[]
+  ownerUser                User                      @relation(fields: [ownerUserId], references: [id])
 }
 
 model OrgMembership {
   id        String            @id @default(uuid())
   orgId     String
   userId    String
-  role      OrgMembershipRole
   createdAt DateTime          @default(now())
-
-  user User         @relation(fields: [userId], references: [id])
-  org  Organization @relation(fields: [orgId], references: [id])
+  role      OrgMembershipRole
+  org       Organization      @relation(fields: [orgId], references: [id])
+  user      User              @relation(fields: [userId], references: [id])
 
   @@unique([orgId, userId])
   @@index([userId])
@@ -161,12 +135,12 @@ model Team {
   departmentId String
   name         String
   createdAt    DateTime       @default(now())
-  department   Department     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   categories   Category[]
-  process      Process[]
-  newsPost     NewsPost[]
   ideas        Idea[]
+  newsPost     NewsPost[]
+  process      Process[]
   ProcessChunk ProcessChunk[]
+  department   Department     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
   @@index([departmentId, name])
 }
@@ -182,43 +156,28 @@ model Category {
   @@index([teamId, sortOrder])
 }
 
-enum ProcessStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum ProcessStyle {
-  RAW
-  STEPS
-  FLOW
-  YESNO
-}
-
 model Process {
-  id                 String        @id @default(uuid())
+  id                 String           @id @default(uuid())
   teamId             String
   categoryId         String?
   slug               String
   title              String
   description        String?
+  pendingVersionId   String?          @unique
+  publishedVersionId String?          @unique
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
   style              ProcessStyle
   status             ProcessStatus
-  pendingVersionId   String?       @unique
-  publishedVersionId String?       @unique
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-
-  versions         ProcessVersion[]
-  pendingVersion   ProcessVersion?  @relation("PendingVersion", fields: [pendingVersionId], references: [id])
-  publishedVersion ProcessVersion?  @relation("PublishedVersion", fields: [publishedVersionId], references: [id])
-
-  team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  ingestionJobs IngestionJob[]
-  category      Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  favorites     Favorite[]
-  errorReports  ErrorReport[]
-  ProcessChunk  ProcessChunk[]
+  errorReports       ErrorReport[]
+  favorites          Favorite[]
+  ingestionJobs      IngestionJob[]
+  category           Category?        @relation(fields: [categoryId], references: [id])
+  pendingVersion     ProcessVersion?  @relation("PendingVersion", fields: [pendingVersionId], references: [id])
+  publishedVersion   ProcessVersion?  @relation("PublishedVersion", fields: [publishedVersionId], references: [id])
+  team               Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  ProcessChunk       ProcessChunk[]
+  versions           ProcessVersion[]
 
   @@unique([teamId, slug])
   @@index([teamId, categoryId])
@@ -231,31 +190,28 @@ model ProcessVersion {
   processId     String
   createdBy     String
   createdAt     DateTime       @default(now())
-  style         ProcessStyle
   contentJSON   Json
   contentText   String?
+  style         ProcessStyle
   ingestionJobs IngestionJob[]
-
-  process Process? @relation(fields: [processId], references: [id], onDelete: Cascade)
-
-  pendingOf   Process? @relation("PendingVersion")
-  publishedOf Process? @relation("PublishedVersion")
+  pendingOf     Process?       @relation("PendingVersion")
+  publishedOf   Process?       @relation("PublishedVersion")
+  process       Process        @relation(fields: [processId], references: [id], onDelete: Cascade)
 
   @@index([processId, createdAt])
 }
 
 model ProcessChunk {
-  id         String                       @id @default(uuid())
+  id         String                 @id @default(uuid())
   processId  String
   teamId     String
   title      String
   chunkIndex Int
-  chunkText  String                       @db.Text
-  embedding  Unsupported("vector(1536)")?
-  createdAt  DateTime                     @default(now())
-
-  process Process @relation(fields: [processId], references: [id], onDelete: Cascade)
-  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  chunkText  String
+  embedding  Unsupported("vector")?
+  createdAt  DateTime               @default(now())
+  process    Process                @relation(fields: [processId], references: [id], onDelete: Cascade)
+  team       Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([teamId, processId])
   @@index([processId, chunkIndex])
@@ -277,19 +233,12 @@ model NewsPost {
 model Favorite {
   userId    String
   processId String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   process   Process @relation(fields: [processId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, processId])
   @@index([userId])
   @@index([processId])
-}
-
-enum IdeaStatus {
-  NEW
-  IN_PROGRESS
-  COMPLETED
-  ARCHIVED
 }
 
 model Idea {
@@ -298,17 +247,11 @@ model Idea {
   createdBy String
   title     String
   body      String
-  status    IdeaStatus @default(NEW)
   createdAt DateTime   @default(now())
+  status    IdeaStatus @default(NEW)
   team      Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([teamId, status, createdAt])
-}
-
-enum ErrorReportStatus {
-  OPEN
-  RESOLVED
-  ARCHIVED
 }
 
 model ErrorReport {
@@ -316,35 +259,26 @@ model ErrorReport {
   processId String
   createdBy String
   body      String
-  status    ErrorReportStatus @default(OPEN)
   createdAt DateTime          @default(now())
+  status    ErrorReportStatus @default(OPEN)
   process   Process           @relation(fields: [processId], references: [id], onDelete: Cascade)
 
   @@index([processId, status, createdAt])
-}
-
-enum IngestionJobStatus {
-  QUEUED
-  PARSING
-  GENERATING
-  FAILED
-  READY
 }
 
 model IngestionJob {
   id              String             @id @default(uuid())
   orgId           String
   processId       String
-  sourceType      String // pdf | docx | text
+  sourceType      String
   fileKey         String?
-  status          IngestionJobStatus
   error           String?
   outputVersionId String?
-  outputVersion   ProcessVersion?    @relation(fields: [outputVersionId], references: [id], onDelete: SetNull)
   createdAt       DateTime           @default(now())
-
-  org     Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  process Process      @relation(fields: [processId], references: [id], onDelete: Cascade)
+  status          IngestionJobStatus
+  org             Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  outputVersion   ProcessVersion?    @relation(fields: [outputVersionId], references: [id])
+  process         Process            @relation(fields: [processId], references: [id], onDelete: Cascade)
 
   @@index([orgId, status, createdAt])
   @@index([processId, status, createdAt])
@@ -360,4 +294,62 @@ model AuditLog {
   at         DateTime @default(now())
   beforeJSON Json?
   afterJSON  Json?
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum StripeSubscriptionStatus {
+  active
+  incomplete
+  incomplete_expired
+  past_due
+  canceled
+  unpaid
+  trialing
+  paused
+}
+
+enum OrgMembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ProcessStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProcessStyle {
+  RAW
+  STEPS
+  FLOW
+  YESNO
+}
+
+enum IdeaStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum ErrorReportStatus {
+  OPEN
+  RESOLVED
+  ARCHIVED
+}
+
+enum IngestionJobStatus {
+  QUEUED
+  PARSING
+  GENERATING
+  FAILED
+  READY
 }

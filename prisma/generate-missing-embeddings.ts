@@ -2,7 +2,7 @@ import { PrismaClient, ProcessStatus } from "@prisma/client";
 import { generateEmbedding } from "../src/lib/ai/embeddings";
 import { chunkProcessContent } from "../src/features/ai/utils/chunk-content";
 import { generatePlainTextFromTiptap } from "../src/features/processes/utils/generate-plain-text-from-tiptap";
-import { JsonObject } from "@prisma/client/runtime/library";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 const prisma = new PrismaClient();
 

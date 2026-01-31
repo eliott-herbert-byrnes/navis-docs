@@ -6,11 +6,11 @@ import { PinIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react";
 import { NewsDeleteButton } from "./news-delete-button";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useProcessRouteContext } from "@/contexts/process-route-context";
+import { JsonObject } from "@prisma/client/runtime/client";
 
 type NewsPostListProps = {
   userMap: Record<string, { id: string; name: string | null } | null>;
