@@ -50,6 +50,48 @@ export const usersRouter = router({
       };
     }),
 
+  // Query: Get All Org Users for export
+  getOrgUsersForExport: adminProcedure
+    .use(rateLimitMiddleware("user-get-all-for-export"))
+    .input(z.void().optional())
+    .query(async ({ ctx }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found",
+        });
+      }
+
+      const users = await ctx.db.orgMembership.findMany({
+        where: {
+          orgId: ctx.org.id,
+        },
+        select: {
+          user: {
+            select: {
+              name: true,
+            }
+          },
+          id: true,
+          orgId: true,
+          userId: true,
+          createdAt: true,
+          role: true,
+        },
+        orderBy: [{
+          user: {
+            name: "asc",
+          },
+        }, { role: "asc" }
+        ],
+        take: 5000,
+      })
+
+      return users ?? [];
+
+    }),
+
+
   // Query: Get org members
   getOrgMembers: adminProcedure
     .use(rateLimitMiddleware("user-get-members"))
@@ -72,23 +114,23 @@ export const usersRouter = router({
         orgId: ctx.org.id,
         ...(input.search
           ? {
-              user: {
-                OR: [
-                  {
-                    name: {
-                      contains: input.search,
-                      mode: "insensitive" as const,
-                    },
+            user: {
+              OR: [
+                {
+                  name: {
+                    contains: input.search,
+                    mode: "insensitive" as const,
                   },
-                  {
-                    email: {
-                      contains: input.search,
-                      mode: "insensitive" as const,
-                    },
+                },
+                {
+                  email: {
+                    contains: input.search,
+                    mode: "insensitive" as const,
                   },
-                ],
-              },
-            }
+                },
+              ],
+            },
+          }
           : {}),
       };
 

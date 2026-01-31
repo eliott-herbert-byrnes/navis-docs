@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
 import { ExportProcedureOrgDataButton } from "./export-procedure-org-data-button";
+import { ExportUserOrgDataButton } from "./export-user-org-data-button";
 
 type OrganizationOverviewProps = {
   org: Organization;
@@ -63,9 +64,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
                 </CardDescription>
               </div>
               <ExportProcedureOrgDataButton />
-              <Button className="max-w-[150px]" disabled>
-                User Data
-              </Button>
+              <ExportUserOrgDataButton />
             </div>
             <Separator />
             <div className="grid gap-3">

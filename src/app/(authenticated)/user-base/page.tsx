@@ -2,6 +2,7 @@
 import { homePath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
+import { ExportUserOrgDataButton } from "@/features/settings/components/export-user-org-data-button";
 import { UserList } from "@/features/user-base/components/user-list";
 import { trpc } from "@/trpc/client";
 import { redirect, useSearchParams } from "next/navigation";
@@ -28,6 +29,7 @@ export default function UserBasePage() {
       <Heading
         title="Userbase"
         description="View and manage users for your organization"
+        actions={<ExportUserOrgDataButton />}
       />
       {isLoading ? <ListSkeleton /> : <UserList data={data?.members ?? []} />}
     </>
