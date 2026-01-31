@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { prisma } from "../prisma";
 import { getStripe } from "./index";
 

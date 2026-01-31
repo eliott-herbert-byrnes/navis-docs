@@ -44,7 +44,6 @@ type AuditLogCardProps = {
 export function AuditLogCard({ log, userName }: AuditLogCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Format action name: "PROCEDURE_CREATED" -> "Procedure Created"
   const formatAction = (action: string) => {
     return action
       .split("_")
@@ -155,7 +154,7 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
-                  onClick={(e) => e.stopPropagation()} // Prevent collapsible toggle
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <MoreHorizontal className="h-4 w-4" />
                   <span className="sr-only">Export options</span>
