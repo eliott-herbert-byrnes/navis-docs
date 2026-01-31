@@ -9,7 +9,7 @@ export function useDeleteUser() {
   const mutation = trpc.users.deleteUser.useMutation({
     onSuccess: () => {
       utils.users.getOrgMembers.invalidate();
-      toast.success("User deleted");
+      toast.success("User removed from the organization sucsessfully");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to delete user");
