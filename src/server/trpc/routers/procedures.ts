@@ -35,7 +35,59 @@ const updateProcedureContentSchema = z.object({
 });
 
 export const procedureRouter = router({
-  // Query: GET-list uncategorized procedurees
+  // Query: GET-all procedures for export
+  listForExport: adminProcedure
+    .input(z.void().optional())
+    .query(async ({ ctx }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found",
+        });
+      }
+
+      const procedures = await ctx.db.procedure.findMany({
+        where: {
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          description: true,
+          status: true,
+          createdAt: true,
+          pendingVersion: true,
+          publishedVersion: true,
+          category: {
+            select: { name: true },
+          },
+          team: {
+            select: {
+              name: true,
+              department: {
+                select: { name: true },
+              },
+            },
+          },
+        },
+
+        orderBy: [
+          { team: { department: { name: "asc" } } },
+          { team: { name: "asc" } },
+          { title: "asc" },
+        ],
+        take: 5000,
+      });
+
+      return { procedures };
+    }),
+
+  // Query: GET-list uncategorized procedures
   list: orgProcedure
     .input(
       z.object({

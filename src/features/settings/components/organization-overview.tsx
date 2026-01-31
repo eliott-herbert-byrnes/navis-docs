@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
+import { ExportProcedureOrgDataButton } from "./export-procedure-org-data-button";
 
 type OrganizationOverviewProps = {
   org: Organization;
@@ -38,16 +39,11 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
         <Card className="animate-fade-from-top">
           <CardHeader>
             <CardTitle>Organization Settings</CardTitle>
-            <CardDescription>
-              Manage the organization settings
-              <p className="text-sm text-red-500 mt-2">
-                Export / Delete Organization disabled for MVP
-              </p>
-            </CardDescription>
+            <CardDescription>Manage the organization settings</CardDescription>
           </CardHeader>
-          <Separator />
 
-          <CardContent className="flex flex-col gap-4">
+          <CardContent className="flex flex-col gap-6">
+            <Separator />
             <div className="grid gap-3">
               <Label>Rename Organization</Label>
               <Input
@@ -66,9 +62,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
                   Export the organization and user data
                 </CardDescription>
               </div>
-              <Button className="max-w-[150px]" disabled>
-                Organization Data
-              </Button>
+              <ExportProcedureOrgDataButton />
               <Button className="max-w-[150px]" disabled>
                 User Data
               </Button>
