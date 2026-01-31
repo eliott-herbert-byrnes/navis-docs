@@ -36,6 +36,12 @@ async function main() {
     create: { email: "demo@navisdocs.com", name: "Demo User" },
   });
 
+  const testUser = await prisma.user.upsert({
+    where: { email: "test@navisdocs.com" },
+    update: {},
+    create: { email: "test@navisdocs.com", name: "Test User" },
+  });
+
   const org = await prisma.organization.upsert({
     where: { slug: "demo-organization" },
     update: {},
@@ -56,6 +62,16 @@ async function main() {
     where: { orgId_userId: { orgId: org.id, userId: user.id } },
     update: { role: OrgMembershipRole.OWNER },
     create: { orgId: org.id, userId: user.id, role: OrgMembershipRole.OWNER },
+  });
+
+  await prisma.orgMembership.upsert({
+    where: { orgId_userId: { orgId: org.id, userId: testUser.id } },
+    update: { role: OrgMembershipRole.MEMBER },
+    create: {
+      orgId: org.id,
+      userId: testUser.id,
+      role: OrgMembershipRole.MEMBER,
+    },
   });
 
   const dept1 = await prisma.department.upsert({
