@@ -11,15 +11,15 @@ export type AuditAction =
   | "TEAM_CREATED"
   | "TEAM_RENAMED"
   | "TEAM_DELETED"
-  //  Process actions
-  | "PROCESS_CREATED"
-  | "PROCESS_RENAMED"
-  | "PROCESS_DELETED"
-  | "PROCESS_PUBLISHED"
-  | "PROCESS_UNPUBLISHED"
-  | "PROCESS_ARCHIVED"
-  | "PROCESS_UNARCHIVED"
-  | "PROCESS_EDITED"
+  //  Procedure actions
+  | "PROCEDURE_CREATED"
+  | "PROCEDURE_RENAMED"
+  | "PROCEDURE_DELETED"
+  | "PROCEDURE_PUBLISHED"
+  | "PROCEDURE_UNPUBLISHED"
+  | "PROCEDURE_ARCHIVED"
+  | "PROCEDURE_UNARCHIVED"
+  | "PROCEDURE_EDITED"
   // Category actions
   | "CATEGORY_CREATED"
   | "CATEGORY_RENAMED"
@@ -44,7 +44,7 @@ export type AuditAction =
 export type AuditEntityType =
   | "DEPARTMENT"
   | "TEAM"
-  | "PROCESS"
+  | "PROCEDURE"
   | "CATEGORY"
   | "USER"
   | "USER_ROLE"

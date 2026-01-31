@@ -3,11 +3,11 @@
 
   - The `status` column on the `ErrorReport` table would be dropped and recreated. This will lead to data loss if there is data in the column.
   - The `status` column on the `Idea` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - A unique constraint covering the columns `[teamId,slug]` on the table `Process` will be added. If there are existing duplicate values, this will fail.
+  - A unique constraint covering the columns `[teamId,slug]` on the table `Procedure` will be added. If there are existing duplicate values, this will fail.
   - Changed the type of `status` on the `IngestionJob` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
   - Changed the type of `role` on the `OrgMembership` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
-  - Changed the type of `style` on the `Process` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
-  - Changed the type of `status` on the `Process` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
+  - Changed the type of `style` on the `Procedure` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
+  - Changed the type of `status` on the `Procedure` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
   - Changed the type of `style` on the `ProcessVersion` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
 
 */
@@ -39,7 +39,7 @@ ALTER TABLE "public"."Category" DROP CONSTRAINT "Category_teamId_fkey";
 ALTER TABLE "public"."NewsPost" DROP CONSTRAINT "NewsPost_teamId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."Process" DROP CONSTRAINT "Process_teamId_fkey";
+ALTER TABLE "public"."Procedure" DROP CONSTRAINT "Process_teamId_fkey";
 
 -- DropForeignKey
 ALTER TABLE "public"."ProcessVersion" DROP CONSTRAINT "ProcessVersion_processId_fkey";
@@ -64,7 +64,7 @@ ALTER TABLE "public"."OrgMembership" DROP COLUMN "role",
 ADD COLUMN     "role" "public"."OrgMembershipRole" NOT NULL;
 
 -- AlterTable
-ALTER TABLE "public"."Process" DROP COLUMN "style",
+ALTER TABLE "public"."Procedure" DROP COLUMN "style",
 ADD COLUMN     "style" "public"."ProcessStyle" NOT NULL,
 DROP COLUMN "status",
 ADD COLUMN     "status" "public"."ProcessStatus" NOT NULL;
@@ -171,16 +171,16 @@ CREATE INDEX "NewsPost_teamId_createdAt_idx" ON "public"."NewsPost"("teamId", "c
 CREATE INDEX "OrgMembership_userId_idx" ON "public"."OrgMembership"("userId");
 
 -- CreateIndex
-CREATE INDEX "Process_teamId_categoryId_idx" ON "public"."Process"("teamId", "categoryId");
+CREATE INDEX "Process_teamId_categoryId_idx" ON "public"."Procedure"("teamId", "categoryId");
 
 -- CreateIndex
-CREATE INDEX "Process_teamId_title_idx" ON "public"."Process"("teamId", "title");
+CREATE INDEX "Process_teamId_title_idx" ON "public"."Procedure"("teamId", "title");
 
 -- CreateIndex
-CREATE INDEX "Process_teamId_slug_idx" ON "public"."Process"("teamId", "slug");
+CREATE INDEX "Process_teamId_slug_idx" ON "public"."Procedure"("teamId", "slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Process_teamId_slug_key" ON "public"."Process"("teamId", "slug");
+CREATE UNIQUE INDEX "Process_teamId_slug_key" ON "public"."Procedure"("teamId", "slug");
 
 -- CreateIndex
 CREATE INDEX "Team_departmentId_name_idx" ON "public"."Team"("departmentId", "name");
@@ -204,7 +204,7 @@ ALTER TABLE "public"."Team" ADD CONSTRAINT "Team_departmentId_fkey" FOREIGN KEY 
 ALTER TABLE "public"."Category" ADD CONSTRAINT "Category_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Process" ADD CONSTRAINT "Process_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."Procedure" ADD CONSTRAINT "Process_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."NewsPost" ADD CONSTRAINT "NewsPost_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -216,4 +216,4 @@ ALTER TABLE "public"."IngestionJob" ADD CONSTRAINT "IngestionJob_outputVersionId
 ALTER TABLE "public"."IngestionJob" ADD CONSTRAINT "IngestionJob_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "public"."Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."IngestionJob" ADD CONSTRAINT "IngestionJob_processId_fkey" FOREIGN KEY ("processId") REFERENCES "public"."Process"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."IngestionJob" ADD CONSTRAINT "IngestionJob_processId_fkey" FOREIGN KEY ("processId") REFERENCES "public"."Procedure"("id") ON DELETE CASCADE ON UPDATE CASCADE;

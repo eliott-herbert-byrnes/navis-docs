@@ -5,7 +5,7 @@ import { FileText } from "lucide-react";
 import Link from "next/link";
 
 interface Source {
-  processId: string;
+  procedureId: string;
   title: string;
   url: string;
 }
@@ -20,12 +20,12 @@ export function ChatSources({ sources }: ChatSourcesProps) {
   return (
     <div className="border-t p-4 bg-muted/30">
       <p className="text-xs font-medium text-muted-foreground mb-2">
-        Referenced Processes:
+        Referenced Procedures:
       </p>
       <div className="flex flex-col gap-1">
         {sources.map((source) => (
           <Button
-            key={source.processId}
+            key={source.procedureId}
             variant="ghost"
             size="sm"
             className="justify-start h-auto py-2 px-2"

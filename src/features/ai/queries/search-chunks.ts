@@ -5,14 +5,14 @@ import { prisma } from "@/lib/prisma";
 
 export interface ChunkResult {
   id: string;
-  processId: string;
+  procedureId: string;
   teamId: string;
   title: string;
   chunkText: string;
   similarity: number;
 }
 
-export async function searchProcessChunks(
+export async function searchProcedureChunks(
   query: string,
   teamId: string,
   limit: number = 5,
@@ -25,14 +25,14 @@ export async function searchProcessChunks(
   const results = await prisma.$queryRaw<
     Array<{
       id: string;
-      processId: string;
+      procedureId: string;
       teamId: string;
       title: string;
       chunkText: string;
       similarity: number;
     }>
   >`
-        SELECT * FROM match_process_chunks(
+        SELECT * FROM match_procedure_chunks(
             ${queryEmbeddingString}::vector(1536),
             ${threshold}::float,
             ${limit}::int,

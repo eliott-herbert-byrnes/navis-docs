@@ -8,4 +8,4 @@ CREATE INDEX "Favorite_processId_idx" ON "public"."Favorite"("processId");
 ALTER TABLE "public"."Favorite" ADD CONSTRAINT "Favorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Favorite" ADD CONSTRAINT "Favorite_processId_fkey" FOREIGN KEY ("processId") REFERENCES "public"."Process"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."Favorite" ADD CONSTRAINT "Favorite_processId_fkey" FOREIGN KEY ("processId") REFERENCES "public"."Procedure"("id") ON DELETE CASCADE ON UPDATE CASCADE;

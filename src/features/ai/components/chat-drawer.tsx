@@ -14,13 +14,13 @@ import { ChatSources } from "./chat-sources";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { useProcessRouteContext } from "@/contexts/process-route-context";
+import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { usePersistedChatState } from "../hooks/use-persisted-chat-state";
 import { ChatDeleteButton } from "./chat-delete-button";
 
 export function AIChatDrawer() {
   const [isOpen, setIsOpen] = useState(false);
-  const { departmentId, teamId } = useProcessRouteContext();
+  const { departmentId, teamId } = useProcedureRouteContext();
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
     teamId,
@@ -117,7 +117,8 @@ export function AIChatDrawer() {
                 <MessageCircle className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="font-medium mb-2">Ask me anything</h3>
                 <p className="text-sm text-muted-foreground">
-                  I can help you find processes and answer questions about them.
+                  I can help you find procedures and answer questions about
+                  them.
                 </p>
                 <Separator className="my-4" />
                 <p className="text-sm text-muted-foreground">
@@ -155,7 +156,7 @@ export function AIChatDrawer() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about a process..."
+                placeholder="Ask about a procedure..."
                 disabled={isLoading}
                 className="flex-1"
               />

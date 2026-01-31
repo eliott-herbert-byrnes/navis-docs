@@ -22,7 +22,7 @@ CREATE INDEX "ProcessChunk_teamId_processId_idx" ON "public"."ProcessChunk"("tea
 CREATE INDEX "ProcessChunk_processId_chunkIndex_idx" ON "public"."ProcessChunk"("processId", "chunkIndex");
 
 -- AddForeignKey
-ALTER TABLE "public"."ProcessChunk" ADD CONSTRAINT "ProcessChunk_processId_fkey" FOREIGN KEY ("processId") REFERENCES "public"."Process"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."ProcessChunk" ADD CONSTRAINT "ProcessChunk_processId_fkey" FOREIGN KEY ("processId") REFERENCES "public"."Procedure"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."ProcessChunk" ADD CONSTRAINT "ProcessChunk_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "public"."Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;

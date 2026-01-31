@@ -9,7 +9,7 @@ import { NewsDeleteButton } from "./news-delete-button";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthContext } from "@/contexts/auth-context";
-import { useProcessRouteContext } from "@/contexts/process-route-context";
+import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { JsonObject } from "@prisma/client/runtime/client";
 
 type NewsPostListProps = {
@@ -63,7 +63,7 @@ function NewsListSkeleton() {
 
 export function NewsPostList({ userMap }: NewsPostListProps) {
   const { isAdmin } = useAuthContext();
-  const { departmentId, teamId } = useProcessRouteContext();
+  const { departmentId, teamId } = useProcedureRouteContext();
   const { data, isLoading, error } = trpc.news.getNews.useQuery({
     departmentId,
     teamId,

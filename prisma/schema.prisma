@@ -138,8 +138,8 @@ model Team {
   categories   Category[]
   ideas        Idea[]
   newsPost     NewsPost[]
-  process      Process[]
-  ProcessChunk ProcessChunk[]
+  procedure    Procedure[]
+  procedureChunk ProcedureChunk[]
   department   Department     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
   @@index([departmentId, name])
@@ -151,12 +151,12 @@ model Category {
   name      String
   sortOrder Int       @default(0)
   team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  processes Process[]
+  procedures Procedure[]
 
   @@index([teamId, sortOrder])
 }
 
-model Process {
+model Procedure {
   id                 String           @id @default(uuid())
   teamId             String
   categoryId         String?
@@ -167,17 +167,17 @@ model Process {
   publishedVersionId String?          @unique
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
-  style              ProcessStyle
-  status             ProcessStatus
+  style              ProcedureStyle
+  status             ProcedureStatus
   errorReports       ErrorReport[]
   favorites          Favorite[]
   ingestionJobs      IngestionJob[]
   category           Category?        @relation(fields: [categoryId], references: [id])
-  pendingVersion     ProcessVersion?  @relation("PendingVersion", fields: [pendingVersionId], references: [id])
-  publishedVersion   ProcessVersion?  @relation("PublishedVersion", fields: [publishedVersionId], references: [id])
+  pendingVersion     ProcedureVersion?  @relation("PendingVersion", fields: [pendingVersionId], references: [id])
+  publishedVersion   ProcedureVersion?  @relation("PublishedVersion", fields: [publishedVersionId], references: [id])
   team               Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  ProcessChunk       ProcessChunk[]
-  versions           ProcessVersion[]
+  ProcedureChunk     ProcedureChunk[]
+  versions           ProcedureVersion[]
 
   @@unique([teamId, slug])
   @@index([teamId, categoryId])
@@ -185,36 +185,36 @@ model Process {
   @@index([teamId, slug])
 }
 
-model ProcessVersion {
+model ProcedureVersion{
   id            String         @id @default(uuid())
-  processId     String
+  procedureId   String
   createdBy     String
   createdAt     DateTime       @default(now())
   contentJSON   Json
   contentText   String?
-  style         ProcessStyle
+  style         ProcedureStyle
   ingestionJobs IngestionJob[]
-  pendingOf     Process?       @relation("PendingVersion")
-  publishedOf   Process?       @relation("PublishedVersion")
-  process       Process        @relation(fields: [processId], references: [id], onDelete: Cascade)
+  pendingOf     Procedure?       @relation("PendingVersion")
+  publishedOf   Procedure?       @relation("PublishedVersion")
+  procedure     Procedure        @relation(fields: [procedureId], references: [id], onDelete: Cascade)
 
-  @@index([processId, createdAt])
+  @@index([procedureId, createdAt])
 }
 
-model ProcessChunk {
+model ProcedureChunk {
   id         String                 @id @default(uuid())
-  processId  String
+  procedureId  String
   teamId     String
   title      String
   chunkIndex Int
   chunkText  String
   embedding  Unsupported("vector")?
   createdAt  DateTime               @default(now())
-  process    Process                @relation(fields: [processId], references: [id], onDelete: Cascade)
+  procedure  Procedure              @relation(fields: [procedureId], references: [id], onDelete: Cascade)
   team       Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
-  @@index([teamId, processId])
-  @@index([processId, chunkIndex])
+  @@index([teamId, procedureId])
+  @@index([procedureId, chunkIndex])
 }
 
 model NewsPost {
@@ -231,14 +231,14 @@ model NewsPost {
 }
 
 model Favorite {
-  userId    String
-  processId String
-  process   Process @relation(fields: [processId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  procedureId String
+  procedure   Procedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([userId, processId])
+  @@id([userId, procedureId])
   @@index([userId])
-  @@index([processId])
+  @@index([procedureId])
 }
 
 model Idea {
@@ -255,21 +255,21 @@ model Idea {
 }
 
 model ErrorReport {
-  id        String            @id @default(uuid())
-  processId String
-  createdBy String
-  body      String
-  createdAt DateTime          @default(now())
-  status    ErrorReportStatus @default(OPEN)
-  process   Process           @relation(fields: [processId], references: [id], onDelete: Cascade)
+  id          String            @id @default(uuid())
+  procedureId String
+  createdBy   String
+  body        String
+  createdAt   DateTime          @default(now())
+  status      ErrorReportStatus @default(OPEN)
+  procedure   Procedure           @relation(fields: [procedureId], references: [id], onDelete: Cascade)
 
-  @@index([processId, status, createdAt])
+  @@index([procedureId, status, createdAt])
 }
 
 model IngestionJob {
   id              String             @id @default(uuid())
   orgId           String
-  processId       String
+  procedureId     String
   sourceType      String
   fileKey         String?
   error           String?
@@ -277,11 +277,11 @@ model IngestionJob {
   createdAt       DateTime           @default(now())
   status          IngestionJobStatus
   org             Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  outputVersion   ProcessVersion?    @relation(fields: [outputVersionId], references: [id])
-  process         Process            @relation(fields: [processId], references: [id], onDelete: Cascade)
+  outputVersion   ProcedureVersion?    @relation(fields: [outputVersionId], references: [id])
+  procedure       Procedure            @relation(fields: [procedureId], references: [id], onDelete: Cascade)
 
   @@index([orgId, status, createdAt])
-  @@index([processId, status, createdAt])
+  @@index([procedureId, status, createdAt])
 }
 
 model AuditLog {
@@ -320,13 +320,13 @@ enum OrgMembershipRole {
   MEMBER
 }
 
-enum ProcessStatus {
+enum ProcedureStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
 }
 
-enum ProcessStyle {
+enum ProcedureStyle {
   RAW
   STEPS
   FLOW

@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
-const processIdSchema = z.uuid();
+const procedureIdSchema = z.uuid();
 
 export const favoritesRouter = router({
   // Query: GET favorites for a team
@@ -24,13 +24,13 @@ export const favoritesRouter = router({
       const favorites = await ctx.db.favorite.findMany({
         where: {
           userId: ctx.user.id,
-          process: {
+          procedure: {
             teamId: input.teamId,
             status: "PUBLISHED",
           },
         },
         include: {
-          process: {
+          procedure: {
             include: {
               category: {
                 select: {
@@ -46,13 +46,13 @@ export const favoritesRouter = router({
           },
         },
         orderBy: {
-          process: {
+          procedure: {
             title: "asc",
           },
         },
       });
 
-      return { data: favorites.map((fav) => fav.process) };
+      return { data: favorites.map((fav) => fav.procedure) };
     }),
 
   // Mutation: Toggle favorite
@@ -60,7 +60,7 @@ export const favoritesRouter = router({
     .use(rateLimitMiddleware("favorite-toggle"))
     .input(
       z.object({
-        processId: processIdSchema,
+        procedureId: procedureIdSchema,
         isFavorited: z.boolean(),
       }),
     )
@@ -72,9 +72,9 @@ export const favoritesRouter = router({
         });
       }
 
-      const process = await ctx.db.process.findFirst({
+      const procedure = await ctx.db.procedure.findFirst({
         where: {
-          id: input.processId,
+          id: input.procedureId,
           team: {
             department: {
               orgId: ctx.org!.id,
@@ -83,10 +83,10 @@ export const favoritesRouter = router({
         },
       });
 
-      if (!process) {
+      if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Process not found",
+          message: "Procedure not found",
         });
       }
 
@@ -95,21 +95,21 @@ export const favoritesRouter = router({
         await ctx.db.favorite.deleteMany({
           where: {
             userId: ctx.user.id,
-            processId: input.processId,
+            procedureId: input.procedureId,
           },
         });
       } else {
         // Add favorite
         await ctx.db.favorite.upsert({
           where: {
-            userId_processId: {
+            userId_procedureId: {
               userId: ctx?.user?.id ?? "",
-              processId: input.processId,
+              procedureId: input.procedureId,
             },
           },
           create: {
             userId: ctx?.user?.id ?? "",
-            processId: input.processId,
+            procedureId: input.procedureId,
           },
           update: {},
         });
@@ -117,7 +117,7 @@ export const favoritesRouter = router({
 
       return {
         data: {
-          processId: input.processId,
+          procedureId: input.procedureId,
           isFavorited: !input.isFavorited,
         },
         message: input.isFavorited

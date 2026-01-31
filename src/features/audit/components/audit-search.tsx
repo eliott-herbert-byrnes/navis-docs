@@ -18,7 +18,7 @@ import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 const ENTITY_TYPES: AuditEntityType[] = [
   "DEPARTMENT",
   "TEAM",
-  "PROCESS",
+  "PROCEDURE",
   "CATEGORY",
   "USER",
 ];

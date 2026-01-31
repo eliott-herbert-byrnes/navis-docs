@@ -30,7 +30,7 @@ export const departmentRouter = router({
               name: true,
               _count: {
                 select: {
-                  process: true,
+                  procedure: true,
                 },
               },
             },

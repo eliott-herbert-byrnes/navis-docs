@@ -27,9 +27,9 @@ export const getStripeProvisionByOrg = async (
   }
 
   const defaults = {
-    business: { processes: 100, departments: 3, teamsPerDepartment: 1 },
+    business: { procedures: 100, departments: 3, teamsPerDepartment: 1 },
     enterprise: {
-      processes: 1000,
+      procedures: 1000,
       departments: 1000,
       teamsPerDepartment: 1000,
     },

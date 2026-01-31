@@ -1,7 +1,7 @@
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
-import { ProcessErrorList } from "@/features/processes/components/error/components/process-error-list";
+import { ProcedureErrorList } from "@/features/procedures/components/error/components/procedure-error-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { redirect } from "next/navigation";
@@ -30,10 +30,10 @@ const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
     <>
       <Heading
         title="Error Reports"
-        description="View and manage error reports for processes"
+        description="View and manage error reports for procedures"
       />
       <Suspense fallback={<ListSkeleton />} key={search}>
-        <ProcessErrorList data={errors} />
+        <ProcedureErrorList data={errors} />
       </Suspense>
     </>
   );

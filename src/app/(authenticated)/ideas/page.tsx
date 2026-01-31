@@ -1,7 +1,7 @@
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
-import { IdeaList } from "@/features/processes/components/Idea/components/idea-list";
+import { IdeaList } from "@/features/procedures/components/Idea/components/idea-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { redirect } from "next/navigation";

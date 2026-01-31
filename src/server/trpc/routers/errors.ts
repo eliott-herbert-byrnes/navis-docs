@@ -10,7 +10,7 @@ import { ErrorReportStatus } from "@prisma/client";
 
 const errorIdSchema = z.uuid();
 const createErrorReportSchema = z.object({
-  processId: z.string().min(1, { message: "Is Required" }),
+  procedureId: z.string().min(1, { message: "Is Required" }),
   errorReport: z.string().min(1, { message: "Is Required" }).max(1000),
 });
 
@@ -32,7 +32,7 @@ export const errorsRouter = router({
 
       const errors = await ctx.db.errorReport.findMany({
         where: {
-          process: {
+          procedure: {
             team: {
               department: {
                 orgId: ctx.org.id,
@@ -49,7 +49,7 @@ export const errorsRouter = router({
           },
         },
         include: {
-          process: {
+          procedure: {
             include: {
               category: true,
               team: {
@@ -69,14 +69,14 @@ export const errorsRouter = router({
         data: errors.map((error) => ({
           createdBy: error.createdBy,
           id: error.id,
-          processName: error.process.title,
-          category: error.process.category?.name || "Uncategorized",
+          procedureName: error.procedure.title,
+          category: error.procedure.category?.name || "Uncategorized",
           status: error.status,
           body: error.body,
           createdAt: error.createdAt,
-          processId: error.processId,
-          teamId: error.process.teamId,
-          departmentId: error.process.team.departmentId,
+          procedureId: error.procedureId,
+          teamId: error.procedure.teamId,
+          departmentId: error.procedure.team.departmentId,
         })),
       };
     }),
@@ -93,11 +93,11 @@ export const errorsRouter = router({
         });
       }
 
-      const { processId, errorReport: errorBody } = input;
+      const { procedureId, errorReport: errorBody } = input;
 
       const errorReport = await ctx.db.errorReport.create({
         data: {
-          processId,
+          procedureId,
           createdBy: ctx?.user?.id ?? "",
           body: errorBody,
           status: "OPEN",
@@ -129,7 +129,7 @@ export const errorsRouter = router({
       const error = await ctx.db.errorReport.findUnique({
         where: { id: input.errorId },
         include: {
-          process: {
+          procedure: {
             include: {
               team: {
                 include: {
@@ -151,7 +151,7 @@ export const errorsRouter = router({
       }
 
       // Verify belongs to org
-      if (error.process.team.department.orgId !== ctx.org!.id) {
+      if (error.procedure.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Error report not found",
@@ -195,7 +195,7 @@ export const errorsRouter = router({
       const error = await ctx.db.errorReport.findUnique({
         where: { id: input.errorId },
         include: {
-          process: {
+          procedure: {
             include: {
               team: {
                 include: {
@@ -217,7 +217,7 @@ export const errorsRouter = router({
       }
 
       // Verify belongs to org
-      if (error.process.team.department.orgId !== ctx.org!.id) {
+      if (error.procedure.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Error report not found",

@@ -1,6 +1,6 @@
 # Navis Docs
 
-**Enterprise Process Documentation & Knowledge Management Platform**
+**Enterprise Procedure Documentation & Knowledge Management Platform**
 
 A full-stack SaaS application that centralises organisational process documentation with AI-powered search, real-time collaboration, and comprehensive audit trails.
 

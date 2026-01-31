@@ -1,26 +1,26 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { chunkProcessContent } from "../utils/chunk-content";
+import { chunkProcedureContent } from "../utils/chunk-content";
 import { generateEmbedding } from "@/lib/ai/embeddings";
 
-export async function generateProcessEmbeddings(processId: string) {
-  const process = await prisma.process.findUnique({
-    where: { id: processId },
+export async function generateProcedureEmbeddings(procedureId: string) {
+  const procedure = await prisma.procedure.findUnique({
+    where: { id: procedureId },
     include: {
       publishedVersion: true,
     },
   });
 
-  if (!process?.publishedVersion?.contentText) {
+  if (!procedure?.publishedVersion?.contentText) {
     throw new Error("No published content to embed");
   }
 
-  await prisma.processChunk.deleteMany({
-    where: { processId },
+  await prisma.procedureChunk.deleteMany({
+    where: { procedureId },
   });
 
-  const chunks = chunkProcessContent(process.publishedVersion.contentText);
+  const chunks = chunkProcedureContent(procedure.publishedVersion.contentText);
 
   for (const chunk of chunks) {
     try {
@@ -29,13 +29,13 @@ export async function generateProcessEmbeddings(processId: string) {
       const embeddingString = `[${embedding.join(",")}]`;
 
       await prisma.$executeRaw`
-    INSERT INTO "ProcessChunk" (
-        id, "processId", "teamId", title, "chunkIndex", "chunkText", embedding, "createdAt"
+    INSERT INTO "procedureChunk" (
+        id, "procedureId", "teamId", title, "chunkIndex", "chunkText", embedding, "createdAt"
     ) VALUES (
         gen_random_uuid()::text,
-        ${processId},
-        ${process.teamId},
-        ${process.title},
+        ${procedureId},
+        ${procedure.teamId},
+        ${procedure.title},
         ${chunk.chunkIndex},
         ${chunk.chunkText},
         ${embeddingString}::vector,
@@ -51,5 +51,5 @@ export async function generateProcessEmbeddings(processId: string) {
     }
   }
 
-  console.log(`Generated ${chunks.length} chunks for process ${processId}`);
+  console.log(`Generated ${chunks.length} chunks for procedure ${procedureId}`);
 }

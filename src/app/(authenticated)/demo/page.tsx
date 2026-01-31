@@ -41,27 +41,29 @@ const DemoPage = async () => {
             <CardHeader>
               <CardTitle>What is Navis Docs?</CardTitle>
               <CardDescription>
-                Your centralised process documentation and knowledge management
-                platform
+                Your centralised procedure documentation and knowledge
+                management platform
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm w-8/12">
-                Navis Docs is an enterprise process documentation system
+                Navis Docs is an enterprise procedure documentation system
                 designed to help teams maintain, organise, and share standard
                 operating procedures (SOPs). With built-in AI assistance,
                 version control, and comprehensive audit trails, Navis Docs
                 ensures your team always has access to current, accurate
-                processes.
+                procedures.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                 <div className="flex gap-3">
                   <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-sm">Process Management</h4>
+                    <h4 className="font-medium text-sm">
+                      Procedure Management
+                    </h4>
                     <p className="text-xs text-muted-foreground">
-                      Create, edit, and publish processes with version control
+                      Create, edit, and publish procedures with version control
                     </p>
                   </div>
                 </div>
@@ -71,7 +73,7 @@ const DemoPage = async () => {
                   <div>
                     <h4 className="font-medium text-sm">AI-Powered Search</h4>
                     <p className="text-xs text-muted-foreground">
-                      Ask the AI assistant questions about your processes
+                      Ask the AI assistant questions about your procedures
                     </p>
                   </div>
                 </div>
@@ -81,7 +83,7 @@ const DemoPage = async () => {
                   <div>
                     <h4 className="font-medium text-sm">Error Tracking</h4>
                     <p className="text-xs text-muted-foreground">
-                      Report and manage process documentation errors
+                      Report and manage procedure documentation errors
                     </p>
                   </div>
                 </div>
@@ -109,7 +111,7 @@ const DemoPage = async () => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">🎯 Standardisation</h4>
                 <p className="text-sm text-muted-foreground">
-                  Ensure consistent processes across departments and teams by
+                  Ensure consistent procedures across departments and teams by
                   centralising all documentation.
                 </p>
               </div>
@@ -127,8 +129,8 @@ const DemoPage = async () => {
                   📊 Data-Driven Improvements
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Track error reports and ideas to identify where processes need
-                  improvement.
+                  Track error reports and ideas to identify where procedures
+                  need improvement.
                 </p>
               </div>
 
@@ -149,16 +151,16 @@ const DemoPage = async () => {
             <CardHeader>
               <CardTitle>Core Features</CardTitle>
               <CardDescription>
-                Everything you need to manage processes effectively
+                Everything you need to manage procedures effectively
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="border-l-4 border-blue-500 pl-4">
                 <h3 className="font-semibold text-base mb-2">
-                  📝 Process Editor
+                  📝 Procedure Editor
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Create and edit processes in multiple formats:
+                  Create and edit procedures in multiple formats:
                 </p>
                 <ul className="text-sm space-y-1 ml-4 list-disc text-muted-foreground">
                   <li>
@@ -185,7 +187,7 @@ const DemoPage = async () => {
                   🤖 AI Chat Assistant
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Ask natural language questions about your processes. The AI
+                  Ask natural language questions about your procedures. The AI
                   searches your documentation using semantic search and provides
                   accurate answers with source citations. Perfect for quick
                   lookups and training new team members.
@@ -198,8 +200,9 @@ const DemoPage = async () => {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Users can report documentation issues directly from each
-                  process. Track status (Open, Resolved, Archived) and use error
-                  data to identify which processes need updates most urgently.
+                  procedure. Track status (Open, Resolved, Archived) and use
+                  error data to identify which procedures need updates most
+                  urgently.
                 </p>
               </div>
 
@@ -210,7 +213,7 @@ const DemoPage = async () => {
                 <p className="text-sm text-muted-foreground">
                   Collect improvement suggestions from team members. Track ideas
                   through stages (New, In Progress, Completed, Archived) to
-                  implement continuous improvement in your processes.
+                  implement continuous improvement in your procedures.
                 </p>
               </div>
 
@@ -221,7 +224,7 @@ const DemoPage = async () => {
                 <p className="text-sm text-muted-foreground">
                   Publish important updates for your teams. Pin announcements to
                   ensure critical information stays visible, and keep everyone
-                  informed about process changes.
+                  informed about procedure changes.
                 </p>
               </div>
 
@@ -237,7 +240,7 @@ const DemoPage = async () => {
               <div className="border-l-4 border-orange-500 pl-4">
                 <h3 className="font-semibold text-base mb-2">⭐ Favorites</h3>
                 <p className="text-sm text-muted-foreground">
-                  Bookmark frequently-used processes for quick access.
+                  Bookmark frequently-used procedures for quick access.
                   Personalise your dashboard with your most-referenced
                   procedures.
                 </p>
@@ -265,13 +268,13 @@ const DemoPage = async () => {
                   <div className="ml-12">
                     └─ 👥 Team (e.g., Account Services, Fraud Detection)
                   </div>
-                  <div className="ml-18">└─ 📄 Processes</div>
+                  <div className="ml-18">└─ 📄 Procedures</div>
                   <div className="ml-24">
                     ├─ 📂 Categories (Payment Processing, Account Management,
                     etc.)
                   </div>
                   <div className="ml-24">
-                    └─ 📝 Process Versions (Draft → Published)
+                    └─ 📝 Procedure Versions (Draft → Published)
                   </div>
                 </div>
               </div>
@@ -301,8 +304,8 @@ const DemoPage = async () => {
                   <Badge variant="secondary">Admin</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Can manage processes, users, error reports, ideas, and view
-                  audit logs. Responsible for process governance.
+                  Can manage procedures, users, error reports, ideas, and view
+                  audit logs. Responsible for procedure governance.
                 </p>
               </div>
 
@@ -311,7 +314,7 @@ const DemoPage = async () => {
                   <Badge variant="outline">Member</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Can view processes, use AI chat assistant, report errors, and
+                  Can view procedures, use AI chat assistant, report errors, and
                   submit improvement ideas.
                 </p>
               </div>
@@ -340,9 +343,9 @@ const DemoPage = async () => {
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-medium text-sm">3. Create Processes</h4>
+                <h4 className="font-medium text-sm">3. Create Procedures</h4>
                 <p className="text-sm text-muted-foreground">
-                  Click &quot;Create Process&quot; in your team to start
+                  Click &quot;Create Procedure&quot; in your team to start
                   documenting SOPs.
                 </p>
               </div>
@@ -350,8 +353,8 @@ const DemoPage = async () => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">4. Publish & Share</h4>
                 <p className="text-sm text-muted-foreground">
-                  Once satisfied with a process, publish it to make it available
-                  to your team members.
+                  Once satisfied with a procedure, publish it to make it
+                  available to your team members.
                 </p>
               </div>
 
@@ -384,13 +387,13 @@ const DemoPage = async () => {
                       Agentic AI Integration
                     </h3>
                     <p className="text-sm text-purple-800 dark:text-purple-200 mt-1">
-                      Intelligent background processes powered by AI agents that
-                      automatically:
+                      Intelligent background procedures powered by AI agents
+                      that automatically:
                     </p>
                     <ul className="text-sm text-purple-800 dark:text-purple-200 mt-2 ml-4 list-disc space-y-1">
                       <li>
                         Analyse and categorise error reports to identify
-                        systemic process issues
+                        systemic procedure issues
                       </li>
                       <li>
                         Generate suggested improvements based on error patterns
@@ -405,7 +408,7 @@ const DemoPage = async () => {
                         prioritisation
                       </li>
                       <li>
-                        Suggest process consolidation opportunities to reduce
+                        Suggest procedure consolidation opportunities to reduce
                         redundancy
                       </li>
                     </ul>
@@ -419,13 +422,13 @@ const DemoPage = async () => {
                       Advanced Analytics Dashboard
                     </h3>
                     <p className="text-sm text-green-800 dark:text-green-200 mt-1">
-                      Comprehensive insights into process performance and team
+                      Comprehensive insights into procedure performance and team
                       engagement:
                     </p>
                     <ul className="text-sm text-green-800 dark:text-green-200 mt-2 ml-4 list-disc space-y-1">
-                      <li>Process usage metrics and adoption rates</li>
+                      <li>Procedure usage metrics and adoption rates</li>
                       <li>Error trends and resolution times</li>
-                      <li>Most accessed processes and AI chat patterns</li>
+                      <li>Most accessed procedures and AI chat patterns</li>
                       <li>Team member engagement and contribution metrics</li>
                     </ul>
                   </div>
@@ -443,11 +446,11 @@ const DemoPage = async () => {
                     <ul className="text-sm text-orange-800 dark:text-orange-200 mt-2 ml-4 list-disc space-y-1">
                       <li>Webhook support for custom integrations</li>
                       <li>
-                        Slack notifications for process updates and error
+                        Slack notifications for procedure updates and error
                         reports
                       </li>
                       <li>Microsoft Teams integration</li>
-                      <li>Calendar sync for process training schedules</li>
+                      <li>Calendar sync for procedure training schedules</li>
                       <li>API endpoints for programmatic access</li>
                     </ul>
                   </div>
@@ -457,10 +460,10 @@ const DemoPage = async () => {
                   <Clock className="h-5 w-5 text-cyan-600 dark:text-cyan-400 flex-shrink-0 mt-1" />
                   <div className="flex-1">
                     <h3 className="font-semibold text-base text-cyan-900 dark:text-cyan-100">
-                      Process Version Diff & Comparison
+                      Procedure Version Diff & Comparison
                     </h3>
                     <p className="text-sm text-cyan-800 dark:text-cyan-200 mt-1">
-                      Side-by-side comparison of process versions showing
+                      Side-by-side comparison of procedure versions showing
                       exactly what changed.
                     </p>
                   </div>
@@ -470,12 +473,12 @@ const DemoPage = async () => {
                   <CheckCircle2 className="h-5 w-5 text-pink-600 dark:text-pink-400 flex-shrink-0 mt-1" />
                   <div className="flex-1">
                     <h3 className="font-semibold text-base text-pink-900 dark:text-pink-100">
-                      Process Certifications & Training Tracking
+                      Procedure Certifications & Training Tracking
                     </h3>
                     <p className="text-sm text-pink-800 dark:text-pink-200 mt-1">
                       Track team member training completion, certification
                       status, and knowledge assessments. Ensure compliance with
-                      process training requirements.
+                      procedure training requirements.
                     </p>
                   </div>
                 </div>

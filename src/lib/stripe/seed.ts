@@ -103,7 +103,7 @@ const seed = async () => {
     name: "Navis-docs Business Plan",
     description: "Your business plan.",
     marketing_features: [
-      { name: "Up to 100 processes" },
+      { name: "Up to 100 procedures" },
       { name: "Up to 3 departments" },
       { name: "Up to 1 team per department" },
       { name: "AI-assistant" },
@@ -116,7 +116,7 @@ const seed = async () => {
     name: "Navis-docs Enterprise Plan",
     description: "Your Enterprise plan.",
     marketing_features: [
-      { name: "Up to 1000 processes" },
+      { name: "Up to 1000 procedures" },
       { name: "Unlimited departments" },
       { name: "Unlimited teams per department" },
       { name: "AI-assistant" },
@@ -134,7 +134,7 @@ const seed = async () => {
     },
     metadata: {
       plan: "business",
-      allowedProcesses: 100,
+      allowedProcedures: 100,
       allowedDepartments: 3,
       allowedTeamsPerDepartment: 1,
     },
@@ -149,7 +149,7 @@ const seed = async () => {
     },
     metadata: {
       plan: "enterprise",
-      allowedProcesses: 1000,
+      allowedProcedures: 1000,
       allowedDepartments: 1000,
       allowedTeamsPerDepartment: 1000,
     },

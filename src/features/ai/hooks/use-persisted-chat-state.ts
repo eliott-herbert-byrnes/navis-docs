@@ -6,7 +6,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   sources?: Array<{
-    processId: string;
+    procedureId: string;
     title: string;
     url: string;
   }>;

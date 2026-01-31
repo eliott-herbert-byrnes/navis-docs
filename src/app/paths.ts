@@ -10,37 +10,37 @@ export const auditPath = () => "/audit";
 export const errorsPath = () => "/errors";
 export const ideasPath = () => "/ideas";
 export const newsPath = (departmentId: string, teamId: string) =>
-  `/departments/${departmentId}/${teamId}/processes/news`;
+  `/departments/${departmentId}/${teamId}/procedures/news`;
 export const newsCreatePath = (departmentId: string, teamId: string) =>
-  `/departments/${departmentId}/${teamId}/processes/news-create`;
-export const processBasePath = () => "/process-base";
+  `/departments/${departmentId}/${teamId}/procedures/news-create`;
+export const procedureBasePath = () => "/procedure-base";
 export const userBasePath = () => "/user-base";
 export const settingsPath = () => "/settings";
 export const addressPath = (departmentId: string, teamId: string) =>
-  `/departments/${departmentId}/${teamId}/processes/address`;
+  `/departments/${departmentId}/${teamId}/procedures/address`;
 export const demoPath = () => "/demo";
 
-// Process Database Paths
+// Procedure Database Paths
 export const departmentPath = (departmentId: string) =>
   `/departments/${departmentId}`;
-export const teamProcessCreatePath = (departmentId: string, teamId: string) =>
-  `/departments/${departmentId}/${teamId}/processes/create`;
-export const teamProcessPath = (departmentId: string, teamId: string) =>
-  `/departments/${departmentId}/${teamId}/processes`;
-export const processPath = (
+export const teamProcedureCreatePath = (departmentId: string, teamId: string) =>
+  `/departments/${departmentId}/${teamId}/procedures/create`;
+export const teamProcedurePath = (departmentId: string, teamId: string) =>
+  `/departments/${departmentId}/${teamId}/procedures`;
+export const procedurePath = (
   departmentId: string,
   teamId: string,
-  processId: string,
-) => `/departments/${departmentId}/${teamId}/processes/${processId}`;
-export const editProcessPath = (
+  procedureId: string,
+) => `/departments/${departmentId}/${teamId}/procedures/${procedureId}`;
+export const editProcedurePath = (
   departmentId: string,
   teamId: string,
-  processId: string,
-) => `/departments/${departmentId}/${teamId}/processes/${processId}/edit`;
-export const viewProcessPath = (
+  procedureId: string,
+) => `/departments/${departmentId}/${teamId}/procedures/${procedureId}/edit`;
+export const viewProcedurePath = (
   departmentId: string,
   teamId: string,
-  processId: string,
-) => `/departments/${departmentId}/${teamId}/processes/${processId}/view`;
-export const favoriteProcessesPath = () =>
-  `/department/[departmentId]/[teamId]/processes`;
+  procedureId: string,
+) => `/departments/${departmentId}/${teamId}/procedures/${procedureId}/view`;
+export const favoriteProceduresPath = () =>
+  `/department/[departmentId]/[teamId]/procedures`;

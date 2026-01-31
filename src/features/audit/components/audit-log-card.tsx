@@ -44,7 +44,7 @@ type AuditLogCardProps = {
 export function AuditLogCard({ log, userName }: AuditLogCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Format action name: "PROCESS_CREATED" -> "Process Created"
+  // Format action name: "PROCEDURE_CREATED" -> "Procedure Created"
   const formatAction = (action: string) => {
     return action
       .split("_")

@@ -1,13 +1,13 @@
-export interface ProcessChunk {
+export interface ProcedureChunk {
   chunkIndex: number;
   chunkText: string;
 }
 
-export function chunkProcessContent(
+export function chunkProcedureContent(
   contentText: string,
   maxChunkSize: number = 600,
-): ProcessChunk[] {
-  const chunks: ProcessChunk[] = [];
+): ProcedureChunk[] {
+  const chunks: ProcedureChunk[] = [];
 
   const paragraphs = contentText.split(/\n\n+/);
 

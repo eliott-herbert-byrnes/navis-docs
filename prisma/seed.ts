@@ -1,4 +1,8 @@
-import { OrgMembershipRole, ProcessStyle, ProcessStatus } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  ProcedureStyle,
+  ProcedureStatus,
+} from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
@@ -14,8 +18,8 @@ async function main() {
     prisma.newsPost.deleteMany(),
     prisma.favorite.deleteMany(),
     prisma.idea.deleteMany(),
-    prisma.processVersion.deleteMany(),
-    prisma.process.deleteMany(),
+    prisma.procedureVersion.deleteMany(),
+    prisma.procedure.deleteMany(),
     prisma.category.deleteMany(),
     prisma.team.deleteMany(),
     prisma.department.deleteMany(),
@@ -51,7 +55,7 @@ async function main() {
       ownerUserId: user.id,
       plan: "enterprise",
       entitlementsJSON: {
-        maxProcesses: 100,
+        maxProcedures: 100,
         maxDepartments: 3,
         maxTeamsPerDepartment: 1,
       },
@@ -113,32 +117,32 @@ async function main() {
     data: { teamId: teamComp.id, name: "Fraud Detection", sortOrder: 2 },
   });
 
-  const p1 = await prisma.process.create({
+  const p1 = await prisma.procedure.create({
     data: {
       teamId: teamComp.id,
       categoryId: catCompliance.id,
       slug: "kyc-basic-check",
       title: "KYC Basic Check",
       description:
-        "Standard Know Your Customer verification process for new account holders.",
-      style: ProcessStyle.RAW,
-      status: ProcessStatus.PUBLISHED,
+        "Standard Know Your Customer verification procedure for new account holders.",
+      style: ProcedureStyle.RAW,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p2 = await prisma.process.create({
+  const p2 = await prisma.procedure.create({
     data: {
       teamId: teamOps.id,
       categoryId: catAccounts.id,
       slug: "account-closure-procedure",
       title: "Account Closure Procedure",
-      description: "Complete process for safely closing customer accounts.",
-      style: ProcessStyle.RAW,
-      status: ProcessStatus.PUBLISHED,
+      description: "Complete procedure for safely closing customer accounts.",
+      style: ProcedureStyle.RAW,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p3 = await prisma.process.create({
+  const p3 = await prisma.procedure.create({
     data: {
       teamId: teamOps.id,
       categoryId: catPayments.id,
@@ -146,25 +150,25 @@ async function main() {
       title: "Setup Direct Debit",
       description:
         "Step-by-step guide to setting up recurring direct debit payments.",
-      style: ProcessStyle.STEPS,
-      status: ProcessStatus.PUBLISHED,
+      style: ProcedureStyle.STEPS,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p4 = await prisma.process.create({
+  const p4 = await prisma.procedure.create({
     data: {
       teamId: teamComp.id,
       categoryId: catCompliance.id,
       slug: "credit-card-application-review",
       title: "Credit Card Application Review",
       description:
-        "Structured steps for reviewing and processing credit card applications.",
-      style: ProcessStyle.STEPS,
-      status: ProcessStatus.PUBLISHED,
+        "Structured steps for reviewing and procedureing credit card applications.",
+      style: ProcedureStyle.STEPS,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p5 = await prisma.process.create({
+  const p5 = await prisma.procedure.create({
     data: {
       teamId: teamComp.id,
       categoryId: catFraud.id,
@@ -172,25 +176,25 @@ async function main() {
       title: "Fraud Investigation Workflow",
       description:
         "Complete workflow for investigating suspicious account activity.",
-      style: ProcessStyle.FLOW,
-      status: ProcessStatus.PUBLISHED,
+      style: ProcedureStyle.FLOW,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p6 = await prisma.process.create({
+  const p6 = await prisma.procedure.create({
     data: {
       teamId: teamOps.id,
       categoryId: catAccounts.id,
-      slug: "loan-approval-process",
-      title: "Loan Approval Process",
+      slug: "loan-approval-procedure",
+      title: "Loan Approval procedure",
       description:
         "End-to-end workflow for personal loan application processing.",
-      style: ProcessStyle.FLOW,
-      status: ProcessStatus.PUBLISHED,
+      style: ProcedureStyle.FLOW,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p7 = await prisma.process.create({
+  const p7 = await prisma.procedure.create({
     data: {
       teamId: teamOps.id,
       categoryId: catAccounts.id,
@@ -198,29 +202,29 @@ async function main() {
       title: "Customer Complaint Resolution",
       description:
         "Decision tree for handling and resolving customer complaints.",
-      style: ProcessStyle.YESNO,
-      status: ProcessStatus.PUBLISHED,
+      style: ProcedureStyle.YESNO,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const p8 = await prisma.process.create({
+  const p8 = await prisma.procedure.create({
     data: {
       teamId: teamComp.id,
       categoryId: catFraud.id,
       slug: "transaction-dispute-assessment",
       title: "Transaction Dispute Assessment",
       description:
-        "Guided decision process for evaluating transaction disputes.",
-      style: ProcessStyle.YESNO,
-      status: ProcessStatus.PUBLISHED,
+        "Guided decision procedure for evaluating transaction disputes.",
+      style: ProcedureStyle.YESNO,
+      status: ProcedureStatus.PUBLISHED,
     },
   });
 
-  const pv1 = await prisma.processVersion.create({
+  const pv1 = await prisma.procedureVersion.create({
     data: {
-      processId: p1.id,
+      procedureId: p1.id,
       createdBy: user.id,
-      style: ProcessStyle.RAW,
+      style: ProcedureStyle.RAW,
       contentJSON: {
         tiptap: {
           type: "doc",
@@ -240,7 +244,7 @@ async function main() {
               content: [
                 {
                   type: "text",
-                  text: "This process outlines the standard Know Your Customer (KYC) verification requirements for all new customers opening accounts.",
+                  text: "This procedure outlines the standard Know Your Customer (KYC) verification requirements for all new customers opening accounts.",
                 },
               ],
             },
@@ -349,15 +353,15 @@ async function main() {
           ],
         },
       },
-      contentText: "KYC verification process for new customers",
+      contentText: "KYC verification procedure for new customers",
     },
   });
 
-  const pv2 = await prisma.processVersion.create({
+  const pv2 = await prisma.procedureVersion.create({
     data: {
-      processId: p2.id,
+      procedureId: p2.id,
       createdBy: user.id,
-      style: ProcessStyle.RAW,
+      style: ProcedureStyle.RAW,
       contentJSON: {
         tiptap: {
           type: "doc",
@@ -445,7 +449,7 @@ async function main() {
             {
               type: "heading",
               attrs: { level: 2 },
-              content: [{ type: "text", text: "Closure Process" }],
+              content: [{ type: "text", text: "Closure Procedure" }],
             },
             {
               type: "paragraph",
@@ -463,11 +467,11 @@ async function main() {
     },
   });
 
-  const pv3 = await prisma.processVersion.create({
+  const pv3 = await prisma.procedureVersion.create({
     data: {
-      processId: p3.id,
+      procedureId: p3.id,
       createdBy: user.id,
-      style: ProcessStyle.STEPS,
+      style: ProcedureStyle.STEPS,
       contentJSON: {
         steps: [
           {
@@ -481,7 +485,7 @@ async function main() {
             id: "step-2",
             title: "Check Existing Direct Debits",
             description:
-              "Review the current direct debit list to ensure no duplicate payment setup exists. If found, inform customer and follow amendment process instead.",
+              "Review the current direct debit list to ensure no duplicate payment setup exists. If found, inform customer and follow amendment procedure instead.",
             isExpanded: false,
           },
           {
@@ -514,15 +518,15 @@ async function main() {
           },
         ],
       },
-      contentText: "Direct debit setup process",
+      contentText: "Direct debit setup procedure",
     },
   });
 
-  const pv4 = await prisma.processVersion.create({
+  const pv4 = await prisma.procedureVersion.create({
     data: {
-      processId: p4.id,
+      procedureId: p4.id,
       createdBy: user.id,
-      style: ProcessStyle.STEPS,
+      style: ProcedureStyle.STEPS,
       contentJSON: {
         steps: [
           {
@@ -536,7 +540,7 @@ async function main() {
             id: "step-2",
             title: "Verify Identity",
             description:
-              "Perform KYC checks as per standard process. Verify applicant identity using photo ID and proof of address. Check against sanctions and fraud databases.",
+              "Perform KYC checks as per standard procedure. Verify applicant identity using photo ID and proof of address. Check against sanctions and fraud databases.",
             isExpanded: false,
           },
           {
@@ -573,11 +577,11 @@ async function main() {
     },
   });
 
-  const pv5 = await prisma.processVersion.create({
+  const pv5 = await prisma.procedureVersion.create({
     data: {
-      processId: p5.id,
+      procedureId: p5.id,
       createdBy: user.id,
-      style: ProcessStyle.FLOW,
+      style: ProcedureStyle.FLOW,
       contentJSON: {
         flow: {
           nodes: [
@@ -660,11 +664,11 @@ async function main() {
     },
   });
 
-  const pv6 = await prisma.processVersion.create({
+  const pv6 = await prisma.procedureVersion.create({
     data: {
-      processId: p6.id,
+      procedureId: p6.id,
       createdBy: user.id,
-      style: ProcessStyle.FLOW,
+      style: ProcedureStyle.FLOW,
       contentJSON: {
         flow: {
           nodes: [
@@ -726,7 +730,7 @@ async function main() {
               id: "10",
               type: "end",
               position: { x: 250, y: 640 },
-              data: { label: "Process Complete" },
+              data: { label: "Procedure Complete" },
             },
           ],
           edges: [
@@ -748,18 +752,18 @@ async function main() {
     },
   });
 
-  const pv7 = await prisma.processVersion.create({
+  const pv7 = await prisma.procedureVersion.create({
     data: {
-      processId: p7.id,
+      procedureId: p7.id,
       createdBy: user.id,
-      style: ProcessStyle.YESNO,
+      style: ProcedureStyle.YESNO,
       contentJSON: {
         yesno: {
           nodes: [
             {
               id: "start",
               question: "Customer Complaint Resolution",
-              description: "Begin complaint assessment process",
+              description: "Begin complaint assessment procedure",
               yesNodeId: "type",
             },
             {
@@ -812,7 +816,7 @@ async function main() {
             },
             {
               id: "refund-charges",
-              question: "Process Refund",
+              question: "Procedure Refund",
               description:
                 "Issue immediate refund for incorrect charges. Add goodwill credit if customer experienced hardship. Update account notes.",
               isEndNode: true,
@@ -843,18 +847,18 @@ async function main() {
     },
   });
 
-  const pv8 = await prisma.processVersion.create({
+  const pv8 = await prisma.procedureVersion.create({
     data: {
-      processId: p8.id,
+      procedureId: p8.id,
       createdBy: user.id,
-      style: ProcessStyle.YESNO,
+      style: ProcedureStyle.YESNO,
       contentJSON: {
         yesno: {
           nodes: [
             {
               id: "start",
               question: "Transaction Dispute Assessment",
-              description: "Start dispute evaluation process",
+              description: "Start dispute evaluation procedure",
               yesNodeId: "reported-timeframe",
             },
             {
@@ -953,35 +957,35 @@ async function main() {
     },
   });
 
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p1.id },
     data: { publishedVersionId: pv1.id, pendingVersionId: pv1.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p2.id },
     data: { publishedVersionId: pv2.id, pendingVersionId: pv2.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p3.id },
     data: { publishedVersionId: pv3.id, pendingVersionId: pv3.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p4.id },
     data: { publishedVersionId: pv4.id, pendingVersionId: pv4.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p5.id },
     data: { publishedVersionId: pv5.id, pendingVersionId: pv5.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p6.id },
     data: { publishedVersionId: pv6.id, pendingVersionId: pv6.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p7.id },
     data: { publishedVersionId: pv7.id, pendingVersionId: pv7.id },
   });
-  await prisma.process.update({
+  await prisma.procedure.update({
     where: { id: p8.id },
     data: { publishedVersionId: pv8.id, pendingVersionId: pv8.id },
   });
@@ -993,7 +997,7 @@ async function main() {
   // OPEN Error Reports
   await prisma.errorReport.create({
     data: {
-      processId: p3.id, // Direct Debit Setup
+      procedureId: p3.id, // Direct Debit Setup
       createdBy: user.id,
       body: "Step 4 is unclear about which system screen to use. The Direct Debit section has multiple entry points and the instructions don't specify which one to navigate to. This causes confusion for new staff members.",
       status: "OPEN",
@@ -1003,9 +1007,9 @@ async function main() {
 
   await prisma.errorReport.create({
     data: {
-      processId: p7.id, // Customer Complaint Resolution
+      procedureId: p7.id, // Customer Complaint Resolution
       createdBy: user.id,
-      body: "The decision tree doesn't account for complaints that involve both service issues AND financial disputes. We had a case where a customer complained about poor service that led to missed payment and fees. The process needs a combined pathway.",
+      body: "The decision tree doesn't account for complaints that involve both service issues AND financial disputes. We had a case where a customer complained about poor service that led to missed payment and fees. The procedure needs a combined pathway.",
       status: "OPEN",
       createdAt: new Date("2024-10-28T14:15:00Z"),
     },
@@ -1014,7 +1018,7 @@ async function main() {
   // RESOLVED Error Reports
   await prisma.errorReport.create({
     data: {
-      processId: p1.id, // KYC Basic Check
+      procedureId: p1.id, // KYC Basic Check
       createdBy: user.id,
       body: "The sanctions screening step mentions using \"electronic verification system\" but doesn't provide the login credentials or link to the system. New team members don't know which system to access.",
       status: "RESOLVED",
@@ -1024,7 +1028,7 @@ async function main() {
 
   await prisma.errorReport.create({
     data: {
-      processId: p4.id, // Credit Card Application Review
+      procedureId: p4.id, // Credit Card Application Review
       createdBy: user.id,
       body: "Step 3 references checking credit score but the threshold of 650 mentioned later contradicts our actual policy which is 680. This needs to be corrected to avoid incorrect approvals.",
       status: "RESOLVED",
@@ -1035,7 +1039,7 @@ async function main() {
   // ARCHIVED Error Reports
   await prisma.errorReport.create({
     data: {
-      processId: p2.id, // Account Closure
+      procedureId: p2.id, // Account Closure
       createdBy: user.id,
       body: "The pre-closure checklist is missing a step to verify if customer has any pending disputes or chargebacks. This caused issues when we closed an account with an active dispute.",
       status: "ARCHIVED",
@@ -1045,7 +1049,7 @@ async function main() {
 
   await prisma.errorReport.create({
     data: {
-      processId: p6.id, // Loan Approval
+      procedureId: p6.id, // Loan Approval
       createdBy: user.id,
       body: 'The flowchart shows "DTI < 43%" but recent regulatory changes require us to use 40% for personal loans. The diagram is outdated.',
       status: "ARCHIVED",
@@ -1062,8 +1066,8 @@ async function main() {
     data: {
       teamId: teamOps.id,
       createdBy: user.id,
-      title: "Add Video Tutorials for Complex Processes",
-      body: "We should create short 2-3 minute video walkthroughs for our most complex processes like loan approvals and account closures. Many team members are visual learners and videos would complement the written documentation. We could embed them directly in the process pages.",
+      title: "Add Video Tutorials for Complex Procedures",
+      body: "We should create short 2-3 minute video walkthroughs for our most complex procedures like loan approvals and account closures. Many team members are visual learners and videos would complement the written documentation. We could embed them directly in the procedure pages.",
       status: "NEW",
       createdAt: new Date("2024-11-03T08:00:00Z"),
     },
@@ -1073,8 +1077,8 @@ async function main() {
     data: {
       teamId: teamComp.id,
       createdBy: user.id,
-      title: "Implement Process Version History Viewer",
-      body: "It would be helpful to see what changed between process versions. A side-by-side diff viewer showing changes would make it easier to understand updates and review changes before publishing.",
+      title: "Implement Procedure Version History Viewer",
+      body: "It would be helpful to see what changed between procedure versions. A side-by-side diff viewer showing changes would make it easier to understand updates and review changes before publishing.",
       status: "NEW",
       createdAt: new Date("2024-11-02T15:30:00Z"),
     },
@@ -1085,8 +1089,8 @@ async function main() {
     data: {
       teamId: teamOps.id,
       createdBy: user.id,
-      title: "Create Mobile-Friendly Process Views",
-      body: "Many staff members access processes from tablets or phones while helping customers. We should optimize the process views for mobile devices with larger buttons, better spacing, and offline capability for critical processes.",
+      title: "Create Mobile-Friendly Procedure Views",
+      body: "Many staff members access procedures from tablets or phones while helping customers. We should optimize the procedure views for mobile devices with larger buttons, better spacing, and offline capability for critical procedures.",
       status: "IN_PROGRESS",
       createdAt: new Date("2024-10-25T09:45:00Z"),
     },
@@ -1096,8 +1100,8 @@ async function main() {
     data: {
       teamId: teamComp.id,
       createdBy: user.id,
-      title: "Add Search Functionality Within Processes",
-      body: "For long processes with many steps, we need a search feature that lets users quickly find specific terms or steps. This would be especially useful for RAW format processes with lots of text content.",
+      title: "Add Search Functionality Within Procedures",
+      body: "For long procedures with many steps, we need a search feature that lets users quickly find specific terms or steps. This would be especially useful for RAW format procedures with lots of text content.",
       status: "IN_PROGRESS",
       createdAt: new Date("2024-10-22T14:20:00Z"),
     },
@@ -1108,8 +1112,8 @@ async function main() {
     data: {
       teamId: teamOps.id,
       createdBy: user.id,
-      title: "Add Process Categories for Better Organization",
-      body: 'Processes should be grouped into categories like "Payment Processing", "Account Management", etc. This would make it easier to find related processes and improve navigation.',
+      title: "Add Procedure Categories for Better Organization",
+      body: 'Procedures should be grouped into categories like "Payment Processing", "Account Management", etc. This would make it easier to find related procedures and improve navigation.',
       status: "COMPLETED",
       createdAt: new Date("2024-09-15T10:30:00Z"),
     },
@@ -1119,8 +1123,8 @@ async function main() {
     data: {
       teamId: teamComp.id,
       createdBy: user.id,
-      title: "Enable Process Favoriting",
-      body: "Users should be able to favorite frequently used processes for quick access. A favorites section in the sidebar would save time and improve user experience.",
+      title: "Enable Procedure Favoriting",
+      body: "Users should be able to favorite frequently used procedures for quick access. A favorites section in the sidebar would save time and improve user experience.",
       status: "COMPLETED",
       createdAt: new Date("2024-09-18T16:00:00Z"),
     },
@@ -1132,7 +1136,7 @@ async function main() {
       teamId: teamOps.id,
       createdBy: user.id,
       title: "Integrate with Salesforce CRM",
-      body: "We should integrate the process documentation with our Salesforce CRM so that relevant processes appear contextually when viewing customer records.",
+      body: "We should integrate the procedure documentation with our Salesforce CRM so that relevant procedures appear contextually when viewing customer records.",
       status: "ARCHIVED",
       createdAt: new Date("2024-08-10T11:00:00Z"),
     },
@@ -1143,7 +1147,7 @@ async function main() {
       teamId: teamComp.id,
       createdBy: user.id,
       title: "Add Real-Time Collaboration Features",
-      body: "Multiple users should be able to edit processes simultaneously with real-time updates showing what others are changing. Like Google Docs but for our process documentation.",
+      body: "Multiple users should be able to edit procedures simultaneously with real-time updates showing what others are changing. Like Google Docs but for our procedure documentation.",
       status: "ARCHIVED",
       createdAt: new Date("2024-08-05T09:30:00Z"),
     },
@@ -1175,7 +1179,7 @@ async function main() {
             content: [
               {
                 type: "text",
-                text: "Key Changes: The new system features faster transaction processing, enhanced fraud detection, and improved reporting capabilities. Please review the updated Direct Debit and Payment Processing procedures in your process documentation.",
+                text: "Key Changes: The new system features faster transaction processing, enhanced fraud detection, and improved reporting capabilities. Please review the updated Direct Debit and Payment Processing procedures in your procedure documentation.",
               },
             ],
           },
@@ -1208,7 +1212,7 @@ async function main() {
             content: [
               {
                 type: "text",
-                text: "Congratulations team! Our customer satisfaction scores reached an all-time high of 94% this quarter. Average resolution time improved by 15% thanks to everyone following our updated complaint resolution processes.",
+                text: "Congratulations team! Our customer satisfaction scores reached an all-time high of 94% this quarter. Average resolution time improved by 15% thanks to everyone following our updated complaint resolution procedure.",
               },
             ],
           },
@@ -1250,7 +1254,7 @@ async function main() {
             content: [
               {
                 type: "text",
-                text: "Additional temporary staff will join us starting November 18th. Please help welcome them and direct them to our process documentation for training materials. Remember to use the buddy system for the first week.",
+                text: "Additional temporary staff will join us starting November 18th. Please help welcome them and direct them to our procedure documentation for training materials. Remember to use the buddy system for the first week.",
               },
             ],
           },
@@ -1293,7 +1297,7 @@ async function main() {
             content: [
               {
                 type: "text",
-                text: "The Credit Card Application Review process has been updated to reflect these changes. Please review immediately and acknowledge receipt via the compliance system.",
+                text: "The Credit Card Application Review procedure has been updated to reflect these changes. Please review immediately and acknowledge receipt via the compliance system.",
               },
             ],
           },
@@ -1371,25 +1375,25 @@ async function main() {
     },
   });
 
-  console.log("\n🔄 Generating embeddings for seeded processes...");
-  const { generateProcessEmbeddings } = await import(
+  console.log("\n🔄 Generating embeddings for seeded procedure...");
+  const { generateProcedureEmbeddings } = await import(
     "../src/features/ai/actions/generate-embeddings"
   );
 
-  for (const process of [p1, p2, p3, p4, p5, p6, p7, p8]) {
+  for (const procedure of [p1, p2, p3, p4, p5, p6, p7, p8]) {
     try {
-      await generateProcessEmbeddings(process.id);
-      console.log(`✅ Generated embeddings for: ${process.title}`);
+      await generateProcedureEmbeddings(procedure.id);
+      console.log(`✅ Generated embeddings for: ${procedure.title}`);
     } catch (error) {
       console.log(
-        `⚠️  Failed to generate embeddings for ${process.title}:`,
+        `⚠️  Failed to generate embeddings for ${procedure.title}:`,
         error,
       );
     }
   }
 
   console.log("✅ Seed complete with mock data:");
-  console.log("   - 8 Processes with versions");
+  console.log("   - 8 Procedures with versions");
   console.log("   - 6 Error Reports (2 OPEN, 2 RESOLVED, 2 ARCHIVED)");
   console.log("   - 8 Ideas (2 NEW, 2 IN_PROGRESS, 2 COMPLETED, 2 ARCHIVED)");
   console.log("   - 6 News Posts (3 per team, 1 pinned per team)");

@@ -6,13 +6,13 @@ import { LucideLoaderCircle, PlusIcon } from "lucide-react";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/auth-context";
-import { useProcessRouteContext } from "@/contexts/process-route-context";
+import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 
 const NewsCreateButton = () => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { isAdmin } = useAuthContext();
-  const { departmentId, teamId } = useProcessRouteContext();
+  const { departmentId, teamId } = useProcedureRouteContext();
 
   const handleCreateNews = () => {
     startTransition(() => {

@@ -18,9 +18,9 @@ type Plan = "business" | "enterprise";
 // Add plan descriptions
 const PLAN_DESCRIPTIONS: Record<Plan, string> = {
   business:
-    "Up to 100 processes, up to 3 departments, 1 team per department, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
+    "Up to 100 procedures, up to 3 departments, 1 team per department, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
   enterprise:
-    "Up to 1000 processes, unlimited departments, unlimited teams, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
+    "Up to 1000 procedures, unlimited departments, unlimited teams, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
 };
 
 type PricesProps = {

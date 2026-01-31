@@ -21,7 +21,7 @@ const DepartmentDeleteButton = ({
   return (
     <DepartmentDeleteDialog
       title="Are you sure you want to delete this department?"
-      description="All associated teams and processes will be deleted as well. This action cannot be undone."
+      description="All associated teams and procedures will be deleted as well. This action cannot be undone."
       onConfirm={handleDelete}
       isPending={isPending}
       disabled={!isAdmin || isPending}

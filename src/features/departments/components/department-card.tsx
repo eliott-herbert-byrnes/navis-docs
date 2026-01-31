@@ -26,7 +26,7 @@ import {
 import { DepartmentDeleteButton } from "./department-buttons/department-delete-button";
 import { CreateTeamButton } from "./team-buttons/team-create-button";
 import { DepartmentOverviewButton } from "./overview/department-overview-button";
-import { teamProcessPath } from "@/app/paths";
+import { teamProcedurePath } from "@/app/paths";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
@@ -37,7 +37,7 @@ type DepartmentCardProps = {
     teams: {
       id: string;
       name: string;
-      _count: { process: number };
+      _count: { procedure: number };
     }[];
   };
 };
@@ -47,15 +47,15 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const totalProcesses = department.teams.reduce(
-    (sum, team) => sum + team._count.process,
+  const totalProcedures = department.teams.reduce(
+    (sum, team) => sum + team._count.procedure,
     0,
   );
 
   const handleViewClick = () => {
     if (!selectedTeamId) return;
     startTransition(() => {
-      router.push(teamProcessPath(department.id, selectedTeamId));
+      router.push(teamProcedurePath(department.id, selectedTeamId));
     });
   };
 
@@ -116,7 +116,8 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
           <Badge variant="outline" className="gap-1.5 font-normal">
             <FileText className="h-3 w-3" />
             <span>
-              {totalProcesses} {totalProcesses === 1 ? "process" : "processes"}
+              {totalProcedures}{" "}
+              {totalProcedures === 1 ? "procedure" : "procedures"}
             </span>
           </Badge>
           <Badge variant="outline" className="gap-1.5 font-normal">

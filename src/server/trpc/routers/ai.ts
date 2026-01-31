@@ -4,7 +4,7 @@ import { generateEmbedding } from "@/lib/ai/embeddings";
 
 export interface ChunkResult {
   id: string;
-  processId: string;
+  procedureId: string;
   teamId: string;
   title: string;
   chunkText: string;
@@ -12,7 +12,7 @@ export interface ChunkResult {
 }
 
 export const aiRouter = router({
-  // Query: Search process chunks with vector similarity
+  // Query: Search procedure chunks with vector similarity
   searchChunks: orgProcedure
     .use(rateLimitMiddleware("ai-search"))
     .input(
@@ -28,7 +28,7 @@ export const aiRouter = router({
       const queryEmbeddingString = `[${queryEmbedding.join(",")}]`;
 
       const results = await ctx.db.$queryRaw<ChunkResult[]>`
-                SELECT * FROM match_process_chunks(
+                SELECT * FROM match_procedure_chunks(
                     ${queryEmbeddingString}::vector(1536),
                     0.5::float,
                     ${input.limit}::int,

@@ -122,7 +122,7 @@ export const organizationRouter = router({
           ownerUserId: userId as string,
           plan: "business",
           entitlementsJSON: {
-            maxProcesses: 100,
+            maxProcedures: 100,
             maxDepartments: 3,
             maxTeamsPerDepartment: 1,
           },
