@@ -33,6 +33,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="procedure-view-actions" data-print-hide>
           <ProcedureViewActions
+            procedure={procedure}
             procedureId={procedureId}
             canEdit={canEdit}
             isFavorite={isFavorite}

@@ -1,7 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, Printer, Share2, Loader2 } from "lucide-react";
+import {
+  Edit,
+  Printer,
+  Share2,
+  Loader2,
+  FileJson,
+  FileIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcedurePath } from "@/app/paths";
 import { toast } from "sonner";
@@ -17,17 +24,21 @@ import { MoreVertical } from "lucide-react";
 import { ProcedureFavoriteButton } from "./favorite/components/procedure-favorite-button";
 import { ProcedureErrorButton } from "./error/components/procedure-error-button";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
+import { ProcedureForViewWithRelations } from "../types/types";
+import { format } from "date-fns";
 
 type ProcedureViewActionsProps = {
   procedureId: string;
   canEdit: boolean;
   isFavorite: boolean;
+  procedure: ProcedureForViewWithRelations;
 };
 
 export function ProcedureViewActions({
   procedureId,
   canEdit,
   isFavorite,
+  procedure,
 }: ProcedureViewActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -53,6 +64,34 @@ export function ProcedureViewActions({
     }
   };
 
+  // Generate JSON export format
+  const generateJSON = () => {
+    return JSON.stringify(
+      {
+        id: procedure.id,
+        title: procedure.title,
+        description: procedure.description,
+        category: procedure.category?.name,
+        team: procedure.team?.name,
+        createdAt: procedure.publishedVersion?.createdAt,
+        content: procedure.publishedVersion?.contentJSON,
+      },
+      null,
+      2,
+    );
+  };
+
+  // Copy to clipboard with toast notification
+  const handleExport = async () => {
+    try {
+      const content = generateJSON();
+      await navigator.clipboard.writeText(content);
+      toast.success(`Copied as JSON`);
+    } catch (error) {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
   return (
     <div className="flex gap-2">
       {/* Desktop Actions */}
@@ -74,6 +113,10 @@ export function ProcedureViewActions({
         <Button variant="outline" size="sm" onClick={handleShare}>
           <Share2 className="w-4 h-4 mr-2" />
           Share
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleExport}>
+          <FileIcon className="w-4 h-4 mr-2" />
+          Export
         </Button>
         <ProcedureFavoriteButton
           procedureId={procedureId}
