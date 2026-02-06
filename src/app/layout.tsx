@@ -5,13 +5,11 @@ import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import {
   SidebarProvider,
-  SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { Badge } from "@/components/ui/badge";
 import { getStripeCustomerByOrg } from "@/features/stripe/queries/get-stripe-customer";
 import { getStripe } from "@/lib/stripe";
 import { AuthProvider } from "@/contexts/auth-context";
@@ -92,8 +90,7 @@ export default async function RootLayout({
                 <div className="flex flex-row h-full">
                   <div className="flex h-full w-full flex-col rounded-lg p-4">
                     <div className="flex flex-row items-center justify-between">
-                      <SidebarTrigger />
-                      {isAdmin && <Badge variant="outline">{planLabel}</Badge>}
+                      {/* <SidebarTrigger />*/}
                     </div>
                     <Separator className="my-2" />
                     {children}
