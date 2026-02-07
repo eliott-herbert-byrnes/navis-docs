@@ -10,9 +10,9 @@ import {
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { getStripeCustomerByOrg } from "@/features/stripe/queries/get-stripe-customer";
-import { getStripe } from "@/lib/stripe";
 import { AuthProvider } from "@/contexts/auth-context";
+import { MainHeaderBreadcrumbs } from "@/features/breadcrumbs/components/main-header-breadcrumbs";
+import { OrgBadge } from "@/features/org/components/org-badge";
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,27 +58,6 @@ export default async function RootLayout({
     );
   }
 
-  const stripeCustomer = await getStripeCustomerByOrg(org.slug);
-
-  let subscriptionStatus = stripeCustomer?.stripeSubscriptionStatus ?? null;
-  if (stripeCustomer?.stripeSubscriptionId) {
-    try {
-      const sub = await getStripe().subscriptions.retrieve(
-        stripeCustomer.stripeSubscriptionId,
-      );
-      subscriptionStatus = sub.status;
-    } catch (error) {
-      console.error("Failed to fetch Stripe subscription:", error);
-    }
-  }
-
-  const activeSubscription = subscriptionStatus === "active";
-  const activePlan = stripeCustomer?.plan ?? "";
-  const planLabel =
-    activeSubscription && activePlan
-      ? `${activePlan.charAt(0).toUpperCase()}${activePlan.slice(1)}`
-      : "No plan";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${GeistSans.variable} antialiased min-h-screen`}>
@@ -88,11 +67,12 @@ export default async function RootLayout({
               <AppSidebar />
               <SidebarInset className="p-2">
                 <div className="flex flex-row h-full">
-                  <div className="flex h-full w-full flex-col rounded-lg p-4">
+                  <div className="flex h-full w-full flex-col rounded-lg pl-4 pr-4 pt-2">
                     <div className="flex flex-row items-center justify-between">
-                      {/* <SidebarTrigger />*/}
+                      <MainHeaderBreadcrumbs />
+                      <OrgBadge />
                     </div>
-                    <Separator className="my-2" />
+                    <Separator className="mt-3" />
                     {children}
                   </div>
                 </div>

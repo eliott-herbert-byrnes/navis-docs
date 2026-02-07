@@ -1,7 +1,6 @@
 import { Heading } from "@/components/ui/Heading";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { Suspense } from "react";
-import { ProcedureBreadcrumbs } from "./_navigation";
 import { ProcedureCreateButton } from "@/features/procedures/components/procedure-create-button";
 import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,10 +22,6 @@ export default async function ProcedurePage({
   const trpc = await serverTrpc();
   const { list: departments } = await trpc.department.list();
 
-  const departmentName = departments.find(
-    (department) => department.id === departmentId,
-  )?.name;
-
   const teamName = departments
     .find((department) => department.id === departmentId)
     ?.teams.find((team) => team.id === teamId)?.name;
@@ -36,12 +31,6 @@ export default async function ProcedurePage({
       <Heading
         title={`${teamName} Docs`}
         actions={isAdmin ? <ProcedureCreateButton /> : null}
-        breadcrumbs={
-          <ProcedureBreadcrumbs
-            teamName={teamName}
-            departmentName={departmentName}
-          />
-        }
       />
       <FavoriteList />
       <Suspense fallback={<Skeleton />}>
