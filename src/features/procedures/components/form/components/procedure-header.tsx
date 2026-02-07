@@ -7,7 +7,7 @@ import { ProcedureDeleteButton } from "../../procedure-delete-button";
 type ProcedureHeaderProps = {
   procedure: ProcedureForEdit;
   viewMode: "edit" | "preview";
-  onViewModeChange: (mode: "edit" | "preview") => void;
+  onViewModeChange: () => void;
   isDisabled: boolean;
 };
 
@@ -41,24 +41,15 @@ export function ProcedureHeader({
         </div>
         <div className="flex gap-2">
           <Button
-            variant={viewMode === "edit" ? "default" : "outline"}
-            size="sm"
-            onClick={() => onViewModeChange("edit")}
-            disabled={isDisabled}
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <ProcedureDeleteButton procedureId={procedure.id} />
-          <Button
             variant={viewMode === "preview" ? "default" : "outline"}
             size="sm"
-            onClick={() => onViewModeChange("preview")}
+            onClick={() => onViewModeChange()}
             disabled={isDisabled}
           >
             <Eye className="h-4 w-4 mr-2" />
             Preview
           </Button>
+          <ProcedureDeleteButton procedureId={procedure.id} />
         </div>
       </div>
     </Card>

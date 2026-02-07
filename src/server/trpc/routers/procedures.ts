@@ -428,7 +428,6 @@ export const procedureRouter = router({
           message: "Team not found",
         });
       }
-
       
       let categoryId = procedureCategoryId;
       if (newProcedureCategory && newProcedureCategoryName) {

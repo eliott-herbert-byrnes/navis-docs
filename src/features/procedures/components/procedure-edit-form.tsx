@@ -51,6 +51,8 @@ export const EditProcedureForm = ({
     teamId,
   );
 
+  const handleViewMode = () => viewMode === 'edit' ? setViewMode('preview') : setViewMode('edit')
+
   const [cancelTrigger, cancelDialog] = useConfirmDialog({
     title: "Discard unsaved changes?",
     description:
@@ -138,7 +140,7 @@ export const EditProcedureForm = ({
       <ProcedureHeader
         procedure={procedure}
         viewMode={viewMode}
-        onViewModeChange={setViewMode}
+        onViewModeChange={handleViewMode}
         isDisabled={isSaving || isCancelling || isPending}
       />
 
