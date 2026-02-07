@@ -159,8 +159,12 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
     });
   };
 
+  const deleteProcedureAsync = (procedureId: string) =>
+    mutation.mutateAsync({ procedureId });
+
   return {
     deleteProcedure,
+    deleteProcedureAsync,
     isPending: mutation.isPending,
   };
 }

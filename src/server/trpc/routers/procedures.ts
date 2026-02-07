@@ -688,6 +688,8 @@ export const procedureRouter = router({
         });
       }
 
+      const categoryIdToCheck = procedure.categoryId;
+
       await ctx.db.procedure.delete({
         where: { id: input.procedureId },
       });
@@ -699,6 +701,36 @@ export const procedureRouter = router({
         entityType: "PROCEDURE",
         entityId: input.procedureId,
       });
+
+      if (categoryIdToCheck) {
+        const remainingCount = await ctx.db.procedure.count({
+          where: { categoryId: categoryIdToCheck },
+        });
+        if (remainingCount === 0) {
+          const category = await ctx.db.category.findUnique({
+            where: { id: categoryIdToCheck },
+            select: { id: true, name: true, teamId: true },
+          });
+          if (category) {
+            await ctx.db.category.delete({
+              where: { id: categoryIdToCheck },
+            });
+            await createAuditLog({
+              orgId: ctx.org!.id,
+              actorId: ctx?.user?.id ?? "",
+              action: "CATEGORY_DELETED",
+              entityType: "CATEGORY",
+              entityId: category.id,
+              beforeJSON: {
+                id: category.id,
+                name: category.name,
+                teamId: category.teamId,
+                reason: "Auto-removed: category had no remaining procedures after procedure deletion",
+              },
+            });
+          }
+        }
+      }
 
       return {
         data: procedure,

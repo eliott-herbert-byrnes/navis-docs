@@ -19,6 +19,7 @@ import { ProcedureForEdit } from "../types/types";
 import {
   usePublishProcedure,
   useUpdateProcedureContent,
+  useDeleteProcedure,
 } from "../hooks/use-procedure-mutations";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 
@@ -50,8 +51,50 @@ export const EditProcedureForm = ({
     departmentId,
     teamId,
   );
+  const { deleteProcedureAsync, isPending: isDeleting } = useDeleteProcedure(
+    departmentId,
+    teamId,
+  );
 
-  const handleViewMode = () => viewMode === 'edit' ? setViewMode('preview') : setViewMode('edit')
+  const isDraft = procedure.status === "DRAFT";
+
+  const [discardDraftTrigger, discardDraftDialog] = useConfirmDialog({
+    title: "Discard this draft?",
+    description:
+      "The procedure will be deleted. If its category has no other procedures, the category will be removed."
+      ,
+    action: async () => {
+      try {
+        await deleteProcedureAsync(procedureId);
+        return {
+          status: "SUCCESS" as const,
+          message: "",
+          fieldErrors: {},
+          timestamp: Date.now(),
+        };
+      } catch (err) {
+        return {
+          status: "ERROR" as const,
+          message: err instanceof Error ? err.message : "Failed to delete procedure",
+          fieldErrors: {},
+          timestamp: Date.now(),
+        };
+      }
+    },
+    trigger: (isLoading) => (
+      <Button
+        variant="outline"
+        disabled={
+          isLoading || isCancelling || isSaving || isPending || isDeleting
+        }
+      >
+        {isLoading || isCancelling || isDeleting ? (
+          <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
+        ) : null}
+        Cancel
+      </Button>
+    ),
+  });
 
   const [cancelTrigger, cancelDialog] = useConfirmDialog({
     title: "Discard unsaved changes?",
@@ -97,6 +140,9 @@ export const EditProcedureForm = ({
     );
   };
 
+  const handleViewMode = () =>
+    setViewMode((m) => (m === "edit" ? "preview" : "edit"));
+
   const handleContentChange = useCallback((newContent: ProcedureContent) => {
     setContent(newContent);
     setHasUnsavedChanges(true);
@@ -141,7 +187,7 @@ export const EditProcedureForm = ({
         procedure={procedure}
         viewMode={viewMode}
         onViewModeChange={handleViewMode}
-        isDisabled={isSaving || isCancelling || isPending}
+        isDisabled={isSaving || isCancelling || isPending || isDeleting}
       />
 
       <ProcedureEditorSelector
@@ -162,6 +208,8 @@ export const EditProcedureForm = ({
         cancelTrigger={cancelTrigger}
         cancelDialog={cancelDialog}
         onCancelWithoutChanges={handleCancelWithoutChanges}
+        discardDraftTrigger={isDraft ? discardDraftTrigger : undefined}
+        discardDraftDialog={isDraft ? discardDraftDialog : undefined}
       />
     </div>
   );

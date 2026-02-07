@@ -14,6 +14,8 @@ type ProcedureActionButtonsProps = {
   cancelTrigger: React.ReactNode;
   cancelDialog: React.ReactNode;
   onCancelWithoutChanges: () => void;
+  discardDraftTrigger?: React.ReactNode;
+  discardDraftDialog?: React.ReactNode;
 };
 
 export function ProcedureActionButtons({
@@ -27,7 +29,10 @@ export function ProcedureActionButtons({
   cancelTrigger,
   cancelDialog,
   onCancelWithoutChanges,
+  discardDraftTrigger,
+  discardDraftDialog,
 }: ProcedureActionButtonsProps) {
+  const isDraft = procedure.status === "DRAFT";
   return (
     <Card className="p-4 animate-fade-from-top">
       <div className="flex items-center justify-between">
@@ -50,7 +55,12 @@ export function ProcedureActionButtons({
           )}
         </div>
         <div className="flex gap-2">
-          {hasUnsavedChanges ? (
+          {isDraft && discardDraftTrigger != null && discardDraftDialog != null ? (
+            <>
+              {discardDraftTrigger}
+              {discardDraftDialog}
+            </>
+          ) : hasUnsavedChanges ? (
             <>
               {cancelTrigger}
               {cancelDialog}
