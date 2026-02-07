@@ -63,15 +63,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ProcedureBaseDeleteButton } from "./procedure-base-delete-button";
+import { trpc } from "@/trpc/client";
+import { toast } from "sonner";
 
 export const schema = z.object({
   id: z.string(),
+  teamId: z.string(),
   slug: z.string(),
   title: z.string(),
   description: z.string().nullable(),
   categoryId: z.string().nullable(),
   category: z
     .object({
+      id: z.string(),
       name: z.string().nullable(),
     })
     .nullable(),
@@ -79,6 +83,54 @@ export const schema = z.object({
 });
 
 type Procedure = z.infer<typeof schema>;
+
+const UNCATEGORIZED_VALUE = "";
+
+function CategoryCell({
+  procedure,
+  categories,
+}: {
+  procedure: Procedure;
+  categories: { id: string; name: string }[];
+}) {
+  const utils = trpc.useUtils();
+  const updateCategory = trpc.procedures.updateProcedureCategory.useMutation({
+    onSuccess: () => {
+      utils.procedures.getProceduresForBase.invalidate();
+      toast.success("Category updated");
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to update category");
+    },
+  });
+  const value = procedure.categoryId ?? UNCATEGORIZED_VALUE;
+  return (
+    <div className="w-40">
+      <Select
+        value={value}
+        onValueChange={(newValue) => {
+          updateCategory.mutate({
+            procedureId: procedure.id,
+            categoryId: newValue === UNCATEGORIZED_VALUE ? null : newValue,
+          });
+        }}
+        disabled={updateCategory.isPending}
+      >
+        <SelectTrigger className="h-8 text-muted-foreground">
+          <SelectValue placeholder="Category" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={UNCATEGORIZED_VALUE}>Uncategorized</SelectItem>
+          {categories.map((c) => (
+            <SelectItem key={c.id} value={c.id}>
+              {c.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
 
 function TableCellViewer({ item }: { item: Procedure }) {
   const isMobile = useIsMobile();
@@ -169,6 +221,16 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     pageSize: 10,
   });
 
+  const teamIds = React.useMemo(
+    () => [...new Set(initialData.map((p) => p.teamId))],
+    [initialData],
+  );
+  const { data: categoriesData } = trpc.procedures.getCategoriesForTeams.useQuery(
+    { teamIds },
+    { enabled: teamIds.length > 0 },
+  );
+  const categoriesByTeam = categoriesData?.categoriesByTeam ?? {};
+
   const columns: ColumnDef<Procedure>[] = [
     {
       id: "select",
@@ -210,11 +272,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
       accessorKey: "category",
       header: "Category",
       cell: ({ row }) => (
-        <div className="w-32">
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
-            {row.original.category?.name}
-          </Badge>
-        </div>
+        <CategoryCell
+          procedure={row.original}
+          categories={categoriesByTeam[row.original.teamId] ?? []}
+        />
       ),
     },
     {
@@ -306,9 +367,9 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
