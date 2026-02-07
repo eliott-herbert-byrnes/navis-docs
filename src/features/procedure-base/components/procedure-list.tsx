@@ -64,7 +64,7 @@ import {
 } from "@/components/ui/table";
 import { ProcedureBaseDeleteButton } from "./procedure-base-delete-button";
 import { trpc } from "@/trpc/client";
-import { toast } from "sonner";
+import { CategoryCell } from "./procedure-list-category-cell";
 
 export const schema = z.object({
   id: z.string(),
@@ -82,57 +82,15 @@ export const schema = z.object({
   createdAt: z.date(),
 });
 
-type Procedure = z.infer<typeof schema>;
+export type Procedure = z.infer<typeof schema>;
 
-const UNCATEGORIZED_VALUE = "";
-
-function CategoryCell({
-  procedure,
+function TableCellViewer({
+  item,
   categories,
 }: {
-  procedure: Procedure;
+  item: Procedure;
   categories: { id: string; name: string }[];
 }) {
-  const utils = trpc.useUtils();
-  const updateCategory = trpc.procedures.updateProcedureCategory.useMutation({
-    onSuccess: () => {
-      utils.procedures.getProceduresForBase.invalidate();
-      toast.success("Category updated");
-    },
-    onError: (error) => {
-      toast.error(error.message ?? "Failed to update category");
-    },
-  });
-  const value = procedure.categoryId ?? UNCATEGORIZED_VALUE;
-  return (
-    <div className="w-40">
-      <Select
-        value={value}
-        onValueChange={(newValue) => {
-          updateCategory.mutate({
-            procedureId: procedure.id,
-            categoryId: newValue === UNCATEGORIZED_VALUE ? null : newValue,
-          });
-        }}
-        disabled={updateCategory.isPending}
-      >
-        <SelectTrigger className="h-8 text-muted-foreground">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={UNCATEGORIZED_VALUE}>Uncategorized</SelectItem>
-          {categories.map((c) => (
-            <SelectItem key={c.id} value={c.id}>
-              {c.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
-function TableCellViewer({ item }: { item: Procedure }) {
   const isMobile = useIsMobile();
 
   return (
@@ -170,7 +128,7 @@ function TableCellViewer({ item }: { item: Procedure }) {
 
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Category</Label>
-              <p className="text-muted-foreground">{item.category?.name}</p>
+              <CategoryCell procedure={item} categories={categories} />
             </div>
 
             <Separator />
@@ -263,9 +221,12 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => {
-        return <TableCellViewer item={row.original} />;
-      },
+      cell: ({ row }) => (
+        <TableCellViewer
+          item={row.original}
+          categories={categoriesByTeam[row.original.teamId] ?? []}
+        />
+      ),
       enableHiding: false,
     },
     {

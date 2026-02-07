@@ -25,3 +25,27 @@ export function useDeleteProcedureFromBase() {
     isPending: mutation.isPending,
   };
 }
+
+
+export function useUpdateProcedureCategory() {
+  const utils = trpc.useUtils();
+
+  const mutation = trpc.procedures.updateProcedureCategory.useMutation({
+    onSuccess: () => {
+      utils.procedures.getProceduresForBase.invalidate();
+      toast.success("Category updated");
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to update category");
+    },
+  });
+
+  const updateCategory = (procedureId: string, categoryId: string | null) => {
+    mutation.mutate({ procedureId, categoryId });
+  };
+
+  return {
+    updateCategory,
+    isPending: mutation.isPending,
+  };
+}

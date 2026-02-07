@@ -46,8 +46,8 @@ export function ProcedureHeader({
             onClick={() => onViewModeChange()}
             disabled={isDisabled}
           >
-            <Eye className="h-4 w-4 mr-2" />
-            Preview
+            <Eye className="h-4 w-4" />
+            {viewMode === "preview" ? "Amend" : "Preview"}
           </Button>
           <ProcedureDeleteButton procedureId={procedure.id} />
         </div>
