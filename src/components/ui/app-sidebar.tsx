@@ -5,7 +5,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -22,7 +21,6 @@ import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "../theme/theme-switcher";
-import { OrgBadge } from "@/features/org/components/org-badge";
 import { Button } from "./button";
 import Link from "next/link";
 import { items } from "@/config/navigation";
@@ -37,15 +35,13 @@ export async function AppSidebar() {
     <Sidebar collapsible="icon" variant="inset">
       <SidebarContent>
         <SidebarGroup className="flex flex-col gap-2 h-full">
-          <SidebarGroupLabel>
-            <div className="flex flex-row gap-2 items-center">
-              <LucideShip className="w-4 h-4" />
-              <OrgBadge />
-            </div>
-          </SidebarGroupLabel>
-          <Separator />
           <SidebarGroupContent>
             <SidebarMenu>
+              <div className="flex flex-row gap-2 items-center pt-3 mb-2">
+                <LucideShip className="w-4.5 h-4.5 ml-2 mt-1" />
+                <span className="text-sm group-data-[collapsible=icon]:hidden">Navis Docs</span>
+              </div>
+              <Separator />
               {items
                 .filter((item) =>
                   "isAdmin" in item && item.isAdmin ? isAdmin : true,
@@ -57,15 +53,15 @@ export async function AppSidebar() {
                         key={item.title}
                         className={cn(
                           "isAdmin" in item &&
-                            item.isAdmin &&
-                            !isAdmin &&
-                            "hidden",
+                          item.isAdmin &&
+                          !isAdmin &&
+                          "hidden",
                         )}
                       >
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton asChild tooltip={item.title}>
                           <a href={item.path}>
-                            <item.icon />
-                            <span>{item.title}</span>
+                              <item.icon/>
+                              <span>{item.title}</span>
                           </a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -76,12 +72,12 @@ export async function AppSidebar() {
                       key={item.title}
                       className={cn(
                         "isAdmin" in item &&
-                          item.isAdmin &&
-                          !isAdmin &&
-                          "hidden",
+                        item.isAdmin &&
+                        !isAdmin &&
+                        "hidden",
                       )}
                     >
-                      <SidebarMenuButton asChild>
+                      <SidebarMenuButton asChild tooltip={item.title}>
                         <a href={item.path}>
                           <item.icon />
                           <span>{item.title}</span>

@@ -1,5 +1,4 @@
 import {
-  demoPath,
   homePath,
   errorsPath,
   ideasPath,
@@ -11,7 +10,6 @@ import {
   settingsPath,
 } from "@/app/paths";
 import {
-  Rocket,
   Home,
   Inbox,
   Lightbulb,
@@ -33,14 +31,14 @@ export type NavItem = {
 };
 
 export const items = [
-  {
-    id: "demo",
-    title: "Demo Info",
-    path: demoPath(),
-    icon: Rocket,
-    isAdmin: true,
-    separator: true,
-  },
+  // {
+  //   id: "Logo",
+  //   title: "",
+  //   path: demoPath(),
+  //   icon: Rocket,
+  //   isAdmin: true,
+  //   separator: true,
+  // },
   {
     id: "home",
     title: "Home",
