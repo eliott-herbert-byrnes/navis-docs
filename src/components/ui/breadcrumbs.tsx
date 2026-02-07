@@ -12,17 +12,27 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 
 type BreadcrumbsProps = {
   breadcrumbs: {
+    id?: string;
     title: string;
     href?: string;
+    dropdownAriaLabel?: string;
     dropdown?: {
+      id?: string;
       title: string;
       href: string;
+    }[];
+    dropdownGroups?: {
+      label: string;
+      items: { id?: string; title: string; href: string }[];
     }[];
   }[];
 };
@@ -49,16 +59,47 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
             );
           }
 
+          if (breadcrumb.dropdownGroups) {
+            breadcrumbItem = (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                  aria-label={breadcrumb.dropdownAriaLabel}
+                >
+                  {breadcrumb.title}
+                  <LucideChevronDown className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  {breadcrumb.dropdownGroups.map((group) => (
+                    <DropdownMenuGroup key={group.label}>
+                      <DropdownMenuLabel className="bg-neutral-800">
+                        {group.label}
+                      </DropdownMenuLabel>
+                      {group.items.map((item) => (
+                        <DropdownMenuItem asChild key={item.id ?? item.href}>
+                          <Link href={item.href}>{item.title}</Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          }
+
           if (breadcrumb.dropdown) {
             breadcrumbItem = (
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1">
+                <DropdownMenuTrigger
+                  className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                  aria-label={breadcrumb.dropdownAriaLabel}
+                >
                   {breadcrumb.title}
                   <LucideChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   {breadcrumb.dropdown.map((item) => (
-                    <DropdownMenuItem asChild key={item.href}>
+                    <DropdownMenuItem asChild key={item.id ?? item.href}>
                       <Link href={item.href}>{item.title}</Link>
                     </DropdownMenuItem>
                   ))}
@@ -68,7 +109,9 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
           }
 
           return (
-            <Fragment key={breadcrumb.title}>
+            <Fragment
+              key={breadcrumb.id ?? breadcrumb.href ?? breadcrumb.title}
+            >
               <BreadcrumbItem>{breadcrumbItem}</BreadcrumbItem>
               {index < breadcrumbs.length - 1 && (
                 <BreadcrumbSeparator>

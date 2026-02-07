@@ -176,6 +176,9 @@ importers:
       openai:
         specifier: ^6.8.1
         version: 6.8.1(zod@4.1.11)
+      parse-path:
+        specifier: ^7.1.0
+        version: 7.1.0
       pg:
         specifier: ^8.18.0
         version: 8.18.0
@@ -7133,6 +7136,12 @@ packages:
       }
     engines: { node: ">=6" }
 
+  parse-path@7.1.0:
+    resolution:
+      {
+        integrity: sha512-EuCycjZtfPcjWk7KTksnJ5xPMvWGA/6i4zrLYhRG0hGvC3GPU/jGUj3Cy+ZR0v30duV3e23R95T1lE2+lsndSw==,
+      }
+
   parseley@0.12.1:
     resolution:
       {
@@ -7515,6 +7524,12 @@ packages:
         integrity: sha512-CvexbZtbov6jW2eXAvLukXjXUW1TzFaivC46BpWc/3BpcCysb5Vffu+B3XHMm8lVEuy2Mm4XGex8hBSg1yapPg==,
       }
     engines: { node: ">=12.0.0" }
+
+  protocols@2.0.2:
+    resolution:
+      {
+        integrity: sha512-hHVTzba3wboROl0/aWRRG9dMytgH6ow//STBZh43l/wQgmMhYhOFi0EHWAPtoCz9IAUymsyP0TSBHkhgMEGNnQ==,
+      }
 
   proxy-from-env@1.1.0:
     resolution:
@@ -13248,6 +13263,10 @@ snapshots:
     dependencies:
       callsites: 3.1.0
 
+  parse-path@7.1.0:
+    dependencies:
+      protocols: 2.0.2
+
   parseley@0.12.1:
     dependencies:
       leac: 0.6.0
@@ -13505,6 +13524,8 @@ snapshots:
       "@protobufjs/utf8": 1.1.0
       "@types/node": 20.19.17
       long: 5.3.2
+
+  protocols@2.0.2: {}
 
   proxy-from-env@1.1.0: {}
 

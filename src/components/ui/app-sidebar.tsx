@@ -1,19 +1,4 @@
-import {
-  ChevronUp,
-  Home,
-  Inbox,
-  Database,
-  Settings,
-  Users,
-  UserPlus,
-  CreditCard,
-  User2,
-  Lightbulb,
-  LucideShip,
-  History,
-  Rocket,
-} from "lucide-react";
-
+import { ChevronUp, User2, LucideShip } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -33,18 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import {
-  auditPath,
-  demoPath,
-  errorsPath,
-  homePath,
-  ideasPath,
-  invitePath,
-  procedureBasePath,
-  settingsPath,
-  subscriptionPath,
-  userBasePath,
-} from "@/app/paths";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
@@ -52,72 +25,7 @@ import { ThemeSwitcher } from "../theme/theme-switcher";
 import { OrgBadge } from "@/features/org/components/org-badge";
 import { Button } from "./button";
 import Link from "next/link";
-
-const items = [
-  {
-    title: "Demo Info",
-    url: demoPath(),
-    icon: Rocket,
-    isAdmin: true,
-    separator: true,
-  },
-  {
-    title: "Home",
-    url: homePath(),
-    icon: Home,
-  },
-  {
-    title: "Errors",
-    url: errorsPath(),
-    icon: Inbox,
-    isAdmin: true,
-  },
-  {
-    title: "Ideas",
-    url: ideasPath(),
-    icon: Lightbulb,
-    separator: true,
-    isAdmin: true,
-  },
-  {
-    title: "Procedures",
-    url: procedureBasePath(),
-    icon: Database,
-    isAdmin: true,
-  },
-  {
-    title: "Userbase",
-    url: userBasePath(),
-    icon: Users,
-    isAdmin: true,
-  },
-  {
-    title: "Audit Log",
-    url: auditPath(),
-    icon: History,
-    isAdmin: true,
-    separator: true,
-  },
-  {
-    title: "Invite",
-    url: invitePath(),
-    icon: UserPlus,
-    isAdmin: true,
-  },
-  {
-    title: "Subscription",
-    url: subscriptionPath(),
-    icon: CreditCard,
-    isAdmin: true,
-  },
-  {
-    title: "Settings",
-    url: settingsPath(),
-    icon: Settings,
-    isAdmin: true,
-    separator: true,
-  },
-];
+import { items } from "@/config/navigation";
 
 export async function AppSidebar() {
   const user = await getSessionUser();
@@ -139,16 +47,23 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => (item.isAdmin ? isAdmin : true))
+                .filter((item) =>
+                  "isAdmin" in item && item.isAdmin ? isAdmin : true,
+                )
                 .map((item) =>
-                  item.separator ? (
+                  "separator" in item && item.separator ? (
                     <Fragment key={item.title}>
                       <SidebarMenuItem
                         key={item.title}
-                        className={cn(item.isAdmin && !isAdmin && "hidden")}
+                        className={cn(
+                          "isAdmin" in item &&
+                            item.isAdmin &&
+                            !isAdmin &&
+                            "hidden",
+                        )}
                       >
                         <SidebarMenuButton asChild>
-                          <a href={item.url}>
+                          <a href={item.path}>
                             <item.icon />
                             <span>{item.title}</span>
                           </a>
@@ -159,10 +74,15 @@ export async function AppSidebar() {
                   ) : (
                     <SidebarMenuItem
                       key={item.title}
-                      className={cn(item.isAdmin && !isAdmin && "hidden")}
+                      className={cn(
+                        "isAdmin" in item &&
+                          item.isAdmin &&
+                          !isAdmin &&
+                          "hidden",
+                      )}
                     >
                       <SidebarMenuButton asChild>
-                        <a href={item.url}>
+                        <a href={item.path}>
                           <item.icon />
                           <span>{item.title}</span>
                         </a>
