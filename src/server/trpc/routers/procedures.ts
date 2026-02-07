@@ -153,12 +153,14 @@ export const procedureRouter = router({
           where,
           select: {
             id: true,
+            teamId: true,
             slug: true,
             title: true,
             description: true,
             categoryId: true,
             category: {
               select: {
+                id: true,
                 name: true,
               },
             },
@@ -237,6 +239,43 @@ export const procedureRouter = router({
         }),
       ]);
       return { data: categories, metadata: { count } };
+    }),
+
+  // Query: GET categories for multiple teams (procedure-base list)
+  getCategoriesForTeams: adminProcedure
+    .input(
+      z.object({
+        teamIds: z.array(z.string().uuid()).min(1).max(50),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found",
+        });
+      }
+      const categories = await ctx.db.category.findMany({
+        where: {
+          teamId: { in: input.teamIds },
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: { id: true, name: true, sortOrder: true, teamId: true },
+        orderBy: [{ teamId: "asc" }, { sortOrder: "asc" }],
+      });
+      const byTeam = categories.reduce<Record<string, { id: string; name: string; sortOrder: number }[]>>(
+        (acc, c) => {
+          if (!acc[c.teamId]) acc[c.teamId] = [];
+          acc[c.teamId].push({ id: c.id, name: c.name, sortOrder: c.sortOrder });
+          return acc;
+        },
+        {},
+      );
+      return { categoriesByTeam: byTeam };
     }),
 
   // Query: GET-Individual procedure for edit
@@ -428,9 +467,39 @@ export const procedureRouter = router({
           message: "Team not found",
         });
       }
+      
+      
+      const styleMap: Record<string, ProcedureStyle> = {
+        raw: ProcedureStyle.RAW,
+        steps: ProcedureStyle.STEPS,
+        flow: ProcedureStyle.FLOW,
+        yesno: ProcedureStyle.YESNO,
+      };
+      const finalisedProcedureStyle = styleMap[procedureStyle];
 
+      const existingName = await ctx.db.procedure.findFirst({
+        where: {title: procedureTitle}
+      })
+
+      if(existingName){
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "This title has already been taken, please choose another.",
+        });
+      }
+      
       let categoryId = procedureCategoryId;
       if (newProcedureCategory && newProcedureCategoryName) {
+        const existingCategory = await ctx.db.category.findFirst({
+          where: {name: newProcedureCategoryName}
+        })
+  
+        if(existingCategory){
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "This category name has already been taken, please choose another.",
+          });
+        }
         const newCategory = await ctx.db.category.create({
           data: {
             teamId: teamId,
@@ -453,14 +522,6 @@ export const procedureRouter = router({
           },
         });
       }
-
-      const styleMap: Record<string, ProcedureStyle> = {
-        raw: ProcedureStyle.RAW,
-        steps: ProcedureStyle.STEPS,
-        flow: ProcedureStyle.FLOW,
-        yesno: ProcedureStyle.YESNO,
-      };
-      const finalisedProcedureStyle = styleMap[procedureStyle];
 
       const procedure = await ctx.db.procedure.create({
         data: {
@@ -627,6 +688,8 @@ export const procedureRouter = router({
         });
       }
 
+      const categoryIdToCheck = procedure.categoryId;
+
       await ctx.db.procedure.delete({
         where: { id: input.procedureId },
       });
@@ -639,10 +702,105 @@ export const procedureRouter = router({
         entityId: input.procedureId,
       });
 
+      if (categoryIdToCheck) {
+        const remainingCount = await ctx.db.procedure.count({
+          where: { categoryId: categoryIdToCheck },
+        });
+        if (remainingCount === 0) {
+          const category = await ctx.db.category.findUnique({
+            where: { id: categoryIdToCheck },
+            select: { id: true, name: true, teamId: true },
+          });
+          if (category) {
+            await ctx.db.category.delete({
+              where: { id: categoryIdToCheck },
+            });
+            await createAuditLog({
+              orgId: ctx.org!.id,
+              actorId: ctx?.user?.id ?? "",
+              action: "CATEGORY_DELETED",
+              entityType: "CATEGORY",
+              entityId: category.id,
+              beforeJSON: {
+                id: category.id,
+                name: category.name,
+                teamId: category.teamId,
+                reason: "Auto-removed: category had no remaining procedures after procedure deletion",
+              },
+            });
+          }
+        }
+      }
+
       return {
         data: procedure,
       };
     }),
+
+  // Mutation: Update procedure category
+  updateProcedureCategory: adminProcedure
+    .use(rateLimitMiddleware("procedure-update-category"))
+    .input(
+      z.object({
+        procedureId: procedureIdSchema,
+        categoryId: z.string().uuid().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found",
+        });
+      }
+      const procedure = await ctx.db.procedure.findFirst({
+        where: {
+          id: input.procedureId,
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: { id: true, teamId: true, categoryId: true },
+      });
+      if (!procedure) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Procedure not found",
+        });
+      }
+      if (input.categoryId !== null) {
+        const category = await ctx.db.category.findFirst({
+          where: {
+            id: input.categoryId,
+            teamId: procedure.teamId,
+          },
+        });
+        if (!category) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Category not found or does not belong to this procedure's team",
+          });
+        }
+      }
+      const previousCategoryId = procedure.categoryId;
+      await ctx.db.procedure.update({
+        where: { id: input.procedureId },
+        data: { categoryId: input.categoryId },
+      });
+      await createAuditLog({
+        orgId: ctx.org.id,
+        actorId: ctx.user?.id ?? "",
+        action: "PROCEDURE_CATEGORY_UPDATED",
+        entityType: "PROCEDURE",
+        entityId: procedure.id,
+        beforeJSON: { categoryId: previousCategoryId },
+        afterJSON: { categoryId: input.categoryId },
+      });
+      return { data: { id: procedure.id, categoryId: input.categoryId } };
+    }),
+
   // Mutate: Update Procedure Content
   updateProcedureContent: adminProcedure
     .use(rateLimitMiddleware("procedure-update"))

@@ -23,7 +23,7 @@ export function useCreateProcedure(departmentId: string, teamId: string) {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create procedure");
+      toast.error(error.message);
     },
   });
 
@@ -159,8 +159,12 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
     });
   };
 
+  const deleteProcedureAsync = (procedureId: string) =>
+    mutation.mutateAsync({ procedureId });
+
   return {
     deleteProcedure,
+    deleteProcedureAsync,
     isPending: mutation.isPending,
   };
 }

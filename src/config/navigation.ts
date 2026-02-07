@@ -8,6 +8,7 @@ import {
   invitePath,
   subscriptionPath,
   settingsPath,
+  categoriesPath,
 } from "@/app/paths";
 import {
   Home,
@@ -19,6 +20,7 @@ import {
   CreditCard,
   Settings,
   History,
+  Folder,
 } from "lucide-react";
 
 export type NavItem = {
@@ -58,6 +60,13 @@ export const items = [
     path: ideasPath(),
     icon: Lightbulb,
     separator: true,
+    isAdmin: true,
+  },
+  {
+    id: "categories",
+    title: "Categories",
+    path: categoriesPath(),
+    icon: Folder,
     isAdmin: true,
   },
   {

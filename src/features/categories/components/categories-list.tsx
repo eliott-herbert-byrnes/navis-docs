@@ -24,20 +24,7 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { z } from "zod";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,7 +40,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -62,112 +48,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProcedureBaseDeleteButton } from "./procedure-base-delete-button";
 import { trpc } from "@/trpc/client";
-import { CategoryCell } from "./procedure-list-category-cell";
+import { CategoryDeleteButton } from "./category-delete-button";
 
 export const schema = z.object({
   id: z.string(),
+  name: z.string(),
   teamId: z.string(),
-  slug: z.string(),
-  title: z.string(),
-  description: z.string().nullable(),
-  categoryId: z.string().nullable(),
-  category: z
-    .object({
-      id: z.string(),
-      name: z.string().nullable(),
-    })
-    .nullable(),
-  createdAt: z.date(),
+  departmentName: z.string(),
+  procedureCount: z.number(),
 });
 
-export type Procedure = z.infer<typeof schema>;
+export type CategoryListItem = z.infer<typeof schema>;
 
-function TableCellViewer({
-  item,
-  categories,
-}: {
-  item: Procedure;
-  categories: { id: string; name: string }[];
-}) {
-  const isMobile = useIsMobile();
-
-  return (
-    <div className="w-full">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="link"
-            className="text-foreground w-fit px-0 text-left"
-          >
-            {item.title}
-          </Button>
-        </SheetTrigger>
-        <SheetContent side={isMobile ? "bottom" : "right"}>
-          <SheetHeader className="gap-1">
-            <SheetTitle>{item.title}</SheetTitle>
-            <SheetDescription>Error Report Details</SheetDescription>
-          </SheetHeader>
-          <div className="flex flex-col gap-4 overflow-y-auto py-4 text-sm mx-4">
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Status</Label>
-              <Badge variant="outline" className="w-fit">
-                Published
-              </Badge>
-            </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Description</Label>
-              <p className="text-muted-foreground">{item.description}</p>
-            </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Category</Label>
-              <CategoryCell procedure={item} categories={categories} />
-            </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Report Body</Label>
-              <p className="text-muted-foreground whitespace-pre-wrap">
-                {item.description}
-              </p>
-            </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Created At</Label>
-              <p className="text-muted-foreground">
-                {new Date(item.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
-          </div>
-          <SheetFooter>
-            <SheetClose asChild>
-              <Button variant="outline">Close</Button>
-            </SheetClose>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    </div>
-  );
-}
-
-export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
-  const [rowSelection, setRowSelection] = React.useState({});
+export function CategoriesList({ data: initialData }: { data: CategoryListItem[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -179,76 +73,30 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     pageSize: 10,
   });
 
-  const teamIds = React.useMemo(
-    () => [...new Set(initialData.map((p) => p.teamId))],
-    [initialData],
-  );
-  const { data: categoriesData } = trpc.procedures.getCategoriesForTeams.useQuery(
-    { teamIds },
-    { enabled: teamIds.length > 0 },
-  );
-  const categoriesByTeam = categoriesData?.categoriesByTeam ?? {};
-
-  const columns: ColumnDef<Procedure>[] = [
+  const columns: ColumnDef<CategoryListItem>[] = [
     {
-      id: "select",
-      header: ({ table }) => (
-        <div className="flex items-center justify-center">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center justify-center">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        </div>
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "title",
+      accessorKey: "name",
       header: "Title",
       cell: ({ row }) => (
-        <TableCellViewer
-          item={row.original}
-          categories={categoriesByTeam[row.original.teamId] ?? []}
-        />
+        <span className="font-medium">{row.original.name}</span>
       ),
       enableHiding: false,
     },
     {
-      accessorKey: "category",
-      header: "Category",
+      accessorKey: "departmentName",
+      header: "Department",
       cell: ({ row }) => (
-        <CategoryCell
-          procedure={row.original}
-          categories={categoriesByTeam[row.original.teamId] ?? []}
-        />
+        <div className="text-muted-foreground text-sm">
+          {row.original.departmentName}
+        </div>
       ),
     },
     {
-      accessorKey: "createdAt",
-      header: "Created At",
+      accessorKey: "procedureCount",
+      header: "Procedures",
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {new Date(row.original.createdAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
+        <div className="text-muted-foreground text-sm">
+          {row.original.procedureCount}
         </div>
       ),
     },
@@ -268,7 +116,9 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem asChild>
-              <ProcedureBaseDeleteButton procedureId={row.original.id} />
+              <CategoryDeleteButton
+                category={{ id: row.original.id, name: row.original.name }}
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -282,13 +132,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
       columnFilters,
       pagination,
     },
     getRowId: (row) => row.id,
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -307,10 +154,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by procedure name..."
-            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+            placeholder="Search by category name..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("title")?.setFilterValue(event.target.value)
+              table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className="pl-10"
           />
@@ -322,28 +169,23 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
           <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                    </TableHead>
-                  );
-                })}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -360,7 +202,7 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No procedures found.
+                  No categories found.
                 </TableCell>
               </TableRow>
             )}
@@ -370,8 +212,7 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
 
       <div className="flex items-center justify-between px-1 lg:px-1">
         <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} row(s).
         </div>
         <div className="flex w-full items-center gap-8 lg:w-fit">
           <div className="hidden items-center gap-2 lg:flex">
@@ -400,7 +241,7 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
           </div>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
             Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {table.getPageCount() || 1}
           </div>
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
