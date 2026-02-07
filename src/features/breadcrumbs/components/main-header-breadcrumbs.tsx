@@ -78,18 +78,16 @@ export function MainHeaderBreadcrumbs() {
     const department = departments.find((d) => d.id === departmentId);
     const team = department?.teams.find((t) => t.id === teamId);
 
-    const departmentTitle =
-      departmentsLoading
-        ? "…"
-        : departmentsError || !department
-          ? "Department"
-          : department.name;
-    const teamTitle =
-      departmentsLoading
-        ? "…"
-        : departmentsError || !team
-          ? "Team"
-          : team.name;
+    const departmentTitle = departmentsLoading
+      ? "…"
+      : departmentsError || !department
+        ? "Department"
+        : department.name;
+    const teamTitle = departmentsLoading
+      ? "…"
+      : departmentsError || !team
+        ? "Team"
+        : team.name;
 
     const departmentCrumb = {
       id: departmentId,

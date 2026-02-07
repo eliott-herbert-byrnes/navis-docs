@@ -1,8 +1,4 @@
-import {
-  ChevronUp,
-  User2,
-  LucideShip,
-} from "lucide-react";
+import { ChevronUp, User2, LucideShip } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -31,13 +27,11 @@ import { Button } from "./button";
 import Link from "next/link";
 import { items } from "@/config/navigation";
 
-
 export async function AppSidebar() {
   const user = await getSessionUser();
 
   if (!user) return <div className="h-full invisible" aria-hidden></div>;
   const isAdmin = await isOrgAdminOrOwner(user.userId);
-
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -53,13 +47,20 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => (('isAdmin' in item && item.isAdmin) ? isAdmin : true))
+                .filter((item) =>
+                  "isAdmin" in item && item.isAdmin ? isAdmin : true,
+                )
                 .map((item) =>
-                  ('separator' in item && item.separator) ? (
+                  "separator" in item && item.separator ? (
                     <Fragment key={item.title}>
                       <SidebarMenuItem
                         key={item.title}
-                        className={cn(('isAdmin' in item && item.isAdmin) && !isAdmin && "hidden")}
+                        className={cn(
+                          "isAdmin" in item &&
+                            item.isAdmin &&
+                            !isAdmin &&
+                            "hidden",
+                        )}
                       >
                         <SidebarMenuButton asChild>
                           <a href={item.path}>
@@ -73,7 +74,12 @@ export async function AppSidebar() {
                   ) : (
                     <SidebarMenuItem
                       key={item.title}
-                      className={cn(('isAdmin' in item && item.isAdmin) && !isAdmin && "hidden")}
+                      className={cn(
+                        "isAdmin" in item &&
+                          item.isAdmin &&
+                          !isAdmin &&
+                          "hidden",
+                      )}
                     >
                       <SidebarMenuButton asChild>
                         <a href={item.path}>
