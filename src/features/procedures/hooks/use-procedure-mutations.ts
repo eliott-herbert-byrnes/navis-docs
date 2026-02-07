@@ -23,7 +23,8 @@ export function useCreateProcedure(departmentId: string, teamId: string) {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create procedure");
+      // toast.error("Failed to create procedure. Please contact customer support.");
+      toast.error(error.message.split("message:"));
     },
   });
 

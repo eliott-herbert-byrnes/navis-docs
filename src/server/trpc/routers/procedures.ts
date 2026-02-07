@@ -429,8 +429,19 @@ export const procedureRouter = router({
         });
       }
 
+      
       let categoryId = procedureCategoryId;
       if (newProcedureCategory && newProcedureCategoryName) {
+        const existingCategory = await ctx.db.category.findFirst({
+          where: {name: newProcedureCategoryName}
+        })
+  
+        if(existingCategory){
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "This category name has already been taken, please choose another.",
+          });
+        }
         const newCategory = await ctx.db.category.create({
           data: {
             teamId: teamId,
@@ -462,6 +473,17 @@ export const procedureRouter = router({
       };
       const finalisedProcedureStyle = styleMap[procedureStyle];
 
+      const existingName = await ctx.db.procedure.findFirst({
+        where: {title: procedureTitle}
+      })
+
+      if(existingName){
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "This title has already been taken, please choose another.",
+        });
+      }
+      
       const procedure = await ctx.db.procedure.create({
         data: {
           teamId: teamId,
