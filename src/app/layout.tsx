@@ -3,7 +3,11 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
@@ -71,7 +75,7 @@ export default async function RootLayout({
                           <SidebarTrigger />
                         </div>
                         <div className="hidden md:inline">
-                        <MainHeaderBreadcrumbs />
+                          <MainHeaderBreadcrumbs />
                         </div>
                       </div>
                       <OrgBadge />
