@@ -14,6 +14,7 @@ export const newsPath = (departmentId: string, teamId: string) =>
 export const newsCreatePath = (departmentId: string, teamId: string) =>
   `/departments/${departmentId}/${teamId}/procedures/news-create`;
 export const procedureBasePath = () => "/procedure-base";
+export const categoriesPath = () => "/categories";
 export const userBasePath = () => "/user-base";
 export const settingsPath = () => "/settings";
 export const addressPath = (departmentId: string, teamId: string) =>

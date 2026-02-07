@@ -2,6 +2,7 @@ import { router } from "@/server/trpc/init";
 import { teamRouter } from "./team";
 import { departmentRouter } from "./department";
 import { procedureRouter } from "./procedures";
+import { categoriesRouter } from "./categories";
 import { favoritesRouter } from "./favorites";
 import { ideasRouter } from "./ideas";
 import { errorsRouter } from "./errors";
@@ -16,6 +17,7 @@ export const appRouter = router({
   department: departmentRouter,
   team: teamRouter,
   procedures: procedureRouter,
+  categories: categoriesRouter,
   favorites: favoritesRouter,
   ideas: ideasRouter,
   errors: errorsRouter,
