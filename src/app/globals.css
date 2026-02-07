@@ -163,3 +163,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__controls .react-flow__attribution,
+.react-flow__controls a[href*="reactflow"] {
+  display: none !important;
+}
