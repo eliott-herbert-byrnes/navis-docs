@@ -1,4 +1,4 @@
-import { LucideChevronDown, LucideSlash } from "lucide-react";
+import { LucideChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
 import {
@@ -15,7 +15,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 
@@ -115,7 +114,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
               <BreadcrumbItem>{breadcrumbItem}</BreadcrumbItem>
               {index < breadcrumbs.length - 1 && (
                 <BreadcrumbSeparator>
-                  <LucideSlash className="h-4 w-4" />
+                  <p className="text-xs pb-1 mr-0.5">|</p>
                 </BreadcrumbSeparator>
               )}
             </Fragment>
