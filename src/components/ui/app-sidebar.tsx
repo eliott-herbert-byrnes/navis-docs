@@ -5,7 +5,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -22,7 +21,6 @@ import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "../theme/theme-switcher";
-import { OrgBadge } from "@/features/org/components/org-badge";
 import { Button } from "./button";
 import Link from "next/link";
 import { items } from "@/config/navigation";
@@ -37,15 +35,15 @@ export async function AppSidebar() {
     <Sidebar collapsible="icon" variant="inset">
       <SidebarContent>
         <SidebarGroup className="flex flex-col gap-2 h-full">
-          <SidebarGroupLabel>
-            <div className="flex flex-row gap-2 items-center">
-              <LucideShip className="w-4 h-4" />
-              <OrgBadge />
-            </div>
-          </SidebarGroupLabel>
-          <Separator />
           <SidebarGroupContent>
             <SidebarMenu>
+              <div className="flex flex-row gap-2 items-center pt-2 mb-2 mt-1">
+                <LucideShip className="w-4.5 h-4.5 ml-2" />
+                <span className="text-sm group-data-[collapsible=icon]:hidden">
+                  Navis Docs
+                </span>
+              </div>
+              <Separator />
               {items
                 .filter((item) =>
                   "isAdmin" in item && item.isAdmin ? isAdmin : true,
@@ -62,7 +60,7 @@ export async function AppSidebar() {
                             "hidden",
                         )}
                       >
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton asChild tooltip={item.title}>
                           <a href={item.path}>
                             <item.icon />
                             <span>{item.title}</span>
@@ -81,7 +79,7 @@ export async function AppSidebar() {
                           "hidden",
                       )}
                     >
-                      <SidebarMenuButton asChild>
+                      <SidebarMenuButton asChild tooltip={item.title}>
                         <a href={item.path}>
                           <item.icon />
                           <span>{item.title}</span>
@@ -95,73 +93,70 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu className="border-2 rounded-lg">
+        <SidebarMenu className="border-1 rounded-sm">
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> {user.email.split("@")[0]}
-                  <ChevronUp className="ml-auto" />
+                  <span className="flex size-4 shrink-0 items-center justify-center">
+                    <User2 />
+                  </span>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem>
+              <DropdownMenuContent side="top" className="translate-x-4">
+                <DropdownMenuItem asChild>
                   <ThemeSwitcher />
                 </DropdownMenuItem>
                 <Separator />
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start w-full h-6"
+                    className="flex flex-row justify-start p-4 w-full rounded-none"
                   >
                     <Link
                       href="/"
-                      className="text-sm font-normal cursor-default"
+                      className="text-sm font-normal cursor-default ml-2"
                     >
                       Support
                     </Link>
                   </Button>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start w-full h-6"
+                    className="flex flex-row justify-start p-4 w-full rounded-none"
                   >
                     <Link
                       href="/"
-                      className="text-sm font-normal cursor-default"
+                      className="text-sm font-normal cursor-default ml-2"
                     >
                       Documentation
                     </Link>
                   </Button>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start w-full h-6"
+                    className="flex flex-row justify-start p-4 w-full rounded-none"
                   >
                     <Link
                       href="/"
-                      className="text-sm font-normal cursor-default"
+                      className="text-sm font-normal cursor-default ml-2"
                     >
                       Feedback
                     </Link>
                   </Button>
                 </DropdownMenuItem>
                 <Separator />
-                <DropdownMenuItem>
-                  <form action={signOutAction}>
-                    <Button
-                      variant="ghost"
-                      className="flex flex-row justify-start w-full h-6"
-                      type="submit"
-                    >
-                      <p className="text-sm font-normal">Logout</p>
-                    </Button>
-                  </form>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex flex-row justify-start p-4 w-full rounded-none"
+                    type="submit"
+                    onClick={signOutAction}
+                  >
+                    <p className="text-sm font-normal ml-2">Logout</p>
+                  </Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -9,7 +9,7 @@ const ThemeSwitcher = () => {
     <>
       <Button
         variant="ghost"
-        className="flex flex-row justify-start w-full h-6"
+        className="flex flex-row justify-start p-4 w-full rounded-none"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         <p className="text-sm font-normal">Switch Themes</p>

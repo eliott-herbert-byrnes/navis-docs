@@ -3,7 +3,11 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
@@ -64,12 +68,19 @@ export default async function RootLayout({
               <AppSidebar />
               <SidebarInset className="p-2">
                 <div className="flex flex-row h-full">
-                  <div className="flex h-full w-full flex-col rounded-lg pl-4 pr-4 pt-2">
+                  <div className="flex h-full w-full flex-col rounded-sm pl-4 pr-4 pt-2">
                     <div className="flex flex-row items-center justify-between">
-                      <MainHeaderBreadcrumbs />
+                      <div className="flex flex-row items-center gap-2">
+                        <div className="sm:hidden">
+                          <SidebarTrigger />
+                        </div>
+                        <div className="hidden md:inline">
+                          <MainHeaderBreadcrumbs />
+                        </div>
+                      </div>
                       <OrgBadge />
                     </div>
-                    <Separator className="mt-3" />
+                    <Separator className="mt-2" />
                     {children}
                   </div>
                 </div>
