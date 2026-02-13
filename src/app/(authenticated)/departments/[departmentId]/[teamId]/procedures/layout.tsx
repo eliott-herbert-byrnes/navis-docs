@@ -4,6 +4,7 @@ import { ProcedureSidebar } from "@/features/procedures/components/procedure-sid
 import { Providers } from "@/app/providers";
 import { serverTrpc } from "@/server/trpc/server";
 import { ProcedureRouteProvider } from "@/contexts/procedure-route-context";
+import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 
 export default async function ProcedureLayout({
   children,
@@ -13,6 +14,10 @@ export default async function ProcedureLayout({
   params: Promise<{ departmentId: string; teamId: string }>;
 }) {
   const { departmentId, teamId } = await params;
+  const user = await getSessionUser();
+
+  if (!user) return <div className="h-full invisible" aria-hidden></div>;
+  const isAdmin = await isOrgAdminOrOwner(user.userId);
 
   const trpc = await serverTrpc();
   const { data: procedures } = await trpc.procedures.list({ teamId });

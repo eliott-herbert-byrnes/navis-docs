@@ -35,8 +35,10 @@ import {
 } from "@/components/ui/sheet";
 import { CategoryWithProcedures } from "../types/types";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
+import { cn } from "@/lib/utils";
 
 type ProcedureSidebarProps = {
+  isAdmin: boolean;
   uncategorizedProcedures: {
     id: string;
     status: ProcedureStatus;
@@ -47,11 +49,13 @@ type ProcedureSidebarProps = {
 };
 
 export function ProcedureSidebar({
+  isAdmin,
   uncategorizedProcedures,
   categories,
 }: ProcedureSidebarProps) {
   const [open, setOpen] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
+
 
   const SidebarContent = () => (
     <nav className="flex-1 overflow-y-auto p-2">
@@ -124,18 +128,35 @@ export function ProcedureSidebar({
                       )}
                       className="block"
                     >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start text-sm font-normal hover:bg-accent"
-                        title={procedure.title}
-                      >
-                        <span className="truncate">
-                          {procedure.title.length > 28
-                            ? `${procedure.title.slice(0, 28)}...`
-                            : procedure.title}
-                        </span>
-                      </Button>
+                      {procedure.status === "PUBLISHED" ?(
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start text-sm font-normal hover:bg-accent"
+                          title={procedure.title}
+                        >
+                          <span className="truncate">
+                            {procedure.title.length > 28
+                              ? `${procedure.title.slice(0, 28)}...`
+                              : procedure.title}
+
+                          </span>
+                        </Button>
+                       ) :(
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={cn(isAdmin ? "w-full justify-start text-sm font-normal hover:bg-accent" : "hidden")}
+                          title={procedure.title}
+                        >
+                          <span className="truncate">
+                            {procedure.title.length > 28
+                              ? `${procedure.title.slice(0, 28)} (Draft)...`
+                              : `${procedure.title} (Draft)`}
+
+                          </span>
+                        </Button>
+                      )}
                     </Link>
                   ))}
                 </CollapsibleContent>
