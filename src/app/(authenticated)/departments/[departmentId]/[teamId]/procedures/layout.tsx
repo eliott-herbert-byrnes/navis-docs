@@ -30,6 +30,7 @@ export default async function ProcedureLayout({
       <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
         <div className="flex h-full w-full">
           <ProcedureSidebar
+            isAdmin={isAdmin}
             uncategorizedProcedures={procedures}
             categories={categories}
           />

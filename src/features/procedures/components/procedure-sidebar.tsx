@@ -101,7 +101,7 @@ export function ProcedureSidebar({
           </div>
         ) : (
           <>
-            {categories.map((category) => (
+            {categories.filter((category) => category.procedures.length > 0).map((category) => (
               <Collapsible key={category.id}>
                 <CollapsibleTrigger asChild>
                   <Button
@@ -110,9 +110,6 @@ export function ProcedureSidebar({
                   >
                     <span className="font-medium text-sm">
                       {category.name}
-                      {/* <span className="text-xs text-muted-foreground ml-2">
-                          {category.procedures.length}
-                        </span> */}
                     </span>
                     <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
                   </Button>
@@ -128,7 +125,7 @@ export function ProcedureSidebar({
                       )}
                       className="block"
                     >
-                      {procedure.status === "PUBLISHED" ?(
+                      {procedure.status === "PUBLISHED" ? (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -142,7 +139,7 @@ export function ProcedureSidebar({
 
                           </span>
                         </Button>
-                       ) :(
+                      ) : (
                         <Button
                           variant="ghost"
                           size="sm"
