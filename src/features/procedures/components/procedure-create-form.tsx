@@ -65,7 +65,7 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
       newProcedureCategory: createNewCategory || undefined,
       newProcedureCategoryName: createNewCategory
         ? String(formData.get("newProcedureCategoryName") ?? "").trim() ||
-        undefined
+          undefined
         : undefined,
       procedureStyle: String(formData.get("procedureStyle") ?? "raw").trim() as
         | "raw"

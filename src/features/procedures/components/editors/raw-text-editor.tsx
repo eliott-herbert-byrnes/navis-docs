@@ -1,41 +1,51 @@
 "use client";
 
-import { useEditor, EditorContent, JSONContent, Content, EditorContext } from "@tiptap/react";
+import {
+  useEditor,
+  EditorContent,
+  JSONContent,
+  Content,
+  EditorContext,
+} from "@tiptap/react";
 import { useEffect, useRef } from "react";
 
 // --- Tiptap Core Extensions ---
 import StarterKit from "@tiptap/starter-kit";
-import { TextAlign } from "@tiptap/extension-text-align"
-import { Typography } from "@tiptap/extension-typography"
+import { TextAlign } from "@tiptap/extension-text-align";
+import { Typography } from "@tiptap/extension-typography";
 import Highlight from "@tiptap/extension-highlight";
-import { Selection } from "@tiptap/extensions"
+import { Selection } from "@tiptap/extensions";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 
 // --- UI Primitives ---
-import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
+import {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarSeparator,
+} from "@/components/tiptap-ui-primitive/toolbar";
 
 // --- Tiptap Node ---
-import "@/components/tiptap-node/code-block-node/code-block-node.scss"
-import "@/components/tiptap-node/list-node/list-node.scss"
-import "@/components/tiptap-node/heading-node/heading-node.scss"
-import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
+import "@/components/tiptap-node/code-block-node/code-block-node.scss";
+import "@/components/tiptap-node/list-node/list-node.scss";
+import "@/components/tiptap-node/heading-node/heading-node.scss";
+import "@/components/tiptap-node/paragraph-node/paragraph-node.scss";
 
 // --- Tiptap UI ---
 import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
 import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
-import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
+import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button";
 import {
   ColorHighlightPopover,
   // ColorHighlightPopoverButton,
-} from "@/components/tiptap-ui/color-highlight-popover"
+} from "@/components/tiptap-ui/color-highlight-popover";
 import {
   LinkPopover,
   // LinkContent,
   // LinkButton,
-} from "@/components/tiptap-ui/link-popover"
+} from "@/components/tiptap-ui/link-popover";
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
-import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
+import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 
 // --- Hooks ---
@@ -47,7 +57,6 @@ import "./tiptap-styles.css";
 // import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
 
-
 type ProcedureContent = {
   tiptap?: JSONContent;
 };
@@ -55,9 +64,7 @@ type ProcedureContent = {
 type RawTextEditorProps = {
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
-  onHighlighterClick: () => void
   isPreview: boolean;
-  isMobile: boolean;
 };
 
 export function RawTextEditor({
@@ -69,7 +76,7 @@ export function RawTextEditor({
     type: "doc",
     content: [{ type: "paragraph" }],
   };
-  const toolbarRef = useRef<HTMLDivElement>(null)
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -144,9 +151,7 @@ export function RawTextEditor({
     <EditorContext.Provider value={{ editor }}>
       <div className="space-y-2">
         {/* Toolbar */}
-        <Toolbar className="rounded-md"
-          ref={toolbarRef}
-        >
+        <Toolbar className="rounded-md" ref={toolbarRef}>
           <Spacer />
           {/* Undo/Redo */}
           <ToolbarGroup>
@@ -159,9 +164,7 @@ export function RawTextEditor({
           {/* Headings */}
           <ToolbarGroup>
             <HeadingDropdownMenu levels={[1, 2, 3]} />
-            <ListDropdownMenu
-              types={["bulletList", "orderedList"]}
-            />
+            <ListDropdownMenu types={["bulletList", "orderedList"]} />
             <CodeBlockButton />
           </ToolbarGroup>
 
@@ -188,14 +191,12 @@ export function RawTextEditor({
             <TextAlignButton align="justify" />
           </ToolbarGroup>
           <Spacer />
-
         </Toolbar>
 
         {/* Editor */}
-        <div className="rounded-md bg-background" >
+        <div className="rounded-md bg-background">
           <EditorContent editor={editor} />
         </div>
-
       </div>
     </EditorContext.Provider>
   );

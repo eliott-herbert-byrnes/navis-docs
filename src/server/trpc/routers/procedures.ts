@@ -267,14 +267,13 @@ export const procedureRouter = router({
         select: { id: true, name: true, sortOrder: true, teamId: true },
         orderBy: [{ teamId: "asc" }, { sortOrder: "asc" }],
       });
-      const byTeam = categories.reduce<Record<string, { id: string; name: string; sortOrder: number }[]>>(
-        (acc, c) => {
-          if (!acc[c.teamId]) acc[c.teamId] = [];
-          acc[c.teamId].push({ id: c.id, name: c.name, sortOrder: c.sortOrder });
-          return acc;
-        },
-        {},
-      );
+      const byTeam = categories.reduce<
+        Record<string, { id: string; name: string; sortOrder: number }[]>
+      >((acc, c) => {
+        if (!acc[c.teamId]) acc[c.teamId] = [];
+        acc[c.teamId].push({ id: c.id, name: c.name, sortOrder: c.sortOrder });
+        return acc;
+      }, {});
       return { categoriesByTeam: byTeam };
     }),
 
@@ -467,8 +466,7 @@ export const procedureRouter = router({
           message: "Team not found",
         });
       }
-      
-      
+
       const styleMap: Record<string, ProcedureStyle> = {
         raw: ProcedureStyle.RAW,
         steps: ProcedureStyle.STEPS,
@@ -478,26 +476,27 @@ export const procedureRouter = router({
       const finalisedProcedureStyle = styleMap[procedureStyle];
 
       const existingName = await ctx.db.procedure.findFirst({
-        where: {title: procedureTitle}
-      })
+        where: { title: procedureTitle },
+      });
 
-      if(existingName){
+      if (existingName) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "This title has already been taken, please choose another.",
         });
       }
-      
+
       let categoryId = procedureCategoryId;
       if (newProcedureCategory && newProcedureCategoryName) {
         const existingCategory = await ctx.db.category.findFirst({
-          where: {name: newProcedureCategoryName}
-        })
-  
-        if(existingCategory){
+          where: { name: newProcedureCategoryName },
+        });
+
+        if (existingCategory) {
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "This category name has already been taken, please choose another.",
+            message:
+              "This category name has already been taken, please choose another.",
           });
         }
         const newCategory = await ctx.db.category.create({
@@ -725,7 +724,8 @@ export const procedureRouter = router({
                 id: category.id,
                 name: category.name,
                 teamId: category.teamId,
-                reason: "Auto-removed: category had no remaining procedures after procedure deletion",
+                reason:
+                  "Auto-removed: category had no remaining procedures after procedure deletion",
               },
             });
           }
@@ -780,7 +780,8 @@ export const procedureRouter = router({
         if (!category) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Category not found or does not belong to this procedure's team",
+            message:
+              "Category not found or does not belong to this procedure's team",
           });
         }
       }

@@ -61,7 +61,11 @@ export const schema = z.object({
 
 export type CategoryListItem = z.infer<typeof schema>;
 
-export function CategoriesList({ data: initialData }: { data: CategoryListItem[] }) {
+export function CategoriesList({
+  data: initialData,
+}: {
+  data: CategoryListItem[];
+}) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

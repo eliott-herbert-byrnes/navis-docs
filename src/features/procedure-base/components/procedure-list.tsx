@@ -183,10 +183,11 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     () => [...new Set(initialData.map((p) => p.teamId))],
     [initialData],
   );
-  const { data: categoriesData } = trpc.procedures.getCategoriesForTeams.useQuery(
-    { teamIds },
-    { enabled: teamIds.length > 0 },
-  );
+  const { data: categoriesData } =
+    trpc.procedures.getCategoriesForTeams.useQuery(
+      { teamIds },
+      { enabled: teamIds.length > 0 },
+    );
   const categoriesByTeam = categoriesData?.categoriesByTeam ?? {};
 
   const columns: ColumnDef<Procedure>[] = [
@@ -328,9 +329,9 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
