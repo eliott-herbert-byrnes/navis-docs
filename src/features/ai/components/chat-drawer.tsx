@@ -18,8 +18,29 @@ import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { usePersistedChatState } from "../hooks/use-persisted-chat-state";
 import { ChatDeleteButton } from "./chat-delete-button";
 
-export function AIChatDrawer() {
-  const [isOpen, setIsOpen] = useState(false);
+type AIChatDrawerProps = {
+  /** Controlled open state. When provided with onOpenChange, the drawer is controlled by the parent. */
+  open?: boolean;
+  /** Called when the drawer open state should change (e.g. when user closes it or when opening via floating button in controlled mode). */
+  onOpenChange?: (open: boolean) => void;
+  /** When set, the input is pre-filled with this message when the drawer opens. User can edit before sending. */
+  initialMessage?: string;
+  /** Called after the drawer has applied initialMessage to the input, so the parent can clear it. */
+  onInitialMessageConsumed?: () => void;
+};
+
+export function AIChatDrawer({
+  open: controlledOpen,
+  onOpenChange,
+  initialMessage,
+  onInitialMessageConsumed,
+}: AIChatDrawerProps = {}) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled =
+    typeof controlledOpen === "boolean" && typeof onOpenChange === "function";
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+  const setIsOpen = isControlled ? onOpenChange : setInternalOpen;
+
   const { departmentId, teamId } = useProcedureRouteContext();
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
@@ -34,6 +55,14 @@ export function AIChatDrawer() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // When opened with an initial message (e.g. from "Ask AI" button), pre-fill the input
+  useEffect(() => {
+    if (isOpen && initialMessage) {
+      setInput(initialMessage);
+      onInitialMessageConsumed?.();
+    }
+  }, [isOpen, initialMessage, onInitialMessageConsumed]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,6 +125,7 @@ export function AIChatDrawer() {
         size="icon"
         className="fixed bottom-6 right-6 h-13 w-13 rounded-full shadow-lg z-50 bg-background text-foreground hover:bg-accent hover:text-accent-foreground border-2"
         variant="ghost"
+        aria-label="Open AI chat"
       >
         <Brain className="h-6 w-6" />
       </Button>
