@@ -100,7 +100,9 @@ export const procedureRouter = router({
         where: {
           teamId: input.teamId,
           categoryId: null,
-          status: "PUBLISHED",
+          ...(ctx.isAdmin
+            ? { status: { in: ["PUBLISHED", "DRAFT"] as const } }
+            : { status: "PUBLISHED" }),
         },
         select: {
           id: true,
@@ -199,9 +201,9 @@ export const procedureRouter = router({
           name: true,
           sortOrder: true,
           procedures: {
-            where: {
-              status: "PUBLISHED",
-            },
+            where: ctx.isAdmin
+              ? { OR: [{ status: "PUBLISHED" }, { status: "DRAFT" }] }
+              : { status: "PUBLISHED" },
             select: {
               id: true,
               slug: true,
