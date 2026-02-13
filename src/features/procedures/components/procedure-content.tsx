@@ -45,7 +45,7 @@ const ProcedureContent = ({ procedure }: ProcedureContentProps) => {
         );
       case "FLOW":
         return (
-          <ReactFlowProvider >
+          <ReactFlowProvider>
             <FlowEditor
               content={content}
               onChange={() => {}}

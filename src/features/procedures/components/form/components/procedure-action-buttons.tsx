@@ -55,7 +55,9 @@ export function ProcedureActionButtons({
           )}
         </div>
         <div className="flex gap-2">
-          {isDraft && discardDraftTrigger != null && discardDraftDialog != null ? (
+          {isDraft &&
+          discardDraftTrigger != null &&
+          discardDraftDialog != null ? (
             <>
               {discardDraftTrigger}
               {discardDraftDialog}

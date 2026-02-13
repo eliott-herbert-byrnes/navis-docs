@@ -61,21 +61,21 @@ export const EditProcedureForm = ({
   const [discardDraftTrigger, discardDraftDialog] = useConfirmDialog({
     title: "Discard this draft?",
     description:
-      "The procedure will be deleted. If its category has no other procedures, the category will be removed."
-      ,
+      "The procedure will be deleted. If its category has no other procedures, the category will be removed.",
     action: async () => {
       try {
         await deleteProcedureAsync(procedureId);
         return {
           status: "SUCCESS" as const,
-          message: "",
+          message: "Procedure successfully deleted",
           fieldErrors: {},
           timestamp: Date.now(),
         };
       } catch (err) {
         return {
           status: "ERROR" as const,
-          message: err instanceof Error ? err.message : "Failed to delete procedure",
+          message:
+            err instanceof Error ? err.message : "Failed to delete procedure",
           fieldErrors: {},
           timestamp: Date.now(),
         };

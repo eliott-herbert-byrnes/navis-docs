@@ -26,7 +26,6 @@ export function useDeleteProcedureFromBase() {
   };
 }
 
-
 export function useUpdateProcedureCategory() {
   const utils = trpc.useUtils();
 

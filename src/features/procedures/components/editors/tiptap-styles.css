@@ -2,7 +2,9 @@
 
 .ProseMirror {
   outline: none;
-  min-height: 400px;
+  min-height: 500px;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
@@ -106,5 +108,5 @@
 
 /* Selection */
 .ProseMirror ::selection {
-  background-color: rgba(59, 130, 246, 0.3);
+  background-color: rgba(97, 97, 97, 0.1);
 }
