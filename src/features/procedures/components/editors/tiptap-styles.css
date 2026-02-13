@@ -106,5 +106,5 @@
 
 /* Selection */
 .ProseMirror ::selection {
-  background-color: rgba(59, 130, 246, 0.3);
+  background-color: rgba(97, 97, 97, 0.1);
 }

@@ -1,24 +1,52 @@
 "use client";
 
-import { useEditor, EditorContent, JSONContent, Content } from "@tiptap/react";
+import { useEditor, EditorContent, JSONContent, Content, EditorContext } from "@tiptap/react";
+import { useEffect, useRef } from "react";
+
+// --- Tiptap Core Extensions ---
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
+import { TextAlign } from "@tiptap/extension-text-align"
+import { Typography } from "@tiptap/extension-typography"
+import Highlight from "@tiptap/extension-highlight";
+import { Selection } from "@tiptap/extensions"
 import Placeholder from "@tiptap/extension-placeholder";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import Underline from "@tiptap/extension-underline";
+
+// --- UI Primitives ---
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
+
+// --- Tiptap Node ---
+import "@/components/tiptap-node/code-block-node/code-block-node.scss"
+import "@/components/tiptap-node/list-node/list-node.scss"
+import "@/components/tiptap-node/heading-node/heading-node.scss"
+import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
+
+// --- Tiptap UI ---
+import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
+import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
+import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
 import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Heading1,
-  Heading2,
-  List,
-  ListOrdered,
-  Undo,
-  Redo,
-} from "lucide-react";
-import { useEffect } from "react";
+  ColorHighlightPopover,
+  // ColorHighlightPopoverButton,
+} from "@/components/tiptap-ui/color-highlight-popover"
+import {
+  LinkPopover,
+  // LinkContent,
+  // LinkButton,
+} from "@/components/tiptap-ui/link-popover"
+import { MarkButton } from "@/components/tiptap-ui/mark-button";
+import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
+import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
+
+// --- Hooks ---
+// import { useWindowSize } from "@/hooks/use-window-size"
+// import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
+
+// --- Icons ---
 import "./tiptap-styles.css";
+// import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
+import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
+
 
 type ProcedureContent = {
   tiptap?: JSONContent;
@@ -27,7 +55,9 @@ type ProcedureContent = {
 type RawTextEditorProps = {
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
+  onHighlighterClick: () => void
   isPreview: boolean;
+  isMobile: boolean;
 };
 
 export function RawTextEditor({
@@ -39,15 +69,21 @@ export function RawTextEditor({
     type: "doc",
     content: [{ type: "paragraph" }],
   };
+  const toolbarRef = useRef<HTMLDivElement>(null)
 
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({
+        blockquote: false,
         heading: {
           levels: [1, 2, 3],
         },
       }),
+      Typography,
+      Selection,
+      Highlight.configure({ multicolor: true }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
       Underline,
       Placeholder.configure({
         placeholder: "Start writing your procedure documentation...",
@@ -67,7 +103,13 @@ export function RawTextEditor({
     },
   });
 
+  // const rect = useCursorVisibility({
+  //   editor,
+  //   overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
+  // })
+
   useEffect(() => {
+    if (!editor || !content?.tiptap) return;
     if (JSON.stringify(editor!.getJSON()) !== JSON.stringify(content?.tiptap)) {
       editor!.commands.setContent(content.tiptap as Content);
     }
@@ -99,115 +141,62 @@ export function RawTextEditor({
   }
 
   return (
-    <div className="space-y-2">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-secondary/30 rounded-md border">
-        {/* Undo/Redo */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          title="Undo"
+    <EditorContext.Provider value={{ editor }}>
+      <div className="space-y-2">
+        {/* Toolbar */}
+        <Toolbar className="rounded-md"
+          ref={toolbarRef}
         >
-          <Undo className="w-4 h-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          title="Redo"
-        >
-          <Redo className="w-4 h-4" />
-        </Button>
+          <Spacer />
+          {/* Undo/Redo */}
+          <ToolbarGroup>
+            <UndoRedoButton action="undo" />
+            <UndoRedoButton action="redo" />
+          </ToolbarGroup>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+          <ToolbarSeparator />
 
-        {/* Text Formatting */}
-        <Button
-          variant={editor.isActive("bold") ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          title="Bold (Ctrl+B)"
-        >
-          <Bold className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={editor.isActive("italic") ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          title="Italic (Ctrl+I)"
-        >
-          <Italic className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={editor.isActive("underline") ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          title="Underline (Ctrl+U)"
-        >
-          <UnderlineIcon className="w-4 h-4" />
-        </Button>
+          {/* Headings */}
+          <ToolbarGroup>
+            <HeadingDropdownMenu levels={[1, 2, 3]} />
+            <ListDropdownMenu
+              types={["bulletList", "orderedList"]}
+            />
+            <CodeBlockButton />
+          </ToolbarGroup>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+          <ToolbarSeparator />
 
-        {/* Headings */}
-        <Button
-          variant={
-            editor.isActive("heading", { level: 1 }) ? "secondary" : "ghost"
-          }
-          size="sm"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          title="Heading 1"
-        >
-          <Heading1 className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={
-            editor.isActive("heading", { level: 2 }) ? "secondary" : "ghost"
-          }
-          size="sm"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          title="Heading 2"
-        >
-          <Heading2 className="w-4 h-4" />
-        </Button>
+          {/* Text Editor Buttons */}
+          <ToolbarGroup>
+            <MarkButton type="bold" />
+            <MarkButton type="italic" />
+            <MarkButton type="strike" />
+            <MarkButton type="code" />
+            <MarkButton type="underline" />
+            <ColorHighlightPopover />
+            <LinkPopover />
+          </ToolbarGroup>
 
-        <Separator orientation="vertical" className="h-6 mx-1" />
+          <ToolbarSeparator />
 
-        {/* Lists */}
-        <Button
-          variant={editor.isActive("bulletList") ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet List"
-        >
-          <List className="w-4 h-4" />
-        </Button>
-        <Button
-          variant={editor.isActive("orderedList") ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Numbered List"
-        >
-          <ListOrdered className="w-4 h-4" />
-        </Button>
+          {/* Text Align */}
+          <ToolbarGroup>
+            <TextAlignButton align="left" />
+            <TextAlignButton align="center" />
+            <TextAlignButton align="right" />
+            <TextAlignButton align="justify" />
+          </ToolbarGroup>
+          <Spacer />
+
+        </Toolbar>
+
+        {/* Editor */}
+        <div className="border rounded-md bg-background">
+          <EditorContent editor={editor} />
+        </div>
+
       </div>
-
-      {/* Editor */}
-      <div className="border rounded-md bg-background">
-        <EditorContent editor={editor} />
-      </div>
-
-      {/* Helper Text */}
-      <div className="text-xs text-muted-foreground">
-        Use Ctrl+B for bold, Ctrl+I for italic, Ctrl+U for underline
-      </div>
-    </div>
+    </EditorContext.Provider>
   );
 }
