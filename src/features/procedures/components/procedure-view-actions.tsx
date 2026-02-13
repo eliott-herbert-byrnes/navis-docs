@@ -8,6 +8,7 @@ import {
   Loader2,
   FileJson,
   FileIcon,
+  Brain,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcedurePath } from "@/app/paths";
@@ -32,6 +33,8 @@ type ProcedureViewActionsProps = {
   canEdit: boolean;
   isFavorite: boolean;
   procedure: ProcedureForViewWithRelations;
+  /** When provided, shows an "Ask AI" button that opens the AI chat with a pre-filled message about this procedure. */
+  onAskAI?: () => void;
 };
 
 export function ProcedureViewActions({
@@ -39,6 +42,7 @@ export function ProcedureViewActions({
   canEdit,
   isFavorite,
   procedure,
+  onAskAI,
 }: ProcedureViewActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -118,6 +122,17 @@ export function ProcedureViewActions({
           <FileIcon className="w-4 h-4 mr-2" />
           Export
         </Button>
+        {onAskAI && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onAskAI}
+            aria-label="Ask AI about this procedure"
+          >
+            <Brain className="w-4 h-4 mr-2" />
+            Ask AI
+          </Button>
+        )}
         <ProcedureFavoriteButton
           procedureId={procedureId}
           initialIsFavorite={isFavorite}
@@ -158,6 +173,15 @@ export function ProcedureViewActions({
               <Share2 className="w-4 h-4 mr-2" />
               Share
             </DropdownMenuItem>
+            {onAskAI && (
+              <DropdownMenuItem
+                onClick={onAskAI}
+                aria-label="Ask AI about this procedure"
+              >
+                <Brain className="w-4 h-4 mr-2" />
+                Ask AI
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <ProcedureFavoriteButton

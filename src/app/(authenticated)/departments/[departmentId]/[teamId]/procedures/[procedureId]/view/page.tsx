@@ -1,10 +1,7 @@
 import { Heading } from "@/components/ui/Heading";
-import { ProcedureContent } from "@/features/procedures/components/procedure-content";
-import { ProcedureViewActions } from "@/features/procedures/components/procedure-view-actions";
-import { ProcedureViewMetadata } from "@/features/procedures/components/procedure-view-metadata";
+import { ProcedureViewWithAIChat } from "@/features/procedures/components/procedure-view-with-ai-chat";
 import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { Suspense } from "react";
-import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 
@@ -30,26 +27,14 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
         title={procedure.title}
         description={procedure.description || ""}
       />
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div className="procedure-view-actions" data-print-hide>
-          <ProcedureViewActions
-            procedure={procedure}
-            procedureId={procedureId}
-            canEdit={canEdit}
-            isFavorite={isFavorite}
-          />
-        </div>
-      </div>
 
-      {/* Metadata */}
-      <ProcedureViewMetadata procedure={procedure} />
-
-      {/* Content */}
       <Suspense fallback={<Skeleton />}>
-        <ProcedureContent procedure={procedure} />
-      </Suspense>
-      <Suspense fallback={<Skeleton />}>
-        <AIChatDrawer />
+        <ProcedureViewWithAIChat
+          procedure={procedure}
+          procedureId={procedureId}
+          canEdit={canEdit}
+          isFavorite={isFavorite}
+        />
       </Suspense>
     </div>
   );

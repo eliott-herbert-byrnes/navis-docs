@@ -1,11 +1,11 @@
-import { PrismaClient, ProcedureStatus } from "@prisma/client";
+import "dotenv/config";
+import { ProcedureStatus } from "@prisma/client";
 import { generateEmbedding } from "../src/lib/ai/embeddings";
 import { chunkProcedureContent } from "../src/features/ai/utils/chunk-content";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { generateProcedureEmbeddings } from "@/features/ai/actions/generate-embeddings";
-
-const prisma = new PrismaClient();
+import { prisma } from "../src/lib/prisma";
 
 export async function generateProcessEmbeddings(procedureId: string) {
   const procedure = await prisma.procedure.findUnique({
