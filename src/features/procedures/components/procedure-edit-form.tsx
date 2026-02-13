@@ -68,7 +68,7 @@ export const EditProcedureForm = ({
         await deleteProcedureAsync(procedureId);
         return {
           status: "SUCCESS" as const,
-          message: "",
+          message: "Procedure successfully deleted",
           fieldErrors: {},
           timestamp: Date.now(),
         };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
+import { useEditor, EditorContent, JSONContent, Content } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -68,8 +68,8 @@ export function RawTextEditor({
   });
 
   useEffect(() => {
-    if (editor && content?.tiptap && editor.getJSON() !== content.tiptap) {
-      editor.commands.setContent(content.tiptap);
+    if (JSON.stringify(editor!.getJSON()) !== JSON.stringify(content?.tiptap)) {
+      editor!.commands.setContent(content.tiptap as Content);
     }
   }, [content, editor]);
 
@@ -92,7 +92,7 @@ export function RawTextEditor({
 
   if (isPreview) {
     return (
-      <div className="border rounded-lg p-4 bg-background">
+      <div className="border rounded-md p-4 bg-background">
         <EditorContent editor={editor} />
       </div>
     );
@@ -101,7 +101,7 @@ export function RawTextEditor({
   return (
     <div className="space-y-2">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-secondary/30 rounded-lg border">
+      <div className="flex flex-wrap items-center gap-1 p-2 bg-secondary/30 rounded-md border">
         {/* Undo/Redo */}
         <Button
           variant="ghost"
@@ -200,7 +200,7 @@ export function RawTextEditor({
       </div>
 
       {/* Editor */}
-      <div className="border rounded-lg bg-background">
+      <div className="border rounded-md bg-background">
         <EditorContent editor={editor} />
       </div>
 
