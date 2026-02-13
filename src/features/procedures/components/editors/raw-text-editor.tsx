@@ -192,7 +192,7 @@ export function RawTextEditor({
         </Toolbar>
 
         {/* Editor */}
-        <div className="border rounded-md bg-background">
+        <div className="rounded-md bg-background" >
           <EditorContent editor={editor} />
         </div>
 
