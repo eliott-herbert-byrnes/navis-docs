@@ -29,7 +29,7 @@ export async function generateProcedureEmbeddings(procedureId: string) {
       const embeddingString = `[${embedding.join(",")}]`;
 
       await prisma.$executeRaw`
-    INSERT INTO "procedureChunk" (
+    INSERT INTO "ProcedureChunk" (
         id, "procedureId", "teamId", title, "chunkIndex", "chunkText", embedding, "createdAt"
     ) VALUES (
         gen_random_uuid()::text,
