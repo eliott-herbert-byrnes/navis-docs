@@ -17,7 +17,17 @@ export const getInitialContentForStyle = (style: ProcedureStyle) => {
         },
       };
     case "FLOW":
-      return { nodes: [], edges: [] };
+      return {
+        nodes: [], edges: [], tiptap: {
+          type: "doc",
+          content: [
+            {
+              type: "paragraph",
+              content: [],
+            },
+          ],
+        },
+      };
     case "YESNO":
       return {
         cards: [{ id: "1", question: "", yesNext: null, noNext: null }],

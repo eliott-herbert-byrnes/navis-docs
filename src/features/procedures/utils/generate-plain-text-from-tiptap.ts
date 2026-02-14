@@ -6,12 +6,12 @@ export function generatePlainTextFromTiptap(contentJSON: JsonObject): string {
   }
 
   // Detect format and extract accordingly
-  if (contentJSON.tiptap) {
+  if(contentJSON.flow){
+    return extractTextFromFlow(contentJSON.flow as JsonObject, contentJSON);
+  } else if (contentJSON.tiptap) {
     return extractTextFromTiptap(contentJSON);
   } else if (Array.isArray(contentJSON.steps)) {
     return extractTextFromSteps(contentJSON.steps);
-  } else if (contentJSON.flow) {
-    return extractTextFromFlow(contentJSON.flow as JsonObject);
   } else if (contentJSON.yesno) {
     return extractTextFromYesNo(contentJSON.yesno as JsonObject);
   }
@@ -77,7 +77,7 @@ function extractTextFromSteps(steps: unknown[]): string {
 }
 
 // 3. FLOW: Flowchart format
-function extractTextFromFlow(flow: JsonObject): string {
+function extractTextFromFlow(flow: JsonObject, contentJSON?: JsonObject): string {
   let text = "";
 
   if (Array.isArray(flow.nodes)) {
@@ -129,6 +129,15 @@ function extractTextFromFlow(flow: JsonObject): string {
           text += "\n";
         }
       }
+    }
+  }
+
+  
+  if(contentJSON){
+    const tiptapText = extractTextFromTiptap(contentJSON).trim();
+    if(tiptapText.length > 0){
+      const combined = text.trim() + "\n\n" + tiptapText;
+      return combined.trim()
     }
   }
 
