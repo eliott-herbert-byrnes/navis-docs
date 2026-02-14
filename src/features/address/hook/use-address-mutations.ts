@@ -13,7 +13,10 @@ export function useCreateAddress(onSuccessCallback?: () => void) {
       onSuccessCallback?.();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create address, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to create address, try again or contact support",
+      );
     },
   });
 
@@ -42,7 +45,10 @@ export function useDeleteAddress() {
       toast.success("Address deleted");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete address, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to delete address, try again or contact support",
+      );
     },
   });
 

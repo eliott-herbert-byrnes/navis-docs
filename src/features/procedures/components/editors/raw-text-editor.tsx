@@ -149,7 +149,8 @@ export function RawTextEditor({
 
   return (
     <EditorContext.Provider value={{ editor }}>
-      <div className="space-y-2">
+      {/* Editor */}
+      <div className="space-y-3">
         {/* Toolbar */}
         <Toolbar className="rounded-md" ref={toolbarRef}>
           <Spacer />
@@ -192,12 +193,11 @@ export function RawTextEditor({
           </ToolbarGroup>
           <Spacer />
         </Toolbar>
-
-        {/* Editor */}
         <div className="rounded-md bg-background">
           <EditorContent editor={editor} />
         </div>
       </div>
+      {/* </div> */}
     </EditorContext.Provider>
   );
 }

@@ -124,7 +124,10 @@ function useFileUpload(options: UploadOptions) {
         abortController.signal,
       );
 
-      if (!url) throw new Error("Upload failed, no URL returned. Try again or choose a different file");
+      if (!url)
+        throw new Error(
+          "Upload failed, no URL returned. Try again or choose a different file",
+        );
 
       if (!abortController.signal.aborted) {
         setFileItems((prev) =>

@@ -237,7 +237,9 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
               <li key={`issue-${i}-${issue.slice(0, 20)}`}>{issue}</li>
             ))}
           </ul>
-          <div className="mt-2 text-sm opacity-90">Fix the issues above before exporting</div>
+          <div className="mt-2 text-sm opacity-90">
+            Fix the issues above before exporting
+          </div>
         </div>,
         { duration: 5000 },
       );
@@ -281,7 +283,9 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
         toast.success("Flow exported successfully!");
       })
       .catch(() => {
-        toast.error("Failed to export flow, try again or try a different format");
+        toast.error(
+          "Failed to export flow, try again or try a different format",
+        );
       });
   }, [getNodes]);
 
@@ -296,7 +300,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
   }));
 
   return (
-    <div className="h-[600px] w-full relative">
+    <div className="h-[690px] w-full relative bg-background">
       {!isPreview && (
         <FlowToolbar
           onAddNode={addNode}

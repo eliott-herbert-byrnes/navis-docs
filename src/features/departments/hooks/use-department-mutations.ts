@@ -15,7 +15,9 @@ export function useCreateDepartment() {
       setIsDialogOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong, try again or contact support");
+      toast.error(
+        error.message || "Something went wrong, try again or contact support",
+      );
     },
   });
 
@@ -50,7 +52,9 @@ export function useDeleteDepartment() {
       toast.success("Department deleted successfully");
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong, try again or contact support");
+      toast.error(
+        error.message || "Something went wrong, try again or contact support",
+      );
     },
   });
 
@@ -75,7 +79,9 @@ export function useRenameDepartment() {
       toast.success("Department renamed successfully");
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong, try again or contact support");
+      toast.error(
+        error.message || "Something went wrong, try again or contact support",
+      );
     },
   });
 

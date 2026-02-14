@@ -8,6 +8,7 @@ import { YesNoPairsEditor } from "@/features/procedures/components/editors/yesno
 
 type ProcedureEditorSelectorProps = {
   procedureStyle: "RAW" | "STEPS" | "FLOW" | "YESNO";
+  editorMode: "flow" | "text";
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
   isPreview: boolean;
@@ -18,6 +19,7 @@ export function ProcedureEditorSelector({
   content,
   onChange,
   isPreview,
+  editorMode,
 }: ProcedureEditorSelectorProps) {
   const renderEditor = () => {
     switch (procedureStyle) {
@@ -38,15 +40,27 @@ export function ProcedureEditorSelector({
           />
         );
       case "FLOW":
-        return (
-          <ReactFlowProvider>
-            <FlowEditor
+        if (editorMode === "flow") {
+          return (
+            <ReactFlowProvider>
+              <FlowEditor
+                content={content}
+                onChange={onChange}
+                isPreview={isPreview}
+              />
+            </ReactFlowProvider>
+          );
+        } else {
+          return (
+            <RawTextEditor
               content={content}
-              onChange={onChange}
+              onChange={(newContent) =>
+                onChange({ ...content, tiptap: newContent.tiptap })
+              }
               isPreview={isPreview}
             />
-          </ReactFlowProvider>
-        );
+          );
+        }
       case "YESNO":
         return (
           <YesNoPairsEditor
@@ -66,7 +80,7 @@ export function ProcedureEditorSelector({
 
   if (procedureStyle === "FLOW") {
     return (
-      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top">
+      <Card className="p-4 min-h-[600px] overflow-hidden animate-fade-from-top">
         {renderEditor()}
       </Card>
     );

@@ -14,7 +14,10 @@ export function useCreateInvitation(onSuccessCallback?: () => void) {
       onSuccessCallback?.();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create invitation, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to create invitation, try again or contact support",
+      );
     },
   });
 
@@ -38,7 +41,10 @@ export function useDeleteInvitation(onSuccessCallback?: () => void) {
       onSuccessCallback?.();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete invitation, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to delete invitation, try again or contact support",
+      );
     },
   });
 
@@ -63,7 +69,10 @@ export function useAcceptInvitation() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to accept invitation, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to accept invitation, try again or contact support",
+      );
     },
   });
 

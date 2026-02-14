@@ -16,7 +16,9 @@ export function useNewsCreate(onSuccessCallback?: () => void) {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create news, try again or contact support");
+      toast.error(
+        error.message || "Failed to create news, try again or contact support",
+      );
     },
   });
 
@@ -49,7 +51,9 @@ export function useDeleteNews() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete news, try again or contact support");
+      toast.error(
+        error.message || "Failed to delete news, try again or contact support",
+      );
     },
   });
 
