@@ -12,7 +12,7 @@ export function useRenameOrganization() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to rename organization");
+      toast.error(error.message || "Failed to rename organization, try again or contact support");
     },
   });
 

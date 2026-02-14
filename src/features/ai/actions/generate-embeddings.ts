@@ -13,7 +13,7 @@ export async function generateProcedureEmbeddings(procedureId: string) {
   });
 
   if (!procedure?.publishedVersion?.contentText) {
-    throw new Error("No published content to embed");
+    throw new Error("No published content to embed, publish the procedure first");
   }
 
   await prisma.procedureChunk.deleteMany({

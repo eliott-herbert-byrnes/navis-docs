@@ -17,7 +17,7 @@ export function useCreateErrorReport() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create error report");
+      toast.error(error.message || "Failed to create error report, try again or contact support");
     },
   });
 
@@ -47,7 +47,7 @@ export function useUpdateErrorStatus() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update error report status");
+      toast.error(error.message || "Failed to update error report status, try again or contact support");
     },
   });
 
@@ -80,7 +80,7 @@ export function useDeleteError() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete error report");
+      toast.error(error.message || "Failed to delete error report, try again or contact support");
     },
   });
 

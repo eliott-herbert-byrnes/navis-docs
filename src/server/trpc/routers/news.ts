@@ -94,7 +94,7 @@ export const newsRouter = router({
       if (!news) {
         throw new TRPCError({
           code: "NOT_IMPLEMENTED",
-          message: "Unable to create news posts, try again",
+          message: "Unable to create news post, try again or contact support",
         });
       }
 

@@ -38,7 +38,7 @@ export function useExportProcedureData(dialogOpen: boolean) {
   const exportWithFormat = useCallback(
     (format: ExportFormat) => {
       if (procedures.length === 0) {
-        toast.error("No procedure data to export");
+        toast.error("No procedure data to export, create procedures first or refresh the page");
         return;
       }
 

@@ -37,7 +37,7 @@ const CreateTeamDialog = ({
   const handleConfirm = () => {
     const trimmedTeamName = teamName.trim();
     if (!trimmedTeamName) {
-      toast.error("Team name is required");
+      toast.error("Team name is required, enter a name");
       return;
     }
     onConfirm(trimmedTeamName);

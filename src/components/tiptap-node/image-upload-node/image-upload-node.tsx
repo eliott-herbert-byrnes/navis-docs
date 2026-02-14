@@ -109,7 +109,7 @@ function useFileUpload(options: UploadOptions) {
 
     try {
       if (!options.upload) {
-        throw new Error("Upload function is not defined");
+        throw new Error("Upload function is not defined, contact support");
       }
 
       const url = await options.upload(
@@ -124,7 +124,7 @@ function useFileUpload(options: UploadOptions) {
         abortController.signal,
       );
 
-      if (!url) throw new Error("Upload failed: No URL returned");
+      if (!url) throw new Error("Upload failed, no URL returned. Try again or choose a different file");
 
       if (!abortController.signal.aborted) {
         setFileItems((prev) =>

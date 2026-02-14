@@ -38,7 +38,7 @@ export function useExportUserData(dialogOpen: boolean) {
   const exportWithFormat = useCallback(
     (format: ExportFormat) => {
       if (!users) {
-        toast.error("No user data to export");
+        toast.error("No user data to export, add members first or refresh the page");
         return;
       }
 

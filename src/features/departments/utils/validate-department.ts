@@ -5,25 +5,25 @@ export function validateDepartmentForm(data: {
   teamName3?: string;
 }): { valid: boolean; error?: string } {
   if (!data.departmentName.trim()) {
-    return { valid: false, error: "Department name is required" };
+    return { valid: false, error: "Department name is required, enter a name" };
   }
   if (!data.teamName1.trim()) {
-    return { valid: false, error: "Team name is required" };
+    return { valid: false, error: "Team name is required, enter at least one team name" };
   }
   if (data.departmentName.trim().length > 28) {
     return {
       valid: false,
-      error: "Department name must be less than 28 characters",
+      error: "Department name must be less than 28 characters, shorten the name",
     };
   }
   if (data.teamName1.trim().length > 28) {
-    return { valid: false, error: "Team name must be less than 28 characters" };
+    return { valid: false, error: "Team name must be less than 28 characters, shorten the name" };
   }
   if (data.teamName2 && data.teamName2.trim().length > 28) {
-    return { valid: false, error: "Team name must be less than 28 characters" };
+    return { valid: false, error: "Team name must be less than 28 characters, shorten the name" };
   }
   if (data.teamName3 && data.teamName3.trim().length > 28) {
-    return { valid: false, error: "Team name must be less than 28 characters" };
+    return { valid: false, error: "Team name must be less than 28 characters, shorten the name" };
   }
   return { valid: true };
 }

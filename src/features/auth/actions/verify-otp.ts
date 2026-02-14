@@ -16,13 +16,13 @@ export const verifyOtpAction = async (input: {
   code: string;
 }) => {
   const { success } = await limiter("otp:verify");
-  if (!success) return { ok: false, message: "Too many attempts. Try later" };
+  if (!success) return { ok: false, message: "Too many attempts, try again later" };
 
   const parsed = schema.safeParse({
     email: input.email?.trim().toLowerCase(),
     code: input.code?.trim(),
   });
-  if (!parsed.success) return { ok: false, message: "Invalid code" };
+  if (!parsed.success) return { ok: false, message: "Invalid code, check your email and try again" };
 
   const { email, code } = parsed.data;
 
@@ -30,7 +30,7 @@ export const verifyOtpAction = async (input: {
     const res = await signIn("credentials", { email, code, redirect: false });
     if (res?.error) return { ok: false, message: res.error };
   } catch {
-    return { ok: false, message: "Invalid code" };
+    return { ok: false, message: "Invalid code, check your email and try again" };
   }
 
   await prisma.emailOTP.deleteMany({

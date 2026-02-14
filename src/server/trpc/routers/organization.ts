@@ -59,7 +59,7 @@ export const organizationRouter = router({
       if (!updatedOrg) {
         throw new TRPCError({
           code: "NOT_IMPLEMENTED",
-          message: "Unable to update organization, try again",
+          message: "Unable to update organization, try again or contact support",
         });
       }
 
