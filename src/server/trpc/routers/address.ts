@@ -80,7 +80,7 @@ export const addressRouter = router({
       if (!currentAddress || currentAddress.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Address not found",
+          message: "Address not found, select a valid address",
         });
       }
 

@@ -22,7 +22,7 @@ export const categoriesRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -97,7 +97,7 @@ export const categoriesRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -116,7 +116,7 @@ export const categoriesRouter = router({
       if (!category) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Category not found",
+          message: "Category not found, select a valid category",
         });
       }
 

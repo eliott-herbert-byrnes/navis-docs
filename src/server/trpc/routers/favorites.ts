@@ -68,7 +68,7 @@ export const favoritesRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -86,7 +86,7 @@ export const favoritesRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message: "Procedure not found, select a valid procedure",
         });
       }
 

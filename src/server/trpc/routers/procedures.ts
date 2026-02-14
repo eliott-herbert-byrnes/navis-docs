@@ -43,7 +43,7 @@ export const procedureRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -84,6 +84,13 @@ export const procedureRouter = router({
         ],
         take: 5000,
       });
+
+      if (!procedures) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No procedures found, try a different search or team",
+        });
+      }
 
       return { procedures };
     }),
@@ -130,7 +137,7 @@ export const procedureRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -254,7 +261,7 @@ export const procedureRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
       const categories = await ctx.db.category.findMany({
@@ -337,7 +344,8 @@ export const procedureRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
         });
       }
 
@@ -384,7 +392,8 @@ export const procedureRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
         });
       }
 
@@ -436,7 +445,8 @@ export const procedureRouter = router({
       if (!procedures) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Error searching procedures",
+          message:
+            "Error searching procedures, try a different search or refresh the page",
         });
       }
 
@@ -465,7 +475,7 @@ export const procedureRouter = router({
       if (!team) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Team not found, refresh the page or select a valid team",
         });
       }
 
@@ -484,7 +494,7 @@ export const procedureRouter = router({
       if (existingName) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "This title has already been taken, please choose another.",
+          message: "This title has already been taken, choose another",
         });
       }
 
@@ -498,7 +508,7 @@ export const procedureRouter = router({
           throw new TRPCError({
             code: "FORBIDDEN",
             message:
-              "This category name has already been taken, please choose another.",
+              "This category name has already been taken, choose another",
           });
         }
         const newCategory = await ctx.db.category.create({
@@ -535,6 +545,13 @@ export const procedureRouter = router({
           slug: makeSlugFromTitle(procedureTitle),
         },
       });
+
+      if (!procedure) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message: "Failed to create procedure, try again or contact support",
+        });
+      }
 
       const version = await ctx.db.procedureVersion.create({
         data: {
@@ -599,14 +616,16 @@ export const procedureRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
         });
       }
 
       if (!procedure?.pendingVersion) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "No pending version to publish",
+          message:
+            "No pending version to publish, save a draft first or make changes and try again",
         });
       }
 
@@ -685,7 +704,8 @@ export const procedureRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
         });
       }
 
@@ -752,7 +772,7 @@ export const procedureRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
       const procedure = await ctx.db.procedure.findFirst({
@@ -769,7 +789,8 @@ export const procedureRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
         });
       }
       if (input.categoryId !== null) {
@@ -783,7 +804,7 @@ export const procedureRouter = router({
           throw new TRPCError({
             code: "BAD_REQUEST",
             message:
-              "Category not found or does not belong to this procedure's team",
+              "Category not found or does not belong to this procedure's team, choose a category from this team",
           });
         }
       }
@@ -823,7 +844,8 @@ export const procedureRouter = router({
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Procedure not found",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
         });
       }
       if (
@@ -832,7 +854,8 @@ export const procedureRouter = router({
       ) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Version not found or not pending",
+          message:
+            "Version not found or not pending, save a draft first or select another version",
         });
       }
 

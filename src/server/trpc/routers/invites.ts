@@ -80,7 +80,7 @@ export const invitesRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -99,7 +99,8 @@ export const invitesRouter = router({
       if (existingPending) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Invite already pending for this email",
+          message:
+            "Invite already pending for this email, wait for it to expire or cancel the existing invite",
         });
       }
 
@@ -141,7 +142,7 @@ export const invitesRouter = router({
 
       return {
         data: invitation,
-        message: "Invite created",
+        message: "Invite successfully created",
       };
     }),
 
@@ -166,7 +167,7 @@ export const invitesRouter = router({
       if (!invite) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Invite not found",
+          message: "Invite not found, create a new invite or refresh the list",
         });
       }
 
@@ -191,7 +192,7 @@ export const invitesRouter = router({
 
       return {
         data: invite,
-        message: "Invite deleted",
+        message: "Invite successfully deleted",
       };
     }),
 
@@ -213,14 +214,16 @@ export const invitesRouter = router({
       if (!invite) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Invite not found",
+          message:
+            "Invite not found or invalid, use the link from your invite email",
         });
       }
 
       if (invite.status !== "PENDING") {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invite already used or revoked",
+          message:
+            "Invite already used or revoked, request a new invite if needed",
         });
       }
 
@@ -231,7 +234,7 @@ export const invitesRouter = router({
         });
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invite expired",
+          message: "Invite expired, request a new invite",
         });
       }
 
@@ -243,7 +246,8 @@ export const invitesRouter = router({
       if (existing) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "User already belongs to an organization",
+          message:
+            "User already belongs to an organization, leave the current org first or use a different account",
         });
       }
 
@@ -251,7 +255,8 @@ export const invitesRouter = router({
       if (invite.email.toLowerCase() !== ctx.user!.email?.toLowerCase()) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "This invitation is for a different email address",
+          message:
+            "This invitation is for a different email address, sign in with the invited email",
         });
       }
 

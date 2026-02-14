@@ -52,7 +52,7 @@ export const teamRouter = router({
       if (existingTeam) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Team already exists",
+          message: "Team already exists, choose a different name",
         });
       }
 
@@ -70,7 +70,7 @@ export const teamRouter = router({
         throw new TRPCError({
           code: "FORBIDDEN",
           message:
-            "You have reached the maximum number of teams per department",
+            "You have reached the maximum number of teams per department, upgrade your subscription for more teams",
         });
       }
 
@@ -125,7 +125,7 @@ export const teamRouter = router({
       if (!team) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Team not found, refresh the page or select a valid team",
         });
       }
 
@@ -141,6 +141,13 @@ export const teamRouter = router({
           id: team.id,
         },
       });
+
+      if (!deletedTeam) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message: "Failed to delete team, try again or contact support",
+        });
+      }
 
       // Audit log
       await createAuditLog({
@@ -185,7 +192,7 @@ export const teamRouter = router({
       if (!team) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Team not found, refresh the page or select a valid team",
         });
       }
 
@@ -201,7 +208,7 @@ export const teamRouter = router({
       if (existingTeam) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Team already exists",
+          message: "Team already exists, choose a different team name",
         });
       }
 
