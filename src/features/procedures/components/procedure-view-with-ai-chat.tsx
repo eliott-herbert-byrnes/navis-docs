@@ -31,6 +31,7 @@ export function ProcedureViewWithAIChat({
   const [initialChatMessage, setInitialChatMessage] = useState<
     string | undefined
   >(undefined);
+  const [showDocView, setShowDocView] = useState(false);
 
   const handleAskAI = () => {
     const message = buildAskAIMessage(procedure.title ?? "");
@@ -55,6 +56,8 @@ export function ProcedureViewWithAIChat({
             canEdit={canEdit}
             isFavorite={isFavorite}
             onAskAI={handleAskAI}
+            showDocView={showDocView}
+            onViewText={() => setShowDocView((prev) => !prev)}
           />
         </div>
       </div>
@@ -62,7 +65,10 @@ export function ProcedureViewWithAIChat({
       <ProcedureViewMetadata procedure={procedure} />
 
       <Suspense fallback={<Skeleton />}>
-        <ProcedureContent procedure={procedure} />
+        <ProcedureContent
+          procedure={procedure}
+          showDocView={procedure.style === "FLOW" ? showDocView : undefined}
+        />
       </Suspense>
 
       <Suspense fallback={<Skeleton />}>

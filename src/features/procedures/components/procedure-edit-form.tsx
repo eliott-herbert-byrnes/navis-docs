@@ -46,6 +46,8 @@ export const EditProcedureForm = ({
 
   const [content, setContent] = useState<ProcedureContent>(initialContent);
 
+  const [editorPane, setEditorPane] = useState<"flow" | "text">("flow");
+
   const { updateProcedureContent } = useUpdateProcedureContent();
   const { publishProcedure, isPending } = usePublishProcedure(
     departmentId,
@@ -143,6 +145,9 @@ export const EditProcedureForm = ({
   const handleViewMode = () =>
     setViewMode((m) => (m === "edit" ? "preview" : "edit"));
 
+  const handleEditorMode = () =>
+    setEditorPane((m) => (m === "flow" ? "text" : "flow"));
+
   const handleContentChange = useCallback((newContent: ProcedureContent) => {
     setContent(newContent);
     setHasUnsavedChanges(true);
@@ -187,6 +192,8 @@ export const EditProcedureForm = ({
         procedure={procedure}
         viewMode={viewMode}
         onViewModeChange={handleViewMode}
+        editorMode={editorPane}
+        onEditorChange={handleEditorMode}
         isDisabled={isSaving || isCancelling || isPending || isDeleting}
       />
 
@@ -195,6 +202,7 @@ export const EditProcedureForm = ({
         content={content}
         onChange={handleContentChange}
         isPreview={viewMode === "preview"}
+        editorMode={editorPane}
       />
 
       <ProcedureActionButtons

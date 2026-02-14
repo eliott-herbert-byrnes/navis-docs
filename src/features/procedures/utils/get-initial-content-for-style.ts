@@ -18,7 +18,9 @@ export const getInitialContentForStyle = (style: ProcedureStyle) => {
       };
     case "FLOW":
       return {
-        nodes: [], edges: [], tiptap: {
+        nodes: [],
+        edges: [],
+        tiptap: {
           type: "doc",
           content: [
             {

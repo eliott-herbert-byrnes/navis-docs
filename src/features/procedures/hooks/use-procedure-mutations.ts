@@ -23,7 +23,10 @@ export function useCreateProcedure(departmentId: string, teamId: string) {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create procedure, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to create procedure, try again or contact support",
+      );
     },
   });
 
@@ -65,7 +68,10 @@ export function usePublishProcedure(departmentId: string, teamId: string) {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to publish procedure, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to publish procedure, try again or contact support",
+      );
     },
   });
 
@@ -92,7 +98,10 @@ export function useUpdateProcedureContent() {
       utils.procedures.categoriesWithProcedures.invalidate();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update procedure, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to update procedure, try again or contact support",
+      );
     },
   });
 
@@ -149,7 +158,10 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete procedure, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to delete procedure, try again or contact support",
+      );
     },
   });
 

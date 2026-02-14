@@ -18,7 +18,9 @@ export function useCreateIdea() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create idea, try again or contact support");
+      toast.error(
+        error.message || "Failed to create idea, try again or contact support",
+      );
     },
   });
 
@@ -50,7 +52,10 @@ export function useUpdateIdeaStatus() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update idea status, try again or contact support");
+      toast.error(
+        error.message ||
+          "Failed to update idea status, try again or contact support",
+      );
     },
   });
 
@@ -84,7 +89,9 @@ export function useDeleteIdea() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete idea, try again or contact support");
+      toast.error(
+        error.message || "Failed to delete idea, try again or contact support",
+      );
     },
   });
 

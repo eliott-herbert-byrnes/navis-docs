@@ -11,12 +11,18 @@ import { FlowEditor } from "./editors/flow-editor";
 import { YesNoPairsEditor } from "./editors/yesno-pairs-editor";
 import { Card } from "@/components/ui/card";
 import { ReactFlowProvider } from "reactflow";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type ProcedureContentProps = {
+export type ProcedureContentProps = {
   procedure: ProcedureForViewWithRelations;
+  /** When true and procedure is FLOW with doc, show flow and doc side-by-side (desktop) or tabs (narrow). */
+  showDocView?: boolean;
 };
 
-const ProcedureContent = ({ procedure }: ProcedureContentProps) => {
+const ProcedureContent = ({
+  procedure,
+  showDocView = false,
+}: ProcedureContentProps) => {
   const content = procedure.publishedVersion
     ?.contentJSON as ProcedureContentType;
 
@@ -70,9 +76,56 @@ const ProcedureContent = ({ procedure }: ProcedureContentProps) => {
     }
   };
 
+  // FLOW with doc visible: side-by-side on desktop, tabs on narrow
+  if (procedure.style === "FLOW" && showDocView) {
+    const flowPanel = (
+      <div className="min-h-[400px] flex flex-col overflow-hidden">
+        <ReactFlowProvider>
+          <FlowEditor content={content} onChange={() => {}} isPreview={true} />
+        </ReactFlowProvider>
+      </div>
+    );
+    const docPanel = (
+      <div className="min-h-[400px] overflow-auto">
+        <RawTextEditor
+          content={{ tiptap: content?.tiptap }}
+          onChange={() => {}}
+          isPreview={true}
+        />
+      </div>
+    );
+
+    return (
+      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top bg-background">
+        {/* Desktop: side-by-side */}
+        <div className="hidden md:grid md:grid-cols-2 md:gap-4 md:min-h-[600px] md:p-4">
+          <div className="min-h-0 overflow-hidden flex flex-col">
+            <div className="flex-1 min-h-0 overflow-auto">{flowPanel}</div>
+          </div>
+          <div className="min-h-0 overflow-auto flex flex-col">{docPanel}</div>
+        </div>
+        {/* Narrow: tabs, default to Text when View text was clicked */}
+        <div className="md:hidden p-4">
+          <Tabs defaultValue="text" className="flex flex-col min-h-[500px]">
+            <TabsList className="w-full grid grid-cols-2">
+              <TabsTrigger value="flow">Flow</TabsTrigger>
+              <TabsTrigger value="text">Text</TabsTrigger>
+            </TabsList>
+            <TabsContent value="flow" className="flex-1 min-h-[450px] mt-2">
+              {flowPanel}
+            </TabsContent>
+            <TabsContent value="text" className="flex-1 min-h-[450px] mt-2">
+              <div className="overflow-auto">{docPanel}</div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Card>
+    );
+  }
+
   if (procedure.style === "FLOW") {
     return (
-      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top">
+      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top bg-background">
         {renderProcedureContent()}
       </Card>
     );

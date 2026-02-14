@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye } from "lucide-react";
+import { Eye, PencilIcon } from "lucide-react";
 import { ProcedureForEdit } from "@/features/procedures/types/types";
 import { ProcedureDeleteButton } from "../../procedure-delete-button";
 
@@ -8,6 +8,8 @@ type ProcedureHeaderProps = {
   procedure: ProcedureForEdit;
   viewMode: "edit" | "preview";
   onViewModeChange: () => void;
+  editorMode: "flow" | "text";
+  onEditorChange: () => void;
   isDisabled: boolean;
 };
 
@@ -16,6 +18,8 @@ export function ProcedureHeader({
   viewMode,
   onViewModeChange,
   isDisabled,
+  editorMode,
+  onEditorChange,
 }: ProcedureHeaderProps) {
   return (
     <Card className="p-4 animate-fade-from-top">
@@ -40,6 +44,17 @@ export function ProcedureHeader({
           </div>
         </div>
         <div className="flex gap-2">
+          {procedure.style === "FLOW" ? (
+            <Button
+              variant={editorMode === "flow" ? "default" : "outline"}
+              size="sm"
+              onClick={() => onEditorChange()}
+              disabled={isDisabled}
+            >
+              <PencilIcon className="h-4 w-4" />
+              {editorMode === "flow" ? "Flow" : "Text"}
+            </Button>
+          ) : null}
           <Button
             variant={viewMode === "preview" ? "default" : "outline"}
             size="sm"

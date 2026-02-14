@@ -67,7 +67,9 @@ export function SignInForm({
         setSent(true);
         toast.success("Code sent. Check your email");
       } else {
-        toast.error(res.message ?? "Invalid email, check the address and try again");
+        toast.error(
+          res.message ?? "Invalid email, check the address and try again",
+        );
       }
     });
   };
@@ -83,7 +85,9 @@ export function SignInForm({
         window.location.assign(cb);
       } else {
         setMsg(res.message ?? null);
-        toast.error(res.message ?? "Invalid code, check your email and try again");
+        toast.error(
+          res.message ?? "Invalid code, check your email and try again",
+        );
       }
     });
   };
@@ -102,7 +106,10 @@ export function SignInForm({
           void verifyDemoCode(res.code);
         }, 500);
       } else {
-        toast.error(res.message ?? "Failed to load demo credentials, try again or refresh the page");
+        toast.error(
+          res.message ??
+            "Failed to load demo credentials, try again or refresh the page",
+        );
       }
     });
   };
@@ -120,7 +127,10 @@ export function SignInForm({
           demoPath();
         window.location.assign(cb);
       } else {
-        toast.error(res.message ?? "Demo verification failed, try again or use a new code");
+        toast.error(
+          res.message ??
+            "Demo verification failed, try again or use a new code",
+        );
       }
     });
   };

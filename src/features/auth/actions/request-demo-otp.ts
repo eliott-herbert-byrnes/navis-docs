@@ -6,7 +6,10 @@ const DEMO_EMAIL = "demo@navisdocs.com";
 
 export const requestDemoOtpAction = async () => {
   if (process.env.NEXT_PUBLIC_DEMO_MODE !== "true") {
-    return { ok: false, message: "Demo mode is not enabled, use the sign-in page in production" };
+    return {
+      ok: false,
+      message: "Demo mode is not enabled, use the sign-in page in production",
+    };
   }
 
   try {
@@ -19,6 +22,9 @@ export const requestDemoOtpAction = async () => {
     return { ok: true, message: "Demo code generated", code };
   } catch (error) {
     console.error("Failed to generate demo code:", error);
-    return { ok: false, message: "Failed to generate demo code, try again or refresh the page" };
+    return {
+      ok: false,
+      message: "Failed to generate demo code, try again or refresh the page",
+    };
   }
 };

@@ -99,7 +99,9 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
       await navigator.clipboard.writeText(content);
       toast.success(`Copied as ${format.toUpperCase()}`);
     } catch (error) {
-      toast.error("Failed to copy to clipboard, check permissions or try again");
+      toast.error(
+        "Failed to copy to clipboard, check permissions or try again",
+      );
     }
   };
 

@@ -6,7 +6,7 @@ export function generatePlainTextFromTiptap(contentJSON: JsonObject): string {
   }
 
   // Detect format and extract accordingly
-  if(contentJSON.flow){
+  if (contentJSON.flow) {
     return extractTextFromFlow(contentJSON.flow as JsonObject, contentJSON);
   } else if (contentJSON.tiptap) {
     return extractTextFromTiptap(contentJSON);
@@ -77,7 +77,10 @@ function extractTextFromSteps(steps: unknown[]): string {
 }
 
 // 3. FLOW: Flowchart format
-function extractTextFromFlow(flow: JsonObject, contentJSON?: JsonObject): string {
+function extractTextFromFlow(
+  flow: JsonObject,
+  contentJSON?: JsonObject,
+): string {
   let text = "";
 
   if (Array.isArray(flow.nodes)) {
@@ -132,12 +135,11 @@ function extractTextFromFlow(flow: JsonObject, contentJSON?: JsonObject): string
     }
   }
 
-  
-  if(contentJSON){
+  if (contentJSON) {
     const tiptapText = extractTextFromTiptap(contentJSON).trim();
-    if(tiptapText.length > 0){
+    if (tiptapText.length > 0) {
       const combined = text.trim() + "\n\n" + tiptapText;
-      return combined.trim()
+      return combined.trim();
     }
   }
 
@@ -190,4 +192,16 @@ function extractTextFromYesNo(yesno: JsonObject): string {
   }
 
   return text.trim();
+}
+
+/**
+ * True when contentJSON has a tiptap doc with non-empty extracted text.
+ * Used to show/hide the "View text" button on the FLOW procedure view screen.
+ */
+export function hasFlowDocContent(contentJSON: unknown): boolean {
+  if (!contentJSON || typeof contentJSON !== "object") return false;
+  const obj = contentJSON as JsonObject;
+  if (!obj.tiptap) return false;
+  const text = generatePlainTextFromTiptap({ tiptap: obj.tiptap });
+  return text.trim().length > 0;
 }
