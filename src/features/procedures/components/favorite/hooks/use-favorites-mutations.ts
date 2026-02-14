@@ -18,7 +18,7 @@ export function useToggleFavorite() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to toggle favorite");
+      toast.error(error.message || "Failed to toggle favorite, try again or refresh the page");
     },
   });
 

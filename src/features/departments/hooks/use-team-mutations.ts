@@ -15,7 +15,7 @@ export function useDeleteTeam() {
       setIsDialogOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong, try again or contact support");
     },
   });
 
@@ -42,7 +42,7 @@ export function useCreateTeam() {
       setIsDialogOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong, try again or contact support");
     },
   });
 
@@ -70,7 +70,7 @@ export function useRenameTeam() {
       setIsDialogOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong, try again or contact support");
     },
   });
 

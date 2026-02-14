@@ -22,7 +22,8 @@ export const usersRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message:
+            "No organization found, please reauthenticate your current session",
         });
       }
 
@@ -58,7 +59,8 @@ export const usersRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message:
+            "No organization found, please reauthenticate your current session",
         });
       }
 
@@ -107,7 +109,8 @@ export const usersRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message:
+            "No organization found, please reauthenticate your current session",
         });
       }
 
@@ -186,7 +189,7 @@ export const usersRouter = router({
       if (!ctx.user || !ctx.org) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "Unauthorized",
+          message: "Unauthorized, reauthenticate your current session",
         });
       }
 
@@ -205,28 +208,31 @@ export const usersRouter = router({
       if (!membershipToDelete) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "User not found in this organization",
+          message:
+            "User not found in this organization, refresh the list or select another user",
         });
       }
 
       if (ctx.org.ownerUserId === input.userId) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Cannot delete the organization owner",
+          message:
+            "Cannot delete the organization owner, transfer ownership first",
         });
       }
 
       if (ctx.user.id === input.userId) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Cannot delete yourself",
+          message: "Cannot delete yourself, ask another admin to remove you",
         });
       }
 
       if (membershipToDelete.role === "OWNER") {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Cannot delete organization owners",
+          message:
+            "Cannot delete organization owners, transfer ownership first",
         });
       }
 
@@ -270,7 +276,7 @@ export const usersRouter = router({
       if (!ctx.user || !ctx.org) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "Unauthorized",
+          message: "Unauthorized, reauthenticate your current session",
         });
       }
 
@@ -278,7 +284,7 @@ export const usersRouter = router({
       if (!org) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -288,7 +294,7 @@ export const usersRouter = router({
       if (!userToUpdate) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "User not found",
+          message: "User not found, refresh the page or select another user",
         });
       }
       const roleMap: Record<string, OrgMembershipRole> = {
@@ -301,7 +307,8 @@ export const usersRouter = router({
       if (input.role === "OWNER") {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Cannot promote users to owner role",
+          message:
+            "Cannot promote users to owner role, owner role is managed separately",
         });
       }
 
@@ -317,14 +324,15 @@ export const usersRouter = router({
       if (!currentMembership) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "User membership not found",
+          message: "User membership not found, refresh the page or try again",
         });
       }
 
       if (currentMembership.role === "OWNER") {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Cannot change the role of an organization owner",
+          message:
+            "Cannot change the role of an organization owner, owner role is managed separately",
         });
       }
 

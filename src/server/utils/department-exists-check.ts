@@ -12,7 +12,7 @@ async function departmentExistCheck(ctx: Context, departmentId: string) {
   if (!existingDepartment) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: "Department not found",
+      message: "Department not found, select a valid department",
     });
   }
 }

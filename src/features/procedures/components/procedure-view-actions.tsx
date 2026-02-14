@@ -64,7 +64,7 @@ export function ProcedureViewActions({
       toast.success("Link copied to clipboard");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to copy link");
+      toast.error("Failed to copy link, check permissions or try again");
     }
   };
 
@@ -92,7 +92,7 @@ export function ProcedureViewActions({
       await navigator.clipboard.writeText(content);
       toast.success(`Copied as JSON`);
     } catch (error) {
-      toast.error("Failed to copy to clipboard");
+      toast.error("Failed to copy to clipboard, check permissions or try again");
     }
   };
 

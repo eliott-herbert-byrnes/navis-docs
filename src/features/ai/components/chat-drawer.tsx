@@ -109,7 +109,7 @@ export function AIChatDrawer({
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, I encountered an error. Please try again.",
+          content: "Something went wrong, please try again or refresh the page",
         },
       ]);
     } finally {

@@ -367,12 +367,12 @@ export const handleImageUpload = async (
 ): Promise<string> => {
   // Validate file
   if (!file) {
-    throw new Error("No file provided");
+    throw new Error("No file provided, select an image to upload");
   }
 
   if (file.size > MAX_FILE_SIZE) {
     throw new Error(
-      `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB)`,
+      `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB), choose a smaller file`,
     );
   }
 
@@ -380,7 +380,7 @@ export const handleImageUpload = async (
   // with your own upload implementation.
   for (let progress = 0; progress <= 100; progress += 10) {
     if (abortSignal?.aborted) {
-      throw new Error("Upload cancelled");
+      throw new Error("Upload cancelled, try again if you want to upload");
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
     onProgress?.({ progress });

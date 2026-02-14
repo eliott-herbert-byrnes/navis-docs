@@ -39,6 +39,13 @@ export const newsRouter = router({
         },
       });
 
+      if (!newsQuery) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Unable to load news posts, refresh the page or try again",
+        });
+      }
+
       const mappedNews = newsQuery.map((news) => ({
         id: news.id,
         title: news.title,
@@ -84,6 +91,13 @@ export const newsRouter = router({
         },
       });
 
+      if (!news) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message: "Unable to create news post, try again or contact support",
+        });
+      }
+
       await createAuditLog({
         orgId: ctx.org?.id ?? "",
         actorId: ctx.user?.id ?? "",
@@ -122,13 +136,20 @@ export const newsRouter = router({
       if (!newsPost || newsPost.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "News post not found",
+          message: "News post not found, select a valid post",
         });
       }
 
       const deletedNews = await ctx.db.newsPost.delete({
         where: { id: input.newsPostId },
       });
+
+      if (!deletedNews) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message: "Unable to delete news post, try again or contact support",
+        });
+      }
 
       await createAuditLog({
         orgId: ctx.org?.id ?? "",

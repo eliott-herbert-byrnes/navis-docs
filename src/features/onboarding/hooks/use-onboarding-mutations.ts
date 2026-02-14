@@ -14,7 +14,7 @@ export function useCreateOrganization() {
       router.refresh();
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create organization");
+      toast.error(error.message || "Failed to create organization, try again or contact support");
     },
   });
 

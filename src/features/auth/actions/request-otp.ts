@@ -12,12 +12,12 @@ const schema = z.object({
 
 export const requestOtpAction = async (emailRaw: string) => {
   const { success } = await limiter("otp:request");
-  if (!success) return { ok: false, message: "Too many requests. Try later" };
+  if (!success) return { ok: false, message: "Too many requests, try again later" };
 
   const parsedEmail = schema.safeParse({
     email: emailRaw.trim().toLowerCase(),
   });
-  if (!parsedEmail.success) return { ok: false, message: "Invalid email" };
+  if (!parsedEmail.success) return { ok: false, message: "Invalid email, check the address and try again" };
   const email = parsedEmail.data.email;
 
   const { code, expiresAt } = await createOtpFor(email);

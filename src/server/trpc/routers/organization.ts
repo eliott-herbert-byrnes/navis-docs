@@ -42,7 +42,7 @@ export const organizationRouter = router({
       ) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "Unauthorized",
+          message: "Unauthorized, reauthenticate your current session",
         });
       }
 
@@ -55,6 +55,13 @@ export const organizationRouter = router({
         where: { id: input.orgId },
         data: { name: input.orgName },
       });
+
+      if (!updatedOrg) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message: "Unable to update organization, try again or contact support",
+        });
+      }
 
       await createAuditLog({
         orgId: input.orgId,
@@ -91,7 +98,7 @@ export const organizationRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "You must be logged in",
+          message: "You must be logged in, sign in and try again",
         });
       }
 
@@ -104,7 +111,8 @@ export const organizationRouter = router({
       if (existingMembership) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "You already belong to an organization",
+          message:
+            "You already belong to an organization, leave it first or use a different account",
         });
       }
 
@@ -120,7 +128,8 @@ export const organizationRouter = router({
       if (existingOrg) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Organization with this name already exists",
+          message:
+            "Organization with this name already exists, choose a different name",
         });
       }
 
@@ -137,6 +146,14 @@ export const organizationRouter = router({
           },
         },
       });
+
+      if (!org) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message:
+            "Failed to create organization, try again or contact customer support",
+        });
+      }
 
       await ctx.db.orgMembership.create({
         data: {
@@ -173,7 +190,7 @@ export const organizationRouter = router({
       if (!ctx.org) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "No organization found",
+          message: "No organization found, reauthenticate your current session",
         });
       }
 
@@ -187,7 +204,7 @@ export const organizationRouter = router({
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
               message:
-                "Failed to cancel subscription. Please try again or contact support.",
+                "Failed to cancel subscription. Try again or contact support.",
               cause: error,
             });
           }
@@ -204,7 +221,7 @@ export const organizationRouter = router({
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
               message:
-                "Failed to delete billing account. Please contact support.",
+                "Failed to delete billing account, try again or contact support",
               cause: error,
             });
           }
@@ -216,6 +233,14 @@ export const organizationRouter = router({
           id: ctx.org.id,
         },
       });
+
+      if (!deleted) {
+        throw new TRPCError({
+          code: "NOT_IMPLEMENTED",
+          message:
+            "Failed to delete organization, try again or contact customer support",
+        });
+      }
 
       return {
         data: deleted,

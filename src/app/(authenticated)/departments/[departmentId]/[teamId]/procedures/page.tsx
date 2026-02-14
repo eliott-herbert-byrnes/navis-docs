@@ -29,7 +29,7 @@ export default async function ProcedurePage({
   return (
     <>
       <Heading
-        title={`${teamName} Docs`}
+        title={`${teamName}`}
         actions={isAdmin ? <ProcedureCreateButton /> : null}
       />
       <FavoriteList />

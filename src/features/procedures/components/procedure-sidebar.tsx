@@ -56,7 +56,6 @@ export function ProcedureSidebar({
   const [open, setOpen] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
 
-
   const SidebarContent = () => (
     <nav className="flex-1 overflow-y-auto p-2">
       <div className="space-y-1">
@@ -101,64 +100,68 @@ export function ProcedureSidebar({
           </div>
         ) : (
           <>
-            {categories.filter((category) => category.procedures.length > 0).map((category) => (
-              <Collapsible key={category.id}>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-between group"
-                  >
-                    <span className="font-medium text-sm">
-                      {category.name}
-                    </span>
-                    <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="pl-4 space-y-1 mt-1">
-                  {category.procedures.map((procedure) => (
-                    <Link
-                      key={procedure.id}
-                      href={viewProcedurePath(
-                        departmentId,
-                        teamId,
-                        procedure.id,
-                      )}
-                      className="block"
+            {categories
+              .filter((category) => category.procedures.length > 0)
+              .map((category) => (
+                <Collapsible key={category.id}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between group"
                     >
-                      {procedure.status === "PUBLISHED" ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start text-sm font-normal hover:bg-accent"
-                          title={procedure.title}
-                        >
-                          <span className="truncate">
-                            {procedure.title.length > 28
-                              ? `${procedure.title.slice(0, 28)}...`
-                              : procedure.title}
-
-                          </span>
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={cn(isAdmin ? "w-full justify-start text-sm font-normal hover:bg-accent" : "hidden")}
-                          title={procedure.title}
-                        >
-                          <span className="truncate">
-                            {procedure.title.length > 28
-                              ? `${procedure.title.slice(0, 28)} (Draft)...`
-                              : `${procedure.title} (Draft)`}
-
-                          </span>
-                        </Button>
-                      )}
-                    </Link>
-                  ))}
-                </CollapsibleContent>
-              </Collapsible>
-            ))}
+                      <span className="font-medium text-sm">
+                        {category.name}
+                      </span>
+                      <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-4 space-y-1 mt-1">
+                    {category.procedures.map((procedure) => (
+                      <Link
+                        key={procedure.id}
+                        href={viewProcedurePath(
+                          departmentId,
+                          teamId,
+                          procedure.id,
+                        )}
+                        className="block"
+                      >
+                        {procedure.status === "PUBLISHED" ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-sm font-normal hover:bg-accent"
+                            title={procedure.title}
+                          >
+                            <span className="truncate">
+                              {procedure.title.length > 28
+                                ? `${procedure.title.slice(0, 28)}...`
+                                : procedure.title}
+                            </span>
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              isAdmin
+                                ? "w-full justify-start text-sm font-normal hover:bg-accent"
+                                : "hidden",
+                            )}
+                            title={procedure.title}
+                          >
+                            <span className="truncate">
+                              {procedure.title.length > 28
+                                ? `${procedure.title.slice(0, 28)} (Draft)...`
+                                : `${procedure.title} (Draft)`}
+                            </span>
+                          </Button>
+                        )}
+                      </Link>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              ))}
 
             {/* Uncategorized Procedures */}
             {uncategorizedProcedures.length > 0 && (

@@ -29,7 +29,7 @@ export const ideasRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -82,7 +82,7 @@ export const ideasRouter = router({
       if (!ctx.user || !ctx.org) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -136,7 +136,7 @@ export const ideasRouter = router({
       if (!ctx.user || !ctx.org) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -170,7 +170,7 @@ export const ideasRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -190,7 +190,7 @@ export const ideasRouter = router({
       if (!idea || idea.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Idea not found",
+          message: "Idea not found, select a valid idea",
         });
       }
 
@@ -224,7 +224,7 @@ export const ideasRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -244,7 +244,7 @@ export const ideasRouter = router({
       if (!idea || idea.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Idea not found",
+          message: "Idea not found, select a valid idea",
         });
       }
 

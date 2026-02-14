@@ -34,7 +34,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
       try {
         await createCustomerPortal();
       } catch (e) {
-        toast.error("Could not open billing. Please try again.");
+        toast.error("Could not open billing, try again or contact support");
       }
     });
   };

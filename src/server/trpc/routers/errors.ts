@@ -26,7 +26,7 @@ export const errorsRouter = router({
       if (!ctx.user || !ctx.org) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -89,7 +89,7 @@ export const errorsRouter = router({
       if (!ctx.user || !ctx.org) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -122,7 +122,7 @@ export const errorsRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -146,7 +146,7 @@ export const errorsRouter = router({
       if (!error) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Error report not found",
+          message: "Error report not found, select a valid error report",
         });
       }
 
@@ -154,7 +154,8 @@ export const errorsRouter = router({
       if (error.procedure.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Error report not found",
+          message:
+            "You don't have access to this error report, or it no longer exists",
         });
       }
 
@@ -188,7 +189,7 @@ export const errorsRouter = router({
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "User not found",
+          message: "User not found, reauthenticate your current session",
         });
       }
 
@@ -212,7 +213,7 @@ export const errorsRouter = router({
       if (!error) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Error report not found",
+          message: "Error report not found, select a valid report",
         });
       }
 
@@ -220,7 +221,8 @@ export const errorsRouter = router({
       if (error.procedure.team.department.orgId !== ctx.org!.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Error report not found",
+          message:
+            "You don't have access to this error report, or it no longer exists",
         });
       }
 

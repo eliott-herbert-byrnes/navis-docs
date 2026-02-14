@@ -69,7 +69,7 @@ export const departmentRouter = router({
       if (existingDepartment > 0) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Department already exists",
+          message: "Department already exists, select a different name",
         });
       }
       // Get Stripe provisioning
@@ -82,7 +82,8 @@ export const departmentRouter = router({
       if (currentDepartments >= allowedDepartments) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "You have reached the maximum number of departments",
+          message:
+            "You have reached the maximum number of departments, upgrade your subscription for more departments",
         });
       }
 
@@ -117,7 +118,7 @@ export const departmentRouter = router({
         throw new TRPCError({
           code: "FORBIDDEN",
           message:
-            "You have reached the maximum number of teams per department",
+            "You have reached the maximum number of teams per department, upgrade your subscription for more teams",
         });
       }
 

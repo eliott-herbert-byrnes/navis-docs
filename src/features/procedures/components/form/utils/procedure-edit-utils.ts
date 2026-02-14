@@ -62,7 +62,7 @@ export const handleSaveProcedure = async ({
   silent = false,
 }: SaveProcedureParams) => {
   if (!procedure.pendingVersion) {
-    toast.error("No pending version found");
+    toast.error("No pending version found, save a draft first");
     return;
   }
 
@@ -87,7 +87,7 @@ export const handlePublishProcedure = ({
   publishFn,
 }: PublishProcedureParams) => {
   if (hasUnsavedChanges) {
-    toast.error("Please save your changes before publishing");
+    toast.error("Please save your changes before publishing, then try again");
     return;
   }
 

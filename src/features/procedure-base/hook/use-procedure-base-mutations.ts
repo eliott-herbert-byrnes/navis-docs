@@ -12,7 +12,7 @@ export function useDeleteProcedureFromBase() {
       toast.success("Procedure deleted");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete procedure");
+      toast.error(error.message || "Failed to delete procedure, try again or contact support");
     },
   });
 
@@ -35,7 +35,7 @@ export function useUpdateProcedureCategory() {
       toast.success("Category updated");
     },
     onError: (error) => {
-      toast.error(error.message ?? "Failed to update category");
+      toast.error(error.message ?? "Failed to update category, try again or contact support");
     },
   });
 

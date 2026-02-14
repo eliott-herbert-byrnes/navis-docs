@@ -9,10 +9,10 @@ export function useDeleteUser() {
   const mutation = trpc.users.deleteUser.useMutation({
     onSuccess: () => {
       utils.users.getOrgMembers.invalidate();
-      toast.success("User removed from the organization sucsessfully");
+      toast.success("User removed from the organization successfully");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete user");
+      toast.error(error.message || "Failed to delete user, try again or contact support");
     },
   });
 
@@ -36,7 +36,7 @@ export function useChangeRole() {
       toast.success("User role changed");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to change user role");
+      toast.error(error.message || "Failed to change user role, try again or contact support");
     },
   });
 

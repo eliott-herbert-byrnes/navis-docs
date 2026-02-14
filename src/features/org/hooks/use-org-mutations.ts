@@ -15,7 +15,7 @@ export function useDeleteOrg() {
       redirect(signInPath());
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Failed to delete organization, try again or contact support");
     },
   });
 
