@@ -13,6 +13,8 @@ import { JsonObject } from "@prisma/client/runtime/client";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
 import { getInitialContentForStyle } from "@/features/procedures/utils/get-initial-content-for-style";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -33,6 +35,8 @@ const updateProcedureContentSchema = z.object({
   versionId: z.uuid(),
   contentJSON: z.any(),
 });
+const procedureImagesBucket =
+  process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
 
 export const procedureRouter = router({
   // Query: GET-all procedures for export
@@ -865,6 +869,27 @@ export const procedureRouter = router({
         where: { id: input.versionId },
         data: { contentJSON: input.contentJSON },
       });
+
+      // Delete managed images that were removed from the document.
+      // Cleanup is best-effort and should not block content saves.
+      try {
+        const oldImagePaths = extractManagedImagePathsFromContent(oldContent);
+        const newImagePaths = extractManagedImagePathsFromContent(input.contentJSON);
+        const removedPaths = [...oldImagePaths].filter(
+          (path) => !newImagePaths.has(path),
+        );
+
+        if (removedPaths.length > 0) {
+          const { error } = await supabaseAdmin.storage
+            .from(procedureImagesBucket)
+            .remove(removedPaths);
+          if (error) {
+            console.error("Failed to remove orphaned procedure images:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Procedure image cleanup failed:", error);
+      }
 
       await createAuditLog({
         orgId: ctx.org!.id,

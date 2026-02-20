@@ -40,6 +40,7 @@ const ProcedureContent = ({
       case "RAW":
         return (
           <RawTextEditor
+            procedureId={procedure.id}
             content={content}
             onChange={() => {}}
             isPreview={true}
@@ -88,6 +89,7 @@ const ProcedureContent = ({
     const docPanel = (
       <div className="min-h-[400px] overflow-auto">
         <RawTextEditor
+          procedureId={procedure.id}
           content={{ tiptap: content?.tiptap }}
           onChange={() => {}}
           isPreview={true}

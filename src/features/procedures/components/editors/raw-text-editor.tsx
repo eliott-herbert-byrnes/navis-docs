@@ -7,7 +7,7 @@ import {
   Content,
   EditorContext,
 } from "@tiptap/react";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 // --- Tiptap Core Extensions ---
 import StarterKit from "@tiptap/starter-kit";
@@ -64,19 +64,21 @@ import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 import "./tiptap-styles.css";
 // import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
-import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import { createProcedureImageUploadHandler, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 type ProcedureContent = {
   tiptap?: JSONContent;
 };
 
 type RawTextEditorProps = {
+  procedureId: string;
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
   isPreview: boolean;
 };
 
 export function RawTextEditor({
+  procedureId,
   content,
   onChange,
   isPreview,
@@ -86,6 +88,10 @@ export function RawTextEditor({
     content: [{ type: "paragraph" }],
   };
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const uploadProcedureImage = useMemo(
+    () => createProcedureImageUploadHandler(procedureId),
+    [procedureId],
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -108,7 +114,7 @@ export function RawTextEditor({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 1,
-        upload: handleImageUpload,
+        upload: uploadProcedureImage,
         onError: (error) => console.error("Upload failed:", error),
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -131,81 +137,81 @@ export function RawTextEditor({
     },
   });
 
-  const insertStep = useCallback(() => {
-    if (!editor || !editor.isEditable) return;
+  // const insertStep = useCallback(() => {
+  //   if (!editor || !editor.isEditable) return;
 
-    const { $from } = editor.state.selection;
-    let orderedListDepth: number | null = null;
+  //   const { $from } = editor.state.selection;
+  //   let orderedListDepth: number | null = null;
 
-    for (let depth = $from.depth; depth > 0; depth--) {
-      if ($from.node(depth).type.name === "orderedList") {
-        orderedListDepth = depth;
-        break;
-      }
-    }
+  //   for (let depth = $from.depth; depth > 0; depth--) {
+  //     if ($from.node(depth).type.name === "orderedList") {
+  //       orderedListDepth = depth;
+  //       break;
+  //     }
+  //   }
 
-    if (orderedListDepth !== null) {
-      const orderedListNode = $from.node(orderedListDepth);
-      const isStepList = orderedListNode.attrs?.listType === "steps";
-      const currentListItemIndex = $from.index(orderedListDepth);
-      const nextStepNumber = currentListItemIndex + 2;
+  //   if (orderedListDepth !== null) {
+  //     const orderedListNode = $from.node(orderedListDepth);
+  //     const isStepList = orderedListNode.attrs?.listType === "steps";
+  //     const currentListItemIndex = $from.index(orderedListDepth);
+  //     const nextStepNumber = currentListItemIndex + 2;
 
-      const didConvertToStepList =
-        isStepList ||
-        editor
-          .chain()
-          .focus()
-          .updateAttributes("orderedList", { listType: "steps" })
-          .run();
+  //     const didConvertToStepList =
+  //       isStepList ||
+  //       editor
+  //         .chain()
+  //         .focus()
+  //         .updateAttributes("orderedList", { listType: "steps" })
+  //         .run();
 
-      if (!didConvertToStepList) return;
+  //     if (!didConvertToStepList) return;
 
-      const didSplitListItem = editor
-        .chain()
-        .focus()
-        .splitListItem("listItem")
-        .run();
-      if (!didSplitListItem) return;
+  //     const didSplitListItem = editor
+  //       .chain()
+  //       .focus()
+  //       .splitListItem("listItem")
+  //       .run();
+  //     if (!didSplitListItem) return;
 
-      editor
-        .chain()
-        .focus()
-        .insertContent(`Step ${nextStepNumber}`)
-        .enter()
-        .run();
-      return;
-    }
+  //     editor
+  //       .chain()
+  //       .focus()
+  //       .insertContent(`Step ${nextStepNumber}`)
+  //       .enter()
+  //       .run();
+  //     return;
+  //   }
 
-    editor
-      .chain()
-      .focus()
-      .insertContent({
-        type: "orderedList",
-        attrs: { listType: "steps" },
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: "Step 1" }],
-              },
-              { type: "paragraph" },
-            ],
-          },
-        ],
-      })
-      .run();
-  }, [editor]);
+  //   editor
+  //     .chain()
+  //     .focus()
+  //     .insertContent({
+  //       type: "orderedList",
+  //       attrs: { listType: "steps" },
+  //       content: [
+  //         {
+  //           type: "listItem",
+  //           content: [
+  //             {
+  //               type: "paragraph",
+  //               content: [{ type: "text", text: "Step 1" }],
+  //             },
+  //             { type: "paragraph" },
+  //           ],
+  //         },
+  //       ],
+  //     })
+  //     .run();
+  // }, [editor]);
 
-  const insertImageFromUrl = useCallback(() => {
-    if (!editor || !editor.isEditable) return;
+  // const insertImageFromUrl = useCallback(() => {
+  //   if (!editor || !editor.isEditable) return;
 
-    const url = window.prompt("Enter an image URL");
-    if (!url) return;
+  //   const url = window.prompt("Enter an image URL");
+  //   if (!url) return;
 
-    editor.chain().focus().setImage({ src: url }).run();
-  }, [editor]);
+  //   editor.chain().focus().setImage({ src: url }).run();
+  // }, [editor]);
 
   // const rect = useCursorVisibility({
   //   editor,

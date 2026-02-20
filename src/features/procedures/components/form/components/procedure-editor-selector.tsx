@@ -7,6 +7,7 @@ import { ReactFlowProvider } from "reactflow";
 import { YesNoPairsEditor } from "@/features/procedures/components/editors/yesno-pairs-editor";
 
 type ProcedureEditorSelectorProps = {
+  procedureId: string;
   procedureStyle: "RAW" | "STEPS" | "FLOW" | "YESNO";
   editorMode: "flow" | "text";
   content: ProcedureContent;
@@ -15,6 +16,7 @@ type ProcedureEditorSelectorProps = {
 };
 
 export function ProcedureEditorSelector({
+  procedureId,
   procedureStyle,
   content,
   onChange,
@@ -26,6 +28,7 @@ export function ProcedureEditorSelector({
       case "RAW":
         return (
           <RawTextEditor
+            procedureId={procedureId}
             content={content}
             onChange={onChange}
             isPreview={isPreview}
@@ -53,6 +56,7 @@ export function ProcedureEditorSelector({
         } else {
           return (
             <RawTextEditor
+              procedureId={procedureId}
               content={content}
               onChange={(newContent) =>
                 onChange({ ...content, tiptap: newContent.tiptap })

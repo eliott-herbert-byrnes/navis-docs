@@ -105,7 +105,7 @@
   list-style: none;
   counter-reset: procedure-step;
   padding-left: 0rem;
-  margin: 2rem 0;
+  margin: 2.0rem 0;
 }
 
 .ProseMirror ol[data-list-type="steps"] > li {
@@ -153,6 +153,7 @@
 .ProseMirror ol[data-list-type="steps"] > li > p:first-of-type {
   font-size: 1.5em;
   font-weight: bold;
+  
   padding-bottom: 0.5em;
 }
 

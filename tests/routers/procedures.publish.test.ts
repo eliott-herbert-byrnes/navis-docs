@@ -9,6 +9,16 @@ vi.mock("@/features/ai/actions/generate-embeddings", () => ({
   generateProcedureEmbeddings: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock("@/lib/supabase/admin", () => ({
+  supabaseAdmin: {
+    storage: {
+      from: () => ({
+        remove: vi.fn().mockResolvedValue({ error: null }),
+      }),
+    },
+  },
+}));
+
 import { procedureRouter } from "@/server/trpc/routers/procedures";
 
 describe("Procedure Router - publishProcedure", () => {
