@@ -843,7 +843,7 @@ export const procedureRouter = router({
             },
           },
         },
-        include: { pendingVersion: true },
+        include: { pendingVersion: true, publishedVersion: true },
       });
       if (!procedure) {
         throw new TRPCError({
@@ -875,14 +875,33 @@ export const procedureRouter = router({
       try {
         const oldImagePaths = extractManagedImagePathsFromContent(oldContent);
         const newImagePaths = extractManagedImagePathsFromContent(input.contentJSON);
-        const removedPaths = [...oldImagePaths].filter(
+        const publishedImagePaths = extractManagedImagePathsFromContent(
+          procedure.publishedVersion?.contentJSON,
+        );
+        const keptPaths = new Set([...newImagePaths, ...publishedImagePaths]);
+
+        const procedureFolder = `orgs/${ctx.org!.id}/procedures/${input.procedureId}`;
+        const { data: listedObjects, error: listError } = await supabaseAdmin.storage
+          .from(procedureImagesBucket)
+          .list(procedureFolder, { limit: 1000, offset: 0 });
+        if (listError) {
+          console.error("Failed to list procedure images for cleanup:", listError);
+        }
+
+        const listedPaths = (listedObjects ?? [])
+          .filter((obj) => !!obj.name)
+          .map((obj) => `${procedureFolder}/${obj.name}`);
+
+        const removedPaths = listedPaths.filter((path) => !keptPaths.has(path));
+        const referencedRemovedPaths = [...oldImagePaths].filter(
           (path) => !newImagePaths.has(path),
         );
+        const deletionSet = new Set([...removedPaths, ...referencedRemovedPaths]);
 
-        if (removedPaths.length > 0) {
+        if (deletionSet.size > 0) {
           const { error } = await supabaseAdmin.storage
             .from(procedureImagesBucket)
-            .remove(removedPaths);
+            .remove([...deletionSet]);
           if (error) {
             console.error("Failed to remove orphaned procedure images:", error);
           }
