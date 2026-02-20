@@ -79,6 +79,10 @@ describe("Procedure Router - publishProcedure", () => {
                         type: "paragraph",
                         content: [{ type: "text", text: "Open settings." }],
                       },
+                  {
+                    type: "paragraph",
+                    content: [{ type: "text", text: "Confirm changes are saved." }],
+                  },
                     ],
                   },
                 ],
@@ -105,6 +109,12 @@ describe("Procedure Router - publishProcedure", () => {
     });
     expect(mockVersionUpdate.mock.calls[0][0].data.contentText).toContain(
       "Open settings.",
+    );
+    expect(mockVersionUpdate.mock.calls[0][0].data.contentText).toContain(
+      "Confirm changes are saved.",
+    );
+    expect(mockVersionUpdate.mock.calls[0][0].data.contentText).not.toContain(
+      "add new step",
     );
     expect(mockProcedureUpdate).toHaveBeenCalledWith({
       where: { id: procedureId },

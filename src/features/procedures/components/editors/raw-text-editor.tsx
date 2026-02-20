@@ -7,7 +7,8 @@ import {
   Content,
   EditorContext,
 } from "@tiptap/react";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { TextSelection } from "@tiptap/pm/state";
 
 // --- Tiptap Core Extensions ---
 import StarterKit from "@tiptap/starter-kit";
@@ -30,6 +31,7 @@ import {
 // --- Tiptap Node ---
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
 import { OrderedListExtended } from "@/components/tiptap-node/list-node/ordered-list-step-extension";
+import { ListItemExtended } from "@/components/tiptap-node/list-node/list-item-step-extension";
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension";
 import "@/components/tiptap-node/code-block-node/code-block-node.scss";
 import "@/components/tiptap-node/list-node/list-node.scss";
@@ -77,6 +79,12 @@ type RawTextEditorProps = {
   isPreview: boolean;
 };
 
+type StepsListMeta = {
+  pos: number;
+  childCount: number;
+  nodeSize: number;
+};
+
 export function RawTextEditor({
   procedureId,
   content,
@@ -92,6 +100,62 @@ export function RawTextEditor({
     () => createProcedureImageUploadHandler(procedureId),
     [procedureId],
   );
+  const pendingStepExitPosRef = useRef<number | null>(null);
+
+  const buildStepListItem = useCallback((stepNumber: number): JSONContent => {
+    return {
+      type: "listItem",
+      content: [
+        {
+          type: "heading",
+          attrs: { level: 2 },
+          content: [{ type: "text", text: `Step ${stepNumber}` }],
+        },
+        { type: "paragraph" },
+      ],
+    };
+  }, []);
+
+  const getStepsListContext = useCallback((editorInstance: any) => {
+    const { $from } = editorInstance.state.selection;
+    let orderedListDepth: number | null = null;
+    let listItemDepth: number | null = null;
+    let paragraphDepth: number | null = null;
+
+    for (let depth = $from.depth; depth > 0; depth--) {
+      const nodeName = $from.node(depth).type.name;
+      if (orderedListDepth === null && nodeName === "orderedList") orderedListDepth = depth;
+      if (listItemDepth === null && nodeName === "listItem") listItemDepth = depth;
+      if (paragraphDepth === null && nodeName === "paragraph") paragraphDepth = depth;
+    }
+
+    if (orderedListDepth === null) return null;
+
+    const orderedListNode = $from.node(orderedListDepth);
+    if (orderedListNode.attrs?.listType !== "steps") return null;
+
+    return {
+      $from,
+      orderedListDepth,
+      listItemDepth,
+      paragraphDepth,
+      orderedListNode,
+      orderedListPos: $from.before(orderedListDepth),
+    };
+  }, []);
+
+  const findFirstStepsList = useCallback((editorInstance: any): StepsListMeta | null => {
+    let result: StepsListMeta | null = null;
+    editorInstance.state.doc.descendants((node: any, pos: number) => {
+      if (result) return false;
+      if (node.type.name === "orderedList" && node.attrs?.listType === "steps") {
+        result = { pos, childCount: node.childCount, nodeSize: node.nodeSize };
+        return false;
+      }
+      return true;
+    });
+    return result;
+  }, []);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -99,11 +163,13 @@ export function RawTextEditor({
       StarterKit.configure({
         blockquote: false,
         orderedList: false,
+        listItem: false,
         horizontalRule: false,
         heading: {
           levels: [1, 2, 3],
         },
       }),
+      ListItemExtended,
       OrderedListExtended,
       Typography,
       Selection,
@@ -130,6 +196,90 @@ export function RawTextEditor({
         class:
           "prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none focus:outline-none min-h-[400px] p-4",
       },
+      handleKeyDown: (_view, event) => {
+        if (!editor || !editor.isEditable) return false;
+
+        if (event.key !== "Enter") {
+          pendingStepExitPosRef.current = null;
+          return false;
+        }
+
+        const context = getStepsListContext(editor);
+        if (!context || context.listItemDepth === null) {
+          pendingStepExitPosRef.current = null;
+          return false;
+        }
+
+        const {
+          $from,
+          orderedListDepth,
+          listItemDepth,
+          paragraphDepth,
+          orderedListNode,
+          orderedListPos,
+        } = context;
+
+        if ($from.parent.type.name === "heading") {
+          const listItemNode = $from.node(listItemDepth);
+          const listItemPos = $from.before(listItemDepth);
+          let childOffset = 0;
+          let paragraphPos: number | null = null;
+
+          for (let i = 0; i < listItemNode.childCount; i++) {
+            const childNode = listItemNode.child(i);
+            if (childNode.type.name === "paragraph") {
+              paragraphPos = listItemPos + 1 + childOffset;
+              break;
+            }
+            childOffset += childNode.nodeSize;
+          }
+
+          const tr = editor.state.tr;
+          if (paragraphPos === null) {
+            const insertPos = listItemPos + listItemNode.nodeSize - 1;
+            tr.insert(insertPos, editor.state.schema.nodes.paragraph.create());
+            tr.setSelection(TextSelection.create(tr.doc, insertPos + 1));
+          } else {
+            tr.setSelection(TextSelection.create(tr.doc, paragraphPos + 1));
+          }
+
+          editor.view.dispatch(tr);
+          pendingStepExitPosRef.current = null;
+          event.preventDefault();
+          return true;
+        }
+
+        if (paragraphDepth === null || $from.parent.type.name !== "paragraph") {
+          pendingStepExitPosRef.current = null;
+          return false;
+        }
+
+        const listItemNode = $from.node(listItemDepth);
+        const isCurrentParagraphEmpty = $from.parent.content.size === 0;
+        const isLastStep = $from.index(orderedListDepth) === orderedListNode.childCount - 1;
+        const isLastParagraphInStep = $from.index(listItemDepth) === listItemNode.childCount - 1;
+
+        if (!isCurrentParagraphEmpty || !isLastStep || !isLastParagraphInStep) {
+          pendingStepExitPosRef.current = null;
+          return false;
+        }
+
+        const currentPos = $from.pos;
+        if (pendingStepExitPosRef.current !== currentPos) {
+          pendingStepExitPosRef.current = currentPos;
+          event.preventDefault();
+          return true;
+        }
+
+        const exitPos = orderedListPos + orderedListNode.nodeSize;
+        const tr = editor.state.tr;
+        tr.insert(exitPos, editor.state.schema.nodes.paragraph.create());
+        tr.setSelection(TextSelection.create(tr.doc, exitPos + 1));
+        editor.view.dispatch(tr);
+        pendingStepExitPosRef.current = null;
+        event.preventDefault();
+        return true;
+      },
     },
     onUpdate: ({ editor }) => {
       const json = editor.getJSON();
@@ -137,72 +287,48 @@ export function RawTextEditor({
     },
   });
 
-  // const insertStep = useCallback(() => {
-  //   if (!editor || !editor.isEditable) return;
+  const createStepsListAtCursor = useCallback(() => {
+    if (!editor || !editor.isEditable) return;
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "orderedList",
+        attrs: { listType: "steps" },
+        content: [buildStepListItem(1)],
+      })
+      .run();
+  }, [buildStepListItem, editor]);
 
-  //   const { $from } = editor.state.selection;
-  //   let orderedListDepth: number | null = null;
+  const appendStepAtEndOfCurrentStepsList = useCallback(() => {
+    if (!editor || !editor.isEditable) return;
 
-  //   for (let depth = $from.depth; depth > 0; depth--) {
-  //     if ($from.node(depth).type.name === "orderedList") {
-  //       orderedListDepth = depth;
-  //       break;
-  //     }
-  //   }
+    const stepsList = findFirstStepsList(editor);
+    if (!stepsList) return;
 
-  //   if (orderedListDepth !== null) {
-  //     const orderedListNode = $from.node(orderedListDepth);
-  //     const isStepList = orderedListNode.attrs?.listType === "steps";
-  //     const currentListItemIndex = $from.index(orderedListDepth);
-  //     const nextStepNumber = currentListItemIndex + 2;
+    const insertPos = stepsList.pos + stepsList.nodeSize - 1;
+    const nextStepNumber = stepsList.childCount + 1;
+    const didInsert = editor
+      .chain()
+      .focus()
+      .insertContentAt(insertPos, buildStepListItem(nextStepNumber))
+      .setTextSelection(insertPos + 3)
+      .run();
 
-  //     const didConvertToStepList =
-  //       isStepList ||
-  //       editor
-  //         .chain()
-  //         .focus()
-  //         .updateAttributes("orderedList", { listType: "steps" })
-  //         .run();
+    if (didInsert) pendingStepExitPosRef.current = null;
+  }, [buildStepListItem, editor, findFirstStepsList]);
 
-  //     if (!didConvertToStepList) return;
+  const insertStep = useCallback(() => {
+    if (!editor || !editor.isEditable) return;
+    const context = getStepsListContext(editor);
+    if (context) return;
+    createStepsListAtCursor();
+  }, [createStepsListAtCursor, editor, getStepsListContext]);
 
-  //     const didSplitListItem = editor
-  //       .chain()
-  //       .focus()
-  //       .splitListItem("listItem")
-  //       .run();
-  //     if (!didSplitListItem) return;
-
-  //     editor
-  //       .chain()
-  //       .focus()
-  //       .insertContent(`Step ${nextStepNumber}`)
-  //       .enter()
-  //       .run();
-  //     return;
-  //   }
-
-  //   editor
-  //     .chain()
-  //     .focus()
-  //     .insertContent({
-  //       type: "orderedList",
-  //       attrs: { listType: "steps" },
-  //       content: [
-  //         {
-  //           type: "listItem",
-  //           content: [
-  //             {
-  //               type: "paragraph",
-  //               content: [{ type: "text", text: "Step 1" }],
-  //             },
-  //             { type: "paragraph" },
-  //           ],
-  //         },
-  //       ],
-  //     })
-  //     .run();
-  // }, [editor]);
+  const hasStepList = useMemo(() => {
+    if (!editor) return false;
+    return !!findFirstStepsList(editor);
+  }, [editor, findFirstStepsList, content?.tiptap]);
 
   // const insertImageFromUrl = useCallback(() => {
   //   if (!editor || !editor.isEditable) return;
@@ -331,6 +457,17 @@ export function RawTextEditor({
         </Toolbar>
         <div className="rounded-md bg-background">
           <EditorContent editor={editor} />
+          {editor.isEditable && hasStepList ? (
+            <div className="px-4 pb-4">
+              <button
+                type="button"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                onClick={appendStepAtEndOfCurrentStepsList}
+              >
+                add new step
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
       {/* </div> */}

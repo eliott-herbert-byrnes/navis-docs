@@ -24,6 +24,10 @@ describe("generatePlainTextFromTiptap", () => {
                     content: [{ type: "text", text: "Open the dashboard." }],
                   },
                   {
+                    type: "paragraph",
+                    content: [{ type: "text", text: "Use the admin credentials." }],
+                  },
+                  {
                     type: "codeBlock",
                     content: [{ type: "text", text: "pnpm dev" }],
                   },
@@ -57,8 +61,10 @@ describe("generatePlainTextFromTiptap", () => {
 
     expect(text).toContain("Step 1");
     expect(text).toContain("Open the dashboard.");
+    expect(text).toContain("Use the admin credentials.");
     expect(text).toContain("pnpm dev");
     expect(text).toContain("Step 2");
     expect(text).toContain("Verify the result.");
+    expect(text).not.toContain("add new step");
   });
 });
