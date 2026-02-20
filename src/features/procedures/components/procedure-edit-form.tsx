@@ -198,6 +198,7 @@ export const EditProcedureForm = ({
       />
 
       <ProcedureEditorSelector
+        procedureId={procedureId}
         procedureStyle={procedure.style}
         content={content}
         onChange={handleContentChange}

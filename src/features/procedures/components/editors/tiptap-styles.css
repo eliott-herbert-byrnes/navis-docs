@@ -101,6 +101,66 @@
   margin: 2rem 0;
 }
 
+.ProseMirror ol[data-list-type="steps"] {
+  list-style: none;
+  counter-reset: procedure-step;
+  padding-left: 0rem;
+  margin: 2.0rem 0;
+}
+
+.ProseMirror ol[data-list-type="steps"] > li {
+  list-style: none;
+  position: relative;
+  counter-increment: procedure-step;
+  padding-left: 3.5rem;
+  padding-bottom: 1rem;
+  margin: 0 0 2rem;
+  min-height: 2rem;
+}
+
+.ProseMirror ol[data-list-type="steps"] > li::before {
+  content: counter(procedure-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid rgb(95, 95, 95);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--color-secondary);
+  background: var(--color-primary);
+}
+
+.ProseMirror ol[data-list-type="steps"] > li::after {
+  content: "";
+  position: absolute;
+  left: 0.95rem;
+  top: 2rem;
+  bottom: -2rem;
+  width: 2px;
+  background: rgb(185, 185, 185);
+  opacity: 0.5;
+}
+
+/* .ProseMirror ol[data-list-type="steps"] > li:last-child::after {
+  display: none;
+} */
+
+.ProseMirror ol[data-list-type="steps"] > li > p:first-of-type {
+  font-size: 1.5em;
+  font-weight: bold;
+  
+  padding-bottom: 0.5em;
+}
+
+.ProseMirror ol[data-list-type="steps"] > li > p:not(:first-of-type) {
+  margin-top: 0.5rem;
+}
+
 /* Focus styles */
 .ProseMirror:focus {
   outline: none;

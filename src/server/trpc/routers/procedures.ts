@@ -13,6 +13,8 @@ import { JsonObject } from "@prisma/client/runtime/client";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
 import { getInitialContentForStyle } from "@/features/procedures/utils/get-initial-content-for-style";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -33,6 +35,8 @@ const updateProcedureContentSchema = z.object({
   versionId: z.uuid(),
   contentJSON: z.any(),
 });
+const procedureImagesBucket =
+  process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
 
 export const procedureRouter = router({
   // Query: GET-all procedures for export
@@ -839,7 +843,7 @@ export const procedureRouter = router({
             },
           },
         },
-        include: { pendingVersion: true },
+        include: { pendingVersion: true, publishedVersion: true },
       });
       if (!procedure) {
         throw new TRPCError({
@@ -865,6 +869,46 @@ export const procedureRouter = router({
         where: { id: input.versionId },
         data: { contentJSON: input.contentJSON },
       });
+
+      // Delete managed images that were removed from the document.
+      // Cleanup is best-effort and should not block content saves.
+      try {
+        const oldImagePaths = extractManagedImagePathsFromContent(oldContent);
+        const newImagePaths = extractManagedImagePathsFromContent(input.contentJSON);
+        const publishedImagePaths = extractManagedImagePathsFromContent(
+          procedure.publishedVersion?.contentJSON,
+        );
+        const keptPaths = new Set([...newImagePaths, ...publishedImagePaths]);
+
+        const procedureFolder = `orgs/${ctx.org!.id}/procedures/${input.procedureId}`;
+        const { data: listedObjects, error: listError } = await supabaseAdmin.storage
+          .from(procedureImagesBucket)
+          .list(procedureFolder, { limit: 1000, offset: 0 });
+        if (listError) {
+          console.error("Failed to list procedure images for cleanup:", listError);
+        }
+
+        const listedPaths = (listedObjects ?? [])
+          .filter((obj) => !!obj.name)
+          .map((obj) => `${procedureFolder}/${obj.name}`);
+
+        const removedPaths = listedPaths.filter((path) => !keptPaths.has(path));
+        const referencedRemovedPaths = [...oldImagePaths].filter(
+          (path) => !newImagePaths.has(path),
+        );
+        const deletionSet = new Set([...removedPaths, ...referencedRemovedPaths]);
+
+        if (deletionSet.size > 0) {
+          const { error } = await supabaseAdmin.storage
+            .from(procedureImagesBucket)
+            .remove([...deletionSet]);
+          if (error) {
+            console.error("Failed to remove orphaned procedure images:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Procedure image cleanup failed:", error);
+      }
 
       await createAuditLog({
         orgId: ctx.org!.id,

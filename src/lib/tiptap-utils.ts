@@ -14,6 +14,7 @@ import {
 } from "@tiptap/react";
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const PROCEDURE_IMAGE_PROXY_PREFIX = "/api/procedure-images";
 
 export const MAC_SYMBOLS: Record<string, string> = {
   mod: "⌘",
@@ -360,34 +361,117 @@ export function selectionWithinConvertibleTypes(
  * @param abortSignal Optional AbortSignal for cancelling the upload
  * @returns Promise resolving to the URL of the uploaded image
  */
+export function createProcedureImageUploadHandler(procedureId: string) {
+  return async (
+    file: File,
+    onProgress?: (event: { progress: number }) => void,
+    abortSignal?: AbortSignal,
+  ): Promise<string> => {
+    if (!procedureId) {
+      throw new Error("Missing procedure context for image upload");
+    }
+
+    // Validate file
+    if (!file) {
+      throw new Error("No file provided, select an image to upload");
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error(
+        `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB), choose a smaller file`,
+      );
+    }
+
+    if (abortSignal?.aborted) {
+      throw new Error("Upload cancelled, try again if you want to upload");
+    }
+
+    onProgress?.({ progress: 10 });
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`/api/procedures/${procedureId}/images`, {
+      method: "POST",
+      body: formData,
+      signal: abortSignal,
+    });
+
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+      throw new Error(payload?.error || "Upload failed, please try again");
+    }
+
+    const payload = (await response.json()) as { src?: string };
+    if (!payload?.src) {
+      throw new Error("Upload failed, no image URL returned");
+    }
+
+    onProgress?.({ progress: 100 });
+    return payload.src;
+  };
+}
+
 export const handleImageUpload = async (
   file: File,
   onProgress?: (event: { progress: number }) => void,
   abortSignal?: AbortSignal,
 ): Promise<string> => {
-  // Validate file
-  if (!file) {
-    throw new Error("No file provided, select an image to upload");
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    throw new Error(
-      `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB), choose a smaller file`,
-    );
-  }
-
-  // For demo/testing: Simulate upload progress. In production, replace the following code
-  // with your own upload implementation.
-  for (let progress = 0; progress <= 100; progress += 10) {
-    if (abortSignal?.aborted) {
-      throw new Error("Upload cancelled, try again if you want to upload");
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    onProgress?.({ progress });
-  }
-
-  return "/images/tiptap-ui-placeholder-image.jpg";
+  throw new Error(
+    "Generic image upload is not configured. Use createProcedureImageUploadHandler(procedureId) for procedure uploads.",
+  );
 };
+
+export function extractManagedImagePathsFromContent(contentJSON: unknown): Set<string> {
+  const results = new Set<string>();
+
+  const walk = (node: unknown) => {
+    if (!node || typeof node !== "object") return;
+
+    const obj = node as {
+      type?: string;
+      attrs?: { src?: string };
+      content?: unknown[];
+      tiptap?: unknown;
+    };
+
+    const src = obj.attrs?.src;
+    const managedPath = extractManagedPathFromImageSrc(src);
+    if (managedPath) {
+      results.add(managedPath);
+    }
+
+    if (Array.isArray(obj.content)) {
+      obj.content.forEach(walk);
+    }
+
+    if (obj.tiptap) {
+      walk(obj.tiptap);
+    }
+  };
+
+  walk(contentJSON);
+  return results;
+}
+
+export function extractManagedPathFromImageSrc(src?: string | null): string | null {
+  if (!src || typeof src !== "string") return null;
+
+  try {
+    const url = src.startsWith("http")
+      ? new URL(src)
+      : new URL(src, "http://localhost");
+
+    if (url.pathname !== PROCEDURE_IMAGE_PROXY_PREFIX) return null;
+
+    const path = url.searchParams.get("path");
+    return path ? decodeURIComponent(path) : null;
+  } catch {
+    return null;
+  }
+}
 
 type ProtocolOptions = {
   /**
