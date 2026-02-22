@@ -37,7 +37,10 @@ function extractTextFromTiptap(contentJSON: JsonObject): string {
           if (
             (child as { type?: string }).type === "paragraph" ||
             (child as { type?: string }).type === "heading" ||
-            (child as { type?: string }).type === "listItem"
+            (child as { type?: string }).type === "listItem" ||
+            (child as { type?: string }).type === "stepTitle" ||
+            (child as { type?: string }).type === "stepBody" ||
+            (child as { type?: string }).type === "stepItem"
           ) {
             text += "\n";
           }

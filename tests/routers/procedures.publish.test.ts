@@ -52,6 +52,66 @@ describe("Procedure Router - publishProcedure", () => {
     };
   });
 
+  it("publishes a procedure and stores extracted text from custom stepsContainer nodes in contentText", async () => {
+    mockFindUnique.mockResolvedValue({
+      id: procedureId,
+      status: "DRAFT",
+      publishedVersionId: null,
+      pendingVersion: {
+        id: versionId,
+        contentJSON: {
+          tiptap: {
+            type: "doc",
+            content: [
+              {
+                type: "stepsContainer",
+                content: [
+                  {
+                    type: "stepItem",
+                    content: [
+                      {
+                        type: "stepTitle",
+                        content: [{ type: "text", text: "Enable the feature flag" }],
+                      },
+                      {
+                        type: "stepBody",
+                        content: [
+                          {
+                            type: "paragraph",
+                            content: [{ type: "text", text: "Open settings and toggle the flag." }],
+                          },
+                          {
+                            type: "codeBlock",
+                            attrs: { language: null },
+                            content: [{ type: "text", text: "feature_flag=true" }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      publishedVersion: null,
+    });
+
+    mockVersionUpdate.mockResolvedValue({ id: versionId });
+    mockProcedureUpdate.mockResolvedValue({ id: procedureId });
+
+    const caller = procedureRouter.createCaller(mockContext);
+    await caller.publishProcedure({ procedureId });
+
+    expect(mockVersionUpdate).toHaveBeenCalledTimes(1);
+    const contentText = mockVersionUpdate.mock.calls[0][0].data.contentText;
+    expect(contentText).toContain("Enable the feature flag");
+    expect(contentText).toContain("Open settings and toggle the flag.");
+    expect(contentText).toContain("feature_flag=true");
+    expect(contentText).not.toContain("add new step");
+  });
+
   it("publishes a procedure and stores extracted step heading/description in contentText", async () => {
     mockFindUnique.mockResolvedValue({
       id: procedureId,
