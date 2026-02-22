@@ -169,12 +169,25 @@ export const procedureRouter = router({
             teamId: true,
             slug: true,
             title: true,
+            status: true,
             description: true,
-            categoryId: true,
+            categoryId: true,           
             category: {
               select: {
                 id: true,
                 name: true,
+              },
+            },
+            team: {
+              select: {
+                id: true,
+                name: true,
+                department: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
               },
             },
             createdAt: true,
