@@ -776,6 +776,96 @@ export const procedureRouter = router({
       };
     }),
 
+  // Mutation: Delete multiple procedures (bulk)
+  deleteProcedures: adminProcedure
+    .use(rateLimitMiddleware("procedure-bulk-delete"))
+    .input(
+      z.object({
+        procedureIds: z.array(procedureIdSchema).min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found, reauthenticate your current session",
+        });
+      }
+
+      const procedures = await ctx.db.procedure.findMany({
+        where: {
+          id: { in: input.procedureIds },
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: { id: true, categoryId: true },
+      });
+
+      if(!procedures){
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No procedure selected, please select a valid procedure",
+        });
+      }
+
+      const idsToDelete = procedures.map((p) => p.id);
+      const categoryIdsToCheck = [
+        ...new Set(
+          procedures.map((p) => p.categoryId).filter((id): id is string => !!id),
+        ),
+      ];
+
+      const deleteResult = await ctx.db.procedure.deleteMany({
+        where: { id: { in: idsToDelete } },
+      });
+
+      for (const categoryIdToCheck of categoryIdsToCheck) {
+        const remainingCount = await ctx.db.procedure.count({
+          where: { categoryId: categoryIdToCheck },
+        });
+        if (remainingCount === 0) {
+          const category = await ctx.db.category.findUnique({
+            where: { id: categoryIdToCheck },
+            select: { id: true, name: true, teamId: true },
+          });
+          if (category) {
+            await ctx.db.category.delete({
+              where: { id: categoryIdToCheck },
+            });
+            await createAuditLog({
+              orgId: ctx.org.id,
+              actorId: ctx?.user?.id ?? "",
+              action: "CATEGORY_DELETED",
+              entityType: "CATEGORY",
+              entityId: category.id,
+              beforeJSON: {
+                id: category.id,
+                name: category.name,
+                teamId: category.teamId,
+                reason:
+                  "Auto-removed: category had no remaining procedures after procedure deletion",
+              },
+            });
+          }
+        }
+      }
+
+      await createAuditLog({
+        orgId: ctx.org.id,
+        actorId: ctx?.user?.id ?? "",
+        action: "PROCEDURES_DELETED",
+        entityType: "PROCEDURE",
+        entityId: JSON.stringify(idsToDelete),
+      });
+
+      return {
+        data: { deletedCount: deleteResult.count },
+      };
+    }),
+
   // Mutation: Update procedure category
   updateProcedureCategory: adminProcedure
     .use(rateLimitMiddleware("procedure-update-category"))

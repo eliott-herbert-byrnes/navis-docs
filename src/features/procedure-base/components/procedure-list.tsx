@@ -17,12 +17,14 @@ import {
 } from "@tanstack/react-table";
 import {
   ArrowUpDown,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   Search,
   MoreVertical,
+  TrashIcon,
 } from "lucide-react";
 import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -64,8 +66,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ProcedureBaseDeleteButton } from "./procedure-base-delete-button";
+import { ProcedureBaseDeleteDialog } from "./procedure-base-delete-dialog";
+import { useDeleteProceduresFromBase } from "../hook/use-procedure-base-mutations";
 import { trpc } from "@/trpc/client";
 import { CategoryCell } from "./procedure-list-category-cell";
+import { toast } from "sonner";
 
 export const schema = z.object({
   id: z.string(),
@@ -210,6 +215,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     pageSize: 10,
   });
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
+  const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
+
+  const { deleteProcedures, isPending: isBulkDeletePending } =
+    useDeleteProceduresFromBase();
 
   const teamIds = React.useMemo(
     () => [...new Set(initialData.map((p) => p.teamId))],
@@ -419,31 +428,77 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     }
   };
 
+  const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by procedure name..."
-            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("title")?.setFilterValue(event.target.value)
-            }
-            className="pl-10"
-          />
+        <div className="flex flex-1 items-center gap-4">
+            <Search className="absolute left-9.5 top-2/21 h-4 w-4 -translate-y-1/4 text-muted-foreground" />
+            <Input
+              placeholder="Search by procedure name..."
+              value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("title")?.setFilterValue(event.target.value)
+              }
+              className="pl-10 mr-70"
+              />
+          <div className="flex justify-between gap-2">
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+              <SelectTrigger className="w-[125px]">
+                <SelectValue placeholder={statusFilter} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                <SelectItem value="PUBLISHED">Published</SelectItem>
+                <SelectItem value="DRAFT">Draft</SelectItem>
+              </SelectContent>
+            </Select>
+            
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2">
+                    {/* Actions ({selectedCount}) */}
+                    {/* <ChevronDown className="h-4 w-4" /> */}
+                    <MoreVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      if (selectedCount === 0) {
+                        toast.error(
+                          "No procedure selected, please select a valid procedure",
+                        );
+                        return;
+                      }
+                      setBulkDeleteOpen(true);
+                    }}
+                    className="flex gap-4"
+                  >
+                    <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-normal">Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+          </div>
         </div>
-        <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-          <SelectTrigger className="w-[125px]">
-            <SelectValue placeholder={statusFilter} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All</SelectItem>
-            <SelectItem value="PUBLISHED">Published</SelectItem>
-            <SelectItem value="DRAFT">Draft</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
+
+      <ProcedureBaseDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title={`Are you sure you want to delete ${selectedCount === 1 ? "this procedure" : `${selectedCount} procedures`}?`}
+        description="This action cannot be undone."
+        onConfirm={() => {
+          const ids = table
+            .getFilteredSelectedRowModel()
+            .rows.map((r) => r.original.id);
+          deleteProcedures(ids);
+          setRowSelection({});
+        }}
+        isPending={isBulkDeletePending}
+      />
 
       <div className="overflow-hidden rounded-lg border">
         <Table>
