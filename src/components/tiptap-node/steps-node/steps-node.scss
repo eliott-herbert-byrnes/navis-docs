@@ -1,0 +1,76 @@
+.tiptap.ProseMirror {
+  div[data-steps-container] {
+    counter-reset: step-counter;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  div[data-step-item] {
+    counter-increment: step-counter;
+    position: relative;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem 0.875rem 3.5rem;
+    background-color: hsl(var(--background));
+
+    // Numbered circle badge rendered via pseudo-element
+    &::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0.875rem;
+      top: 0.875rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      background-color: hsl(var(--primary));
+      color: hsl(var(--primary-foreground));
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+  }
+
+  p[data-step-title] {
+    font-weight: 700;
+    font-size: 1.05em;
+    line-height: 1.4;
+    margin: 0 0 0.5rem 0;
+    color: hsl(var(--foreground));
+
+    &:only-child {
+      margin-bottom: 0;
+    }
+  }
+
+  div[data-step-body] {
+    // Separate step body content from the title visually
+    > *:first-child {
+      margin-top: 0;
+    }
+
+    > *:last-child {
+      margin-bottom: 0;
+    }
+
+    // Indent nested lists inside step body
+    ol,
+    ul {
+      padding-left: 1.25em;
+    }
+  }
+}
