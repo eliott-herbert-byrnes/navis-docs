@@ -1,27 +1,38 @@
-"use client";
 import { homePath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { ExportUserOrgDataButton } from "@/features/settings/components/export-user-org-data-button";
 import { UserList } from "@/features/user-base/components/user-list";
-import { trpc } from "@/trpc/client";
-import { redirect, useSearchParams } from "next/navigation";
+import { serverTrpc } from "@/server/trpc/server";
+import { TRPCError } from "@trpc/server";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-export default function UserBasePage() {
-  const searchParams = useSearchParams();
-  const search = searchParams.get("search") || undefined;
-  const page = parseInt(searchParams.get("page") || "1", 10);
+type UserBasePageProps = {
+  searchParams: Promise<{
+    search?: string;
+    page?: string;
+  }>;
+};
+
+export default async function UserBasePage({ searchParams }: UserBasePageProps) {
+  const params = await searchParams;
+  const search = params.search;
+  const page = parseInt(params.page ?? "1", 10);
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const { data, isLoading, error } = trpc.users.getOrgMembers.useQuery({
-    search,
-    limit,
-    offset,
-  });
+  const trpc = await serverTrpc();
 
-  if (error?.data?.code === "FORBIDDEN") {
-    redirect(homePath());
+  let members: Awaited<ReturnType<typeof trpc.users.getOrgMembers>>["members"];
+  try {
+    const data = await trpc.users.getOrgMembers({ search, limit, offset });
+    members = data.members ?? [];
+  } catch (err) {
+    if (err instanceof TRPCError && err.code === "FORBIDDEN") {
+      redirect(homePath());
+    }
+    throw err;
   }
 
   return (
@@ -31,7 +42,9 @@ export default function UserBasePage() {
         description="View and manage users for your organization"
         actions={<ExportUserOrgDataButton />}
       />
-      {isLoading ? <ListSkeleton /> : <UserList data={data?.members ?? []} />}
+      <Suspense fallback={<ListSkeleton />} key={`${search ?? ""}-${page}`}>
+        <UserList data={members} />
+      </Suspense>
     </>
   );
 }

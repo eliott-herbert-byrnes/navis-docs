@@ -22,6 +22,7 @@ import {
   ChevronsRight,
   Search,
   MoreVertical,
+  TrashIcon,
 } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -48,8 +49,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { trpc } from "@/trpc/client";
 import { CategoryDeleteButton } from "./category-delete-button";
+import { CategoryDeleteDialog } from "./category-delete-dialog";
+import { useDeleteCategories } from "../hooks/use-category-mutations";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 export const schema = z.object({
   id: z.string(),
@@ -71,13 +75,53 @@ export function CategoriesList({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  const [rowSelection, setRowSelection] = React.useState({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [departmentFilter, setDepartmentFilter] = React.useState<string>("ALL");
+  const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
+
+  const { deleteCategories, isPending: isBulkDeletePending } =
+    useDeleteCategories();
+
+  const departmentNames = React.useMemo(
+    () =>
+      [...new Set(initialData.map((c) => c.departmentName))].filter(Boolean).sort(),
+    [initialData],
+  );
 
   const columns: ColumnDef<CategoryListItem>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "name",
       header: "Title",
@@ -138,8 +182,11 @@ export function CategoriesList({
       columnVisibility,
       columnFilters,
       pagination,
+      rowSelection,
     },
     getRowId: (row) => row.id,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -152,21 +199,95 @@ export function CategoriesList({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const handleDepartmentFilterChange = (value: string) => {
+    setDepartmentFilter(value);
+    if (value === "ALL") {
+      table.getColumn("departmentName")?.setFilterValue(undefined);
+    } else {
+      table.getColumn("departmentName")?.setFilterValue(value);
+    }
+  };
+
+  const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+
   return (
     <div className="flex w-full flex-col gap-4 px-1">
-      <div className="flex items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by category name..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="pl-10"
-          />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 justify-between gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by category name..."
+              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="pl-10 mr-2"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Select
+              value={departmentFilter}
+              onValueChange={handleDepartmentFilterChange}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={departmentFilter} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                {departmentNames.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {selectedCount ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2">
+                    <MoreVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      if (selectedCount === 0) {
+                        toast.error(
+                          "No category selected, please select a valid category",
+                        );
+                        return;
+                      }
+                      setBulkDeleteOpen(true);
+                    }}
+                    className="flex gap-4"
+                  >
+                    <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-normal">Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+          </div>
         </div>
       </div>
+
+      <CategoryDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title={`Are you sure you want to delete ${selectedCount === 1 ? "this category" : `${selectedCount} categories`}?`}
+        description="Procedures in these categories will become uncategorized. This action cannot be undone."
+        onConfirm={() => {
+          const ids = table
+            .getFilteredSelectedRowModel()
+            .rows.map((r) => r.original.id);
+          deleteCategories(ids);
+          setRowSelection({});
+        }}
+        isPending={isBulkDeletePending}
+      />
 
       <div className="overflow-hidden rounded-lg border">
         <Table>
@@ -189,7 +310,10 @@ export function CategoriesList({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() ? "selected" : undefined}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -216,7 +340,8 @@ export function CategoriesList({
 
       <div className="flex items-center justify-between px-1 lg:px-1">
         <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-          {table.getFilteredRowModel().rows.length} row(s).
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="flex w-full items-center gap-8 lg:w-fit">
           <div className="hidden items-center gap-2 lg:flex">

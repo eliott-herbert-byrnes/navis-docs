@@ -18,14 +18,24 @@ type UserDeleteDialogProps = {
   description: string;
   onConfirm: () => void;
   isPending: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
+
 const UserDeleteDialog = ({
   title,
   description,
   onConfirm,
   isPending,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: UserDeleteDialogProps) => {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled =
+    controlledOpen !== undefined && controlledOnOpenChange !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   const handleClose = () => {
     onConfirm();
@@ -34,12 +44,14 @@ const UserDeleteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" className="w-full flex justify-start gap-4">
-          <TrashIcon className="w-4 h-4 text-muted-foreground" />
-          <span className="font-normal">Delete</span>
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant="ghost" className="w-full flex justify-start gap-4">
+            <TrashIcon className="w-4 h-4 text-muted-foreground" />
+            <span className="font-normal">Delete</span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

@@ -104,3 +104,31 @@ export function useDeleteError() {
     isPending: mutation.isPending,
   };
 }
+
+export function useDeleteErrors() {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const mutation = trpc.errors.deleteErrors.useMutation({
+    onSuccess: (data) => {
+      utils.errors.getErrors.invalidate();
+      toast.success(data.message);
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ||
+          "Failed to delete error reports, try again or contact support",
+      );
+    },
+  });
+
+  const deleteErrors = (errorIds: string[]) => {
+    mutation.mutate({ errorIds });
+  };
+
+  return {
+    deleteErrors,
+    isPending: mutation.isPending,
+  };
+}

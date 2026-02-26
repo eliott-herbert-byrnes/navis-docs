@@ -22,6 +22,7 @@ import {
   ChevronsRight,
   Search,
   MoreVertical,
+  TrashIcon,
 } from "lucide-react";
 import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -65,8 +66,11 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns/format";
 import { UserDeleteButton } from "./user-delete-button";
+import { UserDeleteDialog } from "./user-delete-dialog";
+import { useDeleteUsers } from "../hooks/use-user-mutations";
 import { OrgMembershipRole } from "@prisma/client";
 import { UserRoleChangeButton } from "./user-role-change-button";
+import { toast } from "sonner";
 
 export const schema = z.object({
   id: z.string(),
@@ -158,6 +162,17 @@ export function UserList({ data: initialData }: { data: User[] }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
+  const [userFilter, setUserFilter] = React.useState<string>("ALL");
+
+  const userRoles = React.useMemo(
+    () =>
+      [...new Set(initialData.map((c) => c.role))].filter(Boolean).sort(),
+    [initialData],
+  );
+
+
+  const { deleteUsers, isPending: isBulkDeletePending } = useDeleteUsers();
 
   const columns: ColumnDef<User>[] = [
     {
@@ -293,21 +308,94 @@ export function UserList({ data: initialData }: { data: User[] }) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+
+  const handleUserFilterChange = (value: string) => {
+    setUserFilter(value);
+    if (value === "ALL") {
+      table.getColumn("role")?.setFilterValue(undefined);
+    } else {
+      table.getColumn("role")?.setFilterValue(value);
+    }
+  };
+
   return (
     <div className="flex w-full flex-col gap-4 px-1">
-      <div className="flex items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by user name or email..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="pl-10"
-          />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 justify-between gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by user name or email..."
+              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="pl-10 mr-2"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Select
+              value={userFilter}
+              onValueChange={handleUserFilterChange}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={userFilter} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                {userRoles.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedCount ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2">
+                    <MoreVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      if (selectedCount === 0) {
+                        toast.error(
+                          "No user selected, please select a valid user",
+                        );
+                        return;
+                      }
+                      setBulkDeleteOpen(true);
+                    }}
+                    className="flex gap-4"
+                  >
+                    <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-normal">Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+          </div>
         </div>
       </div>
+
+      <UserDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title={`Are you sure you want to remove ${selectedCount === 1 ? "this user" : `${selectedCount} users`} from the organization?`}
+        description="They will lose access to this organization. This action cannot be undone."
+        onConfirm={() => {
+          const ids = table
+            .getFilteredSelectedRowModel()
+            .rows.map((r) => r.original.user.id);
+          deleteUsers(ids);
+          setRowSelection({});
+        }}
+        isPending={isBulkDeletePending}
+      />
 
       <div className="overflow-hidden rounded-lg border">
         <Table>
@@ -320,9 +408,9 @@ export function UserList({ data: initialData }: { data: User[] }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

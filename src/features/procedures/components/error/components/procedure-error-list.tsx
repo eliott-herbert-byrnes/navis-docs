@@ -27,6 +27,7 @@ import {
   Check,
   Eye,
   MoreVertical,
+  TrashIcon,
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
@@ -71,7 +72,9 @@ import {
 } from "@/components/ui/table";
 import { viewProcedurePath } from "@/app/paths";
 import { ProcedureErrorDeleteButton } from "./procedure-error-delete-button";
-import { useUpdateErrorStatus } from "../hooks/use-errors-mutations";
+import { ProcedureErrorDeleteDialog } from "./procedure-error-delete-dialog";
+import { useUpdateErrorStatus, useDeleteErrors } from "../hooks/use-errors-mutations";
+import { toast } from "sonner";
 
 export const schema = z.object({
   id: z.string(),
@@ -200,7 +203,9 @@ export function ProcedureErrorList({
   data: ErrorReport[];
 }) {
   const { updateErrorStatus } = useUpdateErrorStatus();
+  const { deleteErrors, isPending: isBulkDeletePending } = useDeleteErrors();
   const [rowSelection, setRowSelection] = React.useState({});
+  const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -395,37 +400,84 @@ export function ProcedureErrorList({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+
   return (
     <div className="flex w-full flex-col gap-4 px-1">
-      <div className="flex items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by procedure name..."
-            value={
-              (table.getColumn("procedureName")?.getFilterValue() as string) ??
-              ""
-            }
-            onChange={(event) =>
-              table
-                .getColumn("procedureName")
-                ?.setFilterValue(event.target.value)
-            }
-            className="pl-10"
-          />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 justify-between gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by procedure name..."
+              value={
+                (table.getColumn("procedureName")?.getFilterValue() as string) ??
+                ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn("procedureName")
+                  ?.setFilterValue(event.target.value)
+              }
+              className="pl-10 mr-2"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+              <SelectTrigger className="w-[125px]">
+                <SelectValue placeholder={statusFilter} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                <SelectItem value="OPEN">Open</SelectItem>
+                <SelectItem value="RESOLVED">Completed</SelectItem>
+                <SelectItem value="ARCHIVED">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+            {selectedCount ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2">
+                    <MoreVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      if (selectedCount === 0) {
+                        toast.error(
+                          "No error report selected, please select a valid report",
+                        );
+                        return;
+                      }
+                      setBulkDeleteOpen(true);
+                    }}
+                    className="flex gap-4"
+                  >
+                    <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-normal">Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+          </div>
         </div>
-        <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-          <SelectTrigger className="w-[125px]">
-            <SelectValue placeholder={statusFilter} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All</SelectItem>
-            <SelectItem value="OPEN">Open</SelectItem>
-            <SelectItem value="RESOLVED">Completed</SelectItem>
-            <SelectItem value="ARCHIVED">Archived</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
+
+      <ProcedureErrorDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title={`Are you sure you want to delete ${selectedCount === 1 ? "this error report" : `${selectedCount} error reports`}?`}
+        description="This action cannot be undone."
+        onConfirm={() => {
+          const ids = table
+            .getFilteredSelectedRowModel()
+            .rows.map((r) => r.original.id);
+          deleteErrors(ids);
+          setRowSelection({});
+        }}
+        isPending={isBulkDeletePending}
+      />
 
       <div className="overflow-hidden rounded-lg border">
         <Table>

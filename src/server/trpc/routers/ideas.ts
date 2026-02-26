@@ -257,4 +257,52 @@ export const ideasRouter = router({
         message: "Idea deleted successfully",
       };
     }),
+
+  deleteIdeas: adminProcedure
+    .use(rateLimitMiddleware("idea-delete"))
+    .input(
+      z.object({
+        ideaIds: z.array(ideaIdSchema).min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.user || !ctx.org) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User not found, reauthenticate your current session",
+        });
+      }
+
+      const ideas = await ctx.db.idea.findMany({
+        where: {
+          id: { in: input.ideaIds },
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: { id: true },
+      });
+
+      if (ideas.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No ideas found, select valid ideas",
+        });
+      }
+
+      const idsToDelete = ideas.map((i) => i.id);
+      await ctx.db.idea.deleteMany({
+        where: { id: { in: idsToDelete } },
+      });
+
+      return {
+        data: { deletedCount: ideas.length },
+        message:
+          ideas.length === 1
+            ? "Idea deleted successfully"
+            : `${ideas.length} ideas deleted successfully`,
+      };
+    }),
 });

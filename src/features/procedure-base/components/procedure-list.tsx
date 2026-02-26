@@ -433,8 +433,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 items-center gap-4">
-            <Search className="absolute left-9.5 top-2/21 h-4 w-4 -translate-y-1/4 text-muted-foreground" />
+        <div className="flex flex-1 justify-between gap-4">
+
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by procedure name..."
               value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -442,8 +444,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                 table.getColumn("title")?.setFilterValue(event.target.value)
               }
               className="pl-10 mr-70"
-              />
-          <div className="flex justify-between gap-2">
+            />
+          </div>
+
+          <div className="flex gap-2">
             <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
               <SelectTrigger className="w-[125px]">
                 <SelectValue placeholder={statusFilter} />
@@ -454,34 +458,35 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                 <SelectItem value="DRAFT">Draft</SelectItem>
               </SelectContent>
             </Select>
-            
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2">
-                    {/* Actions ({selectedCount}) */}
-                    {/* <ChevronDown className="h-4 w-4" /> */}
-                    <MoreVertical />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem
-                    onSelect={() => {
-                      if (selectedCount === 0) {
-                        toast.error(
-                          "No procedure selected, please select a valid procedure",
-                        );
-                        return;
-                      }
-                      setBulkDeleteOpen(true);
-                    }}
-                    className="flex gap-4"
-                  >
-                    <TrashIcon className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-normal">Delete</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+
+            {selectedCount ? <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="gap-2">
+                  {/* Actions ({selectedCount}) */}
+                  {/* <ChevronDown className="h-4 w-4" /> */}
+                  <MoreVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onSelect={() => {
+                    if (selectedCount === 0) {
+                      toast.error(
+                        "No procedure selected, please select a valid procedure",
+                      );
+                      return;
+                    }
+                    setBulkDeleteOpen(true);
+                  }}
+                  className="flex gap-4"
+                >
+                  <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-normal">Delete</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> : null}
           </div>
+
         </div>
       </div>
 

@@ -106,3 +106,31 @@ export function useDeleteIdea() {
     isPending: mutation.isPending,
   };
 }
+
+export function useDeleteIdeas() {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const mutation = trpc.ideas.deleteIdeas.useMutation({
+    onSuccess: (data) => {
+      utils.ideas.getIdeas.invalidate();
+      utils.ideas.getOrgIdeas.invalidate();
+      toast.success(data.message);
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message || "Failed to delete ideas, try again or contact support",
+      );
+    },
+  });
+
+  const deleteIdeas = (ideaIds: string[]) => {
+    mutation.mutate({ ideaIds });
+  };
+
+  return {
+    deleteIdeas,
+    isPending: mutation.isPending,
+  };
+}

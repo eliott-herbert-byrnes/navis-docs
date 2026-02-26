@@ -145,4 +145,68 @@ export const categoriesRouter = router({
 
       return { data: { id: category.id } };
     }),
+
+  deleteCategories: adminProcedure
+    .use(rateLimitMiddleware("category-delete"))
+    .input(
+      z.object({
+        categoryIds: z.array(categoryIdSchema).min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found, reauthenticate your current session",
+        });
+      }
+
+      const categories = await ctx.db.category.findMany({
+        where: {
+          id: { in: input.categoryIds },
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: { id: true, name: true, teamId: true },
+      });
+
+      if (categories.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No categories found, select valid categories",
+        });
+      }
+
+      const idsToDelete = categories.map((c) => c.id);
+
+      await ctx.db.$transaction([
+        ctx.db.procedure.updateMany({
+          where: { categoryId: { in: idsToDelete } },
+          data: { categoryId: null },
+        }),
+        ctx.db.category.deleteMany({
+          where: { id: { in: idsToDelete } },
+        }),
+      ]);
+
+      for (const category of categories) {
+        await createAuditLog({
+          orgId: ctx.org.id,
+          actorId: ctx.user?.id ?? "",
+          action: "CATEGORY_DELETED",
+          entityType: "CATEGORY",
+          entityId: category.id,
+          beforeJSON: {
+            id: category.id,
+            name: category.name,
+            teamId: category.teamId,
+          },
+        });
+      }
+
+      return { data: { deletedCount: categories.length } };
+    }),
 });
