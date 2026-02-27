@@ -39,6 +39,15 @@ export async function createLimiter() {
   });
 }
 
+export async function createProcedureImportLimiter() {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(100, "1m"),
+    analytics: true,
+    prefix: `rl:${process.env.NODE_ENV}:create`,
+  });
+}
+
 export async function getLimitByIp(limiter: Ratelimit, purpose: string) {
   const h = await headers();
   const ip = (h.get("x-forwarded-for") ?? "unknown").split(",")[0]!.trim();

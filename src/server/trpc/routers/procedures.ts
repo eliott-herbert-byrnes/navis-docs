@@ -21,6 +21,7 @@ const querySchema = z.string();
 const procedureSchema = z.string();
 const procedureIdSchema = z.uuid();
 const createProcedureSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
   departmentId: z.string().min(1, { message: "Department is required" }),
   teamId: z.string().min(1, { message: "Team is required" }),
   procedureTitle: z.string().min(1, { message: "Is Required" }).max(100),
@@ -476,6 +477,7 @@ export const procedureRouter = router({
     .input(createProcedureSchema)
     .mutation(async ({ ctx, input }) => {
       const {
+        title,
         departmentId,
         teamId,
         procedureTitle,
@@ -505,7 +507,14 @@ export const procedureRouter = router({
       const finalisedProcedureStyle = styleMap[procedureStyle];
 
       const existingName = await ctx.db.procedure.findFirst({
-        where: { title: procedureTitle },
+        where: {
+          title,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
       });
 
       if (existingName) {
@@ -518,7 +527,14 @@ export const procedureRouter = router({
       let categoryId = procedureCategoryId;
       if (newProcedureCategory && newProcedureCategoryName) {
         const existingCategory = await ctx.db.category.findFirst({
-          where: { name: newProcedureCategoryName },
+          where: {
+            name: newProcedureCategoryName,
+            team: {
+              department: {
+                orgId: ctx.org!.id,
+              }
+            }
+          }
         });
 
         if (existingCategory) {
