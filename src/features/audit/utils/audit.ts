@@ -166,7 +166,11 @@ export async function getProcedureAuditLogs(
   orgId: string,
   procedureId: string,
   options?: { limit?: number; offset?: number },
-): Promise<{ logs: AuditLogWithActorName[]; hasMore: boolean }> {
+): Promise<{
+  logs: AuditLogWithActorName[];
+  hasMore: boolean;
+  nextOffset: number;
+}> {
   try {
     const procedure = await prisma.procedure.findFirst({
       where: {
@@ -179,7 +183,7 @@ export async function getProcedureAuditLogs(
     });
 
     if (!procedure) {
-      return { logs: [], hasMore: false };
+      return { logs: [], hasMore: false, nextOffset: 0 };
     }
 
     const limit = options?.limit ?? 20;
@@ -211,10 +215,11 @@ export async function getProcedureAuditLogs(
     }));
 
     const hasMore = offset + logs.length < totalCount;
+    const nextOffset = offset + logs.length;
 
-    return { logs: logsWithNames, hasMore };
+    return { logs: logsWithNames, hasMore, nextOffset };
   } catch (error) {
     console.error("Failed to get procedure audit logs", error);
-    return { logs: [], hasMore: false };
+    return { logs: [], hasMore: false, nextOffset: 0 };
   }
 }

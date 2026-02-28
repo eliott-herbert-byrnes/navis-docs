@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ProcedureViewActions } from "./procedure-view-actions";
 import { ProcedureViewMetadata } from "./procedure-view-metadata";
 import { ProcedureContent } from "./procedure-content";
+import { ProcedureAuditLogList } from "@/features/audit/components/procedure-audit-log-list";
 import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { ProcedureForViewWithRelations } from "../types/types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,6 +20,7 @@ type ProcedureViewWithAIChatProps = {
   procedureId: string;
   canEdit: boolean;
   isFavorite: boolean;
+  canViewProcedureAudit: boolean;
 };
 
 export function ProcedureViewWithAIChat({
@@ -26,12 +28,15 @@ export function ProcedureViewWithAIChat({
   procedureId,
   canEdit,
   isFavorite,
+  canViewProcedureAudit,
 }: ProcedureViewWithAIChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState<
     string | undefined
   >(undefined);
   const [showDocView, setShowDocView] = useState(false);
+  const [showAuditLogs, setShowAuditLogs] = useState(false);
+  const auditScrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleAskAI = () => {
     const message = buildAskAIMessage(procedure.title ?? "");
@@ -58,18 +63,48 @@ export function ProcedureViewWithAIChat({
             onAskAI={handleAskAI}
             showDocView={showDocView}
             onViewText={() => setShowDocView((prev) => !prev)}
+            canViewProcedureAudit={canViewProcedureAudit}
+            showAuditLogs={showAuditLogs}
+            onViewAuditLogs={() => setShowAuditLogs((prev) => !prev)}
           />
         </div>
       </div>
 
       <ProcedureViewMetadata procedure={procedure} />
 
-      <Suspense fallback={<Skeleton />}>
-        <ProcedureContent
-          procedure={procedure}
-          showDocView={procedure.style === "FLOW" ? showDocView : undefined}
-        />
-      </Suspense>
+      {!showAuditLogs ? (
+        <Suspense fallback={<Skeleton />}>
+          <ProcedureContent
+            procedure={procedure}
+            showDocView={procedure.style === "FLOW" ? showDocView : undefined}
+          />
+        </Suspense>
+      ) : (
+        <div className="rounded-md border overflow-hidden flex flex-col min-h-[400px] max-h-[70vh] animate-fade-from-top">
+          <div className="flex items-center justify-between gap-2 px-4 py-2 border-b bg-muted/50 shrink-0">
+            <span className="text-sm font-medium">
+              Audit logs
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowAuditLogs(false)}
+              className="text-sm text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
+            >
+              Back to procedure
+            </button>
+          </div>
+          <div
+            ref={auditScrollContainerRef}
+            className="flex-1 min-h-0 overflow-auto p-4"
+          >
+            <ProcedureAuditLogList
+              procedureId={procedureId}
+              enabled={showAuditLogs}
+              scrollContainerRef={auditScrollContainerRef}
+            />
+          </div>
+        </div>
+      )}
 
       <Suspense fallback={<Skeleton />}>
         <AIChatDrawer

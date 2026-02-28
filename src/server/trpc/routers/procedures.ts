@@ -432,11 +432,12 @@ export const procedureRouter = router({
         procedureId: z.string().uuid(),
         limit: z.number().min(1).max(50).optional(),
         offset: z.number().min(0).optional(),
+        cursor: z.number().min(0).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const limit = input.limit ?? 20;
-      const offset = input.offset ?? 0;
+      const offset = input.cursor ?? input.offset ?? 0;
       return getProcedureAuditLogs(ctx.org!.id, input.procedureId, {
         limit,
         offset,

@@ -13,7 +13,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
   const { procedureId } = await params;
 
   const user = await getSessionUser();
-  const [canEdit] = await Promise.all([isOrgAdminOrOwner(user!.userId)]);
+  const canViewProcedureAudit = await isOrgAdminOrOwner(user!.userId);
 
   const trpc = await serverTrpc();
   const { data: procedure, isFavorite } = await trpc.procedures.getForView({
@@ -32,8 +32,9 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
         <ProcedureViewWithAIChat
           procedure={procedure}
           procedureId={procedureId}
-          canEdit={canEdit}
+          canEdit={canViewProcedureAudit}
           isFavorite={isFavorite}
+          canViewProcedureAudit={canViewProcedureAudit}
         />
       </Suspense>
     </div>

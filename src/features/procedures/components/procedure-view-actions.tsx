@@ -1,7 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, Share2, Loader2, FileIcon, Brain, FileText } from "lucide-react";
+import {
+  Edit,
+  Share2,
+  Loader2,
+  FileIcon,
+  Brain,
+  FileText,
+  History,
+  Check,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcedurePath } from "@/app/paths";
 import { toast } from "sonner";
@@ -26,9 +35,11 @@ type ProcedureViewActionsProps = {
   isFavorite: boolean;
   procedure: ProcedureForViewWithRelations;
   onAskAI?: () => void;
-  /** When FLOW has doc, toggles doc visibility (side-by-side / Text tab). */
   showDocView?: boolean;
   onViewText?: () => void;
+  canViewProcedureAudit?: boolean;
+  showAuditLogs?: boolean;
+  onViewAuditLogs?: () => void;
 };
 
 export function ProcedureViewActions({
@@ -39,6 +50,9 @@ export function ProcedureViewActions({
   onAskAI,
   showDocView = false,
   onViewText,
+  canViewProcedureAudit,
+  showAuditLogs = false,
+  onViewAuditLogs,
 }: ProcedureViewActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -136,6 +150,17 @@ export function ProcedureViewActions({
             Ask AI
           </Button>
         )}
+        {canViewProcedureAudit && onViewAuditLogs && (
+          <Button
+            variant={showAuditLogs ? "default" : "outline"}
+            size="sm"
+            onClick={onViewAuditLogs}
+            aria-label="View audit logs for this procedure"
+          >
+            <History className="w-4 h-4 mr-2" />
+            Audit Logs
+          </Button>
+        )}
         <ProcedureFavoriteButton
           procedureId={procedureId}
           initialIsFavorite={isFavorite}
@@ -185,6 +210,16 @@ export function ProcedureViewActions({
               >
                 <Brain className="w-4 h-4 mr-2" />
                 Ask AI
+              </DropdownMenuItem>
+            )}
+            {canViewProcedureAudit && onViewAuditLogs && (
+              <DropdownMenuItem onClick={onViewAuditLogs}>
+                {showAuditLogs ? (
+                  <Check className="w-4 h-4 mr-2" />
+                ) : (
+                  <History className="w-4 h-4 mr-2" />
+                )}
+                Audit Logs
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
