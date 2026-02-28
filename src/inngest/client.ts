@@ -9,5 +9,6 @@ type Events = {
 
 export const inngest = new Inngest({
   id: "navis-docs",
+  eventKey: process.env.INNGEST_DEV,
   schemas: new EventSchemas().fromRecord<Events>(),
 });

@@ -21,12 +21,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { homePath } from "@/app/paths";
 import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
-import { FormEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/trpc/client";
 import type { DepartmentItem } from "./import-procedure-page";
+import { useImportMutations } from "../hooks/use-import-mutations";
 
 type ImportStepOneFormProps = {
     departments: DepartmentItem[];
@@ -41,18 +41,9 @@ const ImportStepOneForm = ({
     const [departmentId, setDepartmentId] = useState<string>("");
     const [teamId, setTeamId] = useState<string>("");
 
-    const startImport = trpc.ingestion.startImport.useMutation({
-        onSuccess: (data) => {
-            onSubmitSuccess(data.jobId);
-        },
-        onError: (error) => {
-            toast.error(
-                error.message ?? "Failed to start import, try again or contact support",
-            );
-        },
-    });
+    const {startImportMutation} = useImportMutations();
 
-    const isPending = startImport.isPending;
+    const isPending = startImportMutation.isPending;
 
     const handleCancel = () => {
         router.replace(homePath());
@@ -68,7 +59,7 @@ const ImportStepOneForm = ({
         setTeamId("");
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
         const formData = new FormData(form);
@@ -122,13 +113,20 @@ const ImportStepOneForm = ({
             const { fileKey } = (await res.json()) as { fileKey: string };
             const sourceType = ext === ".docx" ? "FILE_DOCX" : "FILE_TXT";
 
-            startImport.mutate({
-                title,
-                teamId,
-                departmentId,
-                fileKey,
-                sourceType,
-            });
+            startImportMutation.mutate(
+                {
+                    title,
+                    teamId,
+                    departmentId,
+                    fileKey,
+                    sourceType,
+                },
+                {
+                    onSuccess: (data) => {
+                        onSubmitSuccess(data.jobId);
+                    },
+                }
+            );
         } catch {
             toast.error("Upload failed. Please try again.");
         }
