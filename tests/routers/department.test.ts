@@ -1,5 +1,14 @@
 // tests/routers/department.test.ts
 import { describe, it, expect, beforeEach, vi } from "vitest";
+
+vi.mock("@/auth", () => ({
+  auth: vi.fn().mockResolvedValue({ user: null }),
+}));
+
+vi.mock("@/server/trpc/context", () => ({
+  createContext: vi.fn(),
+}));
+
 import { departmentRouter } from "@/server/trpc/routers/department";
 
 describe("Department Router", () => {
