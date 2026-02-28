@@ -1,7 +1,11 @@
-import { createAuditLog } from "@/features/audit/utils/audit";
+import {
+  createAuditLog,
+  getProcedureAuditLogs,
+} from "@/features/audit/utils/audit";
 import {
   router,
   orgProcedure,
+  orgAdminProcedure,
   adminProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
@@ -419,6 +423,25 @@ export const procedureRouter = router({
         data: procedure,
         isFavorite: !!favorite,
       };
+    }),
+
+  // Query: GET procedure audit logs (admin only)
+  getProcedureAuditLogs: orgAdminProcedure
+    .input(
+      z.object({
+        procedureId: z.string().uuid(),
+        limit: z.number().min(1).max(50).optional(),
+        offset: z.number().min(0).optional(),
+        cursor: z.number().min(0).optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 20;
+      const offset = input.cursor ?? input.offset ?? 0;
+      return getProcedureAuditLogs(ctx.org!.id, input.procedureId, {
+        limit,
+        offset,
+      });
     }),
 
   // Query: GET-Search Procedures

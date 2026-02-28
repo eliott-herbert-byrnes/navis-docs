@@ -294,6 +294,7 @@ model AuditLog {
   at         DateTime @default(now())
   beforeJSON Json?
   afterJSON  Json?
+   @@index([orgId, entityType, entityId, at])
 }
 
 enum InvitationStatus {
