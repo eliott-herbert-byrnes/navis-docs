@@ -29,6 +29,35 @@ export function useDeleteProcedureFromBase() {
   };
 }
 
+export function useDeleteProceduresFromBase() {
+  const utils = trpc.useUtils();
+
+  const mutation = trpc.procedures.deleteProcedures.useMutation({
+    onSuccess: (data) => {
+      utils.procedures.getProceduresForBase.invalidate();
+      const count = data?.data?.deletedCount ?? 0;
+      toast.success(
+        count === 1 ? "Procedure deleted" : `${count} procedures deleted`,
+      );
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ||
+          "Failed to delete procedures, try again or contact support",
+      );
+    },
+  });
+
+  const deleteProcedures = (procedureIds: string[]) => {
+    mutation.mutate({ procedureIds });
+  };
+
+  return {
+    deleteProcedures,
+    isPending: mutation.isPending,
+  };
+}
+
 export function useUpdateProcedureCategory() {
   const utils = trpc.useUtils();
 

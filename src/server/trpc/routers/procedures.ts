@@ -21,6 +21,7 @@ const querySchema = z.string();
 const procedureSchema = z.string();
 const procedureIdSchema = z.uuid();
 const createProcedureSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
   departmentId: z.string().min(1, { message: "Department is required" }),
   teamId: z.string().min(1, { message: "Team is required" }),
   procedureTitle: z.string().min(1, { message: "Is Required" }).max(100),
@@ -169,12 +170,25 @@ export const procedureRouter = router({
             teamId: true,
             slug: true,
             title: true,
+            status: true,
             description: true,
-            categoryId: true,
+            categoryId: true,           
             category: {
               select: {
                 id: true,
                 name: true,
+              },
+            },
+            team: {
+              select: {
+                id: true,
+                name: true,
+                department: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
               },
             },
             createdAt: true,
@@ -463,6 +477,7 @@ export const procedureRouter = router({
     .input(createProcedureSchema)
     .mutation(async ({ ctx, input }) => {
       const {
+        title,
         departmentId,
         teamId,
         procedureTitle,
@@ -492,7 +507,14 @@ export const procedureRouter = router({
       const finalisedProcedureStyle = styleMap[procedureStyle];
 
       const existingName = await ctx.db.procedure.findFirst({
-        where: { title: procedureTitle },
+        where: {
+          title,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
       });
 
       if (existingName) {
@@ -505,7 +527,14 @@ export const procedureRouter = router({
       let categoryId = procedureCategoryId;
       if (newProcedureCategory && newProcedureCategoryName) {
         const existingCategory = await ctx.db.category.findFirst({
-          where: { name: newProcedureCategoryName },
+          where: {
+            name: newProcedureCategoryName,
+            team: {
+              department: {
+                orgId: ctx.org!.id,
+              }
+            }
+          }
         });
 
         if (existingCategory) {
@@ -760,6 +789,96 @@ export const procedureRouter = router({
 
       return {
         data: procedure,
+      };
+    }),
+
+  // Mutation: Delete multiple procedures (bulk)
+  deleteProcedures: adminProcedure
+    .use(rateLimitMiddleware("procedure-bulk-delete"))
+    .input(
+      z.object({
+        procedureIds: z.array(procedureIdSchema).min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found, reauthenticate your current session",
+        });
+      }
+
+      const procedures = await ctx.db.procedure.findMany({
+        where: {
+          id: { in: input.procedureIds },
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: { id: true, categoryId: true },
+      });
+
+      if(!procedures){
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No procedure selected, please select a valid procedure",
+        });
+      }
+
+      const idsToDelete = procedures.map((p) => p.id);
+      const categoryIdsToCheck = [
+        ...new Set(
+          procedures.map((p) => p.categoryId).filter((id): id is string => !!id),
+        ),
+      ];
+
+      const deleteResult = await ctx.db.procedure.deleteMany({
+        where: { id: { in: idsToDelete } },
+      });
+
+      for (const categoryIdToCheck of categoryIdsToCheck) {
+        const remainingCount = await ctx.db.procedure.count({
+          where: { categoryId: categoryIdToCheck },
+        });
+        if (remainingCount === 0) {
+          const category = await ctx.db.category.findUnique({
+            where: { id: categoryIdToCheck },
+            select: { id: true, name: true, teamId: true },
+          });
+          if (category) {
+            await ctx.db.category.delete({
+              where: { id: categoryIdToCheck },
+            });
+            await createAuditLog({
+              orgId: ctx.org.id,
+              actorId: ctx?.user?.id ?? "",
+              action: "CATEGORY_DELETED",
+              entityType: "CATEGORY",
+              entityId: category.id,
+              beforeJSON: {
+                id: category.id,
+                name: category.name,
+                teamId: category.teamId,
+                reason:
+                  "Auto-removed: category had no remaining procedures after procedure deletion",
+              },
+            });
+          }
+        }
+      }
+
+      await createAuditLog({
+        orgId: ctx.org.id,
+        actorId: ctx?.user?.id ?? "",
+        action: "PROCEDURES_DELETED",
+        entityType: "PROCEDURE",
+        entityId: JSON.stringify(idsToDelete),
+      });
+
+      return {
+        data: { deletedCount: deleteResult.count },
       };
     }),
 

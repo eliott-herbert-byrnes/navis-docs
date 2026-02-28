@@ -235,4 +235,54 @@ export const errorsRouter = router({
         message: "Error report deleted successfully",
       };
     }),
+
+  deleteErrors: adminProcedure
+    .use(rateLimitMiddleware("error-delete"))
+    .input(
+      z.object({
+        errorIds: z.array(errorIdSchema).min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.user || !ctx.org) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User not found, reauthenticate your current session",
+        });
+      }
+
+      const errors = await ctx.db.errorReport.findMany({
+        where: {
+          id: { in: input.errorIds },
+          procedure: {
+            team: {
+              department: {
+                orgId: ctx.org.id,
+              },
+            },
+          },
+        },
+        select: { id: true },
+      });
+
+      if (errors.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No error reports found, select valid reports",
+        });
+      }
+
+      const idsToDelete = errors.map((e) => e.id);
+      await ctx.db.errorReport.deleteMany({
+        where: { id: { in: idsToDelete } },
+      });
+
+      return {
+        data: { deletedCount: errors.length },
+        message:
+          errors.length === 1
+            ? "Error report deleted successfully"
+            : `${errors.length} error reports deleted successfully`,
+      };
+    }),
 });

@@ -45,3 +45,4 @@ export const viewProcedurePath = (
 ) => `/departments/${departmentId}/${teamId}/procedures/${procedureId}/view`;
 export const favoriteProceduresPath = () =>
   `/department/[departmentId]/[teamId]/procedures`;
+export const procedureBaseImportPath = () => "/procedure-base/import";

@@ -16,12 +16,15 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 import {
+  ArrowUpDown,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   Search,
   MoreVertical,
+  TrashIcon,
 } from "lucide-react";
 import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -63,20 +66,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ProcedureBaseDeleteButton } from "./procedure-base-delete-button";
+import { ProcedureBaseDeleteDialog } from "./procedure-base-delete-dialog";
+import { useDeleteProceduresFromBase } from "../hook/use-procedure-base-mutations";
 import { trpc } from "@/trpc/client";
 import { CategoryCell } from "./procedure-list-category-cell";
+import { toast } from "sonner";
 
 export const schema = z.object({
   id: z.string(),
   teamId: z.string(),
   slug: z.string(),
   title: z.string(),
+  status: z.string(),
   description: z.string().nullable(),
   categoryId: z.string().nullable(),
   category: z
     .object({
       id: z.string(),
       name: z.string().nullable(),
+    })
+    .nullable(),
+  team: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      department: z.object({
+        id: z.string(),
+        name: z.string(),
+      }),
     })
     .nullable(),
   createdAt: z.date(),
@@ -113,7 +130,7 @@ function TableCellViewer({
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Status</Label>
               <Badge variant="outline" className="w-fit">
-                Published
+                {item.status.toLowerCase().charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
               </Badge>
             </div>
 
@@ -127,11 +144,30 @@ function TableCellViewer({
             <Separator />
 
             <div className="flex flex-col gap-2">
+              <Label className="font-semibold">Department</Label>
+              <p className="text-muted-foreground">
+                {item.team?.department?.name ?? "—"}
+              </p>
+            </div>
+
+            <Separator />
+
+            <div className="flex flex-col gap-2">
+              <Label className="font-semibold">Team</Label>
+              <p className="text-muted-foreground">
+                {item.team?.name ?? "—"}
+              </p>
+            </div>
+
+            <Separator />
+
+            <div className="flex flex-col gap-2">
               <Label className="font-semibold">Category</Label>
               <CategoryCell procedure={item} categories={categories} />
             </div>
 
             <Separator />
+
 
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Report Body</Label>
@@ -178,6 +214,11 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
+  const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
+
+  const { deleteProcedures, isPending: isBulkDeletePending } =
+    useDeleteProceduresFromBase();
 
   const teamIds = React.useMemo(
     () => [...new Set(initialData.map((p) => p.teamId))],
@@ -231,8 +272,56 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
       enableHiding: false,
     },
     {
-      accessorKey: "category",
-      header: "Category",
+      id: "department",
+      accessorFn: (row) => row.team?.department?.name ?? "",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-ml-3 h-8"
+        >
+          Department
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.original.team?.department?.name ?? "—"}
+        </div>
+      ),
+    },
+    {
+      id: "team",
+      accessorFn: (row) => row.team?.name ?? "",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-ml-3 h-8"
+        >
+          Team
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.original.team?.name ?? "—"}
+        </div>
+      ),
+    },
+    {
+      id: "category",
+      accessorFn: (row) => row.category?.name ?? "",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-ml-3 h-8"
+        >
+          Category
+          <ArrowUpDown />
+        </Button>
+      ),
       cell: ({ row }) => (
         <CategoryCell
           procedure={row.original}
@@ -241,8 +330,36 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
       ),
     },
     {
+      id: "status",
+      accessorFn: (row) => row.status ?? "",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-ml-3 h-8"
+        >
+          Status
+          <ArrowUpDown />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.original.status.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
+        </div>
+      ),
+    },
+    {
       accessorKey: "createdAt",
-      header: "Created At",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-ml-3 h-8"
+        >
+          Created At
+          <ArrowUpDown />
+        </Button>
+      ),
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.original.createdAt).toLocaleDateString("en-US", {
@@ -302,21 +419,91 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    if (value === "ALL") {
+      table.getColumn("status")?.setFilterValue(undefined);
+    } else {
+      table.getColumn("status")?.setFilterValue(value);
+    }
+  };
+
+  const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+
   return (
     <div className="flex w-full flex-col gap-4 px-1">
-      <div className="flex items-center justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by procedure name..."
-            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("title")?.setFilterValue(event.target.value)
-            }
-            className="pl-10"
-          />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 justify-between gap-4">
+
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by procedure name..."
+              value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("title")?.setFilterValue(event.target.value)
+              }
+              className="pl-10 mr-70"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+              <SelectTrigger className="w-[125px]">
+                <SelectValue placeholder={statusFilter} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                <SelectItem value="PUBLISHED">Published</SelectItem>
+                <SelectItem value="DRAFT">Draft</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {selectedCount ? <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="gap-2">
+                  {/* Actions ({selectedCount}) */}
+                  {/* <ChevronDown className="h-4 w-4" /> */}
+                  <MoreVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onSelect={() => {
+                    if (selectedCount === 0) {
+                      toast.error(
+                        "No procedure selected, please select a valid procedure",
+                      );
+                      return;
+                    }
+                    setBulkDeleteOpen(true);
+                  }}
+                  className="flex gap-4"
+                >
+                  <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-normal">Delete</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> : null}
+          </div>
+
         </div>
       </div>
+
+      <ProcedureBaseDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        title={`Are you sure you want to delete ${selectedCount === 1 ? "this procedure" : `${selectedCount} procedures`}?`}
+        description="This action cannot be undone."
+        onConfirm={() => {
+          const ids = table
+            .getFilteredSelectedRowModel()
+            .rows.map((r) => r.original.id);
+          deleteProcedures(ids);
+          setRowSelection({});
+        }}
+        isPending={isBulkDeletePending}
+      />
 
       <div className="overflow-hidden rounded-lg border">
         <Table>
@@ -329,9 +516,9 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

@@ -30,6 +30,36 @@ export function useDeleteUser() {
   };
 }
 
+export function useDeleteUsers() {
+  const utils = trpc.useUtils();
+  const mutation = trpc.users.deleteUsers.useMutation({
+    onSuccess: (data) => {
+      utils.users.getOrgMembers.invalidate();
+      const count = data?.data?.deletedCount ?? 0;
+      toast.success(
+        count === 1
+          ? "User removed from the organization successfully"
+          : `${count} users removed from the organization successfully`,
+      );
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ||
+          "Failed to remove users, try again or contact support",
+      );
+    },
+  });
+
+  const deleteUsers = (userIds: string[]) => {
+    mutation.mutate({ userIds });
+  };
+
+  return {
+    deleteUsers,
+    isPending: mutation.isPending,
+  };
+}
+
 export function useChangeRole() {
   const utils = trpc.useUtils();
   const mutation = trpc.users.changeUserRole.useMutation({

@@ -18,6 +18,9 @@ type CategoryDeleteDialogProps = {
   description: string;
   onConfirm: () => void;
   isPending: boolean;
+  /** When provided, dialog is controlled and no trigger is rendered (for use in dropdowns etc.) */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export function CategoryDeleteDialog({
@@ -25,8 +28,15 @@ export function CategoryDeleteDialog({
   description,
   onConfirm,
   isPending,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: CategoryDeleteDialogProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled =
+    controlledOpen !== undefined && controlledOnOpenChange !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   const handleConfirm = () => {
     onConfirm();
@@ -35,12 +45,14 @@ export function CategoryDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" className="w-full flex justify-start gap-4">
-          <TrashIcon className="w-4 h-4 text-muted-foreground" />
-          <span className="font-normal">Delete</span>
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant="ghost" className="w-full flex justify-start gap-4">
+            <TrashIcon className="w-4 h-4 text-muted-foreground" />
+            <span className="font-normal">Delete</span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

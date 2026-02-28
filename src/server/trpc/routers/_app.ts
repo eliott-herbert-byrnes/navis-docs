@@ -12,6 +12,7 @@ import { addressRouter } from "./address";
 import { newsRouter } from "./news";
 import { invitesRouter } from "./invites";
 import { aiRouter } from "./ai";
+import { ingestionRouter } from "./inngestion";
 
 export const appRouter = router({
   department: departmentRouter,
@@ -27,6 +28,7 @@ export const appRouter = router({
   news: newsRouter,
   invites: invitesRouter,
   ai: aiRouter,
+  ingestion: ingestionRouter,
 });
 
 export type AppRouter = typeof appRouter;

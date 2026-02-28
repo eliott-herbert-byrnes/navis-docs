@@ -15,7 +15,7 @@ const Heading = ({
 }: HeadingProps) => {
   return (
     <>
-      <div className="p-2 flex flex-row justify-between">
+      <div className="pt-2 flex flex-row justify-between">
         <div className="flex flex-col gap-0.5">
           <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-sm text-muted-foreground">{description}</p>

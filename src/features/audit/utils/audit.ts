@@ -15,12 +15,15 @@ export type AuditAction =
   | "PROCEDURE_CREATED"
   | "PROCEDURE_RENAMED"
   | "PROCEDURE_DELETED"
+  | "PROCEDURES_DELETED"
   | "PROCEDURE_PUBLISHED"
   | "PROCEDURE_UNPUBLISHED"
   | "PROCEDURE_ARCHIVED"
   | "PROCEDURE_UNARCHIVED"
   | "PROCEDURE_EDITED"
   | "PROCEDURE_CATEGORY_UPDATED"
+  // TODO: IngestionJob actions
+  | "PROCEDURE_IMPORTED"
   // Category actions
   | "CATEGORY_CREATED"
   | "CATEGORY_RENAMED"
@@ -38,7 +41,7 @@ export type AuditAction =
   | "ADDRESS_CREATED"
   | "ADDRESS_UPDATED"
   | "ADDRESS_DELETED"
-  // TODO: IngestionJob actions
+  // News Actions
   | "NEWS_CREATED"
   | "NEWS_DELETED";
 
@@ -51,7 +54,8 @@ export type AuditEntityType =
   | "USER_ROLE"
   | "ORGANIZATION"
   | "ADDRESS"
-  | "NEWS";
+  | "NEWS"
+  | "INGESTION_JOB";
 
 type AuditLogData = {
   orgId: string;

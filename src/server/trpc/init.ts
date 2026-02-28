@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { Context } from "@/server/trpc/context";
 import z, { ZodError } from "zod";
-import { createLimiter, getLimitByUser } from "@/lib/rate-limiter";
+import { createLimiter, createProcedureImportLimiter, getLimitByUser } from "@/lib/rate-limiter";
 
 export const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -57,6 +57,30 @@ export const rateLimitMiddleware = (purpose: string) =>
       });
     }
     const limiter = await createLimiter();
+    const { success } = await getLimitByUser(limiter, ctx.user.id, purpose);
+
+    if (!success) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Too many requests",
+      });
+    }
+    return next({ ctx });
+  });
+
+export const rateLimitProcedureMiddleware = (purpose: string) =>
+  t.middleware(async ({ ctx, next }) => {
+    // Skip ratelimit in ci tests FOR NOW
+    if (process.env.NODE_ENV === "test") {
+      return next({ ctx });
+    }
+    if (!ctx.user) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to perform this action",
+      });
+    }
+    const limiter = await createProcedureImportLimiter();
     const { success } = await getLimitByUser(limiter, ctx.user.id, purpose);
 
     if (!success) {

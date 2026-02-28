@@ -263,6 +263,72 @@ export const usersRouter = router({
       };
     }),
 
+  deleteUsers: adminProcedure
+    .use(rateLimitMiddleware("user-base-delete"))
+    .input(
+      z.object({
+        userIds: z.array(z.string().min(1)).min(1).max(100),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.user || !ctx.org) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized, reauthenticate your current session",
+        });
+      }
+
+      const memberships = await ctx.db.orgMembership.findMany({
+        where: {
+          orgId: ctx.org.id,
+          userId: { in: input.userIds },
+          role: { not: "OWNER" },
+        },
+        include: { user: true },
+      });
+
+      const toDelete = memberships.filter(
+        (m) =>
+          m.userId !== ctx.user!.id && m.userId !== ctx.org!.ownerUserId,
+      );
+
+      if (toDelete.length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "No users can be removed (cannot remove owner or yourself)",
+        });
+      }
+
+      for (const m of toDelete) {
+        await ctx.db.orgMembership.delete({
+          where: {
+            orgId_userId: { orgId: ctx.org.id, userId: m.userId },
+          },
+        });
+        await createAuditLog({
+          orgId: ctx.org.id,
+          actorId: ctx.user.id ?? "",
+          action: "USER_DELETED",
+          entityType: "USER",
+          entityId: m.userId,
+          beforeJSON: {
+            email: m.user.email,
+            name: m.user.name,
+            role: m.role,
+          },
+        });
+      }
+
+      return {
+        data: { deletedCount: toDelete.length },
+        message:
+          toDelete.length === 1
+            ? "User removed from organization successfully"
+            : `${toDelete.length} users removed from organization successfully`,
+      };
+    }),
+
   // Mutation: Change user role
   changeUserRole: adminProcedure
     .use(rateLimitMiddleware("user-change-role"))
