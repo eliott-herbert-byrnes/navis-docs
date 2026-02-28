@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { getUserById } from "@/lib/auth";
 
 export type AuditAction =
   // Department actions
@@ -118,11 +119,11 @@ export async function getAuditLogsWithCount(
     // Date filtering
     ...(options?.startDate || options?.endDate
       ? {
-          at: {
-            ...(options.startDate && { gte: options.startDate }),
-            ...(options.endDate && { lte: options.endDate }),
-          },
-        }
+        at: {
+          ...(options.startDate && { gte: options.startDate }),
+          ...(options.endDate && { lte: options.endDate }),
+        },
+      }
       : {}),
 
     // Search across multiple fields
@@ -146,4 +147,74 @@ export async function getAuditLogsWithCount(
   ]);
 
   return { logs, totalCount };
+}
+
+export type AuditLogWithActorName = {
+  id: string;
+  orgId: string;
+  actorId: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  at: Date;
+  beforeJSON: Prisma.JsonValue;
+  afterJSON: Prisma.JsonValue;
+  actorName: string;
+};
+
+export async function getProcedureAuditLogs(
+  orgId: string,
+  procedureId: string,
+  options?: { limit?: number; offset?: number },
+): Promise<{ logs: AuditLogWithActorName[]; hasMore: boolean }> {
+  try {
+    const procedure = await prisma.procedure.findFirst({
+      where: {
+        id: procedureId,
+        team: {
+          department: { orgId },
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!procedure) {
+      return { logs: [], hasMore: false };
+    }
+
+    const limit = options?.limit ?? 20;
+    const offset = options?.offset ?? 0;
+    const { logs, totalCount } = await getAuditLogsWithCount(orgId, {
+      entityType: "PROCEDURE",
+      entityId: procedureId,
+      limit,
+      offset,
+    });
+
+    const actorIds = Array.from(new Set(logs.map((log) => log.actorId)));
+    const users = await Promise.all(actorIds.map((id) => getUserById(id)));
+    const nameByActorId = new Map(
+      actorIds.map((id, i) => [id, users[i]?.name ?? "Unknown"]),
+    );
+
+    const logsWithNames: AuditLogWithActorName[] = logs.map((log) => ({
+      id: log.id,
+      orgId: log.orgId,
+      actorId: log.actorId,
+      action: log.action,
+      entityType: log.entityType,
+      entityId: log.entityId,
+      at: log.at,
+      beforeJSON: log.beforeJSON,
+      afterJSON: log.afterJSON,
+      actorName: nameByActorId.get(log.actorId) ?? "Unknown",
+    }));
+
+    const hasMore = offset + logs.length < totalCount;
+
+    return { logs: logsWithNames, hasMore };
+  } catch (error) {
+    console.error("Failed to get procedure audit logs", error);
+    return { logs: [], hasMore: false };
+  }
 }
