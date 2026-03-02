@@ -7,17 +7,18 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  name          String?
-  image         String?
-  emailVerified DateTime?       @map("emailVerifiedAt")
-  createdAt     DateTime        @default(now())
-  accounts      Account[]
-  favorites     Favorite[]
-  invitations   Invitation[]
-  memberships   OrgMembership[]
-  organizations Organization[]
+  id                  String          @id @default(uuid())
+  email               String          @unique
+  name                String?
+  image               String?
+  emailVerified       DateTime?       @map("emailVerifiedAt")
+  createdAt           DateTime        @default(now())
+  accounts            Account[]
+  favorites           Favorite[]
+  invitations         Invitation[]
+  memberships         OrgMembership[]
+  organizations       Organization[]
+  userProcedureRead   UserProcedureRead[]
 }
 
 model Account {
@@ -103,28 +104,30 @@ model Organization {
   ingestionJobs            IngestionJob[]
   invitations              Invitation[]
   memberships              OrgMembership[]
+  procedureRollout         ProcedureRollout[]
   ownerUser                User                      @relation(fields: [ownerUserId], references: [id])
 }
 
 model OrgMembership {
-  id        String            @id @default(uuid())
-  orgId     String
-  userId    String
-  createdAt DateTime          @default(now())
-  role      OrgMembershipRole
-  org       Organization      @relation(fields: [orgId], references: [id])
-  user      User              @relation(fields: [userId], references: [id])
+  id                  String              @id @default(uuid())
+  orgId               String
+  userId              String
+  createdAt           DateTime            @default(now())
+  compliant           Boolean             @default(true)
+  role                OrgMembershipRole
+  org                 Organization        @relation(fields: [orgId], references: [id])
+  user                User                @relation(fields: [userId], references: [id])
 
   @@unique([orgId, userId])
   @@index([userId])
 }
 
 model Department {
-  id        String       @id @default(uuid())
+  id        String            @id @default(uuid())
   orgId     String
   name      String
-  createdAt DateTime     @default(now())
-  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  createdAt DateTime          @default(now())
+  org       Organization      @relation(fields: [orgId], references: [id], onDelete: Cascade)
   teams     Team[]
 
   @@index([orgId, name])
@@ -167,6 +170,11 @@ model Procedure {
   publishedVersionId String?          @unique
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
+  notifyOnPublish    Boolean         @default(false)
+  notifyRoleFilter   RolloutRoleFilter?
+  emailOnPublish     Boolean          @default(false)
+  emailRoleFilter    RolloutRoleFilter?
+  newsOnPublish      Boolean           @default(false)
   style              ProcedureStyle
   status             ProcedureStatus
   errorReports       ErrorReport[]
@@ -178,6 +186,8 @@ model Procedure {
   team               Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
   ProcedureChunk     ProcedureChunk[]
   versions           ProcedureVersion[]
+  procedureRollout   ProcedureRollout[]
+  userProcedureRead  UserProcedureRead[]
 
   @@unique([teamId, slug])
   @@index([teamId, categoryId])
@@ -185,25 +195,64 @@ model Procedure {
   @@index([teamId, slug])
 }
 
+model ProcedureRollout {
+  id                String             @id @default(uuid())   
+  procedureId       String
+  versionId         String
+  orgId             String
+  notifyRoleFilter  RolloutRoleFilter
+  emailRoleFilter   RolloutRoleFilter?
+  rolloutType       RolloutType
+  createdAt         DateTime           @default(now())
+  newsPostId        String?
+
+  @@index([orgId, procedureId, versionId])
+  procedure         Procedure           @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  version           ProcedureVersion    @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  org               Organization        @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  news              NewsPost?           @relation(fields: [newsPostId], references: [id], onDelete: Cascade)
+}
+
+enum RolloutType {
+  NEW
+  EDIT
+}
+
+model UserProcedureRead {
+  id                String             @id @default(uuid())   
+  userId            String
+  procedureId       String
+  versionId         String
+  readAt            DateTime           @default(now())
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  procedure         Procedure          @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  version           ProcedureVersion   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@unique([userId, procedureId, versionId])
+}
+
 model ProcedureVersion{
-  id            String         @id @default(uuid())
-  procedureId   String
-  createdBy     String
-  createdAt     DateTime       @default(now())
-  contentJSON   Json
-  contentText   String?
-  style         ProcedureStyle
-  ingestionJobs IngestionJob[]
-  pendingOf     Procedure?       @relation("PendingVersion")
-  publishedOf   Procedure?       @relation("PublishedVersion")
-  procedure     Procedure        @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  id                  String         @id @default(uuid())
+  procedureId         String
+  createdBy           String
+  createdAt           DateTime       @default(now())
+  contentJSON         Json
+  contentText         String?
+  style               ProcedureStyle
+  ingestionJobs       IngestionJob[]
+  procedureRollout    ProcedureRollout[]
+  pendingOf           Procedure?       @relation("PendingVersion")
+  publishedOf         Procedure?       @relation("PublishedVersion")
+  procedure           Procedure        @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  userProcedureRead   UserProcedureRead[]
 
   @@index([procedureId, createdAt])
 }
 
 model ProcedureChunk {
-  id         String                 @id @default(uuid())
-  procedureId  String
+  id            String                 @id @default(uuid())
+  procedureId   String
   teamId     String
   title      String
   chunkIndex Int
@@ -226,6 +275,7 @@ model NewsPost {
   createdBy String
   createdAt DateTime @default(now())
   team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  procedureRollout    ProcedureRollout[]
 
   @@index([teamId, createdAt])
 }
@@ -319,6 +369,12 @@ enum OrgMembershipRole {
   OWNER
   ADMIN
   MEMBER
+}
+
+enum RolloutRoleFilter {
+  ALL_USERS
+  ADMINS_ONLY
+  MEMBERS_ONLY
 }
 
 enum ProcedureStatus {
