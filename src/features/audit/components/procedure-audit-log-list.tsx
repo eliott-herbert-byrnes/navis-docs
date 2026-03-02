@@ -39,21 +39,16 @@ export function ProcedureAuditLogList({
 }: ProcedureAuditLogListProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = trpc.procedures.getProcedureAuditLogs.useInfiniteQuery(
-    { procedureId, limit: PAGE_SIZE },
-    {
-      enabled,
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) =>
-        lastPage.hasMore ? lastPage.nextOffset : undefined,
-    },
-  );
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    trpc.procedures.getProcedureAuditLogs.useInfiniteQuery(
+      { procedureId, limit: PAGE_SIZE },
+      {
+        enabled,
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) =>
+          lastPage.hasMore ? lastPage.nextOffset : undefined,
+      },
+    );
 
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage) return;

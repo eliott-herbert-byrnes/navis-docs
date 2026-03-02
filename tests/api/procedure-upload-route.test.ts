@@ -39,10 +39,16 @@ describe("POST /api/procedures/[procedureId]/images", () => {
 
   it("returns 403 when user is not org admin/owner", async () => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } });
-    mockFindFirstMembership.mockResolvedValue({ orgId: "org-1", role: "MEMBER" });
+    mockFindFirstMembership.mockResolvedValue({
+      orgId: "org-1",
+      role: "MEMBER",
+    });
 
     const formData = new FormData();
-    formData.append("file", new File(["img"], "image.png", { type: "image/png" }));
+    formData.append(
+      "file",
+      new File(["img"], "image.png", { type: "image/png" }),
+    );
     const req = new Request("http://localhost/api/procedures/proc-1/images", {
       method: "POST",
       body: formData,
@@ -58,12 +64,18 @@ describe("POST /api/procedures/[procedureId]/images", () => {
 
   it("uploads image and returns path + proxy src for admin", async () => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } });
-    mockFindFirstMembership.mockResolvedValue({ orgId: "org-1", role: "ADMIN" });
+    mockFindFirstMembership.mockResolvedValue({
+      orgId: "org-1",
+      role: "ADMIN",
+    });
     mockFindFirstProcedure.mockResolvedValue({ id: "proc-1" });
     mockUpload.mockResolvedValue({ error: null });
 
     const formData = new FormData();
-    formData.append("file", new File(["img"], "image.png", { type: "image/png" }));
+    formData.append(
+      "file",
+      new File(["img"], "image.png", { type: "image/png" }),
+    );
     const req = new Request("http://localhost/api/procedures/proc-1/images", {
       method: "POST",
       body: formData,

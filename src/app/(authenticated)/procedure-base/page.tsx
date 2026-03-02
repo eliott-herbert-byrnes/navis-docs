@@ -1,18 +1,26 @@
-"use client";
-
 import { Heading } from "@/components/ui/Heading";
 import { ProcedureList } from "@/features/procedure-base/components/procedure-list";
-import { trpc } from "@/trpc/client";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { ExportProcedureOrgDataButton } from "@/features/settings/components/export-procedure-org-data-button";
-import { ProcedureImportButton } from "@/features/procedure-base/components/procedure-import-button";
+import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { onboardingPath, homePath } from "@/app/paths";
+import { redirect } from "next/navigation";
+import { serverTrpc } from "@/server/trpc/server";
+import { Suspense } from "react";
 
-const ProcedureBasePage = () => {
-  const { data, isLoading } = trpc.procedures.getProceduresForBase.useQuery({
+const ProcedureBasePage = async () => {
+  const user = await getSessionUser();
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  if (!org) redirect(onboardingPath());
+  if (!isAdmin) redirect(homePath());
+
+  const trpc = await serverTrpc();
+  const proceduresResult = await trpc.procedures.getProceduresForBase({
     search: "",
     limit: 10,
     offset: 0,
   });
+  const data = proceduresResult;
 
   return (
     <>
@@ -28,11 +36,9 @@ const ProcedureBasePage = () => {
         }
       />
 
-      {isLoading ? (
-        <ListSkeleton />
-      ) : (
+      <Suspense fallback={<ListSkeleton />}>
         <ProcedureList data={data?.procedures ?? []} />
-      )}
+      </Suspense>
     </>
   );
 };

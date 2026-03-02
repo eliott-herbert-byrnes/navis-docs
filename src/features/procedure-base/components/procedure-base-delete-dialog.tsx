@@ -33,7 +33,8 @@ const ProcedureBaseDeleteDialog = ({
 }: ProcedureBaseDeleteDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
 
-  const isControlled = controlledOpen !== undefined && controlledOnOpenChange !== undefined;
+  const isControlled =
+    controlledOpen !== undefined && controlledOnOpenChange !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 

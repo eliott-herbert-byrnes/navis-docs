@@ -18,10 +18,10 @@ type AuditPageProps = {
   searchParams: Promise<{
     search?: string;
     entityType?: AuditEntityType;
-    startDate?: string; // NEW
-    endDate?: string; // NEW
-    page?: string; // NEW
-    pageSize?: string; // NEW
+    startDate?: string;
+    endDate?: string;
+    page?: string;
+    pageSize?: string;
   }>;
 };
 

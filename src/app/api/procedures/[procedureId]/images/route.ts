@@ -6,7 +6,8 @@ import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 export const runtime = "nodejs";
 
-const BUCKET = process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
+const BUCKET =
+  process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
 
 function sanitizeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -33,7 +34,10 @@ export async function POST(
     });
 
     if (!membership?.orgId) {
-      return NextResponse.json({ error: "Organization not found" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Organization not found" },
+        { status: 403 },
+      );
     }
     if (!["ADMIN", "OWNER"].includes(membership.role)) {
       return NextResponse.json(
@@ -56,7 +60,10 @@ export async function POST(
     });
 
     if (!procedure) {
-      return NextResponse.json({ error: "Procedure not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Procedure not found" },
+        { status: 404 },
+      );
     }
 
     const formData = await req.formData();
@@ -67,7 +74,10 @@ export async function POST(
     }
 
     if (!file.type?.startsWith("image/")) {
-      return NextResponse.json({ error: "Only image uploads are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Only image uploads are allowed" },
+        { status: 400 },
+      );
     }
 
     if (file.size > MAX_FILE_SIZE) {
@@ -108,6 +118,9 @@ export async function POST(
     );
   } catch (error) {
     console.error("Image upload route error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

@@ -22,21 +22,14 @@ const ImportPreviewCard = ({
     { enabled: !!jobId },
   );
 
-  const {approveImportMutation, rejectImportMutation} = useImportMutations();
-
+  const { approveImportMutation, rejectImportMutation } = useImportMutations();
 
   const handleApproveClick = () => {
-    approveImportMutation.mutate(
-      { jobId },
-      { onSuccess: () => onApprove() }
-    );
+    approveImportMutation.mutate({ jobId }, { onSuccess: () => onApprove() });
   };
 
   const handleRejectClick = () => {
-    rejectImportMutation.mutate(
-      { jobId },
-      { onSuccess: () => onReject() }
-    );
+    rejectImportMutation.mutate({ jobId }, { onSuccess: () => onReject() });
   };
 
   // Loading: show spinner + message (consistent with ImportPollingState)
@@ -112,7 +105,9 @@ const ImportPreviewCard = ({
             variant="outline"
             type="button"
             onClick={handleRejectClick}
-            disabled={approveImportMutation.isPending || rejectImportMutation.isPending}
+            disabled={
+              approveImportMutation.isPending || rejectImportMutation.isPending
+            }
           >
             {rejectImportMutation.isPending ? (
               <LucideLoaderCircle className="h-4 w-4 animate-spin" />
@@ -123,7 +118,9 @@ const ImportPreviewCard = ({
           <Button
             type="button"
             onClick={handleApproveClick}
-            disabled={approveImportMutation.isPending || rejectImportMutation.isPending}
+            disabled={
+              approveImportMutation.isPending || rejectImportMutation.isPending
+            }
           >
             {approveImportMutation.isPending ? (
               <>

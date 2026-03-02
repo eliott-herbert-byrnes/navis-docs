@@ -398,9 +398,9 @@ export function createProcedureImageUploadHandler(procedureId: string) {
     });
 
     if (!response.ok) {
-      const payload = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
       throw new Error(payload?.error || "Upload failed, please try again");
     }
 
@@ -424,7 +424,9 @@ export const handleImageUpload = async (
   );
 };
 
-export function extractManagedImagePathsFromContent(contentJSON: unknown): Set<string> {
+export function extractManagedImagePathsFromContent(
+  contentJSON: unknown,
+): Set<string> {
   const results = new Set<string>();
 
   const walk = (node: unknown) => {
@@ -456,7 +458,9 @@ export function extractManagedImagePathsFromContent(contentJSON: unknown): Set<s
   return results;
 }
 
-export function extractManagedPathFromImageSrc(src?: string | null): string | null {
+export function extractManagedPathFromImageSrc(
+  src?: string | null,
+): string | null {
   if (!src || typeof src !== "string") return null;
 
   try {

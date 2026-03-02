@@ -176,7 +176,7 @@ export const procedureRouter = router({
             title: true,
             status: true,
             description: true,
-            categoryId: true,           
+            categoryId: true,
             category: {
               select: {
                 id: true,
@@ -555,9 +555,9 @@ export const procedureRouter = router({
             team: {
               department: {
                 orgId: ctx.org!.id,
-              }
-            }
-          }
+              },
+            },
+          },
         });
 
         if (existingCategory) {
@@ -843,7 +843,7 @@ export const procedureRouter = router({
         select: { id: true, categoryId: true },
       });
 
-      if(!procedures){
+      if (!procedures) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "No procedure selected, please select a valid procedure",
@@ -853,7 +853,9 @@ export const procedureRouter = router({
       const idsToDelete = procedures.map((p) => p.id);
       const categoryIdsToCheck = [
         ...new Set(
-          procedures.map((p) => p.categoryId).filter((id): id is string => !!id),
+          procedures
+            .map((p) => p.categoryId)
+            .filter((id): id is string => !!id),
         ),
       ];
 
@@ -1016,18 +1018,24 @@ export const procedureRouter = router({
       // Cleanup is best-effort and should not block content saves.
       try {
         const oldImagePaths = extractManagedImagePathsFromContent(oldContent);
-        const newImagePaths = extractManagedImagePathsFromContent(input.contentJSON);
+        const newImagePaths = extractManagedImagePathsFromContent(
+          input.contentJSON,
+        );
         const publishedImagePaths = extractManagedImagePathsFromContent(
           procedure.publishedVersion?.contentJSON,
         );
         const keptPaths = new Set([...newImagePaths, ...publishedImagePaths]);
 
         const procedureFolder = `orgs/${ctx.org!.id}/procedures/${input.procedureId}`;
-        const { data: listedObjects, error: listError } = await supabaseAdmin.storage
-          .from(procedureImagesBucket)
-          .list(procedureFolder, { limit: 1000, offset: 0 });
+        const { data: listedObjects, error: listError } =
+          await supabaseAdmin.storage
+            .from(procedureImagesBucket)
+            .list(procedureFolder, { limit: 1000, offset: 0 });
         if (listError) {
-          console.error("Failed to list procedure images for cleanup:", listError);
+          console.error(
+            "Failed to list procedure images for cleanup:",
+            listError,
+          );
         }
 
         const listedPaths = (listedObjects ?? [])
@@ -1038,7 +1046,10 @@ export const procedureRouter = router({
         const referencedRemovedPaths = [...oldImagePaths].filter(
           (path) => !newImagePaths.has(path),
         );
-        const deletionSet = new Set([...removedPaths, ...referencedRemovedPaths]);
+        const deletionSet = new Set([
+          ...removedPaths,
+          ...referencedRemovedPaths,
+        ]);
 
         if (deletionSet.size > 0) {
           const { error } = await supabaseAdmin.storage

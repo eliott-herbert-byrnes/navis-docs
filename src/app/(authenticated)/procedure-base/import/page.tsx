@@ -8,28 +8,26 @@ import { homePath } from "@/app/paths";
 import { ImportProcedurePage } from "@/features/import/components/import-procedure-page";
 
 const ProcedureImportPage = async () => {
+  const user = await getSessionUser();
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  if (!org || !isAdmin) {
+    redirect(homePath());
+  }
 
-    const user = await getSessionUser();
-    const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
-    if (!org || !isAdmin) {
-        redirect(homePath())
-    }
+  const trpc = await serverTrpc();
+  const { list: departments } = await trpc.department.list();
 
-    const trpc = await serverTrpc();
-    const { list: departments } = await trpc.department.list();
-
-
-    return (
-        <>
-            <Heading
-                title="Import Procedure"
-                description="Import procedures to a specified department"
-            />
-            <Suspense fallback={<ListSkeleton />}>
-                <ImportProcedurePage departments={departments} />
-            </Suspense>
-        </>
-    );
+  return (
+    <>
+      <Heading
+        title="Import Procedure"
+        description="Import procedures to a specified department"
+      />
+      <Suspense fallback={<ListSkeleton />}>
+        <ImportProcedurePage departments={departments} />
+      </Suspense>
+    </>
+  );
 };
 
 export default ProcedureImportPage;

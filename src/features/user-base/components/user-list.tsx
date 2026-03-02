@@ -166,11 +166,9 @@ export function UserList({ data: initialData }: { data: User[] }) {
   const [userFilter, setUserFilter] = React.useState<string>("ALL");
 
   const userRoles = React.useMemo(
-    () =>
-      [...new Set(initialData.map((c) => c.role))].filter(Boolean).sort(),
+    () => [...new Set(initialData.map((c) => c.role))].filter(Boolean).sort(),
     [initialData],
   );
-
 
   const { deleteUsers, isPending: isBulkDeletePending } = useDeleteUsers();
 
@@ -327,7 +325,9 @@ export function UserList({ data: initialData }: { data: User[] }) {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by user name or email..."
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("name")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
@@ -336,10 +336,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
           </div>
 
           <div className="flex gap-2">
-            <Select
-              value={userFilter}
-              onValueChange={handleUserFilterChange}
-            >
+            <Select value={userFilter} onValueChange={handleUserFilterChange}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={userFilter} />
               </SelectTrigger>
@@ -408,9 +405,9 @@ export function UserList({ data: initialData }: { data: User[] }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}

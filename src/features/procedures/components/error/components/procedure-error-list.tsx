@@ -73,7 +73,10 @@ import {
 import { viewProcedurePath } from "@/app/paths";
 import { ProcedureErrorDeleteButton } from "./procedure-error-delete-button";
 import { ProcedureErrorDeleteDialog } from "./procedure-error-delete-dialog";
-import { useUpdateErrorStatus, useDeleteErrors } from "../hooks/use-errors-mutations";
+import {
+  useUpdateErrorStatus,
+  useDeleteErrors,
+} from "../hooks/use-errors-mutations";
 import { toast } from "sonner";
 
 export const schema = z.object({
@@ -411,8 +414,9 @@ export function ProcedureErrorList({
             <Input
               placeholder="Search by procedure name..."
               value={
-                (table.getColumn("procedureName")?.getFilterValue() as string) ??
-                ""
+                (table
+                  .getColumn("procedureName")
+                  ?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
                 table
@@ -423,7 +427,10 @@ export function ProcedureErrorList({
             />
           </div>
           <div className="flex gap-2">
-            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+            <Select
+              value={statusFilter}
+              onValueChange={handleStatusFilterChange}
+            >
               <SelectTrigger className="w-[125px]">
                 <SelectValue placeholder={statusFilter} />
               </SelectTrigger>

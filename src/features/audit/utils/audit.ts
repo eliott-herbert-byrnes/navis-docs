@@ -119,11 +119,11 @@ export async function getAuditLogsWithCount(
     // Date filtering
     ...(options?.startDate || options?.endDate
       ? {
-        at: {
-          ...(options.startDate && { gte: options.startDate }),
-          ...(options.endDate && { lte: options.endDate }),
-        },
-      }
+          at: {
+            ...(options.startDate && { gte: options.startDate }),
+            ...(options.endDate && { lte: options.endDate }),
+          },
+        }
       : {}),
 
     // Search across multiple fields

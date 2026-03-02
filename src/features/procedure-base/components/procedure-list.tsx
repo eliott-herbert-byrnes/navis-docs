@@ -130,7 +130,8 @@ function TableCellViewer({
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Status</Label>
               <Badge variant="outline" className="w-fit">
-                {item.status.toLowerCase().charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+                {item.status.toLowerCase().charAt(0).toUpperCase() +
+                  item.status.slice(1).toLowerCase()}
               </Badge>
             </div>
 
@@ -154,9 +155,7 @@ function TableCellViewer({
 
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Team</Label>
-              <p className="text-muted-foreground">
-                {item.team?.name ?? "—"}
-              </p>
+              <p className="text-muted-foreground">{item.team?.name ?? "—"}</p>
             </div>
 
             <Separator />
@@ -167,7 +166,6 @@ function TableCellViewer({
             </div>
 
             <Separator />
-
 
             <div className="flex flex-col gap-2">
               <Label className="font-semibold">Report Body</Label>
@@ -344,7 +342,9 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
       ),
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
-          {row.original.status.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
+          {row.original.status
+            .toLowerCase()
+            .replace(/^\w/, (c) => c.toUpperCase())}
         </div>
       ),
     },
@@ -434,12 +434,13 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-1 justify-between gap-4">
-
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by procedure name..."
-              value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("title")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("title")?.setFilterValue(event.target.value)
               }
@@ -448,7 +449,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
           </div>
 
           <div className="flex gap-2">
-            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+            <Select
+              value={statusFilter}
+              onValueChange={handleStatusFilterChange}
+            >
               <SelectTrigger className="w-[125px]">
                 <SelectValue placeholder={statusFilter} />
               </SelectTrigger>
@@ -459,34 +463,35 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
               </SelectContent>
             </Select>
 
-            {selectedCount ? <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="gap-2">
-                  {/* Actions ({selectedCount}) */}
-                  {/* <ChevronDown className="h-4 w-4" /> */}
-                  <MoreVertical />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem
-                  onSelect={() => {
-                    if (selectedCount === 0) {
-                      toast.error(
-                        "No procedure selected, please select a valid procedure",
-                      );
-                      return;
-                    }
-                    setBulkDeleteOpen(true);
-                  }}
-                  className="flex gap-4"
-                >
-                  <TrashIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-normal">Delete</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> : null}
+            {selectedCount ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2">
+                    {/* Actions ({selectedCount}) */}
+                    {/* <ChevronDown className="h-4 w-4" /> */}
+                    <MoreVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      if (selectedCount === 0) {
+                        toast.error(
+                          "No procedure selected, please select a valid procedure",
+                        );
+                        return;
+                      }
+                      setBulkDeleteOpen(true);
+                    }}
+                    className="flex gap-4"
+                  >
+                    <TrashIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-normal">Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
           </div>
-
         </div>
       </div>
 
@@ -516,9 +521,9 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}

@@ -288,15 +288,13 @@ export const usersRouter = router({
       });
 
       const toDelete = memberships.filter(
-        (m) =>
-          m.userId !== ctx.user!.id && m.userId !== ctx.org!.ownerUserId,
+        (m) => m.userId !== ctx.user!.id && m.userId !== ctx.org!.ownerUserId,
       );
 
       if (toDelete.length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message:
-            "No users can be removed (cannot remove owner or yourself)",
+          message: "No users can be removed (cannot remove owner or yourself)",
         });
       }
 

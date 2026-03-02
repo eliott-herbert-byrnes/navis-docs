@@ -5,7 +5,8 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
-const BUCKET = process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
+const BUCKET =
+  process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
 
 const PATH_REGEX =
   /^orgs\/([a-z0-9-]+)\/procedures\/([a-z0-9-]+)\/([a-zA-Z0-9._-]+)$/i;
@@ -36,7 +37,10 @@ export async function GET(req: Request) {
 
     const parsed = parseManagedPath(path);
     if (!parsed) {
-      return NextResponse.json({ error: "Invalid image path format" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid image path format" },
+        { status: 400 },
+      );
     }
 
     // AuthZ: user must belong to the same org encoded in path
@@ -63,10 +67,15 @@ export async function GET(req: Request) {
     });
 
     if (!procedure) {
-      return NextResponse.json({ error: "Procedure not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Procedure not found" },
+        { status: 404 },
+      );
     }
 
-    const { data, error } = await supabaseAdmin.storage.from(BUCKET).download(path);
+    const { data, error } = await supabaseAdmin.storage
+      .from(BUCKET)
+      .download(path);
 
     if (error || !data) {
       return NextResponse.json({ error: "Image not found" }, { status: 404 });
@@ -87,6 +96,9 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Image proxy route error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

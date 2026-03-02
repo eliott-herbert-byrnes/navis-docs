@@ -89,7 +89,9 @@ export function CategoriesList({
 
   const departmentNames = React.useMemo(
     () =>
-      [...new Set(initialData.map((c) => c.departmentName))].filter(Boolean).sort(),
+      [...new Set(initialData.map((c) => c.departmentName))]
+        .filter(Boolean)
+        .sort(),
     [initialData],
   );
 
@@ -218,7 +220,9 @@ export function CategoriesList({
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by category name..."
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("name")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }

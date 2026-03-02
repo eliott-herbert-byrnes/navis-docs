@@ -41,7 +41,9 @@ describe("GET /api/procedure-images", () => {
     mockAuth.mockResolvedValue(null);
 
     const response = await GET(
-      new Request("http://localhost/api/procedure-images?path=orgs%2Forg-1%2Fprocedures%2Fproc-1%2Fabc.png"),
+      new Request(
+        "http://localhost/api/procedure-images?path=orgs%2Forg-1%2Fprocedures%2Fproc-1%2Fabc.png",
+      ),
     );
 
     expect(response.status).toBe(401);
@@ -52,7 +54,9 @@ describe("GET /api/procedure-images", () => {
     mockFindFirstMembership.mockResolvedValue({ orgId: "org-2" });
 
     const response = await GET(
-      new Request("http://localhost/api/procedure-images?path=orgs%2Forg-1%2Fprocedures%2Fproc-1%2Fabc.png"),
+      new Request(
+        "http://localhost/api/procedure-images?path=orgs%2Forg-1%2Fprocedures%2Fproc-1%2Fabc.png",
+      ),
     );
 
     expect(response.status).toBe(403);
@@ -68,7 +72,9 @@ describe("GET /api/procedure-images", () => {
     });
 
     const response = await GET(
-      new Request("http://localhost/api/procedure-images?path=orgs%2Forg-1%2Fprocedures%2Fproc-1%2Fabc.png"),
+      new Request(
+        "http://localhost/api/procedure-images?path=orgs%2Forg-1%2Fprocedures%2Fproc-1%2Fabc.png",
+      ),
     );
 
     expect(response.status).toBe(200);

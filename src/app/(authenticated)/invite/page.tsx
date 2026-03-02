@@ -17,7 +17,6 @@ type InvitationPageProps = {
 
 const InvitationPage = async ({ searchParams }: InvitationPageProps) => {
   const user = await getSessionUser();
-
   const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());

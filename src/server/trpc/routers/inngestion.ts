@@ -135,7 +135,7 @@ export const ingestionRouter = router({
       }
 
       const filename = job.fileKey
-        ? job.fileKey.split("/").pop() ?? null
+        ? (job.fileKey.split("/").pop() ?? null)
         : null;
 
       return {
@@ -159,7 +159,11 @@ export const ingestionRouter = router({
         },
         include: {
           procedure: {
-            select: { id: true, teamId: true, team: { select: { departmentId: true } } },
+            select: {
+              id: true,
+              teamId: true,
+              team: { select: { departmentId: true } },
+            },
           },
         },
       });

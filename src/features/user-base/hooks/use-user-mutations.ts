@@ -44,8 +44,7 @@ export function useDeleteUsers() {
     },
     onError: (error) => {
       toast.error(
-        error.message ||
-          "Failed to remove users, try again or contact support",
+        error.message || "Failed to remove users, try again or contact support",
       );
     },
   });

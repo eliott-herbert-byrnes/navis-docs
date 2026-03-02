@@ -22,7 +22,12 @@ describe("generatePlainTextFromTiptap", () => {
                     content: [
                       {
                         type: "paragraph",
-                        content: [{ type: "text", text: "Navigate to the admin panel." }],
+                        content: [
+                          {
+                            type: "text",
+                            text: "Navigate to the admin panel.",
+                          },
+                        ],
                       },
                       {
                         type: "codeBlock",
@@ -45,7 +50,12 @@ describe("generatePlainTextFromTiptap", () => {
                     content: [
                       {
                         type: "paragraph",
-                        content: [{ type: "text", text: "Check the confirmation banner." }],
+                        content: [
+                          {
+                            type: "text",
+                            text: "Check the confirmation banner.",
+                          },
+                        ],
                       },
                     ],
                   },
@@ -90,7 +100,9 @@ describe("generatePlainTextFromTiptap", () => {
                   },
                   {
                     type: "paragraph",
-                    content: [{ type: "text", text: "Use the admin credentials." }],
+                    content: [
+                      { type: "text", text: "Use the admin credentials." },
+                    ],
                   },
                   {
                     type: "codeBlock",

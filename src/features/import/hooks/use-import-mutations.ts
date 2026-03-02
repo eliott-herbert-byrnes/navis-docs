@@ -10,7 +10,7 @@ export function useImportMutations() {
     },
     onError: (error) => {
       toast.error(
-        error.message ?? "Failed to start import, try again or contact support"
+        error.message ?? "Failed to start import, try again or contact support",
       );
     },
   });
@@ -21,7 +21,7 @@ export function useImportMutations() {
     },
     onError: (error) => {
       toast.error(
-        error.message ?? "Failed to import procedure, please try again."
+        error.message ?? "Failed to import procedure, please try again.",
       );
     },
   });
@@ -32,7 +32,7 @@ export function useImportMutations() {
     },
     onError: (error) => {
       toast.error(
-        error.message ?? "Failed to cancel import, please try again."
+        error.message ?? "Failed to cancel import, please try again.",
       );
     },
   });

@@ -15,7 +15,6 @@ type ErrorsPageProps = {
 
 const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
   const user = await getSessionUser();
-
   const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());

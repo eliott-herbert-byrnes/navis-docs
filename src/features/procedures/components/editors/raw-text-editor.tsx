@@ -44,19 +44,18 @@ import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-men
 import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
 import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button";
 import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button";
-import {
-  ColorHighlightPopover,
-} from "@/components/tiptap-ui/color-highlight-popover";
-import {
-  LinkPopover,
-} from "@/components/tiptap-ui/link-popover";
+import { ColorHighlightPopover } from "@/components/tiptap-ui/color-highlight-popover";
+import { LinkPopover } from "@/components/tiptap-ui/link-popover";
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 
 import "./tiptap-styles.css";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
-import { createProcedureImageUploadHandler, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import {
+  createProcedureImageUploadHandler,
+  MAX_FILE_SIZE,
+} from "@/lib/tiptap-utils";
 import {
   StepBody,
   StepItem,
@@ -106,7 +105,8 @@ export function RawTextEditor({
 
     for (let d = $from.depth; d > 0; d--) {
       const name = $from.node(d).type.name;
-      if (containerDepth === null && name === "stepsContainer") containerDepth = d;
+      if (containerDepth === null && name === "stepsContainer")
+        containerDepth = d;
       if (itemDepth === null && name === "stepItem") itemDepth = d;
       if (titleDepth === null && name === "stepTitle") titleDepth = d;
       if (bodyDepth === null && name === "stepBody") bodyDepth = d;
@@ -128,14 +128,19 @@ export function RawTextEditor({
   }, []);
 
   const findFirstStepsContainer = useCallback(
-    (
-      editorOrView: { state: EditorState },
-    ): { pos: number; nodeSize: number; childCount: number } | null => {
-      let result: { pos: number; nodeSize: number; childCount: number } | null = null;
+    (editorOrView: {
+      state: EditorState;
+    }): { pos: number; nodeSize: number; childCount: number } | null => {
+      let result: { pos: number; nodeSize: number; childCount: number } | null =
+        null;
       editorOrView.state.doc.descendants((node, pos) => {
         if (result) return false;
         if (node.type.name === "stepsContainer") {
-          result = { pos, nodeSize: node.nodeSize, childCount: node.childCount };
+          result = {
+            pos,
+            nodeSize: node.nodeSize,
+            childCount: node.childCount,
+          };
           return false;
         }
         return true;
@@ -238,7 +243,11 @@ export function RawTextEditor({
             $from.index(ctx.bodyDepth) === stepBodyNode.childCount - 1;
 
           // Non-empty paragraph or not at the exit point → default behavior
-          if (!isCurrentParagraphEmpty || !isLastItem || !isLastParagraphInBody) {
+          if (
+            !isCurrentParagraphEmpty ||
+            !isLastItem ||
+            !isLastParagraphInBody
+          ) {
             pendingStepExitRef.current = null;
             return false;
           }
@@ -290,7 +299,10 @@ export function RawTextEditor({
           {
             type: "stepItem",
             content: [
-              { type: "stepTitle", content: [{ type: "text", text: "Step 1" }] },
+              {
+                type: "stepTitle",
+                content: [{ type: "text", text: "Step 1" }],
+              },
               { type: "stepBody", content: [{ type: "paragraph" }] },
             ],
           },

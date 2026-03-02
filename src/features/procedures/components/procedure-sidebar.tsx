@@ -241,7 +241,7 @@ export function ProcedureSidebar({
       </div>
 
       {/* Desktop: Regular Sidebar */}
-      <aside className="hidden sm:flex w-64 border-r bg-background flex-col h-full">
+      <aside className="hidden sm:flex w-57 border-r bg-background flex-col h-full">
         <div className="p-4 border-b">
           <ProcedureSearchButton />
         </div>

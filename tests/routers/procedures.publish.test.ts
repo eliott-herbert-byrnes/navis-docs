@@ -71,19 +71,28 @@ describe("Procedure Router - publishProcedure", () => {
                     content: [
                       {
                         type: "stepTitle",
-                        content: [{ type: "text", text: "Enable the feature flag" }],
+                        content: [
+                          { type: "text", text: "Enable the feature flag" },
+                        ],
                       },
                       {
                         type: "stepBody",
                         content: [
                           {
                             type: "paragraph",
-                            content: [{ type: "text", text: "Open settings and toggle the flag." }],
+                            content: [
+                              {
+                                type: "text",
+                                text: "Open settings and toggle the flag.",
+                              },
+                            ],
                           },
                           {
                             type: "codeBlock",
                             attrs: { language: null },
-                            content: [{ type: "text", text: "feature_flag=true" }],
+                            content: [
+                              { type: "text", text: "feature_flag=true" },
+                            ],
                           },
                         ],
                       },
@@ -139,10 +148,12 @@ describe("Procedure Router - publishProcedure", () => {
                         type: "paragraph",
                         content: [{ type: "text", text: "Open settings." }],
                       },
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Confirm changes are saved." }],
-                  },
+                      {
+                        type: "paragraph",
+                        content: [
+                          { type: "text", text: "Confirm changes are saved." },
+                        ],
+                      },
                     ],
                   },
                 ],
