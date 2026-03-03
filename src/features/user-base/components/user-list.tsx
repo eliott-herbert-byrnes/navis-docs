@@ -71,6 +71,7 @@ import { useDeleteUsers } from "../hooks/use-user-mutations";
 import { OrgMembershipRole } from "@prisma/client";
 import { UserRoleChangeButton } from "./user-role-change-button";
 import { toast } from "sonner";
+import { trpc } from "@/trpc/client";
 
 export const schema = z.object({
   id: z.string(),
@@ -97,10 +98,18 @@ type User = z.infer<typeof schema>;
 
 function TableCellViewer({ item }: { item: User }) {
   const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
+
+  const { data, isLoading } = trpc.procedures.getOutstandingForUser.useQuery(
+    { userId: item.userId, orgId: item.orgId },
+    { enabled: open && !item.compliant },
+  );
+
+  const outstanding = data?.data ?? [];
 
   return (
     <div className="w-full">
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button
             variant="link"
@@ -138,6 +147,30 @@ function TableCellViewer({ item }: { item: User }) {
               <p className="text-muted-foreground">
                 {format(item.user.createdAt, "yyyy-MM-dd, HH:mm")}
               </p>
+            </div>
+
+            <Separator />
+            <div className="flex flex-col gap-2">
+              <Label className="font-semibold">Compliant</Label>
+              {item.compliant ? (
+                <p className="text-muted-foreground">
+                  This user is compliant
+                </p>
+              ) : isLoading ? (
+                <p className="text-muted-foreground">Loading…</p>
+              ) : outstanding.length > 0 ? (
+                <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                  {outstanding.map((proc) => (
+                    <li key={`${proc.procedureId}-${proc.versionId}`}>
+                      {proc.procedureTitle}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground">
+                  This user is compliant.
+                </p>
+              )}
             </div>
           </div>
           <SheetFooter>
