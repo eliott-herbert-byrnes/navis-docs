@@ -838,6 +838,7 @@ export const procedureRouter = router({
             newsOnPublish: !!newsOnPublish,
             procedureTitle: procedure.title,
             teamId: procedure.teamId,
+            createdBy: ctx.user?.id ?? "",
           },
         });
       }
