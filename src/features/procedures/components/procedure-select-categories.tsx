@@ -41,7 +41,7 @@ const ProcedureSelectCategories = ({
       <SelectTrigger>
         <SelectValue placeholder="Select a category" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="w-1/2">
         {categories.map((category) => (
           <SelectItem key={category.id} value={category.id}>
             {category.name}

@@ -8,6 +8,7 @@ import {
   teamProcedurePath,
   viewProcedurePath,
 } from "@/app/paths";
+import { RolloutRoleFilter } from "@prisma/client";
 
 export function useCreateProcedure(departmentId: string, teamId: string) {
   const utils = trpc.useUtils();
@@ -37,6 +38,11 @@ export function useCreateProcedure(departmentId: string, teamId: string) {
     newProcedureCategory?: boolean;
     newProcedureCategoryName?: string;
     procedureStyle: "raw" | "steps" | "flow" | "yesno";
+    notifyOnPublish?: boolean;
+    notifyRoleFilter?: RolloutRoleFilter | null;
+    emailOnPublish?: boolean;
+    emailRoleFilter?: RolloutRoleFilter | null;
+    newsOnPublish?: boolean;
   }) => {
     mutation.mutate({
       departmentId,

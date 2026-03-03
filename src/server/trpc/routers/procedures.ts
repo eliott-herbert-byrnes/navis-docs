@@ -11,7 +11,14 @@ import {
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ProcedureStatus, ProcedureStyle } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  Prisma,
+  ProcedureStatus,
+  ProcedureStyle,
+  RolloutRoleFilter,
+  RolloutType,
+} from "@prisma/client";
 import { generateProcedureEmbeddings } from "@/features/ai/actions/generate-embeddings";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
@@ -19,6 +26,7 @@ import { getInitialContentForStyle } from "@/features/procedures/utils/get-initi
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
+import { inngest } from "@/inngest/client";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -34,6 +42,11 @@ const createProcedureSchema = z.object({
   newProcedureCategory: z.boolean().optional(),
   newProcedureCategoryName: z.string().optional(),
   procedureStyle: z.enum(["raw", "steps", "flow", "yesno"]),
+  notifyOnPublish: z.boolean().optional(),
+  notifyRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
+  emailOnPublish: z.boolean().optional(),
+  emailRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
+  newsOnPublish: z.boolean().optional(),
 });
 const updateProcedureContentSchema = z.object({
   procedureId: z.uuid(),
@@ -509,6 +522,11 @@ export const procedureRouter = router({
         newProcedureCategory,
         newProcedureCategoryName,
         procedureStyle,
+        notifyOnPublish,
+        notifyRoleFilter,
+        emailOnPublish,
+        emailRoleFilter,
+        newsOnPublish,
       } = input;
 
       const team = await ctx.db.team.findFirst({
@@ -599,6 +617,11 @@ export const procedureRouter = router({
           style: finalisedProcedureStyle,
           status: ProcedureStatus.DRAFT,
           slug: makeSlugFromTitle(procedureTitle),
+          notifyOnPublish: notifyOnPublish || false,
+          notifyRoleFilter: notifyRoleFilter || null,
+          emailOnPublish: emailOnPublish || false,
+          emailRoleFilter: emailRoleFilter || null,
+          newsOnPublish: newsOnPublish || false,
         },
       });
 
@@ -666,6 +689,11 @@ export const procedureRouter = router({
         include: {
           pendingVersion: true,
           publishedVersion: true,
+          team: {
+            include: {
+              department: true,
+            },
+          },
         },
       });
 
@@ -703,6 +731,97 @@ export const procedureRouter = router({
           publishedVersionId: procedure.pendingVersion.id,
         },
       });
+
+      const {
+        notifyOnPublish,
+        notifyRoleFilter,
+        emailOnPublish,
+        emailRoleFilter,
+        newsOnPublish,
+      } = procedure;
+
+      const shouldCreateRollout =
+        notifyOnPublish || emailOnPublish || newsOnPublish;
+
+      if (shouldCreateRollout) {
+        const newPublishedVersionId = procedure.pendingVersion.id;
+        const orgId = procedure.team.department.orgId;
+
+        const rollout = await ctx.db.procedureRollout.create({
+          data: {
+            procedureId: procedure.id,
+            versionId: newPublishedVersionId,
+            orgId,
+            notifyRoleFilter: notifyRoleFilter ?? RolloutRoleFilter.ALL_USERS,
+            emailRoleFilter: emailOnPublish ? emailRoleFilter : null,
+            rolloutType: RolloutType.NEW,
+          },
+        });
+
+        let membershipWhere: Prisma.OrgMembershipWhereInput = {
+          orgId,
+        };
+
+        if (rollout.notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          membershipWhere.role = {
+            in: [OrgMembershipRole.OWNER, OrgMembershipRole.ADMIN],
+          };
+        } else if (
+          rollout.notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY
+        ) {
+          membershipWhere.role = OrgMembershipRole.MEMBER;
+        }
+
+        const memberships = await ctx.db.orgMembership.findMany({
+          where: membershipWhere,
+          select: { id: true, userId: true },
+        });
+
+        const inScopeUserIds = memberships.map((m) => m.userId);
+
+        const existingReads = await ctx.db.userProcedureRead.findMany({
+          where: {
+            userId: { in: inScopeUserIds },
+            procedureId: procedure.id,
+            versionId: rollout.versionId,
+          },
+          select: { userId: true },
+        });
+
+        const userIdsWithRead = new Set(existingReads.map((r) => r.userId));
+
+        const userIdsNeedingNonCompliant = inScopeUserIds.filter(
+          (id) => !userIdsWithRead.has(id),
+        );
+
+        if (userIdsNeedingNonCompliant.length > 0) {
+          await ctx.db.orgMembership.updateMany({
+            where: {
+              orgId,
+              userId: { in: userIdsNeedingNonCompliant },
+            },
+            data: {
+              compliant: false,
+            },
+          });
+        }
+
+        await inngest.send({
+          name: "procedure/roll-out",
+          data: {
+            rolloutId: rollout.id,
+            procedureId: procedure.id,
+            versionId: rollout.versionId,
+            orgId,
+            notifyRoleFilter: rollout.notifyRoleFilter,
+            emailOnPublish: !!emailOnPublish,
+            emailRoleFilter: rollout.emailRoleFilter,
+            newsOnPublish: !!newsOnPublish,
+            procedureTitle: procedure.title,
+            teamId: procedure.teamId,
+          },
+        });
+      }
 
       try {
         await generateProcedureEmbeddings(input.procedureId);
