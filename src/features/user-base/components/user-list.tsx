@@ -78,6 +78,7 @@ export const schema = z.object({
   orgId: z.string(),
   userId: z.string(),
   role: z.enum(OrgMembershipRole),
+  compliant: z.boolean(),
   user: z.object({
     id: z.string(),
     name: z.string().nullable(),
@@ -231,6 +232,16 @@ export function UserList({ data: initialData }: { data: User[] }) {
           <Badge variant="outline" className="text-muted-foreground px-1.5">
             {row.original.role}
           </Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "compliant",
+      header: "Compliant",
+      accessorFn: (row) => row.compliant,
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.original.compliant ? "Yes" : "No"}
         </div>
       ),
     },
