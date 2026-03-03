@@ -31,9 +31,7 @@ export function ProcedureRolloutEmail({
     (s): s is string => !!s,
   );
   const contextLine =
-    contextParts.length > 0
-      ? `(${contextParts.join(" · ")})`
-      : null;
+    contextParts.length > 0 ? `(${contextParts.join(" · ")})` : null;
 
   return (
     <Html lang="en">

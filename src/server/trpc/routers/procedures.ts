@@ -825,6 +825,28 @@ export const procedureRouter = router({
           });
         }
 
+        await createAuditLog({
+          orgId,
+          actorId: ctx.user?.id ?? "",
+          action: "PROCEDURE_ROLLOUT",
+          entityType: "PROCEDURE",
+          entityId: procedure.id,
+          afterJSON: {
+            rolloutId: rollout.id,
+            procedureId: procedure.id,
+            versionId: rollout.versionId,
+            when: new Date().toISOString(),
+            who: ctx.user?.id ?? "",
+            options: {
+              notifyOnPublish: !!notifyOnPublish,
+              emailOnPublish: !!emailOnPublish,
+              newsOnPublish: !!newsOnPublish,
+              notifyRoleFilter: rollout.notifyRoleFilter,
+              emailRoleFilter: rollout.emailRoleFilter,
+            },
+          },
+        });
+
         await inngest.send({
           name: "procedure/roll-out",
           data: {
@@ -1302,10 +1324,11 @@ export const procedureRouter = router({
         });
       }
 
-      // Get all rollouts in org for non-archived procedures
+      // Phase 7.2 + 7.3: Rollouts for compliant recomputation — non-archived only; only rollouts created after user joined (new joiners have no outstanding)
       const rollouts = await ctx.db.procedureRollout.findMany({
         where: {
           orgId,
+          createdAt: { gte: membership.createdAt },
           procedure: {
             status: { not: ProcedureStatus.ARCHIVED },
           },
@@ -1387,7 +1410,7 @@ export const procedureRouter = router({
   getOutstandingForCurrentUser: orgProcedure
     .input(
       z.object({
-        orgId: z.string().uuid().optional(), // optional: default to ctx.org.id
+        orgId: z.string().uuid().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -1407,9 +1430,11 @@ export const procedureRouter = router({
         return { data: [] };
       }
 
+      // Phase 7.2 + 7.3: Outstanding = non-archived procedures only; only rollouts created after user joined (new joiners have no outstanding)
       const rollouts = await ctx.db.procedureRollout.findMany({
         where: {
           orgId,
+          createdAt: { gte: membership.createdAt },
           procedure: {
             status: { not: ProcedureStatus.ARCHIVED },
           },
