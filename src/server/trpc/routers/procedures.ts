@@ -8,6 +8,7 @@ import {
   orgAdminProcedure,
   adminProcedure,
   rateLimitMiddleware,
+  protectedProcedure,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -397,6 +398,7 @@ export const procedureRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
+      const userId = ctx.user!.id ?? "";
       const [procedure, favorite] = await ctx.db.$transaction([
         ctx.db.procedure.findFirst({
           where: {
@@ -416,7 +418,7 @@ export const procedureRouter = router({
         ctx.db.favorite.findUnique({
           where: {
             userId_procedureId: {
-              userId: ctx.user!.id ?? "",
+              userId,
               procedureId: input.procedureId,
             },
           },
@@ -432,9 +434,25 @@ export const procedureRouter = router({
         });
       }
 
+      let isRead = false;
+      if (procedure.publishedVersion) {
+        const readRecord = await ctx.db.userProcedureRead.findUnique({
+          where: {
+            userId_procedureId_versionId: {
+              userId,
+              procedureId: procedure.id,
+              versionId: procedure.publishedVersion.id,
+            },
+          },
+          select: { userId: true },
+        });
+        isRead = !!readRecord;
+      }
+
       return {
         data: procedure,
         isFavorite: !!favorite,
+        isRead,
       };
     }),
 
@@ -1200,6 +1218,257 @@ export const procedureRouter = router({
 
       return {
         data: procedure,
+      };
+    }),
+  // Mutate: Mark Procedure as Read
+  markProcedureRead: orgProcedure
+    .use(rateLimitMiddleware("procedure-marked-as-read"))
+    .input(
+      z.object({
+        procedureId: z.uuid(),
+        versionId: z.uuid(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const procedure = await ctx.db.procedure.findUnique({
+        where: {
+          id: input.procedureId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
+        include: { publishedVersion: true },
+      });
+      if (!procedure) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
+        });
+      }
+
+      if (
+        !procedure.publishedVersion ||
+        procedure.publishedVersion.id !== input.versionId
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Version is not the current published version for this procedure",
+        });
+      }
+
+      const userId = ctx.user!.id ?? "";
+
+      // Marks procedure as read
+      await ctx.db.userProcedureRead.upsert({
+        where: {
+          userId_procedureId_versionId: {
+            userId,
+            procedureId: input.procedureId,
+            versionId: input.versionId,
+          },
+        },
+        update: {
+          readAt: new Date(),
+        },
+        create: {
+          userId,
+          procedureId: input.procedureId,
+          versionId: input.versionId,
+          readAt: new Date(),
+        },
+      });
+
+      const orgId = ctx.org!.id;
+
+      const membership = await ctx.db.orgMembership.findUnique({
+        where: {
+          orgId_userId: {
+            orgId,
+            userId,
+          },
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "User is not a member of this organization",
+        });
+      }
+
+      // Get all rollouts in org for non-archived procedures
+      const rollouts = await ctx.db.procedureRollout.findMany({
+        where: {
+          orgId,
+          procedure: {
+            status: { not: ProcedureStatus.ARCHIVED },
+          },
+        },
+        select: {
+          id: true,
+          procedureId: true,
+          versionId: true,
+          notifyRoleFilter: true,
+        },
+      });
+
+      const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
+        if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
+        if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          return (
+            membership.role === OrgMembershipRole.OWNER ||
+            membership.role === OrgMembershipRole.ADMIN
+          );
+        }
+        if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
+          return membership.role === OrgMembershipRole.MEMBER;
+        }
+        return false;
+      };
+
+      const inScopeRollouts = rollouts.filter((r) =>
+        isUserInScopeForRollout(r.notifyRoleFilter),
+      );
+
+      if (inScopeRollouts.length === 0) {
+        await ctx.db.orgMembership.update({
+          where: { id: membership.id },
+          data: { compliant: true },
+        });
+        return { data: { read: true, compliant: true } };
+      }
+
+      // Get all reads for this user over the in-scope rollout
+      const reads = await ctx.db.userProcedureRead.findMany({
+        where: {
+          userId,
+          OR: inScopeRollouts.map((r) => ({
+            procedureId: r.procedureId,
+            versionId: r.versionId,
+          })),
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+        },
+      });
+
+      const readSet = new Set(
+        reads.map((r) => `${r.procedureId}:${r.versionId}`),
+      );
+
+      const hasOutstanding = inScopeRollouts.some((r) => {
+        const key = `${r.procedureId}:${r.versionId}`;
+        return !readSet.has(key);
+      });
+
+      // If nothing outstanding mark as compliant
+      if (!hasOutstanding && !membership.compliant) {
+        await ctx.db.orgMembership.update({
+          where: { id: membership.id },
+          data: { compliant: true },
+        });
+      }
+
+      return {
+        data: {
+          read: true,
+          compliant: !hasOutstanding,
+        },
+      };
+    }),
+  // Query: GET outstanding procedure versions for current user (unread rollouts in this org)
+  getOutstandingForCurrentUser: orgProcedure
+    .input(
+      z.object({
+        orgId: z.string().uuid().optional(), // optional: default to ctx.org.id
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const orgId = input.orgId ?? ctx.org!.id;
+      const userId = ctx.user!.id ?? "";
+
+      const membership = await ctx.db.orgMembership.findUnique({
+        where: {
+          orgId_userId: {
+            orgId,
+            userId,
+          },
+        },
+      });
+
+      if (!membership) {
+        return { data: [] };
+      }
+
+      const rollouts = await ctx.db.procedureRollout.findMany({
+        where: {
+          orgId,
+          procedure: {
+            status: { not: ProcedureStatus.ARCHIVED },
+          },
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+          notifyRoleFilter: true,
+        },
+      });
+
+      const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
+        if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
+        if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          return (
+            membership.role === OrgMembershipRole.OWNER ||
+            membership.role === OrgMembershipRole.ADMIN
+          );
+        }
+        if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
+          return membership.role === OrgMembershipRole.MEMBER;
+        }
+        return false;
+      };
+
+      const inScopeRollouts = rollouts.filter((r) =>
+        isUserInScopeForRollout(r.notifyRoleFilter),
+      );
+
+      if (inScopeRollouts.length === 0) {
+        return { data: [] };
+      }
+
+      const reads = await ctx.db.userProcedureRead.findMany({
+        where: {
+          userId,
+          OR: inScopeRollouts.map((r) => ({
+            procedureId: r.procedureId,
+            versionId: r.versionId,
+          })),
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+        },
+      });
+
+      const readSet = new Set(
+        reads.map((r) => `${r.procedureId}:${r.versionId}`),
+      );
+
+      const outstanding = inScopeRollouts.filter((r) => {
+        const key = `${r.procedureId}:${r.versionId}`;
+        return !readSet.has(key);
+      });
+
+      return {
+        data: outstanding.map((r) => ({
+          procedureId: r.procedureId,
+          versionId: r.versionId,
+        })),
       };
     }),
 });
