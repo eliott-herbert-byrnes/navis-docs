@@ -20,6 +20,7 @@ type ProcedureViewWithAIChatProps = {
   procedureId: string;
   canEdit: boolean;
   isFavorite: boolean;
+  isRead: boolean;
   canViewProcedureAudit: boolean;
 };
 
@@ -28,6 +29,7 @@ export function ProcedureViewWithAIChat({
   procedureId,
   canEdit,
   isFavorite,
+  isRead,
   canViewProcedureAudit,
 }: ProcedureViewWithAIChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -60,6 +62,7 @@ export function ProcedureViewWithAIChat({
             procedureId={procedureId}
             canEdit={canEdit}
             isFavorite={isFavorite}
+            isRead={isRead}
             onAskAI={handleAskAI}
             showDocView={showDocView}
             onViewText={() => setShowDocView((prev) => !prev)}

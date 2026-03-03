@@ -25,7 +25,7 @@ import {
 import { ProcedureSearchButton } from "./procedure-search-button";
 import { IdeaButton } from "./Idea/components/idea-button";
 import { ProcedureStatus } from "@prisma/client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Sheet,
   SheetHeader,
@@ -46,15 +46,29 @@ type ProcedureSidebarProps = {
     title: string;
   }[];
   categories: CategoryWithProcedures;
+  unreadProcedureVersionIds?: string[];
 };
 
 export function ProcedureSidebar({
   isAdmin,
   uncategorizedProcedures,
   categories,
+  unreadProcedureVersionIds = [],
 }: ProcedureSidebarProps) {
   const [open, setOpen] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
+
+  const unreadSet = useMemo(
+    () => new Set(unreadProcedureVersionIds),
+    [unreadProcedureVersionIds],
+  );
+
+  const isProcedureUnread = (
+    procedureId: string,
+    publishedVersionId: string | null,
+  ) =>
+    !!publishedVersionId &&
+    unreadSet.has(`${procedureId}:${publishedVersionId}`);
 
   const SidebarContent = () => (
     <nav className="flex-1 overflow-y-auto p-2">
@@ -102,66 +116,89 @@ export function ProcedureSidebar({
           <>
             {categories
               .filter((category) => category.procedures.length > 0)
-              .map((category) => (
-                <Collapsible key={category.id}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-between group"
-                    >
-                      <span className="font-medium text-sm">
-                        {category.name}
-                      </span>
-                      <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-1 mt-1">
-                    {category.procedures.map((procedure) => (
-                      <Link
-                        key={procedure.id}
-                        href={viewProcedurePath(
-                          departmentId,
-                          teamId,
-                          procedure.id,
-                        )}
-                        className="block"
+              .map((category) => {
+                const categoryHasUnread = category.procedures.some((p) =>
+                  isProcedureUnread(p.id, p.publishedVersionId ?? null),
+                );
+                return (
+                  <Collapsible key={category.id}>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-between group"
                       >
-                        {procedure.status === "PUBLISHED" ? (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-full justify-start text-sm font-normal hover:bg-accent"
-                            title={procedure.title}
-                          >
-                            <span className="truncate">
-                              {procedure.title.length > 28
-                                ? `${procedure.title.slice(0, 28)}...`
-                                : procedure.title}
-                            </span>
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={cn(
-                              isAdmin
-                                ? "w-full justify-start text-sm font-normal hover:bg-accent"
-                                : "hidden",
+                        <span className="font-medium text-sm flex items-center gap-1.5">
+                          {category.name}
+                          {categoryHasUnread && (
+                            <span
+                              className="size-1.5 shrink-0 rounded-full bg-primary"
+                              aria-label="Has unread procedures"
+                            />
+                          )}
+                        </span>
+                        <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-90" />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pl-4 space-y-1 mt-1">
+                      {category.procedures.map((procedure) => {
+                        const unread = isProcedureUnread(
+                          procedure.id,
+                          procedure.publishedVersionId ?? null,
+                        );
+                        return (
+                          <Link
+                            key={procedure.id}
+                            href={viewProcedurePath(
+                              departmentId,
+                              teamId,
+                              procedure.id,
                             )}
-                            title={procedure.title}
+                            className="block"
                           >
-                            <span className="truncate">
-                              {procedure.title.length > 28
-                                ? `${procedure.title.slice(0, 28)} (Draft)...`
-                                : `${procedure.title} (Draft)`}
-                            </span>
-                          </Button>
-                        )}
-                      </Link>
-                    ))}
-                  </CollapsibleContent>
-                </Collapsible>
-              ))}
+                            {procedure.status === "PUBLISHED" ? (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="w-full justify-start text-sm font-normal hover:bg-accent gap-1.5"
+                                title={procedure.title}
+                              >
+                                {unread && (
+                                  <span
+                                    className="size-1.5 shrink-0 rounded-full bg-primary"
+                                    aria-hidden
+                                  />
+                                )}
+                                <span className="truncate">
+                                  {procedure.title.length > 28
+                                    ? `${procedure.title.slice(0, 28)}...`
+                                    : procedure.title}
+                                </span>
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                  isAdmin
+                                    ? "w-full justify-start text-sm font-normal hover:bg-accent"
+                                    : "hidden",
+                                )}
+                                title={procedure.title}
+                              >
+                                <span className="truncate">
+                                  {procedure.title.length > 28
+                                    ? `${procedure.title.slice(0, 28)} (Draft)...`
+                                    : `${procedure.title} (Draft)`}
+                                </span>
+                              </Button>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              })}
 
             {/* Uncategorized Procedures */}
             {uncategorizedProcedures.length > 0 && (

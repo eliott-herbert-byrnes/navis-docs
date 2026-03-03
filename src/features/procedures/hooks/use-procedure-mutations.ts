@@ -94,6 +94,35 @@ export function usePublishProcedure(departmentId: string, teamId: string) {
   };
 }
 
+export function useMarkProcedureRead() {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+  const mutation = trpc.procedures.markProcedureRead.useMutation({
+    onSuccess: (_data, variables) => {
+      utils.procedures.getForView.invalidate({
+        procedureId: variables.procedureId,
+      });
+      utils.procedures.getOutstandingForCurrentUser.invalidate();
+      toast.success("Marked as read");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ?? "Failed to mark procedure as read, try again",
+      );
+    },
+  });
+
+  const markProcedureRead = (procedureId: string, versionId: string) => {
+    mutation.mutate({ procedureId, versionId });
+  };
+
+  return {
+    markProcedureRead,
+    isPending: mutation.isPending,
+  };
+}
+
 export function useUpdateProcedureContent() {
   const utils = trpc.useUtils();
   const mutation = trpc.procedures.updateProcedureContent.useMutation({

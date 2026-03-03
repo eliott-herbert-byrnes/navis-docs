@@ -252,6 +252,7 @@ export const procedureRouter = router({
               slug: true,
               title: true,
               status: true,
+              publishedVersionId: true,
             },
             orderBy: {
               title: "asc",
