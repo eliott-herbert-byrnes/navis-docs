@@ -8,10 +8,18 @@ import {
   orgAdminProcedure,
   adminProcedure,
   rateLimitMiddleware,
+  protectedProcedure,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ProcedureStatus, ProcedureStyle } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  Prisma,
+  ProcedureStatus,
+  ProcedureStyle,
+  RolloutRoleFilter,
+  RolloutType,
+} from "@prisma/client";
 import { generateProcedureEmbeddings } from "@/features/ai/actions/generate-embeddings";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
@@ -19,13 +27,13 @@ import { getInitialContentForStyle } from "@/features/procedures/utils/get-initi
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
+import { inngest } from "@/inngest/client";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
 const procedureSchema = z.string();
 const procedureIdSchema = z.uuid();
 const createProcedureSchema = z.object({
-  title: z.string().min(1, { message: "Title is required" }),
   departmentId: z.string().min(1, { message: "Department is required" }),
   teamId: z.string().min(1, { message: "Team is required" }),
   procedureTitle: z.string().min(1, { message: "Is Required" }).max(100),
@@ -34,6 +42,11 @@ const createProcedureSchema = z.object({
   newProcedureCategory: z.boolean().optional(),
   newProcedureCategoryName: z.string().optional(),
   procedureStyle: z.enum(["raw", "steps", "flow", "yesno"]),
+  notifyOnPublish: z.boolean().optional(),
+  notifyRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
+  emailOnPublish: z.boolean().optional(),
+  emailRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
+  newsOnPublish: z.boolean().optional(),
 });
 const updateProcedureContentSchema = z.object({
   procedureId: z.uuid(),
@@ -238,6 +251,7 @@ export const procedureRouter = router({
               slug: true,
               title: true,
               status: true,
+              publishedVersionId: true,
             },
             orderBy: {
               title: "asc",
@@ -384,6 +398,7 @@ export const procedureRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
+      const userId = ctx.user!.id ?? "";
       const [procedure, favorite] = await ctx.db.$transaction([
         ctx.db.procedure.findFirst({
           where: {
@@ -403,7 +418,7 @@ export const procedureRouter = router({
         ctx.db.favorite.findUnique({
           where: {
             userId_procedureId: {
-              userId: ctx.user!.id ?? "",
+              userId,
               procedureId: input.procedureId,
             },
           },
@@ -419,9 +434,25 @@ export const procedureRouter = router({
         });
       }
 
+      let isRead = false;
+      if (procedure.publishedVersion) {
+        const readRecord = await ctx.db.userProcedureRead.findUnique({
+          where: {
+            userId_procedureId_versionId: {
+              userId,
+              procedureId: procedure.id,
+              versionId: procedure.publishedVersion.id,
+            },
+          },
+          select: { userId: true },
+        });
+        isRead = !!readRecord;
+      }
+
       return {
         data: procedure,
         isFavorite: !!favorite,
+        isRead,
       };
     }),
 
@@ -500,7 +531,6 @@ export const procedureRouter = router({
     .input(createProcedureSchema)
     .mutation(async ({ ctx, input }) => {
       const {
-        title,
         departmentId,
         teamId,
         procedureTitle,
@@ -509,6 +539,11 @@ export const procedureRouter = router({
         newProcedureCategory,
         newProcedureCategoryName,
         procedureStyle,
+        notifyOnPublish,
+        notifyRoleFilter,
+        emailOnPublish,
+        emailRoleFilter,
+        newsOnPublish,
       } = input;
 
       const team = await ctx.db.team.findFirst({
@@ -531,7 +566,7 @@ export const procedureRouter = router({
 
       const existingName = await ctx.db.procedure.findFirst({
         where: {
-          title,
+          title: procedureTitle,
           team: {
             department: {
               orgId: ctx.org!.id,
@@ -599,6 +634,11 @@ export const procedureRouter = router({
           style: finalisedProcedureStyle,
           status: ProcedureStatus.DRAFT,
           slug: makeSlugFromTitle(procedureTitle),
+          notifyOnPublish: notifyOnPublish || false,
+          notifyRoleFilter: notifyRoleFilter || null,
+          emailOnPublish: emailOnPublish || false,
+          emailRoleFilter: emailRoleFilter || null,
+          newsOnPublish: newsOnPublish || false,
         },
       });
 
@@ -666,6 +706,11 @@ export const procedureRouter = router({
         include: {
           pendingVersion: true,
           publishedVersion: true,
+          team: {
+            include: {
+              department: true,
+            },
+          },
         },
       });
 
@@ -704,13 +749,127 @@ export const procedureRouter = router({
         },
       });
 
+      const {
+        notifyOnPublish,
+        notifyRoleFilter,
+        emailOnPublish,
+        emailRoleFilter,
+        newsOnPublish,
+      } = procedure;
+
+      const shouldCreateRollout =
+        notifyOnPublish || emailOnPublish || newsOnPublish;
+
+      if (shouldCreateRollout) {
+        const newPublishedVersionId = procedure.pendingVersion.id;
+        const orgId = procedure.team.department.orgId;
+
+        const rollout = await ctx.db.procedureRollout.create({
+          data: {
+            procedureId: procedure.id,
+            versionId: newPublishedVersionId,
+            orgId,
+            notifyRoleFilter: notifyRoleFilter ?? RolloutRoleFilter.ALL_USERS,
+            emailRoleFilter: emailOnPublish ? emailRoleFilter : null,
+            rolloutType: RolloutType.NEW,
+          },
+        });
+
+        let membershipWhere: Prisma.OrgMembershipWhereInput = {
+          orgId,
+        };
+
+        if (rollout.notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          membershipWhere.role = {
+            in: [OrgMembershipRole.OWNER, OrgMembershipRole.ADMIN],
+          };
+        } else if (
+          rollout.notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY
+        ) {
+          membershipWhere.role = OrgMembershipRole.MEMBER;
+        }
+
+        const memberships = await ctx.db.orgMembership.findMany({
+          where: membershipWhere,
+          select: { id: true, userId: true },
+        });
+
+        const inScopeUserIds = memberships.map((m) => m.userId);
+
+        const existingReads = await ctx.db.userProcedureRead.findMany({
+          where: {
+            userId: { in: inScopeUserIds },
+            procedureId: procedure.id,
+            versionId: rollout.versionId,
+          },
+          select: { userId: true },
+        });
+
+        const userIdsWithRead = new Set(existingReads.map((r) => r.userId));
+
+        const userIdsNeedingNonCompliant = inScopeUserIds.filter(
+          (id) => !userIdsWithRead.has(id),
+        );
+
+        if (userIdsNeedingNonCompliant.length > 0) {
+          await ctx.db.orgMembership.updateMany({
+            where: {
+              orgId,
+              userId: { in: userIdsNeedingNonCompliant },
+            },
+            data: {
+              compliant: false,
+            },
+          });
+        }
+
+        await createAuditLog({
+          orgId,
+          actorId: ctx.user?.id ?? "",
+          action: "PROCEDURE_ROLLOUT",
+          entityType: "PROCEDURE",
+          entityId: procedure.id,
+          afterJSON: {
+            rolloutId: rollout.id,
+            procedureId: procedure.id,
+            versionId: rollout.versionId,
+            when: new Date().toISOString(),
+            who: ctx.user?.id ?? "",
+            options: {
+              notifyOnPublish: !!notifyOnPublish,
+              emailOnPublish: !!emailOnPublish,
+              newsOnPublish: !!newsOnPublish,
+              notifyRoleFilter: rollout.notifyRoleFilter,
+              emailRoleFilter: rollout.emailRoleFilter,
+            },
+          },
+        });
+
+        await inngest.send({
+          name: "procedure/roll-out",
+          data: {
+            rolloutId: rollout.id,
+            procedureId: procedure.id,
+            versionId: rollout.versionId,
+            orgId,
+            notifyRoleFilter: rollout.notifyRoleFilter,
+            emailOnPublish: !!emailOnPublish,
+            emailRoleFilter: rollout.emailRoleFilter,
+            newsOnPublish: !!newsOnPublish,
+            procedureTitle: procedure.title,
+            teamId: procedure.teamId,
+            createdBy: ctx.user?.id ?? "",
+          },
+        });
+      }
+
       try {
         await generateProcedureEmbeddings(input.procedureId);
       } catch (error) {
         console.error(error);
         throw new TRPCError({
           code: "NOT_IMPLEMENTED",
-          message: "Failed to embed procedure, contact customer support",
+          message: "Failed to embed procedure, try again or contact support",
         });
       }
 
@@ -1081,6 +1240,360 @@ export const procedureRouter = router({
 
       return {
         data: procedure,
+      };
+    }),
+  // Mutate: Mark Procedure as Read
+  markProcedureRead: orgProcedure
+    .use(rateLimitMiddleware("procedure-marked-as-read"))
+    .input(
+      z.object({
+        procedureId: z.uuid(),
+        versionId: z.uuid(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const procedure = await ctx.db.procedure.findUnique({
+        where: {
+          id: input.procedureId,
+          team: {
+            department: {
+              orgId: ctx.org!.id,
+            },
+          },
+        },
+        include: { publishedVersion: true },
+      });
+      if (!procedure) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
+        });
+      }
+
+      if (
+        !procedure.publishedVersion ||
+        procedure.publishedVersion.id !== input.versionId
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Version is not the current published version for this procedure",
+        });
+      }
+
+      const userId = ctx.user!.id ?? "";
+
+      // Marks procedure as read
+      await ctx.db.userProcedureRead.upsert({
+        where: {
+          userId_procedureId_versionId: {
+            userId,
+            procedureId: input.procedureId,
+            versionId: input.versionId,
+          },
+        },
+        update: {
+          readAt: new Date(),
+        },
+        create: {
+          userId,
+          procedureId: input.procedureId,
+          versionId: input.versionId,
+          readAt: new Date(),
+        },
+      });
+
+      const orgId = ctx.org!.id;
+
+      const membership = await ctx.db.orgMembership.findUnique({
+        where: {
+          orgId_userId: {
+            orgId,
+            userId,
+          },
+        },
+      });
+
+      if (!membership) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "User is not a member of this organization",
+        });
+      }
+
+      // Phase 7.2 + 7.3: Rollouts for compliant recomputation — non-archived only; only rollouts created after user joined (new joiners have no outstanding)
+      const rollouts = await ctx.db.procedureRollout.findMany({
+        where: {
+          orgId,
+          createdAt: { gte: membership.createdAt },
+          procedure: {
+            status: { not: ProcedureStatus.ARCHIVED },
+          },
+        },
+        select: {
+          id: true,
+          procedureId: true,
+          versionId: true,
+          notifyRoleFilter: true,
+        },
+      });
+
+      const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
+        if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
+        if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          return (
+            membership.role === OrgMembershipRole.OWNER ||
+            membership.role === OrgMembershipRole.ADMIN
+          );
+        }
+        if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
+          return membership.role === OrgMembershipRole.MEMBER;
+        }
+        return false;
+      };
+
+      const inScopeRollouts = rollouts.filter((r) =>
+        isUserInScopeForRollout(r.notifyRoleFilter),
+      );
+
+      if (inScopeRollouts.length === 0) {
+        await ctx.db.orgMembership.update({
+          where: { id: membership.id },
+          data: { compliant: true },
+        });
+        return { data: { read: true, compliant: true } };
+      }
+
+      // Get all reads for this user over the in-scope rollout
+      const reads = await ctx.db.userProcedureRead.findMany({
+        where: {
+          userId,
+          OR: inScopeRollouts.map((r) => ({
+            procedureId: r.procedureId,
+            versionId: r.versionId,
+          })),
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+        },
+      });
+
+      const readSet = new Set(
+        reads.map((r) => `${r.procedureId}:${r.versionId}`),
+      );
+
+      const hasOutstanding = inScopeRollouts.some((r) => {
+        const key = `${r.procedureId}:${r.versionId}`;
+        return !readSet.has(key);
+      });
+
+      // If nothing outstanding mark as compliant
+      if (!hasOutstanding && !membership.compliant) {
+        await ctx.db.orgMembership.update({
+          where: { id: membership.id },
+          data: { compliant: true },
+        });
+      }
+
+      return {
+        data: {
+          read: true,
+          compliant: !hasOutstanding,
+        },
+      };
+    }),
+  // Query: GET outstanding procedure versions for current user (unread rollouts in this org)
+  getOutstandingForCurrentUser: orgProcedure
+    .input(
+      z.object({
+        orgId: z.string().uuid().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const orgId = input.orgId ?? ctx.org!.id;
+      const userId = ctx.user!.id ?? "";
+
+      const membership = await ctx.db.orgMembership.findUnique({
+        where: {
+          orgId_userId: {
+            orgId,
+            userId,
+          },
+        },
+      });
+
+      if (!membership) {
+        return { data: [] };
+      }
+
+      const rollouts = await ctx.db.procedureRollout.findMany({
+        where: {
+          orgId,
+          createdAt: { gte: membership.createdAt },
+          procedure: {
+            status: { not: ProcedureStatus.ARCHIVED },
+          },
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+          notifyRoleFilter: true,
+        },
+      });
+
+      const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
+        if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
+        if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          return (
+            membership.role === OrgMembershipRole.OWNER ||
+            membership.role === OrgMembershipRole.ADMIN
+          );
+        }
+        if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
+          return membership.role === OrgMembershipRole.MEMBER;
+        }
+        return false;
+      };
+
+      const inScopeRollouts = rollouts.filter((r) =>
+        isUserInScopeForRollout(r.notifyRoleFilter),
+      );
+
+      if (inScopeRollouts.length === 0) {
+        return { data: [] };
+      }
+
+      const reads = await ctx.db.userProcedureRead.findMany({
+        where: {
+          userId,
+          OR: inScopeRollouts.map((r) => ({
+            procedureId: r.procedureId,
+            versionId: r.versionId,
+          })),
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+        },
+      });
+
+      const readSet = new Set(
+        reads.map((r) => `${r.procedureId}:${r.versionId}`),
+      );
+
+      const outstanding = inScopeRollouts.filter((r) => {
+        const key = `${r.procedureId}:${r.versionId}`;
+        return !readSet.has(key);
+      });
+
+      return {
+        data: outstanding.map((r) => ({
+          procedureId: r.procedureId,
+          versionId: r.versionId,
+        })),
+      };
+    }),
+  // Query: GET outstanding procedure versions for a given user (admin only; for user list viewer)
+  getOutstandingForUser: adminProcedure
+    .use(rateLimitMiddleware("procedure-get-outstanding-for-user"))
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        orgId: z.string().uuid().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const orgId = input.orgId ?? ctx.org?.id;
+      if (!orgId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Organization context or orgId is required",
+        });
+      }
+      const userId = input.userId;
+
+      const membership = await ctx.db.orgMembership.findUnique({
+        where: {
+          orgId_userId: {
+            orgId,
+            userId,
+          },
+        },
+      });
+
+      if (!membership) {
+        return { data: [] };
+      }
+
+      const rollouts = await ctx.db.procedureRollout.findMany({
+        where: {
+          orgId,
+          createdAt: { gte: membership.createdAt },
+          procedure: {
+            status: { not: ProcedureStatus.ARCHIVED },
+          },
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+          notifyRoleFilter: true,
+          procedure: { select: { title: true } },
+        },
+      });
+
+      const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
+        if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
+        if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+          return (
+            membership.role === OrgMembershipRole.OWNER ||
+            membership.role === OrgMembershipRole.ADMIN
+          );
+        }
+        if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
+          return membership.role === OrgMembershipRole.MEMBER;
+        }
+        return false;
+      };
+
+      const inScopeRollouts = rollouts.filter((r) =>
+        isUserInScopeForRollout(r.notifyRoleFilter),
+      );
+
+      if (inScopeRollouts.length === 0) {
+        return { data: [] };
+      }
+
+      const reads = await ctx.db.userProcedureRead.findMany({
+        where: {
+          userId,
+          OR: inScopeRollouts.map((r) => ({
+            procedureId: r.procedureId,
+            versionId: r.versionId,
+          })),
+        },
+        select: {
+          procedureId: true,
+          versionId: true,
+        },
+      });
+
+      const readSet = new Set(
+        reads.map((r) => `${r.procedureId}:${r.versionId}`),
+      );
+
+      const outstanding = inScopeRollouts.filter((r) => {
+        const key = `${r.procedureId}:${r.versionId}`;
+        return !readSet.has(key);
+      });
+
+      return {
+        data: outstanding.map((r) => ({
+          procedureId: r.procedureId,
+          versionId: r.versionId,
+          procedureTitle: r.procedure.title,
+        })),
       };
     }),
 });

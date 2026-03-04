@@ -71,6 +71,7 @@ import { useDeleteUsers } from "../hooks/use-user-mutations";
 import { OrgMembershipRole } from "@prisma/client";
 import { UserRoleChangeButton } from "./user-role-change-button";
 import { toast } from "sonner";
+import { trpc } from "@/trpc/client";
 
 export const schema = z.object({
   id: z.string(),
@@ -78,6 +79,7 @@ export const schema = z.object({
   orgId: z.string(),
   userId: z.string(),
   role: z.enum(OrgMembershipRole),
+  compliant: z.boolean(),
   user: z.object({
     id: z.string(),
     name: z.string().nullable(),
@@ -96,10 +98,18 @@ type User = z.infer<typeof schema>;
 
 function TableCellViewer({ item }: { item: User }) {
   const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
+
+  const { data, isLoading } = trpc.procedures.getOutstandingForUser.useQuery(
+    { userId: item.userId, orgId: item.orgId },
+    { enabled: open && !item.compliant },
+  );
+
+  const outstanding = data?.data ?? [];
 
   return (
     <div className="w-full">
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button
             variant="link"
@@ -137,6 +147,30 @@ function TableCellViewer({ item }: { item: User }) {
               <p className="text-muted-foreground">
                 {format(item.user.createdAt, "yyyy-MM-dd, HH:mm")}
               </p>
+            </div>
+
+            <Separator />
+            <div className="flex flex-col gap-2">
+              <Label className="font-semibold">
+                Oustanding Compliance List
+              </Label>
+              {item.compliant ? (
+                <p className="text-muted-foreground">This user is compliant</p>
+              ) : isLoading ? (
+                <p className="text-muted-foreground">Loading…</p>
+              ) : outstanding.length > 0 ? (
+                <div className="list-disc list-inside space-y-1 text-muted-foreground">
+                  {outstanding.map((proc) => (
+                    <div className="flex flex-col">
+                      <span key={`${proc.procedureId}-${proc.versionId}`}>
+                        {`${proc.procedureTitle}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">This user is compliant.</p>
+              )}
             </div>
           </div>
           <SheetFooter>
@@ -231,6 +265,16 @@ export function UserList({ data: initialData }: { data: User[] }) {
           <Badge variant="outline" className="text-muted-foreground px-1.5">
             {row.original.role}
           </Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "compliant",
+      header: "Compliant",
+      accessorFn: (row) => row.compliant,
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground">
+          {row.original.compliant ? "Yes" : "No"}
         </div>
       ),
     },

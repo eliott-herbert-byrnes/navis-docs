@@ -22,6 +22,14 @@ import { LucideLoaderCircle } from "lucide-react";
 import { ProcedureSelectCategories } from "./procedure-select-categories";
 import { useCreateProcedure } from "../hooks/use-procedure-mutations";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RolloutRoleFilter } from "@prisma/client";
 
 type CreateProcedureFormProps = {
   categories: { id: string; name: string }[];
@@ -33,6 +41,9 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
   const [createNewCategory, setCreateNewCategory] = useState(
     categories.length === 0,
   );
+  const [notifyOnPublishChecked, setNotifyOnPublishChecked] = useState(false);
+  const [emailOnPublishChecked, setEmailOnPublishChecked] = useState(false);
+  const [newsOnPublishChecked, setNewsOnPublishChecked] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
 
   const { createProcedure, isPending } = useCreateProcedure(
@@ -54,6 +65,18 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
+    const notifyOnPublish = formData.get("notifyOnPublish") === "on";
+    const emailOnPublish = formData.get("emailOnPublish") === "on";
+    const newsOnPublish = formData.get("newsOnPublish") === "on";
+
+    const notifyRoleFilter = notifyOnPublish
+      ? (formData.get("notifyRoleFilter") as RolloutRoleFilter | null)
+      : null;
+
+    const emailRoleFilter = emailOnPublish
+      ? (formData.get("emailRoleFilter") as RolloutRoleFilter | null)
+      : null;
+
     createProcedure({
       procedureTitle: String(formData.get("procedureTitle") ?? "").trim(),
       procedureDescription: String(
@@ -72,6 +95,12 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
         | "steps"
         | "flow"
         | "yesno",
+
+      notifyOnPublish,
+      notifyRoleFilter,
+      emailOnPublish,
+      emailRoleFilter,
+      newsOnPublish,
     });
   };
 
@@ -113,11 +142,13 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
               </FieldGroup>
             </FieldSet>
             <FieldSeparator />
+
             <FieldSet>
               <FieldLegend>Procedure Category</FieldLegend>
               <FieldDescription>
                 Select the category of the procedure or create a new one.
               </FieldDescription>
+
               <Field>
                 <FieldLabel>Categories</FieldLabel>
                 <ProcedureSelectCategories
@@ -146,7 +177,7 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
                   </FieldLabel>
                 </Field>
                 {createNewCategory && (
-                  <Field>
+                  <Field className="animate-fade-from-top">
                     <Input
                       id="newProcedureCategoryName"
                       placeholder="New Category Name"
@@ -159,10 +190,11 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
               </FieldGroup>
             </FieldSet>
             <FieldSeparator />
+
             <FieldSet>
               <FieldGroup>
                 <FieldSet>
-                  <FieldLabel htmlFor="procedureStyle">
+                  <FieldLabel className="text-1xl" htmlFor="procedureStyle">
                     Procedure Style
                   </FieldLabel>
                   <FieldDescription>
@@ -221,6 +253,121 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
                 </FieldSet>
               </FieldGroup>
             </FieldSet>
+
+            <FieldSeparator />
+
+            <FieldSet>
+              <FieldLegend>Procedure roll-out</FieldLegend>
+              <FieldDescription>
+                Choose how to notify users when this procedure is published.
+              </FieldDescription>
+              <FieldGroup className="space-y-4">
+                {/* Notify users (in-app) */}
+                <Field>
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="notifyOnPublish"
+                      name="notifyOnPublish"
+                      checked={notifyOnPublishChecked}
+                      onCheckedChange={(v) => setNotifyOnPublishChecked(!!v)}
+                      disabled={isPending}
+                    />
+                    <FieldContent>
+                      <FieldTitle>Notify users in app</FieldTitle>
+                      <FieldDescription>
+                        Show this as an unread procedure for selected users.
+                      </FieldDescription>
+                    </FieldContent>
+                  </Field>
+
+                  {notifyOnPublishChecked && (
+                    <div className="ml-7 max-w-xs animate-fade-from-top">
+                      {/* <FieldLabel htmlFor="notifyRoleFilter">
+                        Who should see it as unread?
+                        </FieldLabel> */}
+                      <Select name="notifyRoleFilter" disabled={isPending}>
+                        <SelectTrigger id="notifyRoleFilter" className="w-full">
+                          <SelectValue placeholder="Select a user group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={RolloutRoleFilter.ALL_USERS}>
+                            All users
+                          </SelectItem>
+                          <SelectItem value={RolloutRoleFilter.ADMINS_ONLY}>
+                            Admins (Owners + Admins)
+                          </SelectItem>
+                          <SelectItem value={RolloutRoleFilter.MEMBERS_ONLY}>
+                            Members
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </Field>
+
+                {/* Email users */}
+                <Field className="w-full">
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="emailOnPublishChecked"
+                      name="emailOnPublishChecked"
+                      checked={emailOnPublishChecked}
+                      onCheckedChange={(v) => setEmailOnPublishChecked(!!v)}
+                      disabled={isPending}
+                    />
+                    <FieldContent>
+                      <FieldTitle>Notify users by email</FieldTitle>
+                      <FieldDescription>
+                        Send an automated email notification to selected users.
+                      </FieldDescription>
+                    </FieldContent>
+                  </Field>
+
+                  {emailOnPublishChecked && (
+                    <div className="ml-7 max-w-xs animate-fade-from-top">
+                      {/* <FieldLabel htmlFor="notifyRoleFilter">
+                        Who should see it as unread?
+                        </FieldLabel> */}
+                      <Select name="emailRoleFilter" disabled={isPending}>
+                        <SelectTrigger id="emailRoleFilter" className="w-full">
+                          <SelectValue placeholder="Select a user group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={RolloutRoleFilter.ALL_USERS}>
+                            All users
+                          </SelectItem>
+                          <SelectItem value={RolloutRoleFilter.ADMINS_ONLY}>
+                            Admins (Owners + Admins)
+                          </SelectItem>
+                          <SelectItem value={RolloutRoleFilter.MEMBERS_ONLY}>
+                            Members
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </Field>
+                {/* News post */}
+                <Field>
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="newsOnPublish"
+                      name="newsOnPublish"
+                      checked={newsOnPublishChecked}
+                      onCheckedChange={(v) => setNewsOnPublishChecked(!!v)}
+                      disabled={isPending}
+                    />
+                    <FieldContent>
+                      <FieldTitle>Create news post</FieldTitle>
+                      <FieldDescription>
+                        Add an automated news post for this team when published.
+                      </FieldDescription>
+                    </FieldContent>
+                  </Field>
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+
             <FieldSeparator />
             <Field orientation="horizontal">
               <Button type="submit" disabled={isPending || isCancelPending}>

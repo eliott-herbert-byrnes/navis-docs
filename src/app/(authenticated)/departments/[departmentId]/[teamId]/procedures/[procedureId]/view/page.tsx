@@ -16,7 +16,11 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
   const canViewProcedureAudit = await isOrgAdminOrOwner(user!.userId);
 
   const trpc = await serverTrpc();
-  const { data: procedure, isFavorite } = await trpc.procedures.getForView({
+  const {
+    data: procedure,
+    isFavorite,
+    isRead,
+  } = await trpc.procedures.getForView({
     procedureId,
   });
 
@@ -34,6 +38,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
           procedureId={procedureId}
           canEdit={canViewProcedureAudit}
           isFavorite={isFavorite}
+          isRead={isRead}
           canViewProcedureAudit={canViewProcedureAudit}
         />
       </Suspense>

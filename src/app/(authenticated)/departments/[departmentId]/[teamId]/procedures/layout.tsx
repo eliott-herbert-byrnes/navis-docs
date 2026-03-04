@@ -20,10 +20,17 @@ export default async function ProcedureLayout({
   const isAdmin = await isOrgAdminOrOwner(user.userId);
 
   const trpc = await serverTrpc();
-  const { data: procedures } = await trpc.procedures.list({ teamId });
-  const { data: categories } = await trpc.procedures.categoriesWithProcedures({
-    teamId,
-  });
+  const [{ data: procedures }, { data: categories }, { data: outstanding }] =
+    await Promise.all([
+      trpc.procedures.list({ teamId }),
+      trpc.procedures.categoriesWithProcedures({ teamId }),
+      trpc.procedures.getOutstandingForCurrentUser({}),
+    ]);
+
+  const unreadProcedureVersionIds =
+    outstanding?.map(
+      ({ procedureId, versionId }) => `${procedureId}:${versionId}`,
+    ) ?? [];
 
   return (
     <Providers>
@@ -33,6 +40,7 @@ export default async function ProcedureLayout({
             isAdmin={isAdmin}
             uncategorizedProcedures={procedures}
             categories={categories}
+            unreadProcedureVersionIds={unreadProcedureVersionIds}
           />
           <main className="flex-1 overflow-auto p-4">{children}</main>
         </div>

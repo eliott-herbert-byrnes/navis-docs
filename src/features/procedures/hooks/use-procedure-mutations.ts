@@ -8,6 +8,7 @@ import {
   teamProcedurePath,
   viewProcedurePath,
 } from "@/app/paths";
+import { RolloutRoleFilter } from "@prisma/client";
 
 export function useCreateProcedure(departmentId: string, teamId: string) {
   const utils = trpc.useUtils();
@@ -37,12 +38,17 @@ export function useCreateProcedure(departmentId: string, teamId: string) {
     newProcedureCategory?: boolean;
     newProcedureCategoryName?: string;
     procedureStyle: "raw" | "steps" | "flow" | "yesno";
+    notifyOnPublish?: boolean;
+    notifyRoleFilter?: RolloutRoleFilter | null;
+    emailOnPublish?: boolean;
+    emailRoleFilter?: RolloutRoleFilter | null;
+    newsOnPublish?: boolean;
   }) => {
     mutation.mutate({
       departmentId,
       teamId,
       ...data,
-      title: "",
+      procedureTitle: "",
     });
   };
 
@@ -84,6 +90,35 @@ export function usePublishProcedure(departmentId: string, teamId: string) {
 
   return {
     publishProcedure,
+    isPending: mutation.isPending,
+  };
+}
+
+export function useMarkProcedureRead() {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+  const mutation = trpc.procedures.markProcedureRead.useMutation({
+    onSuccess: (_data, variables) => {
+      utils.procedures.getForView.invalidate({
+        procedureId: variables.procedureId,
+      });
+      utils.procedures.getOutstandingForCurrentUser.invalidate();
+      toast.success("Marked as read");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ?? "Failed to mark procedure as read, try again",
+      );
+    },
+  });
+
+  const markProcedureRead = (procedureId: string, versionId: string) => {
+    mutation.mutate({ procedureId, versionId });
+  };
+
+  return {
+    markProcedureRead,
     isPending: mutation.isPending,
   };
 }
