@@ -7,10 +7,18 @@ import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react";
 import { NewsDeleteButton } from "./news-delete-button";
 import { trpc } from "@/trpc/client";
+import { useMarkNewsRead } from "../hook/use-news-mutations";
+import { Button } from "@/components/ui/button";
+import { Loader2, CheckCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { JsonObject } from "@prisma/client/runtime/client";
+import type { AppRouter } from "@/server/trpc/routers/_app";
+import type { inferProcedureOutput } from "@trpc/server";
+
+type GetNewsOutput = inferProcedureOutput<AppRouter["news"]["getNews"]>;
+export type NewsPostItem = GetNewsOutput["data"][number];
 
 type NewsPostListProps = {
   userMap: Record<string, { id: string; name: string | null } | null>;
@@ -64,6 +72,7 @@ function NewsListSkeleton() {
 export function NewsPostList({ userMap }: NewsPostListProps) {
   const { isAdmin } = useAuthContext();
   const { departmentId, teamId } = useProcedureRouteContext();
+  const { markNewsRead, isPending: isMarkReadPending } = useMarkNewsRead();
   const { data, isLoading, error } = trpc.news.getNews.useQuery({
     departmentId,
     teamId,
@@ -100,18 +109,45 @@ export function NewsPostList({ userMap }: NewsPostListProps) {
     <div className="flex flex-col px-4 gap-4">
       {pinnedNewsPosts.map((newsPost) => {
         const postUser = userMap[newsPost.createdBy ?? ""];
+        const isUnread = !newsPost.isRead;
         return (
           <Fragment key={newsPost.id}>
-            <Card className="hover:border-primary transition-colors flex flex-col h-full animate-fade-from-top">
+            <Card className="hover:border-primary transition-all flex flex-col h-full animate-fade-from-top">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 min-h-[3rem]">
-                  <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
-                    {newsPost.title}
-                  </CardTitle>
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
+                      {newsPost.title}
+                    </CardTitle>
+                    {isUnread && (
+                      <span
+                        className="size-1.5 shrink-0 rounded-full bg-red-700"
+                        aria-hidden
+                      />
+                    )}
+                  </div>
                   <div className="flex gap-2 justify-start items-center mb-2">
                     <p className="text-sm text-muted-foreground flex gap-2">
                       <PinIcon className="w-4 h-4" /> Pinned
                     </p>
+                    {isUnread && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => markNewsRead(newsPost.id)}
+                        disabled={isMarkReadPending}
+                        className="gap-1.5"
+                      >
+                        {isMarkReadPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <>
+                            <CheckCheck className="w-4 h-4" />
+                            Mark as read
+                          </>
+                        )}
+                      </Button>
+                    )}
                     {isAdmin ? (
                       <NewsDeleteButton newsPostId={newsPost.id} />
                     ) : null}
@@ -144,6 +180,7 @@ export function NewsPostList({ userMap }: NewsPostListProps) {
 
       {unpinnedNewsPosts.map((newsPost) => {
         const postUser = userMap[newsPost.createdBy ?? ""];
+        const isUnread = !newsPost.isRead;
         return (
           <Card
             key={newsPost.id}
@@ -151,10 +188,40 @@ export function NewsPostList({ userMap }: NewsPostListProps) {
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2 min-h-[3rem]">
-                <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
-                  {newsPost.title}
-                </CardTitle>
-                {isAdmin ? <NewsDeleteButton newsPostId={newsPost.id} /> : null}
+                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                  <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
+                    {newsPost.title}
+                  </CardTitle>
+                  {isUnread && (
+                    <span
+                      className="size-1.5 shrink-0 rounded-full bg-red-700"
+                      aria-hidden
+                    />
+                  )}
+                </div>
+                <div className="flex gap-2 items-center">
+                  {isUnread && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => markNewsRead(newsPost.id)}
+                      disabled={isMarkReadPending}
+                      className="gap-1.5"
+                    >
+                      {isMarkReadPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <CheckCheck className="w-4 h-4" />
+                          Mark as read
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {isAdmin ? (
+                    <NewsDeleteButton newsPostId={newsPost.id} />
+                  ) : null}
+                </div>
               </div>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground line-clamp-3">

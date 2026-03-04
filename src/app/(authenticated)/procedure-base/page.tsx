@@ -37,7 +37,7 @@ const ProcedureBasePage = async () => {
       />
 
       <Suspense fallback={<ListSkeleton />}>
-        <ProcedureList data={data?.procedures ?? []} />
+        <ProcedureList initialData={data} />
       </Suspense>
     </>
   );

@@ -11,6 +11,7 @@ export function useNewsCreate(onSuccessCallback?: () => void) {
   const mutation = trpc.news.createNews.useMutation({
     onSuccess: () => {
       utils.news.getNews.invalidate();
+      utils.news.getUnreadNewsCountForCurrentUser.invalidate();
       toast.success("News post successfully created");
       onSuccessCallback?.();
       router.refresh();
@@ -46,6 +47,7 @@ export function useDeleteNews() {
   const mutation = trpc.news.deleteNews.useMutation({
     onSuccess: () => {
       utils.news.getNews.invalidate();
+      utils.news.getUnreadNewsCountForCurrentUser.invalidate();
       toast.success("News post successfully deleted");
 
       router.refresh();
@@ -65,6 +67,35 @@ export function useDeleteNews() {
 
   return {
     deleteNews,
+    isPending: mutation.isPending,
+  };
+}
+
+export function useMarkNewsRead() {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const mutation = trpc.news.markNewsRead.useMutation({
+    onSuccess: () => {
+      utils.news.getNews.invalidate();
+      utils.news.getUnreadNewsCountForCurrentUser.invalidate();
+      toast.success("Marked as read");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ||
+          "Failed to mark as read, try again or contact support",
+      );
+    },
+  });
+
+  const markNewsRead = (newsPostId: string) => {
+    mutation.mutate({ newsPostId });
+  };
+
+  return {
+    markNewsRead,
     isPending: mutation.isPending,
   };
 }

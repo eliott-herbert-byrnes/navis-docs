@@ -16,9 +16,8 @@ import { useState } from "react";
 type ProcedureBaseDeleteDialogProps = {
   title: string;
   description: string;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
   isPending: boolean;
-  /** When provided, dialog is controlled and no trigger is rendered (for use in dropdowns etc.) */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -38,8 +37,8 @@ const ProcedureBaseDeleteDialog = ({
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
-  const handleClose = () => {
-    onConfirm();
+  const handleClose = async () => {
+    await Promise.resolve(onConfirm());
     setOpen(false);
   };
 

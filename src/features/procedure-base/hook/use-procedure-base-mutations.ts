@@ -3,13 +3,22 @@
 import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
 
-export function useDeleteProcedureFromBase() {
+type UseDeleteProcedureFromBaseOptions = {
+  onSuccess?: () => void;
+};
+
+export function useDeleteProcedureFromBase(
+  options?: UseDeleteProcedureFromBaseOptions,
+) {
   const utils = trpc.useUtils();
 
   const mutation = trpc.procedures.deleteProcedure.useMutation({
     onSuccess: () => {
       utils.procedures.getProceduresForBase.invalidate();
+      utils.procedures.getForView.invalidate();
+      utils.procedures.getOutstandingForCurrentUser.invalidate();
       toast.success("Procedure deleted");
+      options?.onSuccess?.();
     },
     onError: (error) => {
       toast.error(
@@ -20,7 +29,7 @@ export function useDeleteProcedureFromBase() {
   });
 
   const deleteProcedure = (procedureId: string) => {
-    mutation.mutate({ procedureId });
+    return mutation.mutateAsync({ procedureId });
   };
 
   return {
