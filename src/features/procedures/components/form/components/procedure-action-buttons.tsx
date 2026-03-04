@@ -99,14 +99,13 @@ export function ProcedureActionButtons({
               </>
             )}
           </Button>
-          <Button
+          {procedure.status === "DRAFT" ? <Button
             onClick={onPublish}
             disabled={
               isSaving ||
               isCancelling ||
               isPublishing ||
-              hasUnsavedChanges ||
-              procedure.status === "PUBLISHED"
+              hasUnsavedChanges
             }
           >
             {isPublishing ? (
@@ -116,7 +115,7 @@ export function ProcedureActionButtons({
             ) : (
               "Publish"
             )}
-          </Button>
+          </Button> : null}
         </div>
       </div>
     </Card>
