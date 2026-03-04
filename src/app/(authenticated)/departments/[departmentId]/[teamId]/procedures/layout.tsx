@@ -20,12 +20,17 @@ export default async function ProcedureLayout({
   const isAdmin = await isOrgAdminOrOwner(user.userId);
 
   const trpc = await serverTrpc();
-  const [{ data: procedures }, { data: categories }, { data: outstanding }] =
-    await Promise.all([
-      trpc.procedures.list({ teamId }),
-      trpc.procedures.categoriesWithProcedures({ teamId }),
-      trpc.procedures.getOutstandingForCurrentUser({}),
-    ]);
+  const [
+    { data: procedures },
+    { data: categories },
+    { data: outstanding },
+    { count: unreadNewsCount },
+  ] = await Promise.all([
+    trpc.procedures.list({ teamId }),
+    trpc.procedures.categoriesWithProcedures({ teamId }),
+    trpc.procedures.getOutstandingForCurrentUser({}),
+    trpc.news.getUnreadNewsCountForCurrentUser({ teamId }),
+  ]);
 
   const unreadProcedureVersionIds =
     outstanding?.map(
@@ -41,6 +46,7 @@ export default async function ProcedureLayout({
             uncategorizedProcedures={procedures}
             categories={categories}
             unreadProcedureVersionIds={unreadProcedureVersionIds}
+            unreadNewsCount={unreadNewsCount ?? 0}
           />
           <main className="flex-1 overflow-auto p-4">{children}</main>
         </div>

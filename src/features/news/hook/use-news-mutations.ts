@@ -11,6 +11,7 @@ export function useNewsCreate(onSuccessCallback?: () => void) {
   const mutation = trpc.news.createNews.useMutation({
     onSuccess: () => {
       utils.news.getNews.invalidate();
+      utils.news.getUnreadNewsCountForCurrentUser.invalidate();
       toast.success("News post successfully created");
       onSuccessCallback?.();
       router.refresh();
@@ -46,6 +47,7 @@ export function useDeleteNews() {
   const mutation = trpc.news.deleteNews.useMutation({
     onSuccess: () => {
       utils.news.getNews.invalidate();
+      utils.news.getUnreadNewsCountForCurrentUser.invalidate();
       toast.success("News post successfully deleted");
 
       router.refresh();

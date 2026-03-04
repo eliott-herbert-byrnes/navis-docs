@@ -47,6 +47,7 @@ type ProcedureSidebarProps = {
   }[];
   categories: CategoryWithProcedures;
   unreadProcedureVersionIds?: string[];
+  unreadNewsCount?: number;
 };
 
 export function ProcedureSidebar({
@@ -54,6 +55,7 @@ export function ProcedureSidebar({
   uncategorizedProcedures,
   categories,
   unreadProcedureVersionIds = [],
+  unreadNewsCount = 0,
 }: ProcedureSidebarProps) {
   const [open, setOpen] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
@@ -88,6 +90,17 @@ export function ProcedureSidebar({
           <Button variant="ghost" className="w-full justify-start gap-2">
             <Newspaper className="h-4 w-4" />
             News
+            {unreadNewsCount > 0 && (
+                <>
+                  <span
+                    className="size-1.5 rounded-full bg-red-700"
+                    aria-hidden
+                    />
+                  <span className="text-muted-foreground text-xs">
+                    {unreadNewsCount}
+                  </span>
+                </>
+              )}
           </Button>
         </Link>
         <Link href={addressPath(departmentId, teamId)}>
