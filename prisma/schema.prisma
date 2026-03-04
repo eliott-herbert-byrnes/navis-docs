@@ -19,6 +19,7 @@ model User {
   memberships         OrgMembership[]
   organizations       Organization[]
   userProcedureRead   UserProcedureRead[]
+  userNewsRead        UserNewsRead[]
 }
 
 model Account {
@@ -276,8 +277,23 @@ model NewsPost {
   createdAt DateTime @default(now())
   team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   procedureRollout    ProcedureRollout[]
+  userNewsRead       UserNewsRead[]
 
   @@index([teamId, createdAt])
+}
+
+model UserNewsRead {
+  id         String   @id @default(uuid())
+  userId     String
+  newsPostId String
+  readAt     DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newsPost NewsPost @relation(fields: [newsPostId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, newsPostId])
+  @@index([userId])
+  @@index([newsPostId])
 }
 
 model Favorite {
