@@ -14,7 +14,7 @@ import {
   CircleCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { editProcedurePath } from "@/app/paths";
+import { editProcedurePath, teamProcedurePath } from "@/app/paths";
 import { toast } from "sonner";
 import { useTransition } from "react";
 import {
@@ -27,6 +27,7 @@ import {
 import { MoreVertical } from "lucide-react";
 import { ProcedureFavoriteButton } from "./favorite/components/procedure-favorite-button";
 import { ProcedureErrorButton } from "./error/components/procedure-error-button";
+import { ProcedureBaseDeleteButton } from "@/features/procedure-base/components/procedure-base-delete-button";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { ProcedureForViewWithRelations } from "../types/types";
 import { hasFlowDocContent } from "../utils/generate-plain-text-from-tiptap";
@@ -122,6 +123,10 @@ export function ProcedureViewActions({
     }
   };
 
+  const handleDeleteSuccess = () => {
+    router.push(teamProcedurePath(departmentId, teamId));
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {/* Mark as read - show only when published and unread */}
@@ -172,6 +177,14 @@ export function ProcedureViewActions({
             <FileIcon className="w-4 h-4 mr-2" />
             Export
           </Button>
+          {canEdit && (
+            <ProcedureBaseDeleteButton
+              procedureId={procedureId}
+              onSuccess={handleDeleteSuccess}
+              variant="outline"
+              size="sm"
+            />
+          )}
           {onAskAI && (
             <Button
               variant="outline"
@@ -267,6 +280,14 @@ export function ProcedureViewActions({
               <DropdownMenuItem asChild>
                 <ProcedureErrorButton procedureId={procedureId} />
               </DropdownMenuItem>
+              {canEdit && (
+                <DropdownMenuItem asChild>
+                  <ProcedureBaseDeleteButton
+                    procedureId={procedureId}
+                    onSuccess={handleDeleteSuccess}
+                  />
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
