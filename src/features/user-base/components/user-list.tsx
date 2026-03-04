@@ -151,25 +151,25 @@ function TableCellViewer({ item }: { item: User }) {
 
             <Separator />
             <div className="flex flex-col gap-2">
-              <Label className="font-semibold">Compliant</Label>
+              <Label className="font-semibold">
+                Oustanding Compliance List
+              </Label>
               {item.compliant ? (
-                <p className="text-muted-foreground">
-                  This user is compliant
-                </p>
+                <p className="text-muted-foreground">This user is compliant</p>
               ) : isLoading ? (
                 <p className="text-muted-foreground">Loading…</p>
               ) : outstanding.length > 0 ? (
-                <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <div className="list-disc list-inside space-y-1 text-muted-foreground">
                   {outstanding.map((proc) => (
-                    <li key={`${proc.procedureId}-${proc.versionId}`}>
-                      {proc.procedureTitle}
-                    </li>
+                    <div className="flex flex-col">
+                      <span key={`${proc.procedureId}-${proc.versionId}`}>
+                        {`${proc.procedureTitle}`}
+                      </span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
-                <p className="text-muted-foreground">
-                  This user is compliant.
-                </p>
+                <p className="text-muted-foreground">This user is compliant.</p>
               )}
             </div>
           </div>

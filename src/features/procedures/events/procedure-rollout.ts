@@ -128,27 +128,11 @@ export const eventProcedureRollout = inngest.createFunction(
           where: { id: procedureId },
           select: {
             title: true,
-            team: {
-              select: {
-                name: true,
-                department: { select: { name: true } },
-              },
-            },
-            category: { select: { name: true } },
           },
         });
-        const teamName = procedure?.team?.name ?? "";
-        const departmentName = procedure?.team?.department?.name ?? "";
-        const categoryName = procedure?.category?.name ?? "";
         const title = procedure?.title ?? procedureTitle;
-        const explanation =
-          "A new or updated procedure has been published and is available for you to read. Please review it and mark as read.";
-        const contextParts = [teamName, departmentName, categoryName].filter(
-          Boolean,
-        );
-        const contextLine =
-          contextParts.length > 0 ? ` (${contextParts.join(" · ")})` : "";
-        const bodyText = `${title}${contextLine}. ${explanation}`;
+        const newsTitle = `New Procedure Published: ${title}`;
+        const bodyText = `A new procedure "${title}" has been published and is available for you to read. Please review it and mark as read.`;
         const bodyJSON = {
           type: "doc",
           content: [
@@ -161,7 +145,7 @@ export const eventProcedureRollout = inngest.createFunction(
         const newsPost = await prisma.newsPost.create({
           data: {
             teamId,
-            title: `Procedure published: ${title}`,
+            title: newsTitle,
             bodyJSON,
             pinned: false,
             createdBy,

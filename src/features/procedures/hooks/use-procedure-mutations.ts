@@ -48,7 +48,7 @@ export function useCreateProcedure(departmentId: string, teamId: string) {
       departmentId,
       teamId,
       ...data,
-      title: "",
+      procedureTitle: "",
     });
   };
 

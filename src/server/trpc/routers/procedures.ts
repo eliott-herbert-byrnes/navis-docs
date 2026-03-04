@@ -34,7 +34,6 @@ const querySchema = z.string();
 const procedureSchema = z.string();
 const procedureIdSchema = z.uuid();
 const createProcedureSchema = z.object({
-  title: z.string().min(1, { message: "Title is required" }),
   departmentId: z.string().min(1, { message: "Department is required" }),
   teamId: z.string().min(1, { message: "Team is required" }),
   procedureTitle: z.string().min(1, { message: "Is Required" }).max(100),
@@ -532,7 +531,6 @@ export const procedureRouter = router({
     .input(createProcedureSchema)
     .mutation(async ({ ctx, input }) => {
       const {
-        title,
         departmentId,
         teamId,
         procedureTitle,
@@ -568,7 +566,7 @@ export const procedureRouter = router({
 
       const existingName = await ctx.db.procedure.findFirst({
         where: {
-          title,
+          title: procedureTitle,
           team: {
             department: {
               orgId: ctx.org!.id,
@@ -871,7 +869,7 @@ export const procedureRouter = router({
         console.error(error);
         throw new TRPCError({
           code: "NOT_IMPLEMENTED",
-          message: "Failed to embed procedure, contact customer support",
+          message: "Failed to embed procedure, try again or contact support",
         });
       }
 
@@ -1430,7 +1428,6 @@ export const procedureRouter = router({
         return { data: [] };
       }
 
-      // Phase 7.2 + 7.3: Outstanding = non-archived procedures only; only rollouts created after user joined (new joiners have no outstanding)
       const rollouts = await ctx.db.procedureRollout.findMany({
         where: {
           orgId,

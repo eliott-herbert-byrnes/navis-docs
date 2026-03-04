@@ -123,21 +123,29 @@ export function ProcedureSidebar({
                 return (
                   <Collapsible key={category.id}>
                     <CollapsibleTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-between group"
-                      >
-                        <span className="font-medium text-sm flex items-center gap-1.5">
-                          {category.name}
-                          {categoryHasUnread && (
-                            <span
-                              className="size-1.5 shrink-0 rounded-full bg-primary"
-                              aria-label="Has unread procedures"
-                            />
-                          )}
-                        </span>
-                        <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-90" />
-                      </Button>
+                      <div className="">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-between group"
+                        >
+                          <span className="font-medium text-sm flex items-center gap-1.5">
+                            {category.name}
+                            {categoryHasUnread && (
+                              <span className="text-muted-foreground text-xs ml-2">
+                                {
+                                  category.procedures.filter((p) =>
+                                    isProcedureUnread(
+                                      p.id,
+                                      p.publishedVersionId ?? null,
+                                    ),
+                                  ).length
+                                }
+                              </span>
+                            )}
+                          </span>
+                          <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-90" />
+                        </Button>
+                      </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 space-y-1 mt-1">
                       {category.procedures.map((procedure) => {
@@ -156,24 +164,26 @@ export function ProcedureSidebar({
                             className="block"
                           >
                             {procedure.status === "PUBLISHED" ? (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="w-full justify-start text-sm font-normal hover:bg-accent gap-1.5"
-                                title={procedure.title}
-                              >
+                              <div className="flex flex-row justify-between">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="w-full justify-start text-sm font-normal hover:bg-accent gap-1.5"
+                                  title={procedure.title}
+                                >
+                                  <span className="truncate">
+                                    {procedure.title.length > 28
+                                      ? `${procedure.title.slice(0, 28)}...`
+                                      : procedure.title}
+                                  </span>
+                                </Button>
                                 {unread && (
                                   <span
-                                    className="size-1.5 shrink-0 rounded-full bg-primary"
+                                    className="absolute size-1.5 shrink-0 rounded-full bg-red-700 left-55 mt-3 cursor-default"
                                     aria-hidden
                                   />
                                 )}
-                                <span className="truncate">
-                                  {procedure.title.length > 28
-                                    ? `${procedure.title.slice(0, 28)}...`
-                                    : procedure.title}
-                                </span>
-                              </Button>
+                              </div>
                             ) : (
                               <Button
                                 variant="ghost"
