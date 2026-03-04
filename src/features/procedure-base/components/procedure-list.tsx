@@ -71,6 +71,13 @@ import { useDeleteProceduresFromBase } from "../hook/use-procedure-base-mutation
 import { trpc } from "@/trpc/client";
 import { CategoryCell } from "./procedure-list-category-cell";
 import { toast } from "sonner";
+import type { AppRouter } from "@/server/trpc/routers/_app";
+import type { inferProcedureOutput } from "@trpc/server";
+import { ListSkeleton } from "@/components/ui/list-skeleton";
+
+type GetProceduresForBaseOutput = inferProcedureOutput<
+  AppRouter["procedures"]["getProceduresForBase"]
+>;
 
 export const schema = z.object({
   id: z.string(),
@@ -200,7 +207,17 @@ function TableCellViewer({
   );
 }
 
-export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
+const PROCEDURES_QUERY_INPUT = {
+  search: "",
+  limit: 10,
+  offset: 0,
+} as const;
+
+export function ProcedureList({
+  initialData,
+}: {
+  initialData?: GetProceduresForBaseOutput;
+}) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -215,12 +232,19 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
   const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
 
+  const { data: proceduresData, isLoading } =
+    trpc.procedures.getProceduresForBase.useQuery(PROCEDURES_QUERY_INPUT, {
+      initialData: initialData ?? undefined,
+    });
+
+  const procedures = proceduresData?.procedures ?? [];
+
   const { deleteProcedures, isPending: isBulkDeletePending } =
     useDeleteProceduresFromBase();
 
   const teamIds = React.useMemo(
-    () => [...new Set(initialData.map((p) => p.teamId))],
-    [initialData],
+    () => [...new Set(procedures.map((p) => p.teamId))],
+    [procedures],
   );
   const { data: categoriesData } =
     trpc.procedures.getCategoriesForTeams.useQuery(
@@ -395,7 +419,7 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
   ];
 
   const table = useReactTable({
-    data: initialData,
+    data: procedures,
     columns,
     state: {
       sorting,
@@ -429,6 +453,10 @@ export function ProcedureList({ data: initialData }: { data: Procedure[] }) {
   };
 
   const selectedCount = table.getFilteredSelectedRowModel().rows.length;
+
+  if (isLoading && procedures.length === 0) {
+    return <ListSkeleton />;
+  }
 
   return (
     <div className="flex w-full flex-col gap-4 px-1">
