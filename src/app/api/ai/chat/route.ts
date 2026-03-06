@@ -168,6 +168,7 @@ export async function POST(req: NextRequest) {
     6. Never make up information not in the context
     7. NEVER generate or display URLs in your response
     8. Reference procedures by title only - the system will provide clickable links
+    9. If a procedure cannot be located or does not exist, do not offer to make a note of it. Instead, inform the user that the procedure may not yet be documented and suggest they contact their organisation's support team to request it be added.
     
     Context (procedure chunks):
     ${context}`;
@@ -207,7 +208,8 @@ export async function POST(req: NextRequest) {
     - Reference procedures by their exact titles in quotes
     - NEVER generate or display URLs
     - Keep explanations brief but informative
-    - The system will provide clickable links automatically`;
+    - The system will provide clickable links automatically
+    - If a procedure cannot be located or does not exist, do not offer to make a note of it. Instead, inform the user that the procedure may not yet be documented and suggest they contact their organisation's support team to request it be added.`;
     }
 
     const response = await getAnthropic().messages.create({
