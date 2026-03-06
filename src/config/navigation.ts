@@ -9,6 +9,7 @@ import {
   subscriptionPath,
   settingsPath,
   categoriesPath,
+  dashboardPath,
 } from "@/app/paths";
 import {
   Home,
@@ -21,6 +22,7 @@ import {
   Settings,
   History,
   Folder,
+  LayoutDashboard,
 } from "lucide-react";
 
 export type NavItem = {
@@ -46,6 +48,13 @@ export const items = [
     title: "Home",
     path: homePath(),
     icon: Home,
+  },
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    path: dashboardPath(),
+    icon: LayoutDashboard,
+    isAdmin: true,
   },
   {
     id: "errors",

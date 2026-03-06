@@ -20,6 +20,7 @@ export const settingsPath = () => "/settings";
 export const addressPath = (departmentId: string, teamId: string) =>
   `/departments/${departmentId}/${teamId}/procedures/address`;
 export const demoPath = () => "/demo";
+export const dashboardPath = () => "/dashboard";
 
 // Procedure Database Paths
 export const departmentPath = (departmentId: string) =>
