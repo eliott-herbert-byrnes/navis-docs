@@ -4,7 +4,6 @@ import { generateEmbedding } from "../src/lib/ai/embeddings";
 import { chunkProcedureContent } from "../src/features/ai/utils/chunk-content";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
-import { generateProcedureEmbeddings } from "@/features/ai/actions/generate-embeddings";
 import { prisma } from "../src/lib/prisma";
 
 export async function generateProcessEmbeddings(procedureId: string) {
@@ -95,7 +94,7 @@ async function main() {
 
   for (const procedure of publishedProcedures) {
     try {
-      await generateProcedureEmbeddings(procedure.id);
+       await generateProcessEmbeddings(procedure.id);
     } catch (error) {
       console.error(`Failed to procedure ${procedure.title}:`, error);
     }

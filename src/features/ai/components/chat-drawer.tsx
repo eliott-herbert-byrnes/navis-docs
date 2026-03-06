@@ -19,13 +19,9 @@ import { usePersistedChatState } from "../hooks/use-persisted-chat-state";
 import { ChatDeleteButton } from "./chat-delete-button";
 
 type AIChatDrawerProps = {
-  /** Controlled open state. When provided with onOpenChange, the drawer is controlled by the parent. */
   open?: boolean;
-  /** Called when the drawer open state should change (e.g. when user closes it or when opening via floating button in controlled mode). */
   onOpenChange?: (open: boolean) => void;
-  /** When set, the input is pre-filled with this message when the drawer opens. User can edit before sending. */
   initialMessage?: string;
-  /** Called after the drawer has applied initialMessage to the input, so the parent can clear it. */
   onInitialMessageConsumed?: () => void;
 };
 
@@ -56,7 +52,6 @@ export function AIChatDrawer({
     }
   }, [messages]);
 
-  // When opened with an initial message (e.g. from "Ask AI" button), pre-fill the input
   useEffect(() => {
     if (isOpen && initialMessage) {
       setInput(initialMessage);
@@ -75,6 +70,12 @@ export function AIChatDrawer({
     setIsLoading(true);
 
     try {
+      const lastAssistantSources =
+        [...messages]
+          .reverse()
+          .find((m) => m.role === "assistant" && m.sources && m.sources.length > 0)
+          ?.sources?.map((s) => ({ procedureId: s.procedureId, title: s.title })) ?? [];
+
       const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,6 +89,7 @@ export function AIChatDrawer({
               content: m.content,
             }))
             .slice(-6),
+          previousSources: lastAssistantSources,
         }),
       });
 
@@ -146,13 +148,13 @@ export function AIChatDrawer({
               <div className="flex flex-col items-center justify-center h-full p-8 ">
                 <MessageCircle className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="font-medium mb-2">Ask me anything</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground text-center">
                   I can help you find procedures and answer questions about
                   them.
                 </p>
                 <Separator className="my-4" />
-                <p className="text-sm text-muted-foreground">
-                  The assistants context will reset every 6 messages.
+                <p className="text-sm text-muted-foreground text-center">
+                  The assistant is AI and can make mistakes. Please double-check and clarify responses.
                 </p>
               </div>
             ) : (

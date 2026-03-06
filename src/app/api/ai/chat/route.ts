@@ -1,6 +1,7 @@
 import { viewProcedurePath } from "@/app/paths";
 import {
   ChunkResult,
+  getChunksByProcedureIds,
   searchProcedureChunks,
 } from "@/features/ai/queries/search-chunks";
 import { getAnthropic } from "@/lib/ai/anthropic";
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { message, teamId, departmentId, conversationHistory } =
+    const { message, teamId, departmentId, conversationHistory, previousSources } =
       await req.json();
 
     if (!message || !teamId || !departmentId) {
@@ -74,20 +75,67 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const lastUserMessage =
+    (conversationHistory ?? [])
+      .slice()
+      .reverse()
+      .find((m: { role: string; content: string }) => m?.role === "user" && typeof m.content === "string" && m.content.trim().length > 0)
+      ?.content ?? null;
+
     const userTeams = await getUserTeamIds(user.userId);
     if (!userTeams.includes(teamId)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Tiered search
-    let chunks = await searchProcedureChunks(message, teamId, 5, 0.5);
-    let searchTier: "strong" | "weak" | "none" = "strong";
+    async function runTieredSearch(query: string) {
+      let chunks = await searchProcedureChunks(query, teamId, 5, 0.5);
+      let tier: "strong" | "weak" | "none" = "strong";
 
-    if (chunks.length === 0) {
-      chunks = await searchProcedureChunks(message, teamId, 10, 0.3);
-      searchTier = chunks.length > 0 ? "weak" : "none";
-    } else if (chunks[0].similarity < 0.5) {
-      searchTier = "weak";
+      if (chunks.length === 0) {
+        chunks = await searchProcedureChunks(query, teamId, 10, 0.3);
+        tier = chunks.length > 0 ? "weak" : "none";
+      } else if (chunks[0].similarity < 0.5) {
+        tier = "weak";
+      }
+
+      return { chunks, tier };
+    }
+
+    let { chunks, tier: searchTier } = await runTieredSearch(message);
+
+    // Fallback: retry search using the last user message from history
+    if (searchTier === "none" && lastUserMessage && lastUserMessage !== message) {
+      const fallback = await runTieredSearch(lastUserMessage);
+      if (fallback.tier !== "none") {
+        chunks = fallback.chunks;
+        searchTier = "strong"; // always treat a follow-up fallback as direct-answer mode
+      }
+    }
+
+    // Sticky context: fetch chunks for procedures surfaced in the previous turn
+    const previousProcedureIds: string[] = (
+      (previousSources ?? []) as { procedureId: string; title: string }[]
+    ).map((s) => s.procedureId);
+
+    const stickyChunks = await getChunksByProcedureIds(previousProcedureIds, teamId);
+
+    if (stickyChunks.length > 0) {
+      const existingChunkIds = new Set(chunks.map((c: ChunkResult) => c.id));
+
+      if (searchTier === "none") {
+        // No results from any search — fall back to the previous turn's procedure content
+        chunks = stickyChunks;
+        searchTier = "strong";
+      } else {
+        // Have current results — supplement with sticky chunks from the same procedures
+        // so the model retains full procedure content across follow-up turns
+        const currentProcedureIds = new Set(chunks.map((c: ChunkResult) => c.procedureId));
+        const relevantStickyChunks = stickyChunks.filter(
+          (c) => currentProcedureIds.has(c.procedureId) && !existingChunkIds.has(c.id),
+        );
+        chunks = [...chunks, ...relevantStickyChunks];
+      }
     }
 
     if (searchTier === "none") {
