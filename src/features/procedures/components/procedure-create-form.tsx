@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
 import { ProcedureSelectCategories } from "./procedure-select-categories";
 import { useCreateProcedure } from "../hooks/use-procedure-mutations";
-import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
+import { useProcedureRouteContextOptional } from "@/contexts/procedure-route-context";
 import {
   Select,
   SelectContent,
@@ -30,12 +30,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RolloutRoleFilter } from "@prisma/client";
+import { trpc } from "@/trpc/client";
 
 type CreateProcedureFormProps = {
   categories: { id: string; name: string }[];
+  cancelPath?: string;
+  redirectOnSuccess?: boolean;
 };
 
-const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
+const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: CreateProcedureFormProps) => {
   const router = useRouter();
   const [isCancelPending, startTransition] = useTransition();
   const [createNewCategory, setCreateNewCategory] = useState(
@@ -44,18 +47,40 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
   const [notifyOnPublishChecked, setNotifyOnPublishChecked] = useState(false);
   const [emailOnPublishChecked, setEmailOnPublishChecked] = useState(false);
   const [newsOnPublishChecked, setNewsOnPublishChecked] = useState(false);
-  const { departmentId, teamId } = useProcedureRouteContext();
+  const routeContext = useProcedureRouteContextOptional();
+  const hasContext = routeContext !== null;
+
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
+  const [selectedTeamId, setSelectedTeamId] = useState("");
+
+  const effectiveDepartmentId = hasContext ? routeContext.departmentId : selectedDepartmentId;
+  const effectiveTeamId = hasContext ? routeContext.teamId : selectedTeamId;
+
+  const { data: departmentData } = trpc.department.list.useQuery(undefined, {
+    enabled: !hasContext,
+  });
+  const departments = departmentData?.list ?? [];
+
+  const { data: categoriesData } = trpc.procedures.categoriesWithCount.useQuery(
+    { teamId: effectiveTeamId },
+    { enabled: !!effectiveTeamId },
+  );
+
+  const resolvedCategories = hasContext
+    ? categories
+    : (categoriesData?.data ?? []);
 
   const { createProcedure, isPending } = useCreateProcedure(
-    departmentId,
-    teamId,
+    effectiveDepartmentId,
+    effectiveTeamId,
+    { redirectOnSuccess: redirectOnSuccess ?? true, onSuccess: () => router.replace(cancelPath ?? homePath()) },
   );
 
   const handleCancel = () => {
-    startTransition(() => {
-      router.replace(homePath());
-    });
+    startTransition(() => router.replace(cancelPath ?? homePath()));
   };
+
+  const isSubmitBlocked = !hasContext && (!selectedDepartmentId || !selectedTeamId);
 
   const handleNewCategoryChange = (checked: boolean) => {
     setCreateNewCategory(checked);
@@ -88,7 +113,7 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
       newProcedureCategory: createNewCategory || undefined,
       newProcedureCategoryName: createNewCategory
         ? String(formData.get("newProcedureCategoryName") ?? "").trim() ||
-          undefined
+        undefined
         : undefined,
       procedureStyle: String(formData.get("procedureStyle") ?? "raw").trim() as
         | "raw"
@@ -115,6 +140,39 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
                 Enter the details of the procedure to create a new one.
               </FieldDescription>
               <FieldSeparator />
+            </FieldSet>
+            {!hasContext && (
+              <>
+                <FieldSet>
+                  <FieldLegend>Department and Team</FieldLegend>
+                  <FieldDescription>Select which team this procedure belongs to.</FieldDescription>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel>Department</FieldLabel>
+                      <Select value={selectedDepartmentId} onValueChange={(v) => { setSelectedDepartmentId(v); setSelectedTeamId(""); }} disabled={isPending}>
+                        <SelectTrigger><SelectValue placeholder="Select a department" /></SelectTrigger>
+                        <SelectContent>
+                          {departments.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field>
+                      <FieldLabel>Team</FieldLabel>
+                      <Select value={selectedTeamId} onValueChange={setSelectedTeamId} disabled={!selectedDepartmentId || isPending}>
+                        <SelectTrigger><SelectValue placeholder="Select a team" /></SelectTrigger>
+                        <SelectContent>
+                          {departments.find(d => d.id === selectedDepartmentId)?.teams.map((t) => (
+                            <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  </FieldGroup>
+                </FieldSet>
+                <FieldSeparator />
+              </>
+            )}
+            <FieldSet>
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="procedureTitle">Title</FieldLabel>
@@ -370,7 +428,7 @@ const CreateProcedureForm = ({ categories }: CreateProcedureFormProps) => {
 
             <FieldSeparator />
             <Field orientation="horizontal">
-              <Button type="submit" disabled={isPending || isCancelPending}>
+              <Button type="submit" disabled={isPending || isCancelPending || isSubmitBlocked}>
                 {isPending ? (
                   <>
                     <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />

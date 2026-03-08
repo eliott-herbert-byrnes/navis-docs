@@ -3,10 +3,13 @@ import { ProcedureList } from "@/features/procedure-base/components/procedure-li
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { ExportProcedureOrgDataButton } from "@/features/settings/components/export-procedure-org-data-button";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { onboardingPath, homePath } from "@/app/paths";
+import { onboardingPath, homePath, procedureBaseCreatePath } from "@/app/paths";
 import { redirect } from "next/navigation";
 import { serverTrpc } from "@/server/trpc/server";
 import { Suspense } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
 
 const ProcedureBasePage = async () => {
   const user = await getSessionUser();
@@ -22,6 +25,15 @@ const ProcedureBasePage = async () => {
   });
   const data = proceduresResult;
 
+  const createProcedureButton = (
+            <Link href={procedureBaseCreatePath()}>
+              <Button variant="outline">
+                <PlusIcon className="w-4 h-4" />
+                Create Procedure
+              </Button>
+            </Link>
+  )
+
   return (
     <>
       <Heading
@@ -32,6 +44,7 @@ const ProcedureBasePage = async () => {
             <ExportProcedureOrgDataButton />
             {/* Disabled for MVP */}
             {/* <ProcedureImportButton /> */}
+            {createProcedureButton}
           </div>
         }
       />
