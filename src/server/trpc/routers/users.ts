@@ -8,6 +8,7 @@ import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { OrgMembershipRole } from "@prisma/client";
 import { getUserOrg } from "@/lib/auth";
+import { revalidateTag } from "next/cache";
 
 export const usersRouter = router({
   // Query: Get users by IDs
@@ -245,6 +246,8 @@ export const usersRouter = router({
         },
       });
 
+      revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
+
       await createAuditLog({
         orgId: ctx.org.id,
         actorId: ctx?.user?.id ?? "",
@@ -304,6 +307,8 @@ export const usersRouter = router({
             orgId_userId: { orgId: ctx.org.id, userId: m.userId },
           },
         });
+
+        
         await createAuditLog({
           orgId: ctx.org.id,
           actorId: ctx.user.id ?? "",
@@ -317,6 +322,8 @@ export const usersRouter = router({
           },
         });
       }
+      
+      revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
 
       return {
         data: { deletedCount: toDelete.length },

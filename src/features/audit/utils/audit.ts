@@ -44,6 +44,10 @@ export type AuditAction =
   | "ADDRESS_UPDATED"
   | "ADDRESS_DELETED"
   // News Actions
+  | "INVITATION_CREATED"
+  | "INVITATION_DELETED"
+  | "INVITATION_ACCEPTED"
+  // News Actions
   | "NEWS_CREATED"
   | "NEWS_DELETED";
 
@@ -57,6 +61,7 @@ export type AuditEntityType =
   | "ORGANIZATION"
   | "ADDRESS"
   | "NEWS"
+  | "INVITATION"
   | "INGESTION_JOB";
 
 type AuditLogData = {

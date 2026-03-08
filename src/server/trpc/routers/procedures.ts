@@ -28,6 +28,7 @@ import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generat
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
 import { inngest } from "@/inngest/client";
+import { revalidateTag } from "next/cache";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -642,6 +643,8 @@ export const procedureRouter = router({
         },
       });
 
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+
       if (!procedure) {
         throw new TRPCError({
           code: "NOT_IMPLEMENTED",
@@ -930,6 +933,9 @@ export const procedureRouter = router({
         where: { id: input.procedureId },
       });
 
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+
+
       await createAuditLog({
         orgId: ctx.org!.id,
         actorId: ctx?.user?.id ?? "",
@@ -1021,6 +1027,8 @@ export const procedureRouter = router({
       const deleteResult = await ctx.db.procedure.deleteMany({
         where: { id: { in: idsToDelete } },
       });
+
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
 
       for (const categoryIdToCheck of categoryIdsToCheck) {
         const remainingCount = await ctx.db.procedure.count({
