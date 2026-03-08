@@ -7,6 +7,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ErrorReportStatus } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 
 const errorIdSchema = z.uuid();
 const createErrorReportSchema = z.object({
@@ -104,6 +105,8 @@ export const errorsRouter = router({
         },
       });
 
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+
       return {
         data: errorReport,
         message: "Error report submitted successfully",
@@ -164,6 +167,9 @@ export const errorsRouter = router({
         data: { status: input.status as ErrorReportStatus },
       });
 
+
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      
       const statusLabel =
         input.status === "RESOLVED"
           ? "completed"
@@ -230,6 +236,8 @@ export const errorsRouter = router({
         where: { id: input.errorId },
       });
 
+      revalidateTag(`org-dashboard-${ctx.org!.id}`, 'max');
+
       return {
         data: { errorId: input.errorId },
         message: "Error report deleted successfully",
@@ -276,6 +284,8 @@ export const errorsRouter = router({
       await ctx.db.errorReport.deleteMany({
         where: { id: { in: idsToDelete } },
       });
+
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
 
       return {
         data: { deletedCount: errors.length },

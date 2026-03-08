@@ -21,9 +21,10 @@ import {
   MoreHorizontal,
   MoreVertical,
 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { JsonObject } from "@prisma/client/runtime/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type AuditLog = {
   id: string;
@@ -106,140 +107,142 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
   };
 
   return (
-    <Card className="w-full">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        {/* Header - Always Visible */}
-        <CardHeader className="py-0">
-          <div className="flex items-center justify-between gap-1 mt-1">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {/* Action Title */}
-              <span className="font-semibold text-md truncate">
-                {formatAction(log.action)}
-              </span>
+    <Suspense fallback={<Skeleton className="h-48" />}>
+      <Card className="w-full">
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          {/* Header - Always Visible */}
+          <CardHeader className="py-0">
+            <div className="flex items-center justify-between gap-1 mt-1">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* Action Title */}
+                <span className="font-semibold text-md truncate">
+                  {formatAction(log.action)}
+                </span>
 
-              {/* Username */}
-              <span className="text-sm text-muted-foreground hidden sm:inline">
-                •
-              </span>
-              <span className="text-sm text-muted-foreground truncate hidden sm:inline">
-                {userName}
-              </span>
+                {/* Username */}
+                <span className="text-sm text-muted-foreground hidden sm:inline">
+                  •
+                </span>
+                <span className="text-sm text-muted-foreground truncate hidden sm:inline">
+                  {userName}
+                </span>
 
-              {/* Relative Time */}
-              <span className="text-sm text-muted-foreground hidden md:inline">
-                •
-              </span>
-              <span className="text-sm text-muted-foreground hidden md:inline whitespace-nowrap">
+                {/* Relative Time */}
+                <span className="text-sm text-muted-foreground hidden md:inline">
+                  •
+                </span>
+                <span className="text-sm text-muted-foreground hidden md:inline whitespace-nowrap">
+                  {formatDistanceToNow(new Date(log.at), { addSuffix: true })}
+                </span>
+              </div>
+
+              {/* Collapsible Trigger Button */}
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  aria-label="Toggle details"
+                >
+                  {isOpen ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+              {/* Export Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Export options</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleExport("markdown")}>
+                    Copy as Markdown
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport("json")}>
+                    Copy as JSON
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile-only: Show username and time below on small screens */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden mt-1 ml-11">
+              <span>{userName}</span>
+              <span>•</span>
+              <span>
                 {formatDistanceToNow(new Date(log.at), { addSuffix: true })}
               </span>
             </div>
+          </CardHeader>
 
-            {/* Collapsible Trigger Button */}
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 w-8 p-0"
-                aria-label="Toggle details"
-              >
-                {isOpen ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-            {/* Export Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Export options</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleExport("markdown")}>
-                  Copy as Markdown
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport("json")}>
-                  Copy as JSON
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {/* Collapsible Content - Shows when expanded */}
+          <CollapsibleContent>
+            <Separator />
+            <CardContent className="pt-4 space-y-4">
+              {/* Audit Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="font-medium">User:</span>{" "}
+                  <span className="text-muted-foreground">{userName}</span>
+                </div>
+                <div>
+                  <span className="font-medium">User ID:</span>{" "}
+                  <span className="text-muted-foreground">{log.actorId}</span>
+                </div>
+                <div>
+                  <span className="font-medium">Entity:</span>{" "}
+                  <span className="text-muted-foreground">{log.entityType}</span>
+                </div>
+                <div>
+                  <span className="font-medium">Entity ID:</span>{" "}
+                  <span className="text-muted-foreground">{log.entityId}</span>
+                </div>
+                <div className="md:col-span-2">
+                  <span className="font-medium">Action:</span>{" "}
+                  <span className="text-muted-foreground">{log.action}</span>
+                </div>
+              </div>
 
-          {/* Mobile-only: Show username and time below on small screens */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden mt-1 ml-11">
-            <span>{userName}</span>
-            <span>•</span>
-            <span>
-              {formatDistanceToNow(new Date(log.at), { addSuffix: true })}
-            </span>
-          </div>
-        </CardHeader>
+              {/* Before JSON */}
+              {log.beforeJSON && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Before:</p>
+                  <pre className="text-xs bg-muted p-3 rounded-md overflow-auto max-h-60">
+                    {JSON.stringify(log.beforeJSON, null, 2)}
+                  </pre>
+                </div>
+              )}
 
-        {/* Collapsible Content - Shows when expanded */}
-        <CollapsibleContent>
-          <Separator />
-          <CardContent className="pt-4 space-y-4">
-            {/* Audit Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-              <div>
-                <span className="font-medium">User:</span>{" "}
-                <span className="text-muted-foreground">{userName}</span>
-              </div>
-              <div>
-                <span className="font-medium">User ID:</span>{" "}
-                <span className="text-muted-foreground">{log.actorId}</span>
-              </div>
-              <div>
-                <span className="font-medium">Entity:</span>{" "}
-                <span className="text-muted-foreground">{log.entityType}</span>
-              </div>
-              <div>
-                <span className="font-medium">Entity ID:</span>{" "}
-                <span className="text-muted-foreground">{log.entityId}</span>
-              </div>
-              <div className="md:col-span-2">
-                <span className="font-medium">Action:</span>{" "}
-                <span className="text-muted-foreground">{log.action}</span>
-              </div>
-            </div>
+              {/* After JSON */}
+              {log.afterJSON && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">After:</p>
+                  <pre className="text-xs bg-muted p-3 rounded-md overflow-auto max-h-60">
+                    {JSON.stringify(log.afterJSON, null, 2)}
+                  </pre>
+                </div>
+              )}
 
-            {/* Before JSON */}
-            {log.beforeJSON && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Before:</p>
-                <pre className="text-xs bg-muted p-3 rounded-md overflow-auto max-h-60">
-                  {JSON.stringify(log.beforeJSON, null, 2)}
-                </pre>
-              </div>
-            )}
-
-            {/* After JSON */}
-            {log.afterJSON && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium">After:</p>
-                <pre className="text-xs bg-muted p-3 rounded-md overflow-auto max-h-60">
-                  {JSON.stringify(log.afterJSON, null, 2)}
-                </pre>
-              </div>
-            )}
-
-            {/* Show message if both are null */}
-            {!log.beforeJSON && !log.afterJSON && (
-              <p className="text-sm text-muted-foreground italic">
-                No JSON data available for this audit log.
-              </p>
-            )}
-          </CardContent>
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+              {/* Show message if both are null */}
+              {!log.beforeJSON && !log.afterJSON && (
+                <p className="text-sm text-muted-foreground italic">
+                  No JSON data available for this audit log.
+                </p>
+              )}
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+    </Suspense>
   );
 }

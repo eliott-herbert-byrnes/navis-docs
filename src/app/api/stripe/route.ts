@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import * as stripeData from "./data";
 
-export const runtime = "nodejs";
+// export const runtime = "nodejs";
 
 const handleSubscriptionCreated = async (subscription: Stripe.Subscription) => {
   await stripeData.updateStripeSubscription(subscription);

@@ -7,6 +7,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { IdeaStatus } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const ideaIdSchema = z.uuid();
@@ -152,6 +153,8 @@ export const ideasRouter = router({
         },
       });
 
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+
       return {
         data: idea,
         message: "Idea submitted successfully",
@@ -198,6 +201,8 @@ export const ideasRouter = router({
         where: { id: input.ideaId },
         data: { status: input.status as IdeaStatus },
       });
+
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
 
       const statusLabel =
         input.status === "COMPLETED"
@@ -252,6 +257,8 @@ export const ideasRouter = router({
         where: { id: input.ideaId },
       });
 
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+
       return {
         data: { ideaId: input.ideaId },
         message: "Idea deleted successfully",
@@ -296,6 +303,8 @@ export const ideasRouter = router({
       await ctx.db.idea.deleteMany({
         where: { id: { in: idsToDelete } },
       });
+
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
 
       return {
         data: { deletedCount: ideas.length },

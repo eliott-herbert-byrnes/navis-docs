@@ -9,6 +9,8 @@ import { z } from "zod";
 import { sha256 } from "@/lib/crypto";
 import { randomBytes } from "crypto";
 import { OrgMembershipRole } from "@prisma/client";
+import { createAuditLog } from "@/features/audit/utils/audit";
+import { revalidateTag } from "next/cache";
 
 export const invitesRouter = router({
   // Query: Get Invites with pagination
@@ -123,18 +125,18 @@ export const invitesRouter = router({
         },
       });
 
-      // await createAuditLog({
-      //     orgId: ctx.org.id,
-      //     actorId: ctx.user?.id ?? "",
-      //     // action: "INVITATION_CREATED",
-      //     entityType: "INVITATION",
-      //     entityId: invitation.email,
-      //     afterJSON: {
-      //         email: invitation.email,
-      //         role: invitation.role,
-      //         expiresAt: invitation.expiresAt,
-      //     },
-      // });
+      await createAuditLog({
+          orgId: ctx.org.id,
+          actorId: ctx.user?.id ?? "",
+          action: "INVITATION_CREATED",
+          entityType: "INVITATION",
+          entityId: invitation.email,
+          afterJSON: {
+              email: invitation.email,
+              role: invitation.role,
+              expiresAt: invitation.expiresAt.toISOString(),
+          },
+      });
 
       // Generate invite link (for logging/email sending)
       const link = `${process.env.NEXTAUTH_URL}/accept-invite/${rawToken}`;
@@ -177,18 +179,18 @@ export const invitesRouter = router({
         },
       });
 
-      // await createAuditLog({
-      //     orgId: input.orgId,
-      //     actorId: ctx.user?.id ?? "",
-      //     action: "INVITATION_DELETED",
-      //     entityType: "INVITATION",
-      //     entityId: input.email,
-      //     beforeJSON: {
-      //         email: invite.email,
-      //         role: invite.role,
-      //         status: invite.status,
-      //     },
-      // });
+      await createAuditLog({
+          orgId: ctx?.org?.id ?? "",
+          actorId: ctx.user?.id ?? "",
+          action: "INVITATION_DELETED",
+          entityType: "INVITATION",
+          entityId: input.email,
+          beforeJSON: {
+              email: invite.email,
+              role: invite.role,
+              status: invite.status,
+          },
+      });
 
       return {
         data: invite,
@@ -282,19 +284,22 @@ export const invitesRouter = router({
           data: { status: "ACCEPTED", acceptedAt: new Date() },
         }),
       ]);
+      
+      revalidateTag(`org-dashboard-${invite.orgId}`, 'max');
 
-      // await createAuditLog({
-      //     orgId: invite.orgId,
-      //     actorId: ctx.user?.id ?? "",
-      //     action: "INVITATION_ACCEPTED",
-      //     entityType: "INVITATION",
-      //     entityId: invite.email,
-      //     afterJSON: {
-      //         email: invite.email,
-      //         userId: ctx.user?.id,
-      //         role: memberRole,
-      //     },
-      // });
+      await createAuditLog({
+          orgId: invite.orgId,
+          actorId: ctx.user?.id ?? "",
+          action: "INVITATION_ACCEPTED",
+          entityType: "INVITATION",
+          entityId: invite.email,
+          afterJSON: {
+              email: invite.email,
+              userId: ctx.user?.id,
+              role: memberRole,
+          },
+      });
+
 
       return {
         data: { orgId: invite.orgId },

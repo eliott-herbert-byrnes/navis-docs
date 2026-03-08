@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-export const runtime = "nodejs";
+// export const runtime = "nodejs";
 
 const BUCKET =
   process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";

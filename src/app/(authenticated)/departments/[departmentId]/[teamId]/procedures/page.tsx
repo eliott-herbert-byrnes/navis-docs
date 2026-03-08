@@ -7,8 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 import { FavoriteList } from "@/features/procedures/components/favorite/components/procedure-favorite-list";
 
-export const revalidate = 3600;
-
 export default async function ProcedurePage({
   params,
 }: {
