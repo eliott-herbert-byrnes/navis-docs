@@ -10,6 +10,7 @@ import {
   settingsPath,
   categoriesPath,
   dashboardPath,
+  departmentsPath,
 } from "@/app/paths";
 import {
   Home,
@@ -50,9 +51,9 @@ export const items = [
     icon: Home,
   },
   {
-    id: "dashboard",
-    title: "Dashboard",
-    path: dashboardPath(),
+    id: "departments",
+    title: "Departments",
+    path: departmentsPath(),
     icon: LayoutDashboard,
     isAdmin: true,
   },

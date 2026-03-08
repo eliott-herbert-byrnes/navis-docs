@@ -1,37 +1,65 @@
-"use client";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AuditLogCard } from "@/features/audit/components/audit-log-card";
+import { getAuditLogsWithCount } from "@/features/audit/utils/audit";
+import { getSessionUser, getUserById, getUserOrgWithRole } from "@/lib/auth";
 import { trpc } from "@/trpc/client";
 import { JsonObject } from "@prisma/client/runtime/client";
 
 function toJsonObject(value: unknown): JsonObject | null {
-  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
-    return value as JsonObject;
-  }
-  return null;
+    if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+        return value as JsonObject;
+    }
+    return null;
 }
 
-export function DashboardAuditStream() {
-  const { data, isLoading } = trpc.audit.getRecent.useQuery(
-    { limit: 5 },
-    { refetchInterval: 30_000 },
-  );
+export async function DashboardAuditStream() {
+    const user = await getSessionUser();
+    const { org } = await getUserOrgWithRole(user?.userId ?? "");
 
-  if (isLoading) return <Skeleton className="h-48" />;
+    const { logs: rawLogs, } = await getAuditLogsWithCount(org?.id ?? "", {
+        limit: 5,
+    });
 
-  return (
-    <div className="space-y-2">
-      {data?.logs.map((log) => (
-        <AuditLogCard
-          key={log.id}
-          log={{
-            ...log,
-            beforeJSON: toJsonObject(log.beforeJSON),
-            afterJSON: toJsonObject(log.afterJSON),
-          }}
-          userName="Unknown"
-        />
-      ))}
-    </div>
-  );
+    // Transform JSON fields to ensure type safety
+    const logs = rawLogs.map((log) => ({
+        ...log,
+        beforeJSON: (typeof log.beforeJSON === "object"
+            ? log.beforeJSON
+            : null) as JsonObject | null,
+        afterJSON: (typeof log.afterJSON === "object"
+            ? log.afterJSON
+            : null) as JsonObject | null,
+    }));
+
+    // Handle empty state
+    if (logs.length === 0) {
+        return (
+            <EmptyState
+                title="No audit logs found"
+                body="There are no audit logs matching your filters. Try adjusting your search or filters."
+            />
+        );
+    }
+
+    // Fetch users efficiently - only unique actors
+    const uniqueActorIds = Array.from(new Set(logs.map((log) => log.actorId)));
+    const users = await Promise.all(uniqueActorIds.map((id) => getUserById(id)));
+
+    // Create a lookup map for O(1) access
+    const userMap = new Map(
+        users.map((user) => [user?.id, user?.name ?? "Unknown"]),
+    );
+
+    return (
+        <div className="space-y-2">
+            {logs.map((log) => (
+                <AuditLogCard
+                    key={log.id}
+                    log={log}
+                    userName={userMap.get(log.actorId) ?? "Unknown"}
+                />
+            ))}
+        </div>
+    );
 }

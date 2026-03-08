@@ -3,24 +3,24 @@ import {
   invitePath,
   procedureBasePath,
   settingsPath,
-  subscriptionPath,
   errorsPath,
   ideasPath,
+  homePath,
 } from "@/app/paths";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { UserPlus, Database, Settings, CreditCard, Inbox, Lightbulb } from "lucide-react";
+import { UserPlus, Database, Settings, Inbox, Lightbulb, Layers } from "lucide-react";
 
 type DashboardQuickLinksProps = { openErrors: number; newIdeas: number };
 
 export function DashboardQuickLinks({ openErrors, newIdeas }: DashboardQuickLinksProps) {
   const links = [
     { label: "Invite a Team Member", path: invitePath(), icon: UserPlus, badge: null },
+    { label: "Create a Department", path: homePath(), icon: Layers, badge: null },
     { label: "Create a Procedure", path: procedureBasePath(), icon: Database, badge: null },
-    { label: "Organisation Settings", path: settingsPath(), icon: Settings, badge: null },
-    { label: "Subscription", path: subscriptionPath(), icon: CreditCard, badge: null },
     { label: "Error Reports", path: errorsPath(), icon: Inbox, badge: openErrors > 0 ? openErrors : null },
     { label: "Ideas", path: ideasPath(), icon: Lightbulb, badge: newIdeas > 0 ? newIdeas : null },
+    { label: "Organisation Settings", path: settingsPath(), icon: Settings, badge: null },
   ];
 
   return (
