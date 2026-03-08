@@ -22,6 +22,7 @@ export const addressPath = (departmentId: string, teamId: string) =>
   `/departments/${departmentId}/${teamId}/procedures/address`;
 export const demoPath = () => "/demo";
 export const dashboardPath = () => "/dashboard";
+export const procedureBaseCreatePath = () => "/procedure-base/create";
 
 // Procedure Database Paths
 export const departmentPath = (departmentId: string) =>

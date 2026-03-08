@@ -10,18 +10,29 @@ import {
 } from "@/app/paths";
 import { RolloutRoleFilter } from "@prisma/client";
 
-export function useCreateProcedure(departmentId: string, teamId: string) {
+type CreateProcedureOptions = {
+  redirectOnSuccess?: boolean; 
+  onSuccess?: () => void;    
+};
+
+export function useCreateProcedure(departmentId: string, teamId: string, options?: CreateProcedureOptions) {
   const utils = trpc.useUtils();
   const router = useRouter();
   const mutation = trpc.procedures.createProcedure.useMutation({
     onSuccess: (data) => {
       utils.procedures.list.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
-      toast.success("Procedure created successfully, redirecting to editor");
       if (data?.data?.id) {
-        router.push(editProcedurePath(departmentId, teamId, data.data.id));
+        if (options?.redirectOnSuccess !== false) {
+          toast.success("Procedure created successfully, redirecting to editor");
+          router.push(editProcedurePath(departmentId, teamId, data.data.id));
+          router.refresh();
+        } else {
+          utils.procedures.getProceduresForBase.invalidate();
+          toast.success("Procedure created successfully");
+          options?.onSuccess?.();
+        }
       }
-      router.refresh();
     },
     onError: (error) => {
       toast.error(
