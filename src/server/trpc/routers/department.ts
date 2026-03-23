@@ -12,6 +12,15 @@ import { z } from "zod";
 
 const nameSchema = z.string().min(1, { message: "Is Required" }).max(28);
 const optionalNameSchema = z.string().max(191).optional();
+const departmentIconKeySchema = z.enum([
+  "users",
+  "layers",
+  "database",
+  "settings",
+  "inbox",
+  "lightbulb",
+  "userPlus",
+]);
 
 export const departmentRouter = router({
   // Query: List departments
@@ -24,6 +33,7 @@ export const departmentRouter = router({
         select: {
           id: true,
           name: true,
+          iconKey: true,
           teams: {
             select: {
               id: true,
@@ -244,5 +254,46 @@ export const departmentRouter = router({
       return {
         department: updatedDepartment,
       };
+    }),
+
+  // Mutation: Set department icon
+  setIcon: adminProcedure
+    .use(rateLimitMiddleware("department-set-icon"))
+    .input(
+      z.object({
+        departmentId: z.string().min(1, { message: "Invalid department" }),
+        iconKey: departmentIconKeySchema,
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Ensures department exists and belongs to this org
+      await departmentExistCheck(ctx, input.departmentId);
+
+      const existingDepartment = await ctx.db.department.findFirst({
+        where: {
+          id: input.departmentId,
+          orgId: ctx.org!.id,
+        },
+      });
+
+      if (!existingDepartment) {
+        // Should be impossible due to departmentExistCheck, but keeps type safety.
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Department not found, select a valid department",
+        });
+      }
+
+      // No-op behavior: avoid unnecessary DB writes
+      if (existingDepartment.iconKey === input.iconKey) {
+        return { department: existingDepartment };
+      }
+
+      const updatedDepartment = await ctx.db.department.update({
+        where: { id: input.departmentId },
+        data: { iconKey: input.iconKey },
+      });
+
+      return { department: updatedDepartment };
     }),
 });
