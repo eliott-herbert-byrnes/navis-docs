@@ -128,6 +128,7 @@ model Department {
   orgId     String
   name      String
   createdAt DateTime          @default(now())
+  iconKey   String            @default("users")
   org       Organization      @relation(fields: [orgId], references: [id], onDelete: Cascade)
   teams     Team[]
 
