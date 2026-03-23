@@ -114,8 +114,8 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
           </Button>
         </SheetTrigger>
         <SheetContent side={isMobile ? "bottom" : "right"}>
-          <SheetHeader className="gap-1">
-            <SheetTitle>{item.procedureName}</SheetTitle>
+          <SheetHeader className="gap-1 my-0 py-0">
+            <SheetTitle className="mt-10">{item.procedureName}</SheetTitle>
             <SheetDescription>Error Report Details</SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-4 overflow-y-auto py-4 text-sm mx-4">
@@ -164,10 +164,12 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
               </p>
             </div>
 
+          </div>
+          <SheetFooter>
             {item.status === "OPEN" && (
               <>
-                <Separator />
-                <div className="flex gap-2">
+                {/* <Separator /> */}
+                <div className="flex flex-col gap-2">
                   <Button
                     onClick={() => handleStatusChange("RESOLVED")}
                     disabled={isUpdating}
@@ -188,11 +190,9 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
                 </div>
               </>
             )}
-          </div>
-          <SheetFooter>
-            <SheetClose asChild>
+            {/* <SheetClose asChild>
               <Button variant="outline">Close</Button>
-            </SheetClose>
+            </SheetClose> */}
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -423,7 +423,7 @@ export function ProcedureErrorList({
                   .getColumn("procedureName")
                   ?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2 shadow-none border-1 mb-2"
+              className="pl-10 mr-2 shadow-none border-1 mb-1"
             />
           </div>
           <div className="flex gap-2">
@@ -486,9 +486,9 @@ export function ProcedureErrorList({
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden">
+      <div className="overflow-hidden rounded-sm">
         <Table>
-          <TableHeader className="sticky top-0 z-10">
+          <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

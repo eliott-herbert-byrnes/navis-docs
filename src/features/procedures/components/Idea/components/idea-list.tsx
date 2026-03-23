@@ -104,8 +104,8 @@ function TableCellViewer({ item }: { item: Idea }) {
           </Button>
         </SheetTrigger>
         <SheetContent side={isMobile ? "bottom" : "right"}>
-          <SheetHeader className="gap-1">
-            <SheetTitle>{item.title}</SheetTitle>
+          <SheetHeader className="gap-1 my-0 py-0">
+            <SheetTitle className="mt-10">{item.title}</SheetTitle>
             <SheetDescription>Idea Details</SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-4 overflow-y-auto py-4 text-sm mx-4">
@@ -147,9 +147,10 @@ function TableCellViewer({ item }: { item: Idea }) {
               </p>
             </div>
 
+          </div>
+          <SheetFooter>
             {item.status === "NEW" && (
               <>
-                <Separator />
                 <div className="flex gap-2">
                   <Button
                     onClick={() => handleStatusChange("IN_PROGRESS")}
@@ -205,11 +206,9 @@ function TableCellViewer({ item }: { item: Idea }) {
                 </div>
               </>
             )}
-          </div>
-          <SheetFooter>
-            <SheetClose asChild>
+            {/* <SheetClose asChild>
               <Button variant="outline">Close</Button>
-            </SheetClose>
+            </SheetClose> */}
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -396,11 +395,11 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }
-            className="pl-10"
+            className="pl-10 shadow-none border-1 mb-1"
           />
         </div>
         <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-          <SelectTrigger className="w-[125px]">
+          <SelectTrigger className="w-[125px] shadow-none">
             <SelectValue placeholder={statusFilter} />
           </SelectTrigger>
           <SelectContent>
@@ -413,7 +412,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
         </Select>
       </div>
 
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
           <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -480,7 +479,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -501,7 +500,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none border-1"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -510,7 +509,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border-1"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -520,7 +519,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border-1"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -530,7 +529,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none border-1"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

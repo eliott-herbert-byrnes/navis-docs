@@ -6,6 +6,7 @@ import { onboardingPath, homePath } from "@/app/paths";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { PageContainer } from "@/components/ui/page-container";
 
 const CategoriesPage = async () => {
   const user = await getSessionUser();
@@ -24,14 +25,16 @@ const CategoriesPage = async () => {
 
   return (
     <>
-      <Heading
-        title="Categories"
-        description="View and manage categories for your organization"
-      />
+      <PageContainer>
+        <Heading
+          title="Categories"
+          description="View and manage categories for your organization"
+        />
 
-      <Suspense fallback={<ListSkeleton />}>
-        <CategoriesList data={data?.categories ?? []} />
-      </Suspense>
+        <Suspense fallback={<ListSkeleton />}>
+          <CategoriesList data={data?.categories ?? []} />
+        </Suspense>
+      </PageContainer>
     </>
   );
 };

@@ -226,7 +226,7 @@ export function CategoriesList({
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2"
+              className="pl-10 mr-2 shadow-none border-1 mb-1"
             />
           </div>
 
@@ -235,7 +235,7 @@ export function CategoriesList({
               value={departmentFilter}
               onValueChange={handleDepartmentFilterChange}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] shadow-none border-1">
                 <SelectValue placeholder={departmentFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -293,7 +293,7 @@ export function CategoriesList({
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
           <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (

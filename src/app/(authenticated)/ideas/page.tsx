@@ -1,6 +1,7 @@
 import { homePath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
+import { PageContainer } from "@/components/ui/page-container";
 import { IdeaList } from "@/features/procedures/components/Idea/components/idea-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
@@ -29,13 +30,16 @@ const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
 
   return (
     <>
-      <Heading
-        title="Ideas"
-        description="View and manage ideas for this organization"
-      />
-      <Suspense fallback={<ListSkeleton />} key={search}>
-        <IdeaList data={ideas} />
-      </Suspense>
+      <PageContainer>
+
+        <Heading
+          title="Ideas"
+          description="View and manage ideas for this organization"
+        />
+        <Suspense fallback={<ListSkeleton />} key={search}>
+          <IdeaList data={ideas} />
+        </Suspense>
+      </PageContainer>
     </>
   );
 };
