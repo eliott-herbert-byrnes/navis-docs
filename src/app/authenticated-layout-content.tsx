@@ -5,7 +5,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { AuthProvider } from "@/contexts/auth-context";
@@ -42,28 +41,31 @@ export async function AuthenticatedLayoutContent({
 
   return (
     <AuthProvider isAdmin={isAdmin} userId={user.userId}>
-      <SidebarProvider defaultOpen={false}>
-        <AppSidebar />
-        <SidebarInset className="p-2">
-          <div className="flex flex-row h-full">
-            <div className="flex h-full w-full flex-col rounded-sm pl-4 pr-4 pt-2">
-              <div className="flex flex-row items-center justify-between">
-                <div className="flex flex-row items-center gap-2">
-                  <div className="sm:hidden">
-                    <SidebarTrigger />
+      {user ?
+        <SidebarProvider defaultOpen={false}>
+          <AppSidebar />
+          <SidebarInset className="p-2">
+            <div className="flex flex-row h-full">
+              <div className="flex h-full w-full flex-col pl-4 pr-4 pt-2">
+                <div className="flex flex-row items-center justify-between px-6">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="sm:hidden">
+                      <SidebarTrigger />
+                    </div>
+                    <div className="hidden md:inline">
+                      <MainHeaderBreadcrumbs />
+                    </div>
                   </div>
-                  <div className="hidden md:inline">
-                    <MainHeaderBreadcrumbs />
-                  </div>
+                  <OrgBadge />
                 </div>
-                <OrgBadge />
+                <div className="grid grid-cols-12 gap-x-4 pt-10 px-6">
+                  {children}
+                </div>
               </div>
-              <Separator className="mt-2" />
-              {children}
             </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+          </SidebarInset>
+        </SidebarProvider>
+        : null}
     </AuthProvider>
   );
 }

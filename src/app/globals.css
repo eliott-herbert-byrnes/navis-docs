@@ -3,6 +3,13 @@
 @import "../styles/_variables.scss";
 @import "../styles/_keyframe-animations.scss";
 
+.hedvig-letters-serif {
+  font-family: "Hedvig Letters Serif", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -18,6 +25,7 @@
   --font-sans:
     ui-sans-serif, system-ui, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial,
     "Noto Sans", "Segoe UI Emoji";
+  --font-serif: "Hedvig Letters Serif";
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -52,6 +60,7 @@
 }
 
 @theme inline {
+  --font-hedvig: "Hedvig Letters Serif";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

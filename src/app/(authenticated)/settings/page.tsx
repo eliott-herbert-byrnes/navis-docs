@@ -1,4 +1,4 @@
-import { homePath, onboardingPath } from "@/app/paths";
+import { homePath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
@@ -8,6 +8,8 @@ import { Suspense } from "react";
 
 const SettingsPage = async () => {
   const user = await getSessionUser();
+  if (!user) redirect(signInPath());
+  
   const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());

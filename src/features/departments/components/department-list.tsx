@@ -32,7 +32,7 @@ const DepartmentList = () => {
   return (
     <>
       {departments.length ? (
-        <div className="flex flex-row flex-wrap gap-4">
+        <div className="flex flex-row flex-wrap gap-6">
           {departments.map((department) => (
             <DepartmentCard key={department.id} department={department} />
           ))}

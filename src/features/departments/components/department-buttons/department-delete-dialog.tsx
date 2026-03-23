@@ -35,15 +35,11 @@ const DepartmentDeleteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
+      <DialogTrigger>
+        <div className="flex flex-row text-sm gap-2 py-2 px-4 font-semibold items-center hover:bg-gray-100">
           <TrashIcon className="w-4 h-4" />
           Delete
-        </Button>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -77,7 +73,7 @@ const DepartmentDeleteDialog = ({
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </Dialog >
   );
 };
 

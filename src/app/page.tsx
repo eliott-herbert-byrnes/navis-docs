@@ -3,7 +3,7 @@ import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { departmentsPath, onboardingPath } from "./paths";
+import { departmentsPath, onboardingPath, signInPath } from "./paths";
 import { getDashboardStats } from "@/features/dashboard/queries/dashboard-stats";
 import { getProcedureChartData } from "@/features/dashboard/queries/procedure-chart-data";
 import { DashboardStatCards } from "@/features/dashboard/components/dashboard-stat-card";
@@ -18,8 +18,9 @@ export async function generateStaticParams() {
 
 export default async function Home() {
   const user = await getSessionUser();
+  if (!user) redirect(signInPath());
+  
   const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
-
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(departmentsPath());
 

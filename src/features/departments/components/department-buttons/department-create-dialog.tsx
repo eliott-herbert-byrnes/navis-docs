@@ -80,8 +80,7 @@ const DepartmentDialog = ({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" disabled={!isAdmin}>
-          <PlusIcon className="w-4 h-4" />
-          Create Department
+          Actions
         </Button>
       </DialogTrigger>
       <DialogContent>

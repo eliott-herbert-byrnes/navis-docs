@@ -6,6 +6,7 @@ import { DepartmentCreateButton } from "@/features/departments/components/depart
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signInPath } from "@/app/paths";
+import { PageContainer } from "@/components/ui/page-container";
 
 export async function generateStaticParams() {
   return [{}];
@@ -13,12 +14,13 @@ export async function generateStaticParams() {
 
 export default async function DepartmentsPage() {
   const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  if (!user) redirect(signInPath());
 
+  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org || !user) redirect(signInPath());
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title="Departments"
         description="Manage your organization's departments"
@@ -27,6 +29,6 @@ export default async function DepartmentsPage() {
       <Suspense fallback={<Skeleton />}>
         <DepartmentList />
       </Suspense>
-    </>
+    </PageContainer>
   );
 }

@@ -20,7 +20,6 @@ export const userBasePath = () => "/user-base";
 export const settingsPath = () => "/settings";
 export const addressPath = (departmentId: string, teamId: string) =>
   `/departments/${departmentId}/${teamId}/procedures/address`;
-export const demoPath = () => "/demo";
 export const dashboardPath = () => "/dashboard";
 export const procedureBaseCreatePath = () => "/procedure-base/create";
 

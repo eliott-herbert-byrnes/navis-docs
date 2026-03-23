@@ -1,4 +1,4 @@
-import { homePath, onboardingPath } from "@/app/paths";
+import { homePath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { IdeaList } from "@/features/procedures/components/Idea/components/idea-list";
@@ -15,6 +15,8 @@ type IdeasPageProps = {
 
 const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   const user = await getSessionUser();
+  if (!user) redirect(signInPath());
+
   const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());

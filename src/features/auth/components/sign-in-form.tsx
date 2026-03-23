@@ -14,7 +14,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { demoPath, onboardingPath } from "@/app/paths";
+import { homePath, onboardingPath } from "@/app/paths";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useTransition, useState } from "react";
@@ -108,7 +108,7 @@ export function SignInForm({
       } else {
         toast.error(
           res.message ??
-            "Failed to load demo credentials, try again or refresh the page",
+          "Failed to load demo credentials, try again or refresh the page",
         );
       }
     });
@@ -124,12 +124,12 @@ export function SignInForm({
         toast.success("Demo code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
-          demoPath();
+          homePath();
         window.location.assign(cb);
       } else {
         toast.error(
           res.message ??
-            "Demo verification failed, try again or use a new code",
+          "Demo verification failed, try again or use a new code",
         );
       }
     });
@@ -138,7 +138,7 @@ export function SignInForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       {!sent && (
-        <Card className="animate-fade-from-top">
+        <Card className="animate-fade-from-top max-w-sm shadow-none">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome back</CardTitle>
             <CardDescription>Login with your Google account</CardDescription>
@@ -155,7 +155,6 @@ export function SignInForm({
                           type="button"
                           onClick={continueWithGoogle}
                           className="w-full"
-                          disabled
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +239,7 @@ export function SignInForm({
       )}
       {sent && (
         <>
-          <Card className="animate-fade-from-top" {...props}>
+          <Card className="animate-fade-from-top shadow-none" {...props}>
             <CardHeader className="text-center">
               <CardTitle className="text-xl">Enter verification code</CardTitle>
               <CardDescription>
@@ -301,10 +300,10 @@ export function SignInForm({
           </Card>
         </>
       )}
-      <FieldDescription className="px-6 text-center">
+      {!sent ? (<FieldDescription className="px-6 text-center pt-1">
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+      </FieldDescription>) : null}
     </div>
   );
 }

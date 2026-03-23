@@ -12,10 +12,8 @@ import {
   EyeIcon,
   LucideLoaderCircle,
   SquareArrowUpRight,
-  FileText,
   Users,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { TeamDropdown } from "./team-dropdown";
 import {
   DropdownMenu,
@@ -60,31 +58,29 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
   };
 
   const buttons = (
-    <>
-      <div className="flex flex-row gap-x-2 gap-y-2 w-full">
-        <div className="flex gap-x-2">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleViewClick}
-            disabled={!selectedTeamId || isPending}
-          >
-            {isPending ? (
-              <LucideLoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <EyeIcon className="w-4 h-4" />
-            )}
-            View
-          </Button>
-        </div>
+    <div className="grid w-full grid-cols-2 gap-2">
+      <Button
+        className="w-full shadow-none"
+        variant="outline"
+        onClick={handleViewClick}
+        disabled={!selectedTeamId || isPending}
+      >
+        {isPending ? (
+          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+        ) : (
+          <EyeIcon className="w-4 h-4" />
+        )}
+        View
+      </Button>
+      <div className="min-w-0 w-full">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="default" className="w-full max-w-[96px]">
+            <Button className="w-full" variant="default">
               <SquareArrowUpRight className="w-4 h-4" />
               Actions
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="flex flex-col gap-1.5">
+          <DropdownMenuContent className="flex flex-col">
             <DropdownMenuItem asChild>
               <DepartmentOverviewButton
                 title={department.name}
@@ -103,31 +99,16 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </>
+    </div>
   );
 
   return (
-    <Card className="w-full max-w-[250px] animate-fade-from-top hover:scale-101 transition-all duration-300">
+    <Card className="w-full max-w-[250px] animate-fade-from-top transition-all duration-300 border-1 shadow-none gap-4">
       <CardHeader>
+        <Users width="45" height="45" className="bg-secondary p-2 rounded-md border-1 mb-1" />
         <CardTitle>
-          <Badge className="text-sm">{department.name}</Badge>
+          <span className="text-xl">{department.name}</span>
         </CardTitle>
-        <div className="flex flex-wrap gap-2 mt-2">
-          <Badge variant="outline" className="gap-1.5 font-normal">
-            <FileText className="h-3 w-3" />
-            <span>
-              {totalProcedures}{" "}
-              {totalProcedures === 1 ? "procedure" : "procedures"}
-            </span>
-          </Badge>
-          <Badge variant="outline" className="gap-1.5 font-normal">
-            <Users className="h-3 w-3" />
-            <span>
-              {department.teams.length}{" "}
-              {department.teams.length === 1 ? "team" : "teams"}
-            </span>
-          </Badge>
-        </div>
       </CardHeader>
       <CardContent>
         <TeamDropdown
@@ -136,8 +117,8 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
           onTeamSelect={setSelectedTeamId}
         />
       </CardContent>
-      <CardFooter>
-        <CardAction>{buttons}</CardAction>
+      <CardFooter className="w-full mt-1">
+        <CardAction className="w-full">{buttons}</CardAction>
       </CardFooter>
     </Card>
   );

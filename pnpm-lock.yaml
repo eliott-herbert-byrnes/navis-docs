@@ -6144,7 +6144,7 @@ snapshots:
 
   '@babel/code-frame@7.27.1':
     dependencies:
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
@@ -6243,9 +6243,9 @@ snapshots:
 
   '@babel/template@7.27.2':
     dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/code-frame': 7.28.6
+      '@babel/parser': 7.28.6
+      '@babel/types': 7.28.6
 
   '@babel/template@7.28.6':
     dependencies:
@@ -10094,7 +10094,7 @@ snapshots:
   eslint-plugin-react-hooks@7.0.1(eslint@9.36.0(jiti@2.6.0)):
     dependencies:
       '@babel/core': 7.28.6
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.6
       eslint: 9.36.0(jiti@2.6.0)
       hermes-parser: 0.25.1
       zod: 4.1.11

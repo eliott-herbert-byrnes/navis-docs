@@ -48,15 +48,11 @@ const DepartmentOverview = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
-          <EyeIcon className="w-4 h-4" />
-          Overview
-        </Button>
+      <DialogTrigger>
+          <div className="flex flex-row text-sm border-b-1 gap-2 py-2 px-4 font-semibold items-center hover:bg-gray-100">
+            <EyeIcon className="w-4 h-4" />
+            Overview
+          </div>
       </DialogTrigger>
 
       <DialogContent>

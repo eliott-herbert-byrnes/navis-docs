@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@radix-ui/react-separator";
 import { Loader2, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -52,15 +53,11 @@ const CreateTeamDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
-          <PlusIcon className="w-4 h-4" />
-          Team
-        </Button>
+      <DialogTrigger>
+          <div className="flex flex-row text-sm border-b-1 gap-2 py-2 px-4 font-semibold items-center hover:bg-gray-100">
+            <PlusIcon className="w-4 h-4" />
+            Team
+          </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
