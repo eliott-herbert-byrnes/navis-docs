@@ -1,6 +1,7 @@
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
+import { PageContainer } from "@/components/ui/page-container";
 import { ProcedureErrorList } from "@/features/procedures/components/error/components/procedure-error-list";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
@@ -27,13 +28,16 @@ const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
 
   return (
     <>
-      <Heading
-        title="Error Reports"
-        description="View and manage error reports for procedures"
-      />
-      <Suspense fallback={<ListSkeleton />} key={search}>
-        <ProcedureErrorList data={errors} />
-      </Suspense>
+      <PageContainer>
+
+        <Heading
+          title="Error Reports"
+          description="View and manage error reports for procedures"
+        />
+        <Suspense fallback={<ListSkeleton />} key={search}>
+          <ProcedureErrorList data={errors} />
+        </Suspense>
+      </PageContainer>
     </>
   );
 };

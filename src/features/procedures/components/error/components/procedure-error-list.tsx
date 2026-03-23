@@ -410,7 +410,7 @@ export function ProcedureErrorList({
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-1 justify-between gap-4">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-4 top-5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by procedure name..."
               value={
@@ -423,7 +423,7 @@ export function ProcedureErrorList({
                   .getColumn("procedureName")
                   ?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2"
+              className="pl-10 mr-2 shadow-none border-1 mb-2"
             />
           </div>
           <div className="flex gap-2">
@@ -431,7 +431,7 @@ export function ProcedureErrorList({
               value={statusFilter}
               onValueChange={handleStatusFilterChange}
             >
-              <SelectTrigger className="w-[125px]">
+              <SelectTrigger className="w-[125px] shadow-none">
                 <SelectValue placeholder={statusFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -486,9 +486,9 @@ export function ProcedureErrorList({
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -553,7 +553,7 @@ export function ProcedureErrorList({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none border-1 rounded-sm" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -571,10 +571,10 @@ export function ProcedureErrorList({
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </div>
-          <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <div className="ml-auto flex items-center gap-1 lg:ml-0 px-2">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none border-1"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -583,7 +583,7 @@ export function ProcedureErrorList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border-1"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -593,7 +593,7 @@ export function ProcedureErrorList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border-1"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -603,7 +603,7 @@ export function ProcedureErrorList({
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none border-1"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

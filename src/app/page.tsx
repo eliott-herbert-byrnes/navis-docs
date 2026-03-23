@@ -34,7 +34,6 @@ export default async function Home() {
   return (
     <>
       <PageContainer>
-
         <Heading
           title="Dashboard"
           description="Organization overview at a glance"
