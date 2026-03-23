@@ -16,7 +16,7 @@ const Heading = ({
   return (
     <>
       <div className="flex flex-row justify-between my-auto">
-        <div className="flex flex-col gap-0.5 mt-3">
+        <div className="flex flex-col gap-1 mt-3">
           <h1 className="text-4xl font-medium font-serif">{title}</h1>
           <p className="text-sm text-muted-foreground">{description}</p>
           {breadcrumbs && (

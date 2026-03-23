@@ -53,7 +53,7 @@ const TeamRenameDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full max-w-[125px]">
+        <Button variant="ghost" className="w-full max-w-[125px] rounded-none border-b-1">
           <PencilIcon className="w-4 h-4" />
           Rename
         </Button>

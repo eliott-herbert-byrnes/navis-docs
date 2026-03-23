@@ -37,8 +37,8 @@ const TeamDeleteDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button
-          variant="outline"
-          className="w-full max-w-[125px]"
+          variant="ghost"
+          className="w-full max-w-[125px] border-b-1 rounded-none"
           disabled={!isAdmin}
         >
           <TrashIcon className="w-4 h-4" />

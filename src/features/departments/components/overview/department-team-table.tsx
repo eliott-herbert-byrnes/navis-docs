@@ -131,7 +131,7 @@ export function DepartmentTeamTable({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col">
                     <DropdownMenuItem asChild>
                       <TeamDeleteButton
                         departmentId={row.getValue("departmentId") as string}
@@ -178,7 +178,7 @@ export function DepartmentTeamTable({
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm border-1 shadow-none"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
