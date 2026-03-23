@@ -3,6 +3,7 @@
 import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
 import { useState } from "react";
+import type { DepartmentIconKey } from "../components/department-icon-registry";
 
 export function useCreateDepartment() {
   const utils = trpc.useUtils();
@@ -99,6 +100,34 @@ export function useRenameDepartment() {
 
   return {
     renameDepartment,
+    isPending: mutation.isPending,
+  };
+}
+
+export function useSetDepartmentIcon() {
+  const utils = trpc.useUtils();
+
+  const mutation = trpc.department.setIcon.useMutation({
+    onSuccess: () => {
+      utils.department.list.invalidate();
+      toast.success("Department icon updated");
+    },
+    onError: (error) => {
+      toast.error(
+        error.message || "Something went wrong, try again or contact support",
+      );
+    },
+  });
+
+  const setDepartmentIcon = (input: {
+    departmentId: string;
+    iconKey: DepartmentIconKey;
+  }) => {
+    mutation.mutate(input);
+  };
+
+  return {
+    setDepartmentIcon,
     isPending: mutation.isPending,
   };
 }

@@ -12,9 +12,9 @@ import {
   EyeIcon,
   LucideLoaderCircle,
   SquareArrowUpRight,
-  Users,
 } from "lucide-react";
 import { TeamDropdown } from "./team-dropdown";
+import { DepartmentIconSelector } from "./department-icon-selector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +32,7 @@ type DepartmentCardProps = {
   department: {
     id: string;
     name: string;
+    iconKey?: string | null;
     teams: {
       id: string;
       name: string;
@@ -44,11 +45,6 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-
-  const totalProcedures = department.teams.reduce(
-    (sum, team) => sum + team._count.procedure,
-    0,
-  );
 
   const handleViewClick = () => {
     if (!selectedTeamId) return;
@@ -105,7 +101,11 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
   return (
     <Card className="w-full max-w-[250px] animate-fade-from-top transition-all duration-300 border-1 shadow-none gap-4">
       <CardHeader>
-        <Users width="45" height="45" className="bg-secondary p-2 rounded-md border-1 mb-1" />
+        <DepartmentIconSelector
+          departmentId={department.id}
+          departmentName={department.name}
+          iconKey={department.iconKey}
+        />
         <CardTitle>
           <span className="text-xl">{department.name}</span>
         </CardTitle>
