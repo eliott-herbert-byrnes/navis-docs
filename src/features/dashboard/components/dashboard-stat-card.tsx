@@ -7,7 +7,7 @@ type DashboardStatCardsProps = { stats: DashboardStats };
 export function DashboardStatCards({ stats }: DashboardStatCardsProps) {
   const cards = [
     {
-      title: "Total Members",
+      title: "Members",
       value: stats.totalUsers,
       icon: Users,
     },
@@ -17,7 +17,7 @@ export function DashboardStatCards({ stats }: DashboardStatCardsProps) {
       icon: ShieldAlert,
     },
     {
-      title: "Total Procedures",
+      title: "Procedures",
       value: stats.totalProcedures,
       icon: BookOpen,
     },
@@ -31,13 +31,13 @@ export function DashboardStatCards({ stats }: DashboardStatCardsProps) {
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {cards.map((card) => (
-        <Card key={card.title}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-            <card.icon className="h-4 w-4 text-muted-foreground" />
+        <Card key={card.title} className="shadow-none border-1 gap-2">
+          <CardHeader className="flex flex-row items-center justify-start gap-3">
+            <card.icon className="h-8 w-8 bg-secondary p-1 rounded-sm border-1" />
+            <p className="text-2xl font-semibold">{card.value}</p>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{card.value}</p>
+            <CardTitle className="text-md font-semibold">{card.title}</CardTitle>
           </CardContent>
         </Card>
       ))}

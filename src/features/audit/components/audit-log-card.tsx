@@ -108,10 +108,10 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
 
   return (
     <Suspense fallback={<Skeleton className="h-48" />}>
-      <Card className="w-full">
+      <Card className="w-full shadow-none border-1 p-4 border-sm">
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           {/* Header - Always Visible */}
-          <CardHeader className="py-0">
+          <CardHeader className="py-0 px-0">
             <div className="flex items-center justify-between gap-1 mt-1">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {/* Action Title */}
