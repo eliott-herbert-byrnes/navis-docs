@@ -7,16 +7,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Brain, Loader2, MessageCircle, Send } from "lucide-react";
+import { Brain, Loader2, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./chat-message";
 import { ChatSources } from "./chat-sources";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { usePersistedChatState } from "../hooks/use-persisted-chat-state";
 import { ChatDeleteButton } from "./chat-delete-button";
+import { Textarea } from "@/components/ui/textarea";
 
 type AIChatDrawerProps = {
   open?: boolean;
@@ -136,27 +135,16 @@ export function AIChatDrawer({
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent
           side="right"
-          className="w-full sm:w-[500px] p-0 flex flex-col !border-l-0 outline-none focus:outline-none"
+          className="w-full sm:w-[345px] p-0 flex flex-col outline-none focus:outline-none shadow-none rounded-none"
         >
-          <SheetHeader className="pl-4 border-b">
-            <SheetTitle>AI Assistant</SheetTitle>
+          <SheetHeader className="flex flex-row pl-4 border-b">
+            <SheetTitle><span className="">AI Assistant</span></SheetTitle>
           </SheetHeader>
 
           {/* Messages */}
-          <ScrollArea className="flex-1 overflow-y-auto" ref={scrollRef}>
+          <ScrollArea className="flex-1 overflow-y-auto relative" ref={scrollRef}>
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full p-8 ">
-                <MessageCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="font-medium mb-2">Ask me anything</h3>
-                <p className="text-sm text-muted-foreground text-center">
-                  I can help you find procedures and answer questions about
-                  them.
-                </p>
-                <Separator className="my-4" />
-                <p className="text-sm text-muted-foreground text-center">
-                  The assistant is AI and can make mistakes. Please double-check and clarify responses.
-                </p>
-              </div>
+              null
             ) : (
               <div className="flex flex-col">
                 {messages.map((message, i) => (
@@ -182,27 +170,44 @@ export function AIChatDrawer({
             )}
           </ScrollArea>
 
+
           {/* Input */}
-          <form onSubmit={handleSubmit} className="p-4 border-t">
+          <form onSubmit={handleSubmit} className="pl-4 pb-4 pr-2">
+            <div className="py-4 mr-10">
+              <div className="bottom-0">
+                <p className="text-sm text-muted-foreground">
+                  The assistant is AI and can make mistakes. Double-check and clarify responses.
+                </p>
+              </div>
+            </div>
             <div className="flex gap-2">
-              <Input
+              <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.nativeEvent.isComposing) return;
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    e.currentTarget.form?.requestSubmit();
+                  }
+                }}
                 placeholder="Ask about a procedure..."
                 disabled={isLoading}
-                className="flex-1"
+                className="flex-1 shadow-none border"
               />
-              <Button
-                type="submit"
-                size="icon"
-                disabled={isLoading || !input.trim()}
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-              <ChatDeleteButton
-                isLoading={isLoading}
-                clearMessage={clearMessages}
-              />
+              <div className="flex flex-col gap-2">
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={isLoading || !input.trim()}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+                <ChatDeleteButton
+                  isLoading={isLoading}
+                  clearMessage={clearMessages}
+                />
+              </div>
             </div>
           </form>
         </SheetContent>

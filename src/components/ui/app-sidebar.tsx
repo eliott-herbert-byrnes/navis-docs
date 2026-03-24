@@ -1,4 +1,4 @@
-import { ChevronUp, User2, LucideShip } from "lucide-react";
+import { User2 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -62,10 +62,10 @@ export async function AppSidebar() {
                         )}
                       >
                         <SidebarMenuButton asChild tooltip={item.title}>
-                          <a href={item.path}>
+                          <Link href={item.path}>
                             <item.icon />
                             <span>{item.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <Separator />
@@ -81,10 +81,10 @@ export async function AppSidebar() {
                       )}
                     >
                       <SidebarMenuButton asChild tooltip={item.title}>
-                        <a href={item.path}>
+                        <Link href={item.path}>
                           <item.icon />
                           <span>{item.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ),

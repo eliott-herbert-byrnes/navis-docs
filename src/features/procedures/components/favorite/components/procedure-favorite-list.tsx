@@ -62,46 +62,46 @@ export function FavoriteList() {
       {favorites.map((procedure) => (
         <Card
           key={procedure.id}
-          className="hover:scale-101 transition-all duration-300 flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top"
+          className="flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top shadow-none border"
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between gap-2 min-h-[3rem]">
-              <Link
-                href={viewProcedurePath(departmentId, teamId, procedure.id)}
-                className="flex-1"
-              >
+          <Link
+            href={viewProcedurePath(departmentId, teamId, procedure.id)}
+            className="flex-1"
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                 <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
                   {procedure.title}
                 </CardTitle>
-              </Link>
-              <ProcedureFavoriteButton
-                procedureId={procedure.id}
-                initialIsFavorite={true}
-                size="sm"
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-between">
-            <div className="space-y-3">
-              {procedure.category && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Folder className="w-3 h-3" />
-                  {procedure.category.name}
-                </div>
-              )}
-              {procedure.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {procedure.description}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
-              <FileText className="w-3 h-3" />
-              <span className="capitalize">
-                {procedure.style.toLowerCase()}
-              </span>
-            </div>
-          </CardContent>
+                <ProcedureFavoriteButton
+                  procedureId={procedure.id}
+                  initialIsFavorite={true}
+                  size="sm"
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <div className="space-y-3">
+                {procedure.category && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Folder className="w-3 h-3" />
+                    {procedure.category.name}
+                  </div>
+                )}
+                {procedure.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {procedure.description}
+                  </p>
+                )}
+              </div>
+              {/* <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
+                <FileText className="w-3 h-3" />
+                <span className="capitalize">
+                  {procedure.style.toLowerCase()}
+                </span>
+              </div> */}
+            </CardContent>
+          </Link>
         </Card>
       ))}
     </div>

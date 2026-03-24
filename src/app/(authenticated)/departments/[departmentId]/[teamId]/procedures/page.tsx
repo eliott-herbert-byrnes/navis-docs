@@ -27,8 +27,9 @@ export default async function ProcedurePage({
   return (
     <>
       <Heading
-        title={`${teamName}`}
-        actions={isAdmin ? <ProcedureCreateButton /> : null}
+        title="Favorites"
+        description="Select a procedure from your favourites list"
+        // actions={isAdmin ? <ProcedureCreateButton /> : null}
       />
       <FavoriteList />
       <Suspense fallback={<Skeleton />}>

@@ -112,7 +112,7 @@ export function ProcedureSidebar({
 
         <IdeaButton />
 
-        <Separator className="my-2" />
+        <Separator className="my-3 max-w-[250px]" />
 
         {/* Categories with Procedures */}
         {categories.length === 0 && uncategorizedProcedures.length === 0 ? (
@@ -139,7 +139,7 @@ export function ProcedureSidebar({
                       <div className="">
                         <Button
                           variant="ghost"
-                          className="w-full justify-between group"
+                          className="w-full justify-between group max-w-[250px]"
                         >
                           <span className="font-medium text-sm flex items-center gap-1.5">
                             {category.name}
@@ -277,7 +277,7 @@ export function ProcedureSidebar({
   return (
     <>
       {/* Mobile: Sheet Drawer */}
-      <div className="sm:hidden ">
+      <div className="sm:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button
@@ -301,10 +301,10 @@ export function ProcedureSidebar({
       </div>
 
       {/* Desktop: Regular Sidebar */}
-      <aside className="hidden sm:flex w-57 border-r bg-background flex-col h-full">
-        <div className="p-4 border-b">
+      <aside className="hidden sm:flex col-span-3 bg-background flex-col h-full mt-5">
+        {/* <div className="border-b"> */}
           <ProcedureSearchButton />
-        </div>
+        {/* </div> */}
         <SidebarContent />
       </aside>
     </>

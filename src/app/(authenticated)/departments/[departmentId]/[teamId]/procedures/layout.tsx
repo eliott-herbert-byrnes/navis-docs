@@ -1,7 +1,4 @@
-"use server";
-
 import { ProcedureSidebar } from "@/features/procedures/components/procedure-sidebar";
-import { Providers } from "@/app/providers";
 import { serverTrpc } from "@/server/trpc/server";
 import { ProcedureRouteProvider } from "@/contexts/procedure-route-context";
 import { getSessionContext } from "@/lib/auth";
@@ -37,19 +34,18 @@ export default async function ProcedureLayout({
     ) ?? [];
 
   return (
-    <Providers>
       <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
-        <div className="flex h-full w-full">
-          <ProcedureSidebar
-            isAdmin={isAdmin}
-            uncategorizedProcedures={procedures}
-            categories={categories}
-            unreadProcedureVersionIds={unreadProcedureVersionIds}
-            unreadNewsCount={unreadNewsCount ?? 0}
-          />
-          <main className="flex-1 overflow-auto p-4">{children}</main>
+        <div className="col-span-24 grid grid-cols-24">
+            <ProcedureSidebar
+              isAdmin={isAdmin}
+              uncategorizedProcedures={procedures}
+              categories={categories}
+              unreadProcedureVersionIds={unreadProcedureVersionIds}
+              unreadNewsCount={unreadNewsCount ?? 0}
+            />
+
+            <main className="col-span-24 sm:col-span-16 sm:col-start-5 ">{children}</main>
         </div>
       </ProcedureRouteProvider>
-    </Providers>
   );
 }
