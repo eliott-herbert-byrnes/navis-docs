@@ -53,11 +53,13 @@ const CreateTeamDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger>
-          <div className="flex flex-row text-sm border-b-1 gap-2 py-2 px-4 font-semibold items-center hover:bg-gray-100">
+      <DialogTrigger asChild>
+        <Button variant="ghost" className="rounded-none justify-start">
+          <div className="flex flex-row gap-2 items-center">
             <PlusIcon className="w-4 h-4" />
             Team
           </div>
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

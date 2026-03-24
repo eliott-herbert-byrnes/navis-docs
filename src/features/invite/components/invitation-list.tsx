@@ -111,7 +111,7 @@ const InvitationList = ({ orgId, search, page = 1 }: InvitationListProps) => {
       </div>
 
       {/* Desktop: table */}
-      <div className="hidden md:block">
+      <div className="hidden md:block rounded-sm border-b-1 ">
         <Table>
           <TableHeader>
             <TableRow>

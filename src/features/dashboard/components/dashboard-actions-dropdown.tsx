@@ -40,13 +40,17 @@ export function DashboardActionsDropdown() {
           Actions <ChevronDown className="size-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="flex flex-col p-2">
+      <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
         {actions.map((action) => (
           <DropdownMenuItem key={action.label} asChild>
-            <Link href={action.path}>
-              <action.icon className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{action.label}</span>
-            </Link>
+            <Button variant="ghost" className="flex justify-start p-4 rounded-none">
+              <Link href={action.path}>
+                <div className="flex flex-row gap-2 items-center">
+                  <action.icon className="h-4 w-4 text-muted-foreground" />
+                  <span className=" font-medium">{action.label}</span>
+                </div>
+              </Link>
+            </Button>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

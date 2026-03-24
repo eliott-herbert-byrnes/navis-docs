@@ -5,7 +5,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { useUpdateProcedureCategory } from "../hook/use-procedure-base-mutations";
 
@@ -21,8 +20,17 @@ export function CategoryCell({
   const { updateCategory, isPending } = useUpdateProcedureCategory();
 
   const value = procedure.categoryId ?? "";
+
+  const selectedCategoryName =
+    categories.find((c) => c.id === value)?.name ?? "";
+
+  const truncatedCategoryName =
+    selectedCategoryName.length > 14
+      ? `${selectedCategoryName.slice(0, 14)}...`
+      : selectedCategoryName;
+
   return (
-    <div className="w-40">
+    <div className="max-w-40">
       <Select
         value={value}
         onValueChange={(newValue) => {
@@ -33,8 +41,10 @@ export function CategoryCell({
         }}
         disabled={isPending}
       >
-        <SelectTrigger className="h-8 text-muted-foreground">
-          <SelectValue placeholder="Category" />
+        <SelectTrigger className="h-8 text-muted-foreground  shadow-none border truncate max-w-40 w-40">
+          <span className={!value ? "text-muted-foreground/60" : ""}>
+            {value ? truncatedCategoryName : "Category"}
+          </span>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={UNCATEGORIZED_VALUE}>Uncategorized</SelectItem>

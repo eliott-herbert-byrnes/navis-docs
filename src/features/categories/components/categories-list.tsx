@@ -226,7 +226,7 @@ export function CategoriesList({
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2 shadow-none border-1 mb-1"
+              className="pl-10 mr-2 shadow-none border-1 mb-1 w-80"
             />
           </div>
 

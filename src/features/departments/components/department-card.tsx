@@ -76,7 +76,7 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
               Actions
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="flex flex-col">
+          <DropdownMenuContent align="end" className="flex flex-col">
             <DropdownMenuItem asChild>
               <DepartmentOverviewButton
                 title={department.name}

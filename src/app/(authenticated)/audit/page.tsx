@@ -13,6 +13,7 @@ import { AuditPagination } from "@/features/audit/components/audit-pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/ui/Heading";
 import { JsonObject } from "@prisma/client/runtime/client";
+import { PageContainer } from "@/components/ui/page-container";
 
 type AuditPageProps = {
   searchParams: Promise<{
@@ -70,7 +71,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   }));
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title="Audit Logs"
         description="View the audit logs for your organization"
@@ -96,7 +97,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
           )}
         </div>
       </Suspense>
-    </>
+    </PageContainer>
   );
 };
 

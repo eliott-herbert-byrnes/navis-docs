@@ -40,7 +40,7 @@ export const InvitationSearch = () => {
         placeholder="Search by email..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="pl-9"
+        className="pl-9 shadow-none border max-w-80"
         disabled={isPending}
       />
     </div>

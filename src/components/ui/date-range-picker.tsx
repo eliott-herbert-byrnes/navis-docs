@@ -23,7 +23,6 @@ export function DatePickerWithRange({
   onDateChange,
   disabled,
 }: DatePickerWithRangeProps) {
-  // Track if popover is open
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -31,7 +30,7 @@ export function DatePickerWithRange({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="justify-start px-2.5 font-normal " // Fixed width
+          className="justify-start px-2.5 font-normal shadow-none" 
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date?.from ? (

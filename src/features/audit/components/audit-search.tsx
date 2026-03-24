@@ -115,7 +115,7 @@ export const AuditSearch = () => {
           placeholder="Search by user..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
+          className="pl-9 shadow-none border w-80"
           disabled={isPending}
         />
       </div>
@@ -129,7 +129,7 @@ export const AuditSearch = () => {
         />
 
         <Select value={entityType} onValueChange={setEntityType}>
-          <SelectTrigger className="w-30">
+          <SelectTrigger className="w-30 shadow-none">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
           <SelectContent>

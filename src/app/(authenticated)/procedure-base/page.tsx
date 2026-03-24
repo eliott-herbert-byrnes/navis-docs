@@ -9,7 +9,9 @@ import { serverTrpc } from "@/server/trpc/server";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { ChevronDown, PlusIcon } from "lucide-react";
+import { PageContainer } from "@/components/ui/page-container";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const ProcedureBasePage = async () => {
   const user = await getSessionUser();
@@ -25,34 +27,53 @@ const ProcedureBasePage = async () => {
   });
   const data = proceduresResult;
 
+
   const createProcedureButton = (
-            <Link href={procedureBaseCreatePath()}>
-              <Button variant="outline">
-                <PlusIcon className="w-4 h-4" />
-                Create Procedure
-              </Button>
-            </Link>
+    <Button variant="ghost" className="flex justify-start p-0 rounded-none">
+      <Link href={procedureBaseCreatePath()} className="ml-1 cursor-default">
+        <div className="flex flex-row gap-2 items-center">
+          <PlusIcon className="w-4 h-4" />
+          Create Procedure
+        </div>
+      </Link>
+    </Button>
+  )
+
+  const dropdownButtons = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          Actions <ChevronDown className="size-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
+        <DropdownMenuItem asChild>
+          <ExportProcedureOrgDataButton />
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          {createProcedureButton}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 
   return (
-    <>
-      <Heading
-        title="Procedures"
-        description="View and manage procedures for your organization"
-        actions={
-          <div className="flex flex-col gap-2">
-            <ExportProcedureOrgDataButton />
-            {/* Disabled for MVP */}
-            {/* <ProcedureImportButton /> */}
-            {createProcedureButton}
-          </div>
-        }
-      />
-
-      <Suspense fallback={<ListSkeleton />}>
-        <ProcedureList initialData={data} />
-      </Suspense>
-    </>
+      <PageContainer>
+        <Heading
+          title="Procedures"
+          description="View and manage procedures for your organization"
+          actions={
+            <div className="flex flex-col gap-2">
+              {/* Disabled for MVP */}
+              {/* <ProcedureImportButton /> */}
+              {dropdownButtons}
+            </div>
+          }
+        />
+        <Suspense fallback={<ListSkeleton />}>
+          <ProcedureList initialData={data} />
+        </Suspense>
+      </PageContainer>
   );
 };
 

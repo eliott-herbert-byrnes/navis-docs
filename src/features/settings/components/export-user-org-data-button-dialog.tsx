@@ -43,9 +43,9 @@ const ExportUserOrgDataButtonDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full flex justify-start gap-4">
-          <FileInput className="w-4 h-4 text-muted-foreground" />
-          <span className="font-semibold">Export Org User Data</span>
+        <Button variant="outline" className="flex justify-start gap-2 max-w-[250px] shadow-none">
+        <FileInput className="w-4 h-4 text-muted-foreground" />
+        <span className="font-semibold">Export Org User Data</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

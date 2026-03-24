@@ -1,5 +1,6 @@
 import { homePath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
+import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
 import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
@@ -15,7 +16,7 @@ const SettingsPage = async () => {
   if (!isAdmin) redirect(homePath());
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title="Settings"
         description="Manage your organization's settings"
@@ -23,7 +24,7 @@ const SettingsPage = async () => {
       <Suspense fallback={<Skeleton />}>
         <OrganizationOverview org={org} />
       </Suspense>
-    </>
+    </PageContainer>
   );
 };
 

@@ -39,7 +39,7 @@ const InvitationCreateButton = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
-              <Button variant="outline" disabled>
+              <Button variant="outline" disabled className="shadow-none">
                 <PlusIcon className="w-4 h-4" />
                 Invite Team Member
               </Button>

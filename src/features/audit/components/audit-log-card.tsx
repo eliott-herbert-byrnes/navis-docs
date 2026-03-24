@@ -188,7 +188,7 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
           {/* Collapsible Content - Shows when expanded */}
           <CollapsibleContent>
             <Separator />
-            <CardContent className="pt-4 space-y-4">
+            <CardContent className="pt-4 space-y-4 m-0 px-1">
               {/* Audit Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                 <div>
@@ -201,7 +201,7 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
                 </div>
                 <div>
                   <span className="font-medium">Entity:</span>{" "}
-                  <span className="text-muted-foreground">{log.entityType}</span>
+                  <span className="text-muted-foreground">{log.entityType.charAt(0) + log.entityType.slice(1).toLowerCase()}</span>
                 </div>
                 <div>
                   <span className="font-medium">Entity ID:</span>{" "}

@@ -50,10 +50,12 @@ const DepartmentOverview = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-          <div className="flex flex-row text-sm border-b-1 gap-2 py-2 px-4 font-semibold items-center hover:bg-gray-100">
+        <Button variant="ghost" className="rounded-none justify-start">
+          <div className="flex flex-row gap-2 items-center">
             <EyeIcon className="w-4 h-4" />
             Overview
           </div>
+        </Button>
       </DialogTrigger>
 
       <DialogContent>

@@ -52,7 +52,7 @@ const UserRoleChangeDialog = ({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full flex justify-start gap-4"
+          className="w-full flex justify-start gap-2 rounded-none"
           disabled={currentRole === "OWNER"}
         >
           <UserIcon className="w-4 h-4 text-muted-foreground" />

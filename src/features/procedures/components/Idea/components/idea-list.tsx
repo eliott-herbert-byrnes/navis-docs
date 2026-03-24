@@ -395,7 +395,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }
-            className="pl-10 shadow-none border-1 mb-1"
+            className="pl-10 shadow-none border-1 mb-1 w-80"
           />
         </div>
         <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
