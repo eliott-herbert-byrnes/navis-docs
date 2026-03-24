@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -16,29 +14,19 @@ function sanitizeFileName(name: string) {
 
 export async function POST(req: Request) {
   try {
-    // Auth
-    const session = await auth();
-    const userId = session?.user?.id;
-
-    if (!userId) {
+    const ctx = await getSessionContext();
+    if (!ctx) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const isAdmin = await isOrgAdminOrOwner(userId!);
-    if (!isAdmin) {
+    if (!ctx.isAdmin) {
       return NextResponse.json(
         { error: "Only organization admins can upload imports" },
         { status: 403 },
       );
     }
 
-    // User Org
-    const membership = await prisma.orgMembership.findFirst({
-      where: { userId },
-      select: { orgId: true },
-    });
-
-    if (!membership?.orgId) {
+    if (!ctx.org?.id) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 403 },
@@ -81,7 +69,7 @@ export async function POST(req: Request) {
 
     // Build storage path: orgs/{orgId}/imports/{uuid}-{safeName}
     const safeName = sanitizeFileName(file.name || "procedure");
-    const objectPath = `orgs/${membership.orgId}/imports/${crypto.randomUUID()}-${safeName}`;
+    const objectPath = `orgs/${ctx.org.id}/imports/${crypto.randomUUID()}-${safeName}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

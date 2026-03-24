@@ -3,7 +3,7 @@ import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { PageContainer } from "@/components/ui/page-container";
 import { ProcedureErrorList } from "@/features/procedures/components/error/components/procedure-error-list";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -15,8 +15,8 @@ type ErrorsPageProps = {
 };
 
 const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

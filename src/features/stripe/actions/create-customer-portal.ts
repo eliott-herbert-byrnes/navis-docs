@@ -1,23 +1,19 @@
 "use server";
 import { homePath, signInPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
-import {
-  getSessionUser,
-  getUserOrgWithRole,
-  isOrgAdminOrOwner,
-} from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import { Stripe } from "stripe";
 
 export const createCustomerPortal = async () => {
-  const user = await getSessionUser();
-  if (!user) {
+  const ctx = await getSessionContext();
+  if (!ctx) {
     redirect(signInPath());
   }
 
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const { org, isAdmin } = ctx;
   if (!isAdmin) {
     redirect(homePath());
   }

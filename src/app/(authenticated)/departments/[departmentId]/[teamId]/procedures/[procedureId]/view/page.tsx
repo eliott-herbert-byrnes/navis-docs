@@ -1,6 +1,6 @@
 import { Heading } from "@/components/ui/Heading";
 import { ProcedureViewWithAIChat } from "@/features/procedures/components/procedure-view-with-ai-chat";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
@@ -12,8 +12,8 @@ type ProcedureViewPageProps = {
 const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
   const { procedureId } = await params;
 
-  const user = await getSessionUser();
-  const canViewProcedureAudit = await isOrgAdminOrOwner(user!.userId);
+  const ctx = await getSessionContext();
+  const canViewProcedureAudit = ctx?.isAdmin ?? false;
 
   const trpc = await serverTrpc();
   const {

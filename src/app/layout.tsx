@@ -3,7 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
-import { AuthenticatedLayoutWithSuspense } from "./authenticated-layout-content";
+import { AuthenticatedLayoutContent } from "./authenticated-layout-content";
 
 const GeistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Navis Docs",
   description: "Welcome to the Navis Docs",
   icons: {
-    icon: "/navis-docs-logo-square.svg",
+    icon: "/navis-docs-logo-svg.svg",
   },
 };
 
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body className={`${GeistSans.variable} antialiased min-h-screen`}>
         <Providers>
           <Toaster />
-          <AuthenticatedLayoutWithSuspense>{children}</AuthenticatedLayoutWithSuspense>
+          <AuthenticatedLayoutContent>{children}</AuthenticatedLayoutContent>
         </Providers>
       </body>
     </html>

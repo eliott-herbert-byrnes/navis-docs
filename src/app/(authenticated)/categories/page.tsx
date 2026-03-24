@@ -3,14 +3,14 @@ import { CategoriesList } from "@/features/categories/components/categories-list
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 import { onboardingPath, homePath } from "@/app/paths";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { PageContainer } from "@/components/ui/page-container";
 
 const CategoriesPage = async () => {
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

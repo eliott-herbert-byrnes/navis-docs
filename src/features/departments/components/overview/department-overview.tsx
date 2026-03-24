@@ -50,7 +50,7 @@ const DepartmentOverview = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <Button variant="ghost" className="rounded-none justify-start">
+        <Button variant="ghost" className="rounded-none justify-start font-normal">
           <div className="flex flex-row gap-2 items-center">
             <EyeIcon className="w-4 h-4" />
             Overview

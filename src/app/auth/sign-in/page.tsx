@@ -9,7 +9,7 @@ const SignInPage = () => {
       <div className="flex w-full max-w-sm flex-col gap-6">
           <a className="flex items-center gap-6 self-center font-medium font-serif text-8xl">
             <div className="flex items-center justify-center">
-              <Image src="\navis-docs-logo-square.svg" alt="" width="90" height="90" className="rounded-md shrink-0" />
+              <Image src="\navis-docs-logo-square.svg" alt="" width="90" height="90" className="rounded-xs shrink-0" />
             </div>
             Navis.docs
           </a>

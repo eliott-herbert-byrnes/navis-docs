@@ -7,7 +7,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { OrgMembershipRole } from "@prisma/client";
-import { getUserOrg } from "@/lib/auth";
 import { revalidateTag } from "next/cache";
 
 export const usersRouter = router({
@@ -351,14 +350,6 @@ export const usersRouter = router({
         });
       }
 
-      const org = await getUserOrg(ctx?.user?.id ?? "");
-      if (!org) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "No organization found, reauthenticate your current session",
-        });
-      }
-
       const userToUpdate = await ctx.db.user.findUnique({
         where: { id: input.userId },
       });
@@ -430,7 +421,7 @@ export const usersRouter = router({
         action: "USER_ROLE_CHANGED",
         entityType: "USER_ROLE",
         entityId: input.userId,
-        beforeJSON: org.role as OrgMembershipRole,
+        beforeJSON: currentMembership.role as OrgMembershipRole,
         afterJSON: newRole as OrgMembershipRole,
       });
 

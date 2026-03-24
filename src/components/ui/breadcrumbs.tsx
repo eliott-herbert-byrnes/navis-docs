@@ -68,15 +68,17 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
                   {breadcrumb.title}
                   <LucideChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent align="end">
                   {breadcrumb.dropdownGroups.map((group) => (
                     <DropdownMenuGroup key={group.label}>
-                      <DropdownMenuLabel className="bg-neutral-800">
+                      <DropdownMenuLabel className="m-0 ml-2 py-2 px-0">
                         {group.label}
                       </DropdownMenuLabel>
                       {group.items.map((item) => (
-                        <DropdownMenuItem asChild key={item.id ?? item.href}>
-                          <Link href={item.href}>{item.title}</Link>
+                        <DropdownMenuItem asChild key={item.id ?? item.href} className="py-2">
+                          <Link href={item.href}>
+                          {item.title}
+                          </Link>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuGroup>
@@ -96,9 +98,9 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
                   {breadcrumb.title}
                   <LucideChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent align="end">
                   {breadcrumb.dropdown.map((item) => (
-                    <DropdownMenuItem asChild key={item.id ?? item.href}>
+                    <DropdownMenuItem asChild key={item.id ?? item.href} className="py-2">
                       <Link href={item.href}>{item.title}</Link>
                     </DropdownMenuItem>
                   ))}

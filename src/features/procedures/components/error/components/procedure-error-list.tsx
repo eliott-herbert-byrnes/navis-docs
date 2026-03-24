@@ -368,7 +368,6 @@ export function ProcedureErrorList({
                 </DropdownMenuItem>
               </>
             )}
-            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <ProcedureErrorDeleteButton errorId={row.original.id} />
             </DropdownMenuItem>

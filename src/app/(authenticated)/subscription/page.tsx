@@ -1,7 +1,7 @@
 "use server";
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Products } from "@/features/stripe/components/product";
 import { LucideSettings } from "lucide-react";
@@ -11,9 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PageContainer } from "@/components/ui/page-container";
 
 const SubscriptionPage = async () => {
-  const user = await getSessionUser();
-
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

@@ -1,6 +1,6 @@
 "use server";
 import { homePath, onboardingPath } from "@/app/paths";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
@@ -28,8 +28,8 @@ type AuditPageProps = {
 
 const AuditPage = async ({ searchParams }: AuditPageProps) => {
   // Authentication & authorization
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
 
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
@@ -78,7 +78,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
       />
 
       {/* Search and filters */}
-      <div className="px-1 mb-4">
+      <div className="mb-4">
         <AuditSearch />
       </div>
 

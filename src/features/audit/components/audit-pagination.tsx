@@ -69,14 +69,14 @@ export function AuditPagination({
       <div className="flex w-full items-center gap-8 lg:w-fit lg:ml-auto">
         {/* Page size selector - hidden on mobile */}
         <div className="hidden items-center gap-2 lg:flex">
-          <Label htmlFor="page-size" className="text-sm font-medium shadow-none">
+          <Label htmlFor="page-size" className="text-sm font-medium">
             Rows per page
           </Label>
           <Select
             value={pageSize.toString()}
             onValueChange={(value) => changePageSize(Number(value))}
           >
-            <SelectTrigger size="sm" className="w-20" id="page-size">
+            <SelectTrigger size="sm" className="w-20 shadow-none" id="page-size">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">

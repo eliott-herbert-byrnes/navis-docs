@@ -26,7 +26,7 @@ export function MainHeaderBreadcrumbs() {
         title: item.title,
         href: item.path,
       }));
-    return { label: "Routes", items: routeItems };
+    return { label: "Pages", items: routeItems };
   }
 
   function buildDepartmentsGroup() {
@@ -59,7 +59,8 @@ export function MainHeaderBreadcrumbs() {
     const secondCrumb = {
       id: segment ?? "route",
       title,
-      dropdownGroups: [buildRoutesGroup(), buildDepartmentsGroup()],
+      // dropdownGroups: [buildRoutesGroup(), buildDepartmentsGroup()],
+      dropdownGroups: [buildRoutesGroup()],
       dropdownAriaLabel: "Switch route",
     };
 

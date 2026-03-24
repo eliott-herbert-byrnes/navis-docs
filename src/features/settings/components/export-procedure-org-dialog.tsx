@@ -24,6 +24,8 @@ import {
   ExportFormat,
   useExportProcedureData,
 } from "../hooks/use-export-procedure-data";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 type ExportProcedureOrgDataButtonDialogProps = {
   title: string;
@@ -36,6 +38,8 @@ const ExportProcedureOrgDataButtonDialog = ({
   const [open, setOpen] = useState(false);
   const [format, setFormat] = useState("json");
   const { isLoading, exportWithFormat } = useExportProcedureData(open);
+  const pathname = usePathname();
+  const isProcedureBaseRoute = pathname === "/procedure-base";
 
   const handleExport = () => {
     exportWithFormat(format as ExportFormat);
@@ -45,8 +49,16 @@ const ExportProcedureOrgDataButtonDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex justify-start gap-2 max-w-[250px] shadow-none">
-          <FileInput className="w-4 h-4 text-muted-foreground" />
+        <Button
+          variant={isProcedureBaseRoute ? "ghost" : "outline"}
+          className={cn("flex justify-start gap-2 max-w-[250px] shadow-none")}
+        >
+          <FileInput
+            className={cn(
+              "w-4 h-4",
+              "text-muted-foreground",
+            )}
+          />
           <span className="font-semibold">Export Org Procedure Data</span>
         </Button>
       </DialogTrigger>

@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { Suspense } from "react";
 import { ProcedureCreateButton } from "@/features/procedures/components/procedure-create-button";
 import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
@@ -14,8 +14,8 @@ export default async function ProcedurePage({
 }) {
   const { departmentId, teamId } = await params;
 
-  const user = await getSessionUser();
-  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { isAdmin } = ctx ?? {};
 
   const trpc = await serverTrpc();
   const { list: departments } = await trpc.department.list();

@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { teamProcedurePath } from "@/app/paths";
@@ -14,9 +14,8 @@ export default async function NewsCreatePage({
 }) {
   const { departmentId, teamId } = await params;
 
-  const user = await getSessionUser();
-
-  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { isAdmin } = ctx ?? {};
   if (!isAdmin) redirect(teamProcedurePath(departmentId, teamId));
 
   const trpc = await serverTrpc();

@@ -1,10 +1,9 @@
 import { Badge } from "@/components/ui/badge";
-import { getSessionUser, getUserOrg } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 
 const OrgBadge = async () => {
-  const user = await getSessionUser();
-  const org = await getUserOrg(user?.userId ?? "");
-  return <Badge variant="default">{org?.org?.name ?? ""}</Badge>;
-};
+  const ctx = await getSessionContext()
+  return <Badge variant="default">{ctx?.org?.name ?? ""}</Badge>
+}
 
 export { OrgBadge };

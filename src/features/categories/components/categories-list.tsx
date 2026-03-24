@@ -358,7 +358,7 @@ export function CategoriesList({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -379,7 +379,7 @@ export function CategoriesList({
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -388,7 +388,7 @@ export function CategoriesList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -398,7 +398,7 @@ export function CategoriesList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -408,7 +408,7 @@ export function CategoriesList({
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

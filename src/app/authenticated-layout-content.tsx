@@ -6,48 +6,61 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { AuthProvider } from "@/contexts/auth-context";
+import { AsyncAuthContextLoader } from "@/contexts/async-auth-context-loader";
 import { MainHeaderBreadcrumbs } from "@/features/breadcrumbs/components/main-header-breadcrumbs";
 import { OrgBadge } from "@/features/org/components/org-badge";
 
-function LayoutFallback() {
+function SidebarFallback() {
   return (
-    <div className="flex h-screen w-full items-center justify-center">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-32" />
+    <div className="hidden md:flex w-14 shrink-0 flex-col gap-2 border-r px-2 py-3">
+      {/* <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <div className="mt-auto">
+        <Skeleton className="h-8 w-8 rounded-md" />
+      </div> */}
+    </div>
+  );
+}
+
+function ContentAreaFallback() {
+  return (
+    <div className="flex h-full w-full flex-col pl-4 pr-4">
+      <div className="flex flex-row items-center justify-between pt-3 px-8">
+        <div className="flex flex-row items-center gap-2">
+          <Skeleton className="h-8 w-8 sm:hidden" />
+          <Skeleton className="h-6 w-56 hidden md:block" />
+        </div>
+        <Skeleton className="h-6 w-28" />
+      </div>
+      <div className="grid grid-cols-12 gap-x-4 pt-10 px-6">
+        <div className="col-span-8 col-start-3 space-y-3">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-56 w-full" />
+        </div>
       </div>
     </div>
   );
 }
 
-export async function AuthenticatedLayoutContent({
+export function AuthenticatedLayoutContent({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getSessionUser();
-
-  if (!user) {
-    return <>{children}</>;
-  }
-
-  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
-
-  if (!org) {
-    return <>{children}</>;
-  }
-
   return (
-    <AuthProvider isAdmin={isAdmin} userId={user.userId}>
-      {user ?
-        <SidebarProvider defaultOpen={false}>
-          <AppSidebar />
-          <SidebarInset className="p-2">
-            <div className="flex flex-row h-full">
-              <div className="flex h-full w-full flex-col pl-4 pr-4 pt-2">
-                <div className="flex flex-row items-center justify-between px-6">
+    <SidebarProvider defaultOpen={false}>
+      <Suspense fallback={<SidebarFallback />}>
+        <AppSidebar />
+      </Suspense>
+      <SidebarInset className="p-2">
+        <div className="flex flex-row h-full">
+          <Suspense fallback={<ContentAreaFallback />}>
+            <AsyncAuthContextLoader>
+              <div className="flex h-full w-full flex-col pl-4 pr-4">
+                <div className="flex flex-row items-center justify-between pt-3 px-8">
                   <div className="flex flex-row items-center gap-2">
                     <div className="sm:hidden">
                       <SidebarTrigger />
@@ -56,28 +69,18 @@ export async function AuthenticatedLayoutContent({
                       <MainHeaderBreadcrumbs />
                     </div>
                   </div>
-                  <OrgBadge />
+                  <Suspense fallback={<Skeleton className="h-6 w-28" />}>
+                    <OrgBadge />
+                  </Suspense>
                 </div>
                 <div className="grid grid-cols-12 gap-x-4 pt-10 px-6">
                   {children}
                 </div>
               </div>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
-        : null}
-    </AuthProvider>
-  );
-}
-
-export function AuthenticatedLayoutWithSuspense({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <Suspense fallback={<LayoutFallback />}>
-      <AuthenticatedLayoutContent>{children}</AuthenticatedLayoutContent>
-    </Suspense>
+            </AsyncAuthContextLoader>
+          </Suspense>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

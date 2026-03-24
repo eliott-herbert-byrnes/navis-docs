@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DepartmentList } from "@/features/departments/components/department-list";
 import { DepartmentCreateButton } from "@/features/departments/components/department-buttons/department-create-button";
@@ -8,16 +8,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { signInPath } from "@/app/paths";
 import { PageContainer } from "@/components/ui/page-container";
 
-export async function generateStaticParams() {
-  return [{}];
-}
-
 export default async function DepartmentsPage() {
-  const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
-  if (!org || !user) redirect(signInPath());
+  const ctx = await getSessionContext();
+  if (!ctx) redirect(signInPath());
+  const { org, isAdmin } = ctx;
+  if (!org) redirect(signInPath());
 
   return (
     <PageContainer>

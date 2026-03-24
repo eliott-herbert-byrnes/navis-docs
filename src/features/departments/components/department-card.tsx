@@ -107,7 +107,7 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
           iconKey={department.iconKey}
         />
         <CardTitle>
-          <span className="text-xl">{department.name}</span>
+          <span className="text-xl font-medium">{department.name}</span>
         </CardTitle>
       </CardHeader>
       <CardContent>

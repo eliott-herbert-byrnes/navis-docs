@@ -3,15 +3,14 @@ import { Heading } from "@/components/ui/Heading";
 import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 const SettingsPage = async () => {
-  const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-  
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  if (!ctx) redirect(signInPath());
+  const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

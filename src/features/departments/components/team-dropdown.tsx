@@ -47,7 +47,7 @@ const TeamDropdown = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between shadow-none"
+          className="w-[200px] justify-between shadow-none font-normal"
         >
           {selectedTeam ? selectedTeam.name : "Select team..."}
           <ChevronsUpDown className="opacity-50" />

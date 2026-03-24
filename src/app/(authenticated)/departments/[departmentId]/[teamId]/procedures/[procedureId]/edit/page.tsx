@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { teamProcedurePath } from "@/app/paths";
@@ -18,8 +18,8 @@ export default async function ProcedureEditPage({
 }) {
   const { departmentId, teamId, procedureId } = await params;
 
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user!.userId);
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org || !isAdmin) redirect(teamProcedurePath(departmentId, teamId));
 
   const trpc = await serverTrpc();

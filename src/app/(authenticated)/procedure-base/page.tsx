@@ -2,7 +2,7 @@ import { Heading } from "@/components/ui/Heading";
 import { ProcedureList } from "@/features/procedure-base/components/procedure-list";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { ExportProcedureOrgDataButton } from "@/features/settings/components/export-procedure-org-data-button";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { onboardingPath, homePath, procedureBaseCreatePath } from "@/app/paths";
 import { redirect } from "next/navigation";
 import { serverTrpc } from "@/server/trpc/server";
@@ -14,8 +14,8 @@ import { PageContainer } from "@/components/ui/page-container";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const ProcedureBasePage = async () => {
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

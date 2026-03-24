@@ -347,7 +347,6 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
                   <Archive className="ml-1 mr-2 h-4 w-4" />
                   Archive
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
               </>
             )}
             <DropdownMenuItem asChild>

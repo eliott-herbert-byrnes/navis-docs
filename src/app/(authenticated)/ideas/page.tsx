@@ -3,7 +3,7 @@ import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { PageContainer } from "@/components/ui/page-container";
 import { IdeaList } from "@/features/procedures/components/Idea/components/idea-list";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -15,10 +15,9 @@ type IdeasPageProps = {
 };
 
 const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
-  const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  if (!ctx) redirect(signInPath());
+  const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 

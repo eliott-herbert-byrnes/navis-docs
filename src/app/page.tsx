@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,15 +12,10 @@ import { DashboardProcedureChart } from "@/features/dashboard/components/dashoar
 import { PageContainer } from "@/components/ui/page-container";
 import { DashboardActionsDropdown } from "@/features/dashboard/components/dashboard-actions-dropdown";
 
-export async function generateStaticParams() {
-  return [{}];
-}
-
 export default async function Home() {
-  const user = await getSessionUser();
-  if (!user) redirect(signInPath());
-
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  if (!ctx) redirect(signInPath());
+  const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(departmentsPath());
 
@@ -39,17 +34,11 @@ export default async function Home() {
           actions={isAdmin ? <DashboardActionsDropdown /> : null}
         />
 
-        <div className="space-y-6">
-          {/* Stat cards */}
+        <div className="space-y-4">
           <DashboardStatCards stats={stats} />
-
-          {/* Chart + subscription side by side */}
           <DashboardProcedureChart data={chartData} />
-          {/* </div> */}
-
-          {/* Live audit stream */}
           <div>
-            <h2 className="text-sm font-semibold mb-3">Recent Activity</h2>
+            <h2 className="text-sm font-semibold mb-4">Recent Activity</h2>
             <Suspense fallback={<Skeleton className="h-48" />}>
               <DashboardAuditStream />
             </Suspense>

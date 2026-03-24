@@ -17,19 +17,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "../theme/theme-switcher";
 import { Button } from "./button";
 import Link from "next/link";
 import { items } from "@/config/navigation";
+import Image from "next/image";
+import { getSessionContext } from "@/lib/auth";
 
 export async function AppSidebar() {
-  const user = await getSessionUser();
-
-  if (!user) return <div className="h-full invisible" aria-hidden></div>;
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
+  const ctx = await getSessionContext()
+  if (!ctx) return <div className="h-full invisible" aria-hidden />
+  const { isAdmin } = ctx;
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -38,7 +38,8 @@ export async function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <div className="flex flex-row gap-2 items-center pt-2 mb-2 mt-1">
-                <LucideShip className="w-4.5 h-4.5 ml-2" />
+                {/* <LucideShip className="w-4.5 h-4.5 ml-2" /> */}
+                <Image src="/navis-docs-logo-square-2-svg.svg" alt="Navis Docs Logo" className="rounded-xs mx-auto" width="30" height="30" />
                 <span className="text-sm group-data-[collapsible=icon]:hidden">
                   Navis Docs
                 </span>
@@ -55,9 +56,9 @@ export async function AppSidebar() {
                         key={item.title}
                         className={cn(
                           "isAdmin" in item &&
-                            item.isAdmin &&
-                            !isAdmin &&
-                            "hidden",
+                          item.isAdmin &&
+                          !isAdmin &&
+                          "hidden",
                         )}
                       >
                         <SidebarMenuButton asChild tooltip={item.title}>
@@ -74,9 +75,9 @@ export async function AppSidebar() {
                       key={item.title}
                       className={cn(
                         "isAdmin" in item &&
-                          item.isAdmin &&
-                          !isAdmin &&
-                          "hidden",
+                        item.isAdmin &&
+                        !isAdmin &&
+                        "hidden",
                       )}
                     >
                       <SidebarMenuButton asChild tooltip={item.title}>
@@ -103,7 +104,7 @@ export async function AppSidebar() {
                   </span>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" className="translate-x-4">
+              <DropdownMenuContent align="end" side="top" className="translate-x-4">
                 <DropdownMenuItem asChild>
                   <ThemeSwitcher />
                 </DropdownMenuItem>

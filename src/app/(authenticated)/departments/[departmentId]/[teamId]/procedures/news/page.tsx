@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserById, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext, getUserById } from "@/lib/auth";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
@@ -14,9 +14,8 @@ export default async function NewsPage({
 }) {
   const { departmentId, teamId } = await params;
 
-  const user = await getSessionUser();
-
-  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { isAdmin } = ctx ?? {};
 
   const trpc = await serverTrpc();
   const { list: departments } = await trpc.department.list();
