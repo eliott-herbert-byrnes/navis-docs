@@ -78,7 +78,7 @@ const DepartmentOverview = ({
                   <CardDescription>
                     Manage the department settings
                   </CardDescription>
-                <Separator className="mt-2"/>
+                  <Separator className="mt-2" />
                 </CardHeader>
 
                 <CardContent className="flex flex-col gap-4 px-1">
@@ -143,32 +143,33 @@ const DepartmentOverview = ({
         </div>
         {currentTab === 'Settings' && (
           <div className="flex flex-col gap-2 px-1">
-        <Separator />
-          <DialogFooter className="flex flex-row gap-2 mt-2">
-            <Button
-              className="w-[75px]"
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-              disabled={isPending}
+            <Separator />
+            <DialogFooter className="flex flex-row gap-2 mt-2">
+              <Button
+                className="w-[75px] shadow-none border"
+                type="button"
+                variant="default"
+                onClick={handleUpdate}
+                disabled={isPending}
               >
-              Cancel
-            </Button>
-            <Button
-              className="w-[75px]"
-              type="button"
-              variant="default"
-              onClick={handleUpdate}
-              disabled={isPending}
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Update"
+                )}
+              </Button>
+              <Button
+                className="w-[75px] shadow-none border"
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isPending}
               >
-              {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                "Update"
-              )}
-            </Button>
-          </DialogFooter>
-              </div>
+                Cancel
+              </Button>
+
+            </DialogFooter>
+          </div>
         )}
       </DialogContent>
     </Dialog>

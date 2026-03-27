@@ -64,23 +64,24 @@ export const ProcedureErrorDialog = ({
             rows={10}
             disabled={isPending}
             maxLength={1000}
+            className="shadow-none border"
           />
           <DialogFooter className="flex flex-row gap-2 mt-4">
+            <Button className="w-[75px] shadow-none border" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Report"
+              )}
+            </Button>
             <Button
-              className="w-[75px]"
+              className="w-[75px] shadow-none border"
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={isPending}
             >
               Cancel
-            </Button>
-            <Button className="w-[75px]" type="submit" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Report"
-              )}
             </Button>
           </DialogFooter>
         </form>

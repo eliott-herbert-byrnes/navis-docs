@@ -60,17 +60,8 @@ const ProcedureBaseDeleteDialog = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-          <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+        <Button
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleClose}
@@ -82,6 +73,16 @@ const ProcedureBaseDeleteDialog = ({
               "Delete"
             )}
           </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+
         </DialogFooter>
       </DialogContent>
     </Dialog>

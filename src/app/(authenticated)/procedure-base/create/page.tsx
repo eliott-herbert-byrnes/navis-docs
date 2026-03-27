@@ -3,6 +3,7 @@ import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { procedureBasePath } from "@/app/paths";
 import { CreateProcedureForm } from "@/features/procedures/components/procedure-create-form";
+import { PageContainer } from "@/components/ui/page-container";
 
 export default async function ProcedureBaseCreatePage() {
   const ctx = await getSessionContext();
@@ -10,13 +11,13 @@ export default async function ProcedureBaseCreatePage() {
   if (!org || !isAdmin) redirect(procedureBasePath());
 
   return (
-    <>
+    <PageContainer>
       <Heading title="Create Procedure" description="Create a new procedure and assign it to a department and team." />
       <CreateProcedureForm
         categories={[]}            
         cancelPath={procedureBasePath()}
         redirectOnSuccess={true}   
       />
-    </>
+    </PageContainer>
   );
 }

@@ -34,7 +34,7 @@ export function ProcedureActionButtons({
 }: ProcedureActionButtonsProps) {
   const isDraft = procedure.status === "DRAFT";
   return (
-    <Card className="p-4 animate-fade-from-top">
+    <Card className="p-4 animate-fade-from-top shadow-none">
       <div className="flex items-center justify-between">
         <div className="text-sm">
           {hasUnsavedChanges && (
@@ -70,6 +70,7 @@ export function ProcedureActionButtons({
           ) : (
             <Button
               variant="outline"
+              className="shadow-none border"
               onClick={onCancelWithoutChanges}
               disabled={isCancelling || isSaving || isPublishing}
             >
@@ -83,6 +84,7 @@ export function ProcedureActionButtons({
 
           <Button
             variant="secondary"
+            className="shadow-none border"
             onClick={onSave}
             disabled={
               isSaving || isCancelling || isPublishing || !hasUnsavedChanges
@@ -100,6 +102,7 @@ export function ProcedureActionButtons({
             )}
           </Button>
           {procedure.status === "DRAFT" ? <Button
+          className="shadow-none border"
             onClick={onPublish}
             disabled={
               isSaving ||

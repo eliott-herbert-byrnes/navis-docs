@@ -365,7 +365,7 @@ export function RawTextEditor({
 
   if (isPreview) {
     return (
-      <div className="border rounded-md p-4 bg-background">
+      <div className="rounded-sm bg-background shadow-none">
         <EditorContent editor={editor} />
       </div>
     );
@@ -373,9 +373,9 @@ export function RawTextEditor({
 
   return (
     <EditorContext.Provider value={{ editor }}>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {/* Toolbar */}
-        <Toolbar className="rounded-md" ref={toolbarRef}>
+        <Toolbar className="rounded-sm shadow-none border max-w-2/3 mx-auto" ref={toolbarRef}>
           <Spacer />
           <ToolbarGroup>
             <UndoRedoButton action="undo" />

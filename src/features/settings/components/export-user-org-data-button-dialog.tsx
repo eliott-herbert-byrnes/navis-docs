@@ -53,9 +53,8 @@ const ExportUserOrgDataButtonDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Separator />
         <Select name="format" value={format} onValueChange={setFormat}>
-          <SelectTrigger className="mt-4">
+          <SelectTrigger className="shadow-none border w-1/2">
             <SelectValue placeholder="Select a format" />
           </SelectTrigger>
           <SelectContent>
@@ -66,16 +65,7 @@ const ExportUserOrgDataButtonDialog = ({
         </Select>
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleExport}
@@ -86,6 +76,15 @@ const ExportUserOrgDataButtonDialog = ({
             ) : (
               "Export"
             )}
+          </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isLoading}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

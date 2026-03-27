@@ -6,6 +6,7 @@ import { teamProcedurePath } from "@/app/paths";
 import { CreateProcedureForm } from "@/features/procedures/components/procedure-create-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
+import { PageContainer } from "@/components/ui/page-container";
 
 export default async function ProcedureCreatePage({
   params,
@@ -23,7 +24,7 @@ export default async function ProcedureCreatePage({
   });
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title={`Create Procedure`}
         description="Create a new procedure and add a category"
@@ -31,6 +32,6 @@ export default async function ProcedureCreatePage({
       <Suspense fallback={<Skeleton />}>
         <CreateProcedureForm categories={categories} />
       </Suspense>
-    </>
+    </PageContainer>
   );
 }

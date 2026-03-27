@@ -180,6 +180,7 @@ export function YesNoPairsEditor({
             value={child.question}
             onChange={(e) => updateNode(child.id, { question: e.target.value })}
             placeholder="End title"
+            className="shadow-none border"
           />
           <Textarea
             value={child.endMessage || ""}
@@ -188,10 +189,12 @@ export function YesNoPairsEditor({
             }
             placeholder="End description"
             rows={3}
+            className="shadow-none border"
           />
           <div className="flex gap-2">
             <Button
               variant="secondary"
+              className="border"
               onClick={() => navigateToNode(child.id)}
             >
               View end
@@ -207,6 +210,7 @@ export function YesNoPairsEditor({
           value={child.question}
           onChange={(e) => updateNode(child.id, { question: e.target.value })}
           placeholder="Card title"
+          className="shadow-none border"
         />
         <Textarea
           value={child.description || ""}
@@ -214,10 +218,11 @@ export function YesNoPairsEditor({
             updateNode(child.id, { description: e.target.value })
           }
           placeholder="Card description"
+          className="shadow-none border"
           rows={3}
         />
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigateToNode(child.id)}>
+          <Button variant="secondary" onClick={() => navigateToNode(child.id)} className="border">
             Go to next set <MoveRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -228,7 +233,7 @@ export function YesNoPairsEditor({
   const renderChildPreview = (child: YesNoNode | null) => {
     if (!child) {
       return (
-        <Card className="h-full flex items-center justify-center">
+        <Card className="h-full flex items-center justify-center border">
           <CardContent className="p-6 text-center text-muted-foreground">
             Not configured
           </CardContent>
@@ -238,7 +243,7 @@ export function YesNoPairsEditor({
     if (child.isEndNode) {
       return (
         <Card
-          className="cursor-pointer hover:border-primary"
+          className="cursor-pointer hover:border-primary border"
           onClick={() => navigateToNode(child.id)}
         >
           <CardHeader>
@@ -328,27 +333,22 @@ export function YesNoPairsEditor({
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
         )}
-        <Button variant="ghost" size="sm" onClick={resetToStart}>
+        <Button variant="outline" size="sm" onClick={resetToStart} className="shadow-none border">
           <Home className="w-4 h-4 mr-2" /> Start
         </Button>
-        {!isPreview && (
-          <span className="text-sm text-muted-foreground">
-            Depth: {currentPath.length - 1}
-          </span>
-        )}
       </div>
 
       {/* Two cards side by side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left card */}
-        <Card className="p-4">
+        <Card className="p-4 shadow-none border">
           {!isPreview
             ? renderChildEditor(leftChild, "yes")
             : renderChildPreview(leftChild)}
         </Card>
 
         {/* Right card */}
-        <Card className="p-4">
+        <Card className="p-4 shadow-none border">
           {!isPreview
             ? renderChildEditor(rightChild, "no")
             : renderChildPreview(rightChild)}

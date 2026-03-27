@@ -182,7 +182,7 @@ export function DepartmentTeamTable({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-auto shadow-none border">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -287,6 +287,7 @@ export function DepartmentTeamTable({
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className="shadow-none"
           >
             Previous
           </Button>
@@ -295,6 +296,7 @@ export function DepartmentTeamTable({
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className="shadow-none"
           >
             Next
           </Button>

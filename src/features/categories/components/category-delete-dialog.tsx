@@ -62,16 +62,7 @@ export function CategoryDeleteDialog({
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleConfirm}
@@ -82,6 +73,15 @@ export function CategoryDeleteDialog({
             ) : (
               "Delete"
             )}
+          </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

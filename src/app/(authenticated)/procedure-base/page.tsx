@@ -48,10 +48,10 @@ const ProcedureBasePage = async () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
         <DropdownMenuItem asChild>
-          <ExportProcedureOrgDataButton />
+          {createProcedureButton}
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          {createProcedureButton}
+          <ExportProcedureOrgDataButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

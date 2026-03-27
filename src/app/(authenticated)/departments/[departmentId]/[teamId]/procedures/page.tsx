@@ -1,7 +1,7 @@
 import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
 import { Suspense } from "react";
-// import { ProcedureCreateButton } from "@/features/procedures/components/procedure-create-button";
+import { ProcedureCreateButton } from "@/features/procedures/components/procedure-create-button";
 import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
@@ -15,7 +15,7 @@ export default async function ProcedurePage({
   const { departmentId, teamId } = await params;
 
   const ctx = await getSessionContext();
-  // const { isAdmin } = ctx ?? {};
+  const { isAdmin } = ctx ?? {};
 
   const trpc = await serverTrpc();
   const { list: departments } = await trpc.department.list();
@@ -29,7 +29,7 @@ export default async function ProcedurePage({
       <Heading
         title="Favorites"
         description="Select a procedure from your favourites list"
-        // actions={isAdmin ? <ProcedureCreateButton /> : null}
+        actions={isAdmin ? <ProcedureCreateButton /> : null}
       />
       <FavoriteList />
       <Suspense fallback={<Skeleton />}>

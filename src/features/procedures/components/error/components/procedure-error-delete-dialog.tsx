@@ -61,16 +61,7 @@ const ProcedureErrorDeleteDialog = ({
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none"
             onClick={handleConfirm}
             disabled={isPending}
           >
@@ -79,6 +70,15 @@ const ProcedureErrorDeleteDialog = ({
             ) : (
               "Delete"
             )}
+          </Button>
+          <Button
+            className="w-[75px] shadow-none"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

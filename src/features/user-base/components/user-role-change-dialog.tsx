@@ -64,13 +64,12 @@ const UserRoleChangeDialog = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Separator />
         <Select
           name="role"
           defaultValue={selectedRole}
           onValueChange={setSelectedRole}
         >
-          <SelectTrigger className="mt-4">
+          <SelectTrigger className="mt-2 w-1/2 shadow-none">
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
           <SelectContent>
@@ -80,16 +79,7 @@ const UserRoleChangeDialog = ({
         </Select>
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleClose}
@@ -100,6 +90,15 @@ const UserRoleChangeDialog = ({
             ) : (
               "Change"
             )}
+          </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

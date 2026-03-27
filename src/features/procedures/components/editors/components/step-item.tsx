@@ -28,7 +28,7 @@ export function StepItem({
 }: StepItemProps) {
   if (isPreview) {
     return (
-      <Card className="p-4 animate-fade-from-top">
+      <Card className="p-4 animate-fade-from-top shadow-none">
         <div className="flex gap-3">
           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
             {index + 1}
@@ -47,7 +47,7 @@ export function StepItem({
   }
 
   return (
-    <Card className="p-4 animate-fade-from-top">
+    <Card className="p-4 animate-fade-from-top shadow-none border">
       <div className="flex gap-2">
         {/* Step Number */}
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
@@ -61,7 +61,7 @@ export function StepItem({
             placeholder={`Step ${index + 1} title...`}
             value={step.title}
             onChange={(e) => onUpdateTitle(e.target.value)}
-            className="font-semibold"
+            className="font-semibold shadow-none border"
           />
 
           {/* Collapsible Content */}
@@ -87,7 +87,7 @@ export function StepItem({
                   value={step.description}
                   onChange={(e) => onUpdateDescription(e.target.value)}
                   rows={3}
-                  className="resize-none"
+                  className="resize-none shadow-none border"
                 />
               </div>
             )}
@@ -96,14 +96,6 @@ export function StepItem({
 
         {/* Actions */}
         <div className="flex-shrink-0 flex flex-col gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onAddAfter}
-            title="Add step below"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
           <Button
             variant="ghost"
             size="sm"

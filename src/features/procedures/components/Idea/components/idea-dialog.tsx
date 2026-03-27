@@ -84,6 +84,13 @@ const ProcedureIdeaDialog = ({
             />
           </div>
           <DialogFooter className="flex flex-row gap-2 mt-4">
+            <Button className="w-[75px] shadow-none border" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Submit"
+              )}
+            </Button>
             <Button
               className="w-[75px] shadow-none border"
               type="button"
@@ -93,13 +100,7 @@ const ProcedureIdeaDialog = ({
             >
               Cancel
             </Button>
-            <Button className="w-[75px] shadow-none border" type="submit" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Submit"
-              )}
-            </Button>
+
           </DialogFooter>
         </form>
       </DialogContent>

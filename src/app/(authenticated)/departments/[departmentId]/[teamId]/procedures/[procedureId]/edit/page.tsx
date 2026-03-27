@@ -1,11 +1,10 @@
-import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { teamProcedurePath } from "@/app/paths";
-import { EditProcedureForm } from "@/features/procedures/components/procedure-edit-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
+import { EditProcedurePageClient } from "./edit-procedure-page-client";
 
 export default async function ProcedureEditPage({
   params,
@@ -30,14 +29,11 @@ export default async function ProcedureEditPage({
   }
 
   return (
-    <>
-      <Heading
-        title={`Edit Procedure`}
-        description="Edit a procedure and ship to documentation"
+    <Suspense fallback={<Skeleton />}>
+      <EditProcedurePageClient
+        procedureId={procedureId}
+        procedure={procedure}
       />
-      <Suspense fallback={<Skeleton />}>
-        <EditProcedureForm procedureId={procedureId} procedure={procedure} />
-      </Suspense>
-    </>
+    </Suspense>
   );
 }
