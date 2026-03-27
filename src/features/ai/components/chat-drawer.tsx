@@ -123,12 +123,11 @@ export function AIChatDrawer({
       {/* Floating Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        size="icon"
-        className="fixed bottom-6 right-6 h-13 w-13 rounded-full shadow-lg z-50 bg-background text-foreground hover:bg-accent hover:text-accent-foreground border-2"
+        className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 bg-background text-foreground hover:bg-accent hover:text-accent-foreground border w-14 h-14"
         variant="ghost"
         aria-label="Open AI chat"
       >
-        <Brain className="h-6 w-6" />
+        <Brain size={64} className="size-8" strokeWidth={1}/>
       </Button>
 
       {/* Drawer */}

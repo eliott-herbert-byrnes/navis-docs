@@ -58,16 +58,10 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
   };
 
   return (
-    <div className="w-full max-w-[700px] mx-auto my-auto">
-      <Card className="p-6 animate-fade-from-top">
+    <div className="w-full">
         <form onSubmit={handleSubmit}>
           <FieldGroup>
             <FieldSet>
-              <FieldLegend>Create a news post for {teamName}</FieldLegend>
-              <FieldDescription>
-                Enter the details of the news post to create a new one.
-              </FieldDescription>
-              <FieldSeparator />
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="newsPostTitle">Title</FieldLabel>
@@ -77,6 +71,7 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
                     name="newsPostTitle"
                     required
                     disabled={isPending}
+                    className="shadow-none border max-w-1/3"
                   />
                 </Field>
                 <Field>
@@ -88,6 +83,7 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
                     rows={10}
                     required
                     disabled={isPending}
+                    className="shadow-none border max-w-1/2"
                   />
                 </Field>
               </FieldGroup>
@@ -114,9 +110,8 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
                 </Field>
               </FieldGroup>
             </FieldSet>
-            <FieldSeparator />
             <Field orientation="horizontal">
-              <Button type="submit" disabled={isPending || isCancelPending}>
+              <Button type="submit" disabled={isPending || isCancelPending} className="shadow-none border">
                 {isPending ? (
                   <>
                     <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
@@ -130,6 +125,7 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
                 type="button"
                 onClick={handleCancel}
                 disabled={isPending || isCancelPending}
+                className="shadow-none border"
               >
                 {isCancelPending ? (
                   <LucideLoaderCircle className="h-4 w-4 animate-spin" />
@@ -140,7 +136,6 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
             </Field>
           </FieldGroup>
         </form>
-      </Card>
     </div>
   );
 };

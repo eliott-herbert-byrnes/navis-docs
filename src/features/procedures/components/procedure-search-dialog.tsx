@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { viewProcedurePath } from "@/app/paths";
 import {
   CommandDialog,
@@ -26,12 +26,21 @@ export function ProcedureSearchDialog({
 }: ProcedureSearchDialogProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const { departmentId, teamId } = useProcedureRouteContext();
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [query]);
+
   const { data, isLoading } = trpc.procedures.searchProcedures.useQuery(
-    { teamId, query },
+    { teamId, query: debouncedQuery },
     {
-      enabled: query.trim().length > 0,
+      enabled: debouncedQuery.trim().length > 0,
       staleTime: 1000 * 60,
     },
   );
@@ -55,14 +64,18 @@ export function ProcedureSearchDialog({
       onOpenChange={onOpenChange}
       title="Search Procedures"
       description="Find and navigate to procedures"
-      className="top-[12.5%]"
+      className="top-[25%]"
     >
       <CommandInput
         placeholder="Search procedures by title..."
         value={query}
         onValueChange={setQuery}
       />
-      <CommandList>
+      <CommandList className="max-h-[300px]
+    overflow-y-auto
+    transition-[max-height]
+    duration-600
+    ease-out py-2">
         {isLoading ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             Searching...

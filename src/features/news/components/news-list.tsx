@@ -106,17 +106,17 @@ export function NewsPostList({ userMap }: NewsPostListProps) {
   const unpinnedNewsPosts = newsPosts.filter((newsPost) => !newsPost.pinned);
 
   return (
-    <div className="flex flex-col px-4 gap-4">
+    <div className="flex flex-col gap-6 mb-8">
       {pinnedNewsPosts.map((newsPost) => {
         const postUser = userMap[newsPost.createdBy ?? ""];
         const isUnread = !newsPost.isRead;
         return (
           <Fragment key={newsPost.id}>
-            <Card className="hover:border-primary transition-all flex flex-col h-full animate-fade-from-top">
+            <Card className="flex flex-col h-full animate-fade-from-top shadow-none border">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                    <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
+                    <CardTitle className="line-clamp-2 font-serif font-medium text-lg">
                       {newsPost.title}
                     </CardTitle>
                     {isUnread && (
@@ -184,12 +184,12 @@ export function NewsPostList({ userMap }: NewsPostListProps) {
         return (
           <Card
             key={newsPost.id}
-            className="hover:border-primary transition-colors flex flex-col h-full"
+            className="flex flex-col h-full shadow-none border"
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2 min-h-[3rem]">
                 <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                  <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
+                  <CardTitle className="font-serif font-medium text-lg line-clamp-2">
                     {newsPost.title}
                   </CardTitle>
                   {isUnread && (

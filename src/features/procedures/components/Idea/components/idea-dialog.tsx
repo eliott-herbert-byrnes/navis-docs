@@ -71,6 +71,7 @@ const ProcedureIdeaDialog = ({
               required
               disabled={isPending}
               maxLength={100}
+              className="shadow-none border"
             />
             <Textarea
               name="ideaBody"
@@ -79,11 +80,12 @@ const ProcedureIdeaDialog = ({
               rows={10}
               disabled={isPending}
               maxLength={1000}
+              className="shadow-none border"
             />
           </div>
           <DialogFooter className="flex flex-row gap-2 mt-4">
             <Button
-              className="w-[75px]"
+              className="w-[75px] shadow-none border"
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
@@ -91,7 +93,7 @@ const ProcedureIdeaDialog = ({
             >
               Cancel
             </Button>
-            <Button className="w-[75px]" type="submit" disabled={isPending}>
+            <Button className="w-[75px] shadow-none border" type="submit" disabled={isPending}>
               {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
