@@ -23,7 +23,7 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --font-sans:
-    ui-sans-serif, system-ui, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial,
+    open sans, ui-sans-serif, system-ui, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial,
     "Noto Sans", "Segoe UI Emoji";
   --font-serif: "Hedvig Letters Serif";
   --background: oklch(1 0 0);

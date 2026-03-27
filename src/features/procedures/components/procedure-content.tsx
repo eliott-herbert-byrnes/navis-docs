@@ -15,7 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export type ProcedureContentProps = {
   procedure: ProcedureForViewWithRelations;
-  /** When true and procedure is FLOW with doc, show flow and doc side-by-side (desktop) or tabs (narrow). */
   showDocView?: boolean;
 };
 
@@ -87,7 +86,7 @@ const ProcedureContent = ({
       </div>
     );
     const docPanel = (
-      <div className="min-h-[400px] overflow-auto">
+      <div className="min-h-[600px] overflow-auto rounded border-1">
         <RawTextEditor
           procedureId={procedure.id}
           content={{ tiptap: content?.tiptap }}
@@ -127,14 +126,14 @@ const ProcedureContent = ({
 
   if (procedure.style === "FLOW") {
     return (
-      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top bg-background">
+      <Card className="min-h-[600px] overflow-hidden animate-fade-from-top bg-background shadow-none border">
         {renderProcedureContent()}
       </Card>
     );
   }
 
   return (
-    <Card className="p-6 min-h-[600px] animate-fade-from-top">
+    <Card className="p-0 min-h-[600px] animate-fade-from-top shadow-none">
       {renderProcedureContent()}
     </Card>
   );

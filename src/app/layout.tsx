@@ -10,6 +10,7 @@ const GeistSans = Geist({
   subsets: ["latin"],
 });
 
+
 export const metadata: Metadata = {
   title: "Navis Docs",
   description: "Welcome to the Navis Docs",

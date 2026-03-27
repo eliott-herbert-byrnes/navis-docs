@@ -76,7 +76,6 @@ export function FavoriteList() {
                 <ProcedureFavoriteButton
                   procedureId={procedure.id}
                   initialIsFavorite={true}
-                  size="sm"
                 />
               </div>
             </CardHeader>

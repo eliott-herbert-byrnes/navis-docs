@@ -29,7 +29,7 @@ export function ProcedureViewMetadata({
   };
 
   return (
-    <Card className="p-4 mb-4 animate-fade-from-top">
+    <Card className="p-4 mb-4 animate-fade-from-top shadow-none border">
       <div className="flex flex-wrap gap-4 text-sm items-center">
         {/* Published Date */}
         <div className="flex items-center gap-2 text-muted-foreground">

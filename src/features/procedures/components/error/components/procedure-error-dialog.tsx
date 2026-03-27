@@ -47,8 +47,9 @@ export const ProcedureErrorDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Flag className="w-4 h-4" />
+        <Button variant="ghost" className="m-0 p-0 justify-start rounded-none">
+          <Flag className="w-4 h-4 text-muted-foreground" />
+          <span className="font-normal ml-1">Report</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -64,24 +65,23 @@ export const ProcedureErrorDialog = ({
             rows={10}
             disabled={isPending}
             maxLength={1000}
-            className="shadow-none border"
           />
           <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button className="w-[75px] shadow-none border" type="submit" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Report"
-              )}
-            </Button>
             <Button
-              className="w-[75px] shadow-none border"
+              className="w-[75px]"
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={isPending}
             >
               Cancel
+            </Button>
+            <Button className="w-[75px]" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Report"
+              )}
             </Button>
           </DialogFooter>
         </form>

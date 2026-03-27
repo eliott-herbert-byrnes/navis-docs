@@ -259,7 +259,7 @@ export function YesNoPairsEditor({
     }
     return (
       <Card
-        className="cursor-pointer hover:border-primary"
+        className="cursor-pointer hover:border-primary border"
         onClick={() => navigateToNode(child.id)}
       >
         <CardHeader>
@@ -274,7 +274,7 @@ export function YesNoPairsEditor({
 
   if (currentNode.isEndNode) {
     return (
-      <Card className="p-8 text-center">
+      <Card className="p-8 text-center border">
         <div className="mb-4 flex items-center justify-center gap-2">
           {currentPath.length > 1 && (
             <Button

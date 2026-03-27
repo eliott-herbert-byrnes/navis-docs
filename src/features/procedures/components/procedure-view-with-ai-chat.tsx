@@ -56,7 +56,6 @@ export function ProcedureViewWithAIChat({
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div className="procedure-view-actions" data-print-hide>
           <ProcedureViewActions
             procedure={procedure}
             procedureId={procedureId}
@@ -70,10 +69,7 @@ export function ProcedureViewWithAIChat({
             showAuditLogs={showAuditLogs}
             onViewAuditLogs={() => setShowAuditLogs((prev) => !prev)}
           />
-        </div>
       </div>
-
-      <ProcedureViewMetadata procedure={procedure} />
 
       {!showAuditLogs ? (
         <Suspense fallback={<Skeleton />}>
