@@ -1,6 +1,6 @@
 import { LucideChevronDown } from "lucide-react";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,7 +21,7 @@ import {
 type BreadcrumbsProps = {
   breadcrumbs: {
     id?: string;
-    title: string;
+    title: ReactNode;
     href?: string;
     dropdownAriaLabel?: string;
     dropdown?: {
@@ -111,7 +111,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
 
           return (
             <Fragment
-              key={breadcrumb.id ?? breadcrumb.href ?? breadcrumb.title}
+              key={breadcrumb.id ?? breadcrumb.href ?? `breadcrumb-${index}`}
             >
               <BreadcrumbItem>{breadcrumbItem}</BreadcrumbItem>
               {index < breadcrumbs.length - 1 && (

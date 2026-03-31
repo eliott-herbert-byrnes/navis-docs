@@ -31,6 +31,35 @@ type ProcedureAuditLogListProps = {
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
 };
 
+function ProcedureAuditLogListSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={className}>
+      <div className="space-y-6">
+        {Array.from({ length: 3 }).map((_, dateIndex) => (
+          <div key={`audit-skeleton-date-${dateIndex}`}>
+            <div className="flex items-center gap-4 my-6 pt-3 first:mt-0">
+              <Skeleton className="h-4 w-36" />
+              <div className="flex-1 h-px bg-border" />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 2 }).map((_, rowIndex) => (
+                <div
+                  key={`audit-skeleton-row-${dateIndex}-${rowIndex}`}
+                  className="rounded-lg border p-4"
+                >
+                  <Skeleton className="h-5 w-1/3" />
+                  <Skeleton className="mt-3 h-4 w-5/6" />
+                  <Skeleton className="mt-2 h-4 w-2/3" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ProcedureAuditLogList({
   procedureId,
   enabled = true,
@@ -70,11 +99,7 @@ export function ProcedureAuditLogList({
     data?.pages.flatMap((p) => p.logs) ?? [];
 
   if (isLoading) {
-    return (
-      <div className={className}>
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
+    return <ProcedureAuditLogListSkeleton className={className} />;
   }
 
   if (allLogs.length === 0) {

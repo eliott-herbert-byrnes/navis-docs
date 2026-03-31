@@ -10,6 +10,18 @@ import { ProcedureForViewWithRelations } from "../types/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 
+function ProcedureContentSkeleton() {
+  return (
+    <div className="rounded-md border p-4 space-y-3">
+      <Skeleton className="h-6 w-2/3" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-11/12" />
+      <Skeleton className="h-4 w-5/6" />
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+}
+
 function buildAskAIMessage(procedureTitle: string): string {
   const name = procedureTitle?.trim() || "this procedure";
   return `Please can you read the '${name}' so I can ask you questions about it?`;
@@ -72,7 +84,7 @@ export function ProcedureViewWithAIChat({
       </div>
 
       {!showAuditLogs ? (
-        <Suspense fallback={<Skeleton />}>
+        <Suspense fallback={<ProcedureContentSkeleton />}>
           <ProcedureContent
             procedure={procedure}
             showDocView={procedure.style === "FLOW" ? showDocView : undefined}

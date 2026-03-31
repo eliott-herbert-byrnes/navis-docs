@@ -62,7 +62,7 @@ export function FavoriteList() {
       {favorites.map((procedure) => (
         <Card
           key={procedure.id}
-          className="flex flex-col h-full w-full lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top shadow-none border hover:shadow"
+          className="flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top shadow-none border hover:shadow"
         >
           <Link
             href={viewProcedurePath(departmentId, teamId, procedure.id)}

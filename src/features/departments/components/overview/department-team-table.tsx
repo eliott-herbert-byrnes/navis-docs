@@ -34,9 +34,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Team } from "@prisma/client";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TeamDeleteButton } from "../team-buttons/team-delete-button";
 import { TeamRenameButton } from "../team-buttons/team-rename-button";
+
+function DepartmentTeamTableRowsSkeleton({ rowCount = 5 }: { rowCount?: number }) {
+  return (
+    <>
+      {Array.from({ length: rowCount }).map((_, index) => (
+        <TableRow key={`skeleton-row-${index}`}>
+          <TableCell>
+            <Skeleton className="h-4 w-4 rounded-sm" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-[180px]" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-[140px]" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-[170px]" />
+          </TableCell>
+          <TableCell>
+            <div className="flex justify-end">
+              <Skeleton className="h-8 w-8 rounded-md" />
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
+  );
+}
 
 export function DepartmentTeamTable({
   departmentId,
@@ -230,14 +258,7 @@ export function DepartmentTeamTable({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columnsWithRefetch.length}
-                  className="h-24 items-center justify-center"
-                >
-                  <Spinner />
-                </TableCell>
-              </TableRow>
+              <DepartmentTeamTableRowsSkeleton />
             ) : isError ? (
               <TableRow>
                 <TableCell

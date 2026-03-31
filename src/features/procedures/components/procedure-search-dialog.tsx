@@ -14,11 +14,34 @@ import {
 import { FileText, FolderIcon } from "lucide-react";
 import { trpc } from "@/trpc/client";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ProcedureSearchDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
+
+function ProcedureSearchResultsSkeleton() {
+  return (
+    <CommandGroup heading="Procedures">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <CommandItem
+          key={`procedure-search-skeleton-${index}`}
+          value={`loading-${index}`}
+          disabled
+          className="pointer-events-none"
+        >
+          <Skeleton className="mr-2 h-4 w-4 rounded-sm" />
+          <div className="flex flex-col flex-1 gap-1">
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+          <Skeleton className="ml-auto h-3 w-16" />
+        </CommandItem>
+      ))}
+    </CommandGroup>
+  );
+}
 
 export function ProcedureSearchDialog({
   open,
@@ -77,9 +100,7 @@ export function ProcedureSearchDialog({
     duration-600
     ease-out py-2">
         {isLoading ? (
-          <div className="py-6 text-center text-sm text-muted-foreground">
-            Searching...
-          </div>
+          <ProcedureSearchResultsSkeleton />
         ) : (
           <>
             <CommandEmpty>

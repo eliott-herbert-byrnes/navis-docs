@@ -10,6 +10,25 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageContainer } from "@/components/ui/page-container";
 
+function ProductsSkeleton() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div key={index} className="rounded-lg border p-5">
+          <Skeleton className="h-6 w-28" />
+          <Skeleton className="mt-3 h-8 w-20" />
+          <div className="mt-4 space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-4/5" />
+          </div>
+          <Skeleton className="mt-6 h-9 w-full" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const SubscriptionPage = async () => {
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};
@@ -32,7 +51,7 @@ const SubscriptionPage = async () => {
         description="Manage the subscription for this organization"
         actions={manageSubscription}
       />
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<ProductsSkeleton />}>
         <Products orgSlug={org.slug} />
       </Suspense>
     </PageContainer>

@@ -7,6 +7,19 @@ import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+function OrganizationOverviewSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div key={index} className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-9 w-full" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const SettingsPage = async () => {
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
@@ -20,7 +33,7 @@ const SettingsPage = async () => {
         title="Settings"
         description="Manage your organization's settings"
       />
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<OrganizationOverviewSkeleton />}>
         <OrganizationOverview org={org} />
       </Suspense>
     </PageContainer>

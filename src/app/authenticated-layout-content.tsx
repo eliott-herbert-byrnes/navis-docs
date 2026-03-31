@@ -13,13 +13,13 @@ import { OrgBadge } from "@/features/org/components/org-badge";
 function SidebarFallback() {
   return (
     <div className="hidden md:flex w-14 shrink-0 flex-col gap-2 border-r px-2 py-3">
-      {/* <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
       <Skeleton className="h-8 w-8 rounded-md" />
       <Skeleton className="h-8 w-8 rounded-md" />
       <Skeleton className="h-8 w-8 rounded-md" />
       <div className="mt-auto">
         <Skeleton className="h-8 w-8 rounded-md" />
-      </div> */}
+      </div>
     </div>
   );
 }

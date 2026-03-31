@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { newsPath } from "@/app/paths";
 import { FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";

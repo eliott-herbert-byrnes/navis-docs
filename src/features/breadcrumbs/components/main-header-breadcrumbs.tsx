@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts/auth-context";
 import { trpc } from "@/trpc/client";
 import { items } from "@/config/navigation";
 import { homePath, teamProcedurePath } from "@/app/paths";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function MainHeaderBreadcrumbs() {
   const parsed = usePathParse();
@@ -79,16 +80,20 @@ export function MainHeaderBreadcrumbs() {
     const department = departments.find((d) => d.id === departmentId);
     const team = department?.teams.find((t) => t.id === teamId);
 
-    const departmentTitle = departmentsLoading
-      ? "…"
-      : departmentsError || !department
-        ? "Department"
-        : department.name;
-    const teamTitle = departmentsLoading
-      ? "…"
-      : departmentsError || !team
-        ? "Team"
-        : team.name;
+    const departmentTitle = departmentsLoading ? (
+      <Skeleton className="inline-block h-4 w-20 align-middle" />
+    ) : departmentsError || !department ? (
+      "Department"
+    ) : (
+      department.name
+    );
+    const teamTitle = departmentsLoading ? (
+      <Skeleton className="inline-block h-4 w-20 align-middle" />
+    ) : departmentsError || !team ? (
+      "Team"
+    ) : (
+      team.name
+    );
 
     const departmentCrumb = {
       id: departmentId,

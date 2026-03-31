@@ -14,6 +14,16 @@ type EditProcedurePageClientProps = {
   procedure: ProcedureForEdit;
 };
 
+function EditProcedureFormSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-64" />
+      <Skeleton className="h-5 w-96" />
+      <Skeleton className="h-96 w-full" />
+    </div>
+  );
+}
+
 export function EditProcedurePageClient({
   procedureId,
   procedure,
@@ -66,7 +76,7 @@ export function EditProcedurePageClient({
         actions={actions}
       />
 
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<EditProcedureFormSkeleton />}>
         <EditProcedureForm
           procedureId={procedureId}
           procedure={procedure}

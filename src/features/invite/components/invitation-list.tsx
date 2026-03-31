@@ -15,13 +15,75 @@ import {
 } from "@/components/ui/table";
 import { useGetInvites } from "../hooks/use-invite-queries";
 import { trpc } from "@/trpc/client";
-import { Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type InvitationListProps = {
   orgId: string;
   search?: string;
   page?: number;
 };
+
+function InvitationListSkeleton() {
+  return (
+    <>
+      <div className="md:hidden px-4 space-y-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={`invite-card-skeleton-${index}`} className="rounded-lg border p-4">
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+            <div className="mt-4 space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+            </div>
+            <div className="mt-4 flex justify-end">
+              <Skeleton className="h-9 w-20" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden md:block rounded-sm border-b-1">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Email</TableHead>
+              <TableHead>Invited At</TableHead>
+              <TableHead>Invited By</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <TableRow key={`invite-row-skeleton-${index}`}>
+                <TableCell>
+                  <Skeleton className="h-4 w-[240px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[140px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[130px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[80px]" />
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end">
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
+  );
+}
 
 const InvitationList = ({ orgId, search, page = 1 }: InvitationListProps) => {
   const { data, isLoading } = useGetInvites(orgId, search, page, 10);
@@ -35,11 +97,7 @@ const InvitationList = ({ orgId, search, page = 1 }: InvitationListProps) => {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <InvitationListSkeleton />;
   }
 
   const invites = data?.data.invites ?? [];

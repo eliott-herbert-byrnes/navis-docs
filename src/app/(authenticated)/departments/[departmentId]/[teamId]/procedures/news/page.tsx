@@ -3,8 +3,7 @@ import { getSessionContext, getUserById } from "@/lib/auth";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
-import { NewsPostList } from "@/features/news/components/news-list";
-import { Skeleton } from "@/components/ui/skeleton";
+import { NewsListSkeleton, NewsPostList } from "@/features/news/components/news-list";
 import { serverTrpc } from "@/server/trpc/server";
 
 export default async function NewsPage({
@@ -40,7 +39,7 @@ export default async function NewsPage({
         description="View and manage news for your department"
         actions={isAdmin ? <NewsCreateButton /> : null}
       />
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<NewsListSkeleton />}>
         {newsPosts.length > 0 ? (
           <NewsPostList userMap={userMap} />
         ) : (

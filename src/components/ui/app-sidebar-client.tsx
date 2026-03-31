@@ -125,7 +125,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start p-4 w-full rounded-none"
+                    className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
                     <Link href="/" className="text-sm font-normal cursor-default ml-2">
                       Support
@@ -135,7 +135,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start p-4 w-full rounded-none"
+                    className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
                     <Link href="/" className="text-sm font-normal cursor-default ml-2">
                       Documentation
@@ -145,7 +145,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start p-4 w-full rounded-none"
+                    className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
                     <Link href="/" className="text-sm font-normal cursor-default ml-2">
                       Feedback
@@ -156,7 +156,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
-                    className="flex flex-row justify-start p-4 w-full rounded-none"
+                    className="flex flex-row justify-start p-2 w-full rounded-none"
                     type="submit"
                     onClick={signOutAction}
                   >

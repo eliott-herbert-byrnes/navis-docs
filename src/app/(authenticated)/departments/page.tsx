@@ -8,6 +8,31 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { signInPath } from "@/app/paths";
 import { PageContainer } from "@/components/ui/page-container";
 
+function DepartmentListSkeleton() {
+  return (
+    <div className="flex flex-row flex-wrap gap-5">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div
+          key={index}
+          className="w-full max-w-[250px] rounded-lg border p-4 shadow-none"
+        >
+          <div className="space-y-3">
+            <Skeleton className="h-8 w-8 rounded-md" />
+            <Skeleton className="h-6 w-32" />
+          </div>
+          <div className="mt-4">
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function DepartmentsPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
@@ -21,7 +46,7 @@ export default async function DepartmentsPage() {
         description="Manage your organization's departments"
         actions={isAdmin ? <DepartmentCreateButton /> : null}
       />
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<DepartmentListSkeleton />}>
         <DepartmentList />
       </Suspense>
     </PageContainer>

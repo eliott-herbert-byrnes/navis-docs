@@ -6,6 +6,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 import { EditProcedurePageClient } from "./edit-procedure-page-client";
 
+function EditProcedureFormSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-64" />
+      <Skeleton className="h-5 w-96" />
+      <Skeleton className="h-96 w-full" />
+    </div>
+  );
+}
+
 export default async function ProcedureEditPage({
   params,
 }: {
@@ -29,7 +39,7 @@ export default async function ProcedureEditPage({
   }
 
   return (
-    <Suspense fallback={<Skeleton />}>
+    <Suspense fallback={<EditProcedureFormSkeleton />}>
       <EditProcedurePageClient
         procedureId={procedureId}
         procedure={procedure}

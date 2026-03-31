@@ -12,6 +12,22 @@ import { DashboardProcedureChart } from "@/features/dashboard/components/dashoar
 import { PageContainer } from "@/components/ui/page-container";
 import { DashboardActionsDropdown } from "@/features/dashboard/components/dashboard-actions-dropdown";
 
+function DashboardAuditStreamSkeleton() {
+  return (
+    <div className="space-y-3 rounded-md border p-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div key={index} className="flex items-center gap-3">
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function Home() {
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
@@ -39,7 +55,7 @@ export default async function Home() {
           <DashboardProcedureChart data={chartData} />
           <div>
             <h2 className="text-sm font-semibold mb-4">Recent Activity</h2>
-            <Suspense fallback={<Skeleton className="h-48" />}>
+            <Suspense fallback={<DashboardAuditStreamSkeleton />}>
               <DashboardAuditStream />
             </Suspense>
           </div>

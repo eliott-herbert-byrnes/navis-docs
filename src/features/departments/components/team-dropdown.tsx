@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { trpc } from "@/trpc/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type TeamDropdownProps = {
   department: {
@@ -35,7 +36,9 @@ const TeamDropdown = ({
   onTeamSelect,
 }: TeamDropdownProps) => {
   const [open, setOpen] = React.useState(false);
-  const { data } = trpc.team.list.useQuery({ departmentId: department.id });
+  const { data, isLoading } = trpc.team.list.useQuery({
+    departmentId: department.id,
+  });
 
   const teams = data?.teams ?? [];
   const selectedTeam = teams.find((team) => team.id === selectedTeamId);
@@ -48,8 +51,15 @@ const TeamDropdown = ({
           role="combobox"
           aria-expanded={open}
           className="w-[200px] justify-between shadow-none font-normal"
+          disabled={isLoading}
         >
-          {selectedTeam ? selectedTeam.name : "Select team..."}
+          {isLoading ? (
+            <Skeleton className="h-4 w-24" />
+          ) : selectedTeam ? (
+            selectedTeam.name
+          ) : (
+            "Select team..."
+          )}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>

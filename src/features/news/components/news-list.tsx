@@ -44,7 +44,7 @@ const getTextFromBodyJSON = (json: JsonObject): string => {
   return "";
 };
 
-function NewsListSkeleton() {
+export function NewsListSkeleton() {
   return (
     <div className="flex flex-col px-4 gap-4">
       {[1, 2, 3].map((i) => (
