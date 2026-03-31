@@ -91,7 +91,7 @@ export function ProcedureEditorSelector({
   }
 
   return (
-    <Card className="p-2 min-h-[600px] animate-fade-from-top shadow-none">
+    <Card className="p-2 min-h-[600px] animate-fade-from-top shadow-none bg-background">
       {renderEditor()}
     </Card>
   );

@@ -49,7 +49,7 @@ const DepartmentOverview = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="ghost" className="rounded-none justify-start font-normal">
           <div className="flex flex-row gap-2 items-center">
             <EyeIcon className="w-4 h-4" />
@@ -66,13 +66,13 @@ const DepartmentOverview = ({
 
         <div className="flex w-full flex-col">
           <Tabs value={currentTab} onValueChange={setCurrentTab}>
-            <TabsList className="flex flex-row gap-2 mb-0">
+            <TabsList className="flex flex-row gap-2 mb-0 bg-primary/0">
               <TabsTrigger value="Settings">Settings</TabsTrigger>
               <TabsTrigger value="Teams">Teams</TabsTrigger>
             </TabsList>
 
             <TabsContent value="Settings">
-              <Card className="animate-fade-from-top border-none shadow-none py-2 px-1">
+              <Card className="animate-fade-from-top border-none shadow-none py-2 px-1 bg-primary/0">
                 <CardHeader className="px-1 gap-1">
                   <CardTitle className="text-md">Department Settings</CardTitle>
                   <CardDescription>
@@ -126,7 +126,7 @@ const DepartmentOverview = ({
             </TabsContent>
 
             <TabsContent value="Teams">
-              <Card className="max-w-[450px] animate-fade-from-top shadow-none gap-2 py-2">
+              <Card className="max-w-[450px] animate-fade-from-top shadow-none gap-2 py-2 bg-primary/0">
                 <CardHeader className="px-1 mb-4">
                   <CardTitle className="mt-1">Teams</CardTitle>
                   <CardDescription>

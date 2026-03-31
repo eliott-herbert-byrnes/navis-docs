@@ -192,7 +192,7 @@ export const EditProcedureForm = ({
   };
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <ProcedureEditorSelector
         procedureId={procedureId}
         procedureStyle={procedure.style}

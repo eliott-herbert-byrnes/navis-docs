@@ -40,7 +40,7 @@ export function ProcedureFavoriteButton({
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
         <Star
-          className={`w-4 h-4 ${optimisticIsFavorite ? "fill-current text-yellow-500 " : ""}`}
+          className={`w-4 h-4 ${optimisticIsFavorite ? "fill-current text-primary " : ""}`}
         />
       )}
       {showLabel && (

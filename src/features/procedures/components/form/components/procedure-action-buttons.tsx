@@ -34,7 +34,7 @@ export function ProcedureActionButtons({
 }: ProcedureActionButtonsProps) {
   const isDraft = procedure.status === "DRAFT";
   return (
-    <Card className="p-4 animate-fade-from-top shadow-none">
+    <Card className="p-4 animate-fade-from-top shadow-none bg-background">
       <div className="flex items-center justify-between">
         <div className="text-sm">
           {hasUnsavedChanges && (

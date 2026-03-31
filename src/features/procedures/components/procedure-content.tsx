@@ -133,7 +133,7 @@ const ProcedureContent = ({
   }
 
   return (
-    <Card className="p-0 min-h-[600px] animate-fade-from-top shadow-none">
+    <Card className="p-0 min-h-[600px] animate-fade-from-top shadow-none bg-background">
       {renderProcedureContent()}
     </Card>
   );

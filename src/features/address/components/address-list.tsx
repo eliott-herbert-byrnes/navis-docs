@@ -178,7 +178,7 @@ export function AddressList() {
     <div className="flex w-full flex-col gap-4">
       <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted">
+          <TableHeader className="bg-secondary">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

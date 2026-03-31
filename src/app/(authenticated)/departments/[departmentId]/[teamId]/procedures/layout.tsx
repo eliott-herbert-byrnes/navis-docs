@@ -44,7 +44,7 @@ export default async function ProcedureLayout({
               unreadNewsCount={unreadNewsCount ?? 0}
             />
 
-            <main className="col-span-24 sm:col-span-16 sm:col-start-5 ">{children}</main>
+            <main className="col-span-14 col-start-8 lg:col-span-16 lg:col-start-6">{children}</main>
         </div>
       </ProcedureRouteProvider>
   );

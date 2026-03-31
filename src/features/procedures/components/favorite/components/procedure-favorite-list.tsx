@@ -62,7 +62,7 @@ export function FavoriteList() {
       {favorites.map((procedure) => (
         <Card
           key={procedure.id}
-          className="flex flex-col h-full w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top shadow-none border"
+          className="flex flex-col h-full w-full lg:w-1/3 xl:w-1/4 2xl:w-1/6 animate-fade-from-top shadow-none border hover:shadow"
         >
           <Link
             href={viewProcedurePath(departmentId, teamId, procedure.id)}
@@ -70,7 +70,7 @@ export function FavoriteList() {
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2 min-h-[3rem]">
-                <CardTitle className="text-base hover:text-primary transition-colors line-clamp-2">
+                <CardTitle className="text-base light:hover:text-black/65 dark:hover:text-white/75 transition-colors line-clamp-2">
                   {procedure.title}
                 </CardTitle>
                 <ProcedureFavoriteButton

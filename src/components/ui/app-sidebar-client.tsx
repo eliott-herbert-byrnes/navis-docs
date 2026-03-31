@@ -107,7 +107,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="light:bg-white">
+                <SidebarMenuButton className="light:bg-white light:hover:bg-accent">
                   <span className="flex size-4 shrink-0 items-center justify-center">
                     <User2 />
                   </span>
