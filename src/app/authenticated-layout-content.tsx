@@ -27,14 +27,14 @@ function SidebarFallback() {
 function ContentAreaFallback() {
   return (
     <div className="flex h-full w-full flex-col pl-4 pr-4">
-      <div className="flex flex-row items-center justify-between pt-3 px-8">
+      <div className="flex flex-row items-center justify-between pt-5 px-8">
         <div className="flex flex-row items-center gap-2">
           <Skeleton className="h-8 w-8 sm:hidden" />
           <Skeleton className="h-6 w-56 hidden md:block" />
         </div>
         <Skeleton className="h-6 w-28" />
       </div>
-      <div className="grid grid-cols-12 gap-x-4 pt-10 px-6">
+      <div className="grid grid-cols-12 gap-x-4 pt-12 px-6">
         <div className="col-span-8 col-start-3 space-y-3">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-40" />
@@ -53,14 +53,14 @@ export function AuthenticatedLayoutContent({
   return (
     <SidebarProvider defaultOpen={false}>
       <Suspense fallback={<SidebarFallback />}>
-        <AppSidebar />
+        <AppSidebar/>
       </Suspense>
-      <SidebarInset className="p-2">
+      <SidebarInset className="">
         <div className="flex flex-row h-full">
           <Suspense fallback={<ContentAreaFallback />}>
             <AsyncAuthContextLoader>
               <div className="flex h-full w-full flex-col pl-4 pr-4">
-                <div className="flex flex-row items-center justify-between pt-3 px-8">
+                <div className="flex flex-row items-center justify-between pt-7 px-8">
                   <div className="flex flex-row items-center gap-2">
                     <div className="sm:hidden">
                       <SidebarTrigger />
@@ -73,7 +73,7 @@ export function AuthenticatedLayoutContent({
                     <OrgBadge />
                   </Suspense>
                 </div>
-                <div className="grid grid-cols-12 gap-x-4 pt-10 px-6">
+                <div className="grid grid-cols-24 gap-x-4 pt-10 px-6 ">
                   {children}
                 </div>
               </div>

@@ -138,7 +138,7 @@ export function SignInForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       {!sent && (
-        <Card className="animate-fade-from-top max-w-sm shadow-none">
+        <Card className="animate-fade-from-top max-w-sm shadow-none bg-brand">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome back</CardTitle>
             <CardDescription>Login with your Google account</CardDescription>
@@ -151,7 +151,7 @@ export function SignInForm({
                     <TooltipTrigger asChild>
                       <div className="flex items-center justify-center">
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           type="button"
                           onClick={continueWithGoogle}
                           className="w-full"
@@ -218,7 +218,7 @@ export function SignInForm({
                     <Field>
                       <Button
                         variant="default"
-                        className="w-full cursor-pointer"
+                        className="w-full cursor-pointer "
                         onClick={signInWithDemo}
                         disabled={pending}
                         type="button"
@@ -262,12 +262,12 @@ export function SignInForm({
                       required
                       containerClassName="w-full justify-center"
                     >
-                      <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border">
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
+                      <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border border-primary">
+                        <InputOTPSlot index={0} className="border-primary"/>
+                        <InputOTPSlot index={1} className="border-primary"/>
+                        <InputOTPSlot index={2} className="border-primary"/>
+                        <InputOTPSlot index={3} className="border-primary"/>
+                        <InputOTPSlot index={4} className="border-primary"/>
                       </InputOTPGroup>
                     </InputOTP>
                     <FieldDescription className="text-center">

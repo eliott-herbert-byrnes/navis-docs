@@ -109,6 +109,7 @@ export function CategoriesList({
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -295,7 +296,7 @@ export function CategoriesList({
 
       <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

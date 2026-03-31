@@ -37,7 +37,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
@@ -252,6 +251,7 @@ export function ProcedureErrorList({
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -297,7 +297,7 @@ export function ProcedureErrorList({
             className="text-muted-foreground px-1.5 flex items-center gap-1 w-fit"
           >
             {status === "RESOLVED" ? (
-              <CircleCheck className="fill-green-500 dark:fill-green-400 h-4 w-4" />
+              <CircleCheck className="fill-secondary dark:fill-secondary h-4 w-4" />
             ) : status === "ARCHIVED" ? (
               <Archive className="h-4 w-4" />
             ) : (
@@ -487,7 +487,7 @@ export function ProcedureErrorList({
 
       <div className="overflow-hidden rounded-sm">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

@@ -43,7 +43,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -161,7 +160,7 @@ function TableCellViewer({ item }: { item: User }) {
               ) : outstanding.length > 0 ? (
                 <div className="list-disc list-inside space-y-1 text-muted-foreground">
                   {outstanding.map((proc) => (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" key={proc.procedureId}>
                       <span key={`${proc.procedureId}-${proc.versionId}`}>
                         {`${proc.procedureTitle}`}
                       </span>
@@ -220,6 +219,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -439,7 +439,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
 
       <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

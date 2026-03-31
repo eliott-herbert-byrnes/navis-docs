@@ -36,7 +36,7 @@ export function DashboardActionsDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="">
           Actions <ChevronDown className="size-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>

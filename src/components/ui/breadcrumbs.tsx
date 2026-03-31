@@ -50,7 +50,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
               <BreadcrumbLink asChild>
                 <Link
                   href={breadcrumb.href}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-secondary-foreground hover:text-secondary-foreground/80"
                 >
                   {breadcrumb.title}
                 </Link>
@@ -62,7 +62,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
             breadcrumbItem = (
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-secondary-foreground hover:text-secondary-foreground/80 transition-colors cursor-pointer"
                   aria-label={breadcrumb.dropdownAriaLabel}
                 >
                   {breadcrumb.title}
@@ -92,7 +92,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
             breadcrumbItem = (
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-secondary-foreground hover:text-secondary-foreground/80 transition-colors cursor-pointer"
                   aria-label={breadcrumb.dropdownAriaLabel}
                 >
                   {breadcrumb.title}

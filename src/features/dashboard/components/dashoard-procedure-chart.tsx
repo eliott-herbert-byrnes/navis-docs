@@ -26,7 +26,7 @@ export function DashboardProcedureChart({ data }: DashboardProcedureChartProps) 
           <BarChart data={data}>
             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="count" fill="var(--color-count)" radius={2} />
+            <Bar dataKey="count" fill="var(--brand-brand)" radius={2} />
           </BarChart>
         </ChartContainer>
       </CardContent>

@@ -6,34 +6,18 @@ type DashboardStatCardsProps = { stats: DashboardStats };
 
 export function DashboardStatCards({ stats }: DashboardStatCardsProps) {
   const cards = [
-    {
-      title: "Members",
-      value: stats.totalUsers,
-      icon: Users,
-    },
-    {
-      title: "Non-compliant Members",
-      value: stats.nonCompliantUsers,
-      icon: ShieldAlert,
-    },
-    {
-      title: "Procedures",
-      value: stats.totalProcedures,
-      icon: BookOpen,
-    },
-    {
-      title: "Departments",
-      value: stats.totalDepartments,
-      icon: Building2,
-    },
+    { title: "Members", value: stats.totalUsers, icon: Users },
+    { title: "Non-compliant Members", value: stats.nonCompliantUsers, icon: ShieldAlert },
+    { title: "Procedures", value: stats.totalProcedures, icon: BookOpen },
+    { title: "Departments", value: stats.totalDepartments, icon: Building2 },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {cards.map((card) => (
-        <Card key={card.title} className="shadow-none border-1 gap-2">
+        <Card key={card.title} className={`shadow-none border-1 gap-2`}>
           <CardHeader className="flex flex-row items-center justify-start gap-3">
-            <card.icon className="h-8 w-8 bg-secondary p-1 rounded-sm border-1" />
+            <card.icon className={`h-9 w-9 p-1.5 rounded-sm border-1 bg-secondary`} strokeWidth={1.5} />
             <p className="text-2xl font-semibold">{card.value}</p>
           </CardHeader>
           <CardContent>

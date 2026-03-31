@@ -41,8 +41,8 @@ export function CategoryCell({
         }}
         disabled={isPending}
       >
-        <SelectTrigger className="h-8 text-muted-foreground  shadow-none border truncate max-w-40 w-40">
-          <span className={!value ? "text-muted-foreground/60" : ""}>
+        <SelectTrigger className="h-8 text-muted-foreground  border truncate max-w-40 w-40">
+          <span className={!value ? "text-muted-foreground/80" : ""}>
             {value ? truncatedCategoryName : "Category"}
           </span>
         </SelectTrigger>

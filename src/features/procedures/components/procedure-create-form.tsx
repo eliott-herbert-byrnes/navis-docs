@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { homePath } from "@/app/paths";
 import { FormEvent, useState, useTransition } from "react";
@@ -214,6 +213,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   checked={createNewCategory}
                   onCheckedChange={handleNewCategoryChange}
                   disabled={isPending}
+                  className="border-black/20"
                 />
                 <FieldLabel
                   htmlFor="newProcedureCategory"
@@ -253,7 +253,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   disabled={isPending}
                 >
                   <FieldLabel htmlFor="rawtext">
-                    <Field orientation="horizontal">
+                    <Field orientation="horizontal" >
                       <FieldContent>
                         <FieldTitle>Raw Text</FieldTitle>
                         <FieldDescription>

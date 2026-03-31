@@ -45,7 +45,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -156,7 +155,7 @@ function TableCellViewer({ item }: { item: Idea }) {
                     onClick={() => handleStatusChange("IN_PROGRESS")}
                     disabled={isUpdating}
                     className="flex-1"
-                    variant="outline"
+                    variant="default"
                   >
                     Start
                   </Button>
@@ -165,6 +164,7 @@ function TableCellViewer({ item }: { item: Idea }) {
                   onClick={() => handleStatusChange("ARCHIVED")}
                   disabled={isUpdating}
                   className="flex-1"
+                  variant="outline"
                 >
                   Archive
                 </Button>
@@ -172,13 +172,12 @@ function TableCellViewer({ item }: { item: Idea }) {
             )}
             {item.status === "IN_PROGRESS" && (
               <>
-                <Separator />
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
                   <Button
                     onClick={() => handleStatusChange("COMPLETED")}
                     disabled={isUpdating}
                     className="flex-1"
-                    variant="outline"
+                    variant="default"
                   >
                     Complete
                   </Button>
@@ -186,6 +185,7 @@ function TableCellViewer({ item }: { item: Idea }) {
                     onClick={() => handleStatusChange("ARCHIVED")}
                     disabled={isUpdating}
                     className="flex-1"
+                    variant="outline"
                   >
                     Archive
                   </Button>
@@ -194,7 +194,6 @@ function TableCellViewer({ item }: { item: Idea }) {
             )}
             {item.status === "COMPLETED" && (
               <>
-                <Separator />
                 <div className="flex gap-2">
                   <Button
                     onClick={() => handleStatusChange("ARCHIVED")}
@@ -262,6 +261,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -413,7 +413,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
 
       <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

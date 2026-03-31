@@ -7,7 +7,7 @@ interface PageContainerProps {
 
 export function PageContainer({ children, className }: PageContainerProps) {
   return (
-    <div className={cn("col-span-8 col-start-3", className)}>
+    <div className={cn("col-span-18 col-start-4", className)}>
       {children}
     </div>
   );

@@ -193,23 +193,23 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                 <div>
                   <span className="font-medium">User:</span>{" "}
-                  <span className="text-muted-foreground">{userName}</span>
+                  <span>{userName}</span>
                 </div>
                 <div>
                   <span className="font-medium">User ID:</span>{" "}
-                  <span className="text-muted-foreground">{log.actorId}</span>
+                  <span>{log.actorId}</span>
                 </div>
                 <div>
                   <span className="font-medium">Entity:</span>{" "}
-                  <span className="text-muted-foreground">{log.entityType.charAt(0) + log.entityType.slice(1).toLowerCase()}</span>
+                  <span>{log.entityType.charAt(0) + log.entityType.slice(1).toLowerCase()}</span>
                 </div>
                 <div>
                   <span className="font-medium">Entity ID:</span>{" "}
-                  <span className="text-muted-foreground">{log.entityId}</span>
+                  <span>{log.entityId}</span>
                 </div>
                 <div className="md:col-span-2">
                   <span className="font-medium">Action:</span>{" "}
-                  <span className="text-muted-foreground">{log.action}</span>
+                  <span>{log.action}</span>
                 </div>
               </div>
 
