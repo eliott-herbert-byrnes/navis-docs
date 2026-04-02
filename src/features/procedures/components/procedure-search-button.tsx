@@ -22,10 +22,10 @@ export function ProcedureSearchButton() {
 
   return (
     <>
-      <div className="">
+      <div className="pr-3 sm:pr-0">
         <Button
           variant="outline"
-          className="w-full justify-start text-muted-foreground max-w-[250px] mt-1 ml-2"
+          className="w-full justify-start text-muted-foreground sm:max-w-[250px] mt-1 ml-2"
           onClick={() => setOpen(true)}
         >
           <Search className="size-4" />

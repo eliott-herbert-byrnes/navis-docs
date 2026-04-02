@@ -51,7 +51,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                   height="25"
                 />
                 <Image
-                  src="/navis-docs-logo-blue-png.png"
+                  src="/navis-docs-logo-blue-2.png"
                   alt="Navis Docs Logo"
                   className="rounded-xs mx-auto hidden dark:block"
                   width="25"
@@ -104,7 +104,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild >
-                <SidebarMenuButton className="light:bg-white light:hover:bg-accent flex justify-center ">
+                <SidebarMenuButton className="dark:bg-accent light:bg-white light:hover:bg-accent flex justify-center ">
                   <span className="flex size-4 shrink-0 items-center justify-center">
                     <User2 />
                   </span>

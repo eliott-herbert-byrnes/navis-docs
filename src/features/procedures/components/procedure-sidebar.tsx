@@ -112,7 +112,7 @@ export function ProcedureSidebar({
 
         <IdeaButton />
 
-        <Separator className="my-3 max-w-[250px]" />
+        <Separator className="my-3 sm:max-w-[250px]" />
 
         {/* Categories with Procedures */}
         {categories.length === 0 && uncategorizedProcedures.length === 0 ? (
@@ -136,10 +136,10 @@ export function ProcedureSidebar({
                 return (
                   <Collapsible key={category.id}>
                     <CollapsibleTrigger asChild>
-                      <div className="">
+                      <div className="group w-full sm:max-w-[250px]">
                         <Button
                           variant="ghost"
-                          className="w-full justify-between group max-w-[250px]"
+                          className="w-full justify-between"
                         >
                           <span className="font-medium text-sm flex items-center gap-1.5">
                             {category.name}
@@ -282,7 +282,7 @@ export function ProcedureSidebar({
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              className="fixed bottom-7 left-6 bg-background text-foreground sm:hidden rounded-full shadow-lg z-50"
+              className="fixed bottom-7 left-6 text-foreground sm:hidden rounded-full shadow-lg z-50"
             >
               <Menu className="h-4 w-4 mr-2" />
               Menu

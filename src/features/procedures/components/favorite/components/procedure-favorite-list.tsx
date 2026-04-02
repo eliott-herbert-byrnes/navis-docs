@@ -58,7 +58,7 @@ export function FavoriteList() {
   }
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-4 mb-8 sm:mb-0">
       {favorites.map((procedure) => (
         <Card
           key={procedure.id}

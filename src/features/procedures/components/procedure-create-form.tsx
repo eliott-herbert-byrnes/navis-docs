@@ -139,7 +139,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   <Field>
                     <FieldLabel>Department</FieldLabel>
                     <Select value={selectedDepartmentId} onValueChange={(v) => { setSelectedDepartmentId(v); setSelectedTeamId(""); }} disabled={isPending}>
-                      <SelectTrigger className="shadow-none max-w-1/3">
+                      <SelectTrigger className="shadow-none sm:max-w-1/3">
                         <SelectValue placeholder="Select a department" />
                         </SelectTrigger>
                       <SelectContent>
@@ -150,7 +150,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   <Field>
                     <FieldLabel>Team</FieldLabel>
                     <Select value={selectedTeamId} onValueChange={setSelectedTeamId} disabled={!selectedDepartmentId || isPending}>
-                      <SelectTrigger className="shadow-none max-w-1/3"><SelectValue placeholder="Select a team" /></SelectTrigger>
+                      <SelectTrigger className="shadow-none sm:max-w-1/3"><SelectValue placeholder="Select a team" /></SelectTrigger>
                       <SelectContent>
                         {departments.find(d => d.id === selectedDepartmentId)?.teams.map((t) => (
                           <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
@@ -173,7 +173,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   name="procedureTitle"
                   required
                   disabled={isPending}
-                  className="shadow-none border max-w-1/3"
+                  className="shadow-none border sm:max-w-1/3"
                 />
               </Field>
               <Field>
@@ -184,7 +184,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   id="procedureDescription"
                   name="procedureDescription"
                   placeholder="Enter a short description of the procedure"
-                  className="resize-none shadow-none border max-w-1/2"
+                  className="resize-none shadow-none border sm:max-w-1/2"
                   required
                   disabled={isPending}
                 />
@@ -228,7 +228,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                     id="newProcedureCategoryName"
                     placeholder="New Category Name"
                     name="newProcedureCategoryName"
-                    className="shadow-none border max-w-1/3"
+                    className="shadow-none border sm:max-w-1/3"
                     required
                     disabled={isPending}
                   />

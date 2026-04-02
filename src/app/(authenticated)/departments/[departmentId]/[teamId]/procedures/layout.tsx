@@ -35,7 +35,7 @@ export default async function ProcedureLayout({
 
   return (
       <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
-        <div className="col-span-24 grid grid-cols-24">
+        <div className="sm:grid sm:col-span-24 sm:grid-cols-24">
             <ProcedureSidebar
               isAdmin={isAdmin}
               uncategorizedProcedures={procedures}
@@ -44,7 +44,7 @@ export default async function ProcedureLayout({
               unreadNewsCount={unreadNewsCount ?? 0}
             />
 
-            <main className="col-span-14 col-start-8 lg:col-span-16 lg:col-start-6">{children}</main>
+            <main className="sm:col-span-14 sm:col-start-8 lg:col-span-16 lg:col-start-6">{children}</main>
         </div>
       </ProcedureRouteProvider>
   );

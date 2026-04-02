@@ -30,7 +30,7 @@ export function StepItem({
     return (
       <Card className="p-4 animate-fade-from-top shadow-none">
         <div className="flex gap-3">
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full light:bg-primary light:text-primary-background flex items-center justify-center font-semibold">
             {index + 1}
           </div>
           <div className="flex-1">

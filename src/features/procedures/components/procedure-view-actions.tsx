@@ -233,8 +233,8 @@ export function ProcedureViewActions({
   return (
     <div className="w-full">
       <Card className="p-4 animate-fade-from-top shadow-none border">
-        <div className="flex flex-row items-center">
-          <div className="flex flex-col gap-3 text-sm ">
+        <div className="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3 text-sm">
             {/* Published Date */}
             <div className="flex items-center gap-2 text-muted-foreground ">
               <Calendar className="w-4 h-4" />
@@ -247,7 +247,7 @@ export function ProcedureViewActions({
             </div>
             {/* Team/Category Badges */}
           </div>
-          <div className="flex flex-row gap-2 ml-4">
+          <div className="flex flex-row gap-2 sm:ml-4">
           {procedure.category && (
             <Badge variant="outline">
               <FolderOpen className="w-3 h-3 mr-1" />
@@ -256,7 +256,7 @@ export function ProcedureViewActions({
           )}
           </div>
           {/* Mark as read - show only when published and unread */}
-          <div className="flex flex-row items-center gap-2 ml-auto flex-wrap">
+          <div className="flex flex-row items-center gap-2 sm:ml-auto flex-wrap">
             {showMarkAsRead && (
               <Button
               size="sm"

@@ -187,7 +187,7 @@ export function RawTextEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none focus:outline-none p-4",
+          "pt-16 sm:pt-0 prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none focus:outline-none p-4",
       },
       handleKeyDown: (_view, event) => {
         if (!_view.editable) return false;
