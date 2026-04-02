@@ -3,7 +3,7 @@ import { getSessionContext } from "@/lib/auth";
 
 const OrgBadge = async () => {
   const ctx = await getSessionContext()
-  return <Badge className=" text-neutral-900 rounded-sm dark:bg-brand">{ctx?.org?.name ?? ""}</Badge>
+  return <Badge className="bg-background text-black dark:text-primary">{ctx?.org?.name ?? ""}</Badge>
 }
 
 export { OrgBadge };

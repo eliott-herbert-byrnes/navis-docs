@@ -61,7 +61,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                   Navis Docs
                 </span>
               </div>
-              <Separator className="bg-background" />
+              <Separator className="bg-primary" />
               {items
                 .filter((item) => ("isAdmin" in item && item.isAdmin ? isAdmin : true))
                 .map((item) => {
@@ -90,7 +90,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                     return (
                       <Fragment key={item.title}>
                         {menuItem}
-                        <Separator className="bg-background" />
+                        <Separator className="bg-primary"/>
                       </Fragment>
                     );
                   }
@@ -121,7 +121,6 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                 <DropdownMenuItem asChild>
                   <ThemeSwitcher />
                 </DropdownMenuItem>
-                <Separator />
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
@@ -152,7 +151,6 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                     </Link>
                   </Button>
                 </DropdownMenuItem>
-                <Separator />
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"

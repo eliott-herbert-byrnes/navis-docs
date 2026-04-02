@@ -14,14 +14,14 @@
 @custom-variant light (&:is(.light *));
 
 ::selection {
-  background-color: #c8d6d1;
+  background-color: #8ebeca;
 }
 
 :root {
   /* Brand palette */
   --brand-white: #efecee;
   --brand-grey: #d9d9d9;
-  --brand-brand: #B9C6C1;
+  --brand-brand: #8ebeca;
   --brand-yellow: #e2dacf;
   --brand-orange: #e2cfcf;
   --brand-purple: #e0cfe2;
@@ -121,7 +121,8 @@
   /* Brand palette */
   --color-white: #efecee;
   --color-grey: #d9d9d9;
-  --color-brand: #d4e2dd;
+  --color-brand: #8ebeca;
+  --color-brandOrange: #F45844;
   --color-yellow: #e2dacf;
   --color-orange: #e2cfcf;
   --color-purple: #e0cfe2;
@@ -165,15 +166,15 @@ body {
 }
 
 .light {
-  --background: oklch(1 0 0);
+  --background: oklch(0.98 0.00 210);
   --foreground: oklch(0.148 0.004 228.8);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.148 0.004 228.8);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.148 0.004 228.8);
-  --primary: #c8d6d1;
+  --primary: oklch(0.97 0.00 106);
   --primary-foreground: oklch(0.987 0.002 197.1);
-  --secondary: #c8d6d1;
+  --secondary: oklch(0.97 0.00 106);
   --secondary-foreground: oklch(0.218 0.008 223.9);
   --muted: oklch(0.963 0.002 197.1);
   --muted-foreground: oklch(0.56 0.021 213.5);
@@ -188,9 +189,10 @@ body {
   --chart-3: oklch(0.45 0.017 213.2);
   --chart-4: oklch(0.378 0.015 216);
   --chart-5: oklch(0.275 0.011 216.9);
-  --radius: 0.45rem;
+  --radius: 0.50rem;
   /* --sidebar: oklch(0.987 0.002 197.1); */
-  --sidebar: #c8d6d1;
+  --sidebar: #8ebeca;
+  /* --sidebar: oklch(0.84 0.02 210); */
   --sidebar-foreground: oklch(0.148 0.004 228.8);
   --sidebar-primary: oklch(0.218 0.008 223.9);
   --sidebar-primary-foreground: oklch(0.987 0.002 197.1);
