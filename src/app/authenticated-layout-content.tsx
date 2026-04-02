@@ -59,8 +59,8 @@ export function AuthenticatedLayoutContent({
         <div className="flex flex-row h-full">
           <Suspense fallback={<ContentAreaFallback />}>
             <AsyncAuthContextLoader>
-              <div className="flex h-full w-full flex-col pl-4 pr-4">
-                <div className="flex flex-row items-center justify-between pt-7 px-8">
+              <div className="flex h-full w-full flex-col sm:pl-4 sm:pr-4">
+                <div className="flex flex-row items-center justify-between pt-7 px-4 sm:px-8">
                   <div className="flex flex-row items-center gap-2">
                     <div className="sm:hidden">
                       <SidebarTrigger />
@@ -73,7 +73,7 @@ export function AuthenticatedLayoutContent({
                     <OrgBadge />
                   </Suspense>
                 </div>
-                <div className="grid grid-cols-24 gap-x-4 pt-10 px-6 ">
+                <div className="flex flex-col w-full min-w-0 sm:grid sm:grid-cols-24 gap-x-4 pt-10 px-6 ">
                   {children}
                 </div>
               </div>

@@ -24,13 +24,18 @@ export const InvitationSearch = () => {
         params.delete("search");
       }
 
+      const nextQuery = params.toString();
+      if (nextQuery === searchParams.toString()) {
+        return;
+      }
+
       startTransition(() => {
-        router.push(`${pathname}?${params.toString()}`);
+        router.push(`${pathname}?${nextQuery}`);
       });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [search, pathname, router, searchParams]);
+  }, [search, pathname, router, searchParams.toString()]);
 
   return (
     <div className="relative w-full max-w-sm ">

@@ -385,7 +385,7 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
 
   return (
     <div className="flex w-full flex-col gap-4 px-1">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -394,11 +394,11 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }
-            className="pl-10 shadow-none border-1 mb-1 w-80"
+            className="pl-10 shadow-none border-1 mb-1"
           />
         </div>
         <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-          <SelectTrigger className="w-[125px] shadow-none">
+          <SelectTrigger className="w-full sm:w-[125px] shadow-none">
             <SelectValue placeholder={statusFilter} />
           </SelectTrigger>
           <SelectContent>

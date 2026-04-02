@@ -125,6 +125,7 @@ export function DepartmentTeamTable({
           cell: ({ row }) => (
             <div className="lowercase">{row.getValue("departmentId")}</div>
           ),
+          meta: { className: "hidden sm:table-cell" },
         },
         {
           accessorKey: "createdAt",
@@ -142,6 +143,7 @@ export function DepartmentTeamTable({
               </div>
             );
           },
+          meta: { className: "hidden sm:table-cell" },
         },
         {
           id: "actions",
@@ -199,18 +201,18 @@ export function DepartmentTeamTable({
 
   return (
     <div className="w-full">
-      <div className="flex flex-row gap-4 items-center py-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center py-4">
         <Input
           placeholder="Search teams..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm border-1 shadow-none"
+          className="w-full sm:max-w-sm border-1 shadow-none"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto shadow-none border">
+            <Button variant="outline" className="sm:ml-auto shadow-none border w-full sm:w-auto">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -236,14 +238,15 @@ export function DepartmentTeamTable({
         </DropdownMenu>
       </div>
 
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-x-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const meta = header.column.columnDef.meta as { className?: string } | undefined;
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className={meta?.className}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -274,14 +277,17 @@ export function DepartmentTeamTable({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const meta = cell.column.columnDef.meta as { className?: string } | undefined;
+                    return (
+                      <TableCell key={cell.id} className={meta?.className}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (

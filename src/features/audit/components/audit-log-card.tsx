@@ -139,6 +139,7 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
           {/* Header - Always Visible */}
           <CardHeader className="py-0 px-0">
             <div className="flex items-center justify-between gap-1 mt-1">
+
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {/* Action Title */}
                 <span className="font-semibold text-md truncate">
@@ -202,7 +203,7 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
             </div>
 
             {/* Mobile-only: Show username and time below on small screens */}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden mt-1 ml-11">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden mt-1 sm:ml-11">
               <span>{userName}</span>
               <span>•</span>
               <span>
@@ -214,7 +215,7 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
           {/* Collapsible Content - Shows when expanded */}
           <CollapsibleContent>
             <Separator />
-            <CardContent className="pt-4 space-y-4 m-0 px-1">
+            <CardContent className="pt-4 space-y-4 m-0 px-1 max-w-80 sm:max-w-full">
               {/* Audit Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                 <div>

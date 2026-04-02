@@ -407,7 +407,7 @@ export function ProcedureErrorList({
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 justify-between gap-4">
+        <div className="flex flex-col sm:flex-row flex-1 justify-between gap-3 sm:gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-4 top-5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -422,7 +422,7 @@ export function ProcedureErrorList({
                   .getColumn("procedureName")
                   ?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2 shadow-none border-1 mb-1"
+              className="pl-10 mr-2 shadow-none border-1 mb-1" 
             />
           </div>
           <div className="flex gap-2">
@@ -430,7 +430,7 @@ export function ProcedureErrorList({
               value={statusFilter}
               onValueChange={handleStatusFilterChange}
             >
-              <SelectTrigger className="w-[125px] shadow-none">
+              <SelectTrigger className="w-full sm:w-[125px] shadow-none">
                 <SelectValue placeholder={statusFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -485,7 +485,7 @@ export function ProcedureErrorList({
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden rounded-sm">
+      <div className="rounded-sm">
         <Table>
           <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (

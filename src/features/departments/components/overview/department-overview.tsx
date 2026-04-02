@@ -58,13 +58,13 @@ const DepartmentOverview = ({
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="flex flex-col max-h-[90dvh] overflow-hidden">
+        <DialogHeader className="shrink-0">
           <DialogTitle className="mt-4">{title}</DialogTitle>
         </DialogHeader>
-        <Separator />
+        <Separator className="shrink-0" />
 
-        <div className="flex w-full flex-col">
+        <div className="flex-1 overflow-y-auto min-h-0">
           <Tabs value={currentTab} onValueChange={setCurrentTab}>
             <TabsList className="flex flex-row gap-2 mb-0 bg-primary/0">
               <TabsTrigger value="Settings">Settings</TabsTrigger>
@@ -101,10 +101,10 @@ const DepartmentOverview = ({
                         Export the department and user data
                       </CardDescription>
                     </div>
-                    <Button className="max-w-[150px]" disabled>
+                    <Button className="w-full sm:max-w-[150px]" disabled>
                       Department Data
                     </Button>
-                    <Button className="max-w-[150px]" disabled>
+                    <Button className="w-full sm:max-w-[150px]" disabled>
                       User Data
                     </Button>
                   </div>
@@ -126,7 +126,7 @@ const DepartmentOverview = ({
             </TabsContent>
 
             <TabsContent value="Teams">
-              <Card className="max-w-[450px] animate-fade-from-top shadow-none gap-2 py-2 bg-primary/0">
+              <Card className="w-full animate-fade-from-top shadow-none gap-2 py-2 bg-primary/0">
                 <CardHeader className="px-1 mb-4">
                   <CardTitle className="mt-1">Teams</CardTitle>
                   <CardDescription>
@@ -141,12 +141,22 @@ const DepartmentOverview = ({
             </TabsContent>
           </Tabs>
         </div>
+
         {currentTab === 'Settings' && (
-          <div className="flex flex-col gap-2 px-1">
+          <div className="flex flex-col gap-2 px-1 shrink-0">
             <Separator />
-            <DialogFooter className="flex flex-row gap-2 mt-2">
+            <DialogFooter className="mt-2">
               <Button
-                className="w-[75px] shadow-none border"
+                className="shadow-none border"
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="shadow-none border"
                 type="button"
                 variant="default"
                 onClick={handleUpdate}
@@ -158,16 +168,6 @@ const DepartmentOverview = ({
                   "Update"
                 )}
               </Button>
-              <Button
-                className="w-[75px] shadow-none border"
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-
             </DialogFooter>
           </div>
         )}

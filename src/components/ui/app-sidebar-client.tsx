@@ -57,11 +57,8 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                   width="25"
                   height="25"
                 />
-                <span className="text-sm group-data-[collapsible=icon]:hidden">
-                  Navis Docs
-                </span>
               </div>
-              <Separator className="bg-primary" />
+              <Separator className="light:bg-foreground"/>
               {items
                 .filter((item) => ("isAdmin" in item && item.isAdmin ? isAdmin : true))
                 .map((item) => {
@@ -90,7 +87,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                     return (
                       <Fragment key={item.title}>
                         {menuItem}
-                        <Separator className="bg-primary"/>
+                        <Separator className="light:bg-foreground"/>
                       </Fragment>
                     );
                   }
@@ -103,11 +100,11 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu className="border-1 rounded-sm shadow">
+        <SidebarMenu className="rounded-sm shadow">
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="light:bg-white light:hover:bg-accent">
+              <DropdownMenuTrigger asChild >
+                <SidebarMenuButton className="light:bg-white light:hover:bg-accent flex justify-center ">
                   <span className="flex size-4 shrink-0 items-center justify-center">
                     <User2 />
                   </span>

@@ -461,7 +461,7 @@ export function ProcedureList({
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 justify-between gap-4">
+        <div className="flex flex-col sm:flex-row flex-1 justify-between gap-3 sm:gap-4">
           <div className="relative flex-1 max-w-sm mb-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -472,7 +472,7 @@ export function ProcedureList({
               onChange={(event) =>
                 table.getColumn("title")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-70 shadow-none border-1 w-80"
+              className="pl-10 sm:mr-2 shadow-none border-1 w-full"
             />
           </div>
 
@@ -481,7 +481,7 @@ export function ProcedureList({
               value={statusFilter}
               onValueChange={handleStatusFilterChange}
             >
-              <SelectTrigger className="w-[125px] shadow-none border">
+              <SelectTrigger className="w-full sm:w-[125px] shadow-none border">
                 <SelectValue placeholder={statusFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -589,7 +589,7 @@ export function ProcedureList({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between px-1 lg:px-1">
+      <div className="flex items-center justify-between px-1 lg:px-1 pb-8 sm:pb-0">
         <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.

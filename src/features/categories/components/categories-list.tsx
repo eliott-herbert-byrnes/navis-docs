@@ -216,7 +216,7 @@ export function CategoriesList({
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 justify-between gap-4">
+        <div className="flex flex-col sm:flex-row flex-1 justify-between gap-3 sm:gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -227,7 +227,7 @@ export function CategoriesList({
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2 shadow-none border-1 mb-1 w-80"
+              className="pl-10 mr-2 shadow-none border-1 mb-1 w-full"
             />
           </div>
 
@@ -236,7 +236,7 @@ export function CategoriesList({
               value={departmentFilter}
               onValueChange={handleDepartmentFilterChange}
             >
-              <SelectTrigger className="w-[180px] shadow-none border-1">
+              <SelectTrigger className="w-full sm:w-[125px] shadow-none border-1">
                 <SelectValue placeholder={departmentFilter} />
               </SelectTrigger>
               <SelectContent>

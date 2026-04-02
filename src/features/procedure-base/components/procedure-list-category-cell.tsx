@@ -30,7 +30,7 @@ export function CategoryCell({
       : selectedCategoryName;
 
   return (
-    <div className="max-w-40">
+    <div className="sm:max-w-40">
       <Select
         value={value}
         onValueChange={(newValue) => {
@@ -41,7 +41,7 @@ export function CategoryCell({
         }}
         disabled={isPending}
       >
-        <SelectTrigger className="h-8 text-muted-foreground  border truncate max-w-40 w-40">
+        <SelectTrigger className="h-8 text-muted-foreground border truncate max-w-40 sm:w-40">
           <span className={!value ? "text-muted-foreground/80" : ""}>
             {value ? truncatedCategoryName : "Category"}
           </span>
