@@ -1,3 +1,4 @@
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -20,6 +21,14 @@ function parseManagedPath(path: string) {
 }
 
 export async function GET(req: Request) {
+  // GET handlers can execute during `next build` when `cacheComponents` is on; skip session work until runtime.
+  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
+    return new NextResponse(null, {
+      status: 200,
+      headers: { "Content-Length": "0" },
+    });
+  }
+
   try {
     const session = await auth();
     const userId = session?.user?.id;

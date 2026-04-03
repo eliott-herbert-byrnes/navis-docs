@@ -40,7 +40,7 @@ export function EditProcedurePageClient({
     <>
       {procedure.style === "FLOW" ? (
         <Button
-          variant={editorPane === "flow" ? "default" : "outline"}
+          variant={editorPane === "flow" ? "outline" : "outline"}
           size="sm"
           onClick={() =>
             setEditorPane((m) => (m === "flow" ? "text" : "flow"))
@@ -53,7 +53,7 @@ export function EditProcedurePageClient({
       ) : null}
 
       <Button
-        variant={viewMode === "preview" ? "default" : "outline"}
+        variant={viewMode === "preview" ? "outline" : "outline"}
         size="sm"
         onClick={() =>
           setViewMode((m) => (m === "edit" ? "preview" : "edit"))

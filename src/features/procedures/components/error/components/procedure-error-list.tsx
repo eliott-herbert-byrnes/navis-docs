@@ -297,7 +297,7 @@ export function ProcedureErrorList({
             className="text-muted-foreground px-1.5 flex items-center gap-1 w-fit"
           >
             {status === "RESOLVED" ? (
-              <CircleCheck className="fill-secondary dark:fill-secondary h-4 w-4" />
+              <CircleCheck className="fill-green-500 dark:fill-green-400 h-4 w-4" />
             ) : status === "ARCHIVED" ? (
               <Archive className="h-4 w-4" />
             ) : (

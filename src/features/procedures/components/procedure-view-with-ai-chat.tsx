@@ -97,7 +97,7 @@ export function ProcedureViewWithAIChat({
             <button
               type="button"
               onClick={() => setShowAuditLogs(false)}
-              className="text-sm text-black hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
+              className="text-sm light:text-black hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
             >
               Back to procedure
             </button>

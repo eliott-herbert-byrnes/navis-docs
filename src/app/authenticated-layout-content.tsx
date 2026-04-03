@@ -60,7 +60,7 @@ export function AuthenticatedLayoutContent({
           <Suspense fallback={<ContentAreaFallback />}>
             <AsyncAuthContextLoader>
               <div className="flex h-full w-full flex-col sm:pl-4 sm:pr-4">
-                <div className="flex flex-row items-center justify-between pt-7 px-4 sm:px-8">
+                <div className="flex flex-row items-center justify-between pt-6.5 px-4 sm:px-8">
                   <div className="flex flex-row items-center gap-2">
                     <div className="sm:hidden">
                       <SidebarTrigger />

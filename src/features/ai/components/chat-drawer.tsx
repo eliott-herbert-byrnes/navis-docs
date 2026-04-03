@@ -123,7 +123,7 @@ export function AIChatDrawer({
       {/* Floating Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 bg-secondary text-foreground hover:bg-secondary/75 hover:text-accent-foreground border w-14 h-14"
+        className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 bg-brand text-foreground dark:text-background dark:hover:bg-brand/75 hover:text-accent-foreground hover:bg-brand/75 border w-14 h-14"
         variant="ghost"
         aria-label="Open AI chat"
       >
@@ -199,6 +199,7 @@ export function AIChatDrawer({
                   type="submit"
                   size="icon"
                   disabled={isLoading || !input.trim()}
+                  className="bg-brand hover:bg-brand/75"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
