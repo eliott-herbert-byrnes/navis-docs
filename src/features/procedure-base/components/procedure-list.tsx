@@ -17,7 +17,6 @@ import {
 } from "@tanstack/react-table";
 import {
   ArrowUpDown,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
@@ -267,6 +266,7 @@ export function ProcedureList({
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -461,8 +461,8 @@ export function ProcedureList({
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 justify-between gap-4">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex flex-col sm:flex-row flex-1 justify-between gap-3 sm:gap-4">
+          <div className="relative flex-1 max-w-sm mb-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by procedure name..."
@@ -472,7 +472,7 @@ export function ProcedureList({
               onChange={(event) =>
                 table.getColumn("title")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-70"
+              className="pl-10 sm:mr-2 shadow-none border-1 w-full"
             />
           </div>
 
@@ -481,7 +481,7 @@ export function ProcedureList({
               value={statusFilter}
               onValueChange={handleStatusFilterChange}
             >
-              <SelectTrigger className="w-[125px]">
+              <SelectTrigger className="w-full sm:w-[125px] shadow-none border">
                 <SelectValue placeholder={statusFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -538,9 +538,9 @@ export function ProcedureList({
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -589,7 +589,7 @@ export function ProcedureList({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between px-1 lg:px-1">
+      <div className="flex items-center justify-between px-1 lg:px-1 pb-8 sm:pb-0">
         <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -605,7 +605,7 @@ export function ProcedureList({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -626,7 +626,7 @@ export function ProcedureList({
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none border"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -635,7 +635,7 @@ export function ProcedureList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -645,7 +645,7 @@ export function ProcedureList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -655,7 +655,7 @@ export function ProcedureList({
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none border"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

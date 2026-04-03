@@ -59,7 +59,7 @@ export function AuditPagination({
   const endItem = Math.min(currentPage * pageSize, totalCount);
 
   return (
-    <div className="flex items-center justify-between px-1">
+    <div className="flex items-center justify-between px-1 mb-8">
       {/* Left side: Item range display */}
       <div className="hidden text-sm text-muted-foreground lg:flex">
         Showing {startItem}-{endItem} of {totalCount} audit logs
@@ -76,7 +76,7 @@ export function AuditPagination({
             value={pageSize.toString()}
             onValueChange={(value) => changePageSize(Number(value))}
           >
-            <SelectTrigger size="sm" className="w-20" id="page-size">
+            <SelectTrigger size="sm" className="w-20 shadow-none" id="page-size">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -99,7 +99,7 @@ export function AuditPagination({
           {/* First page button - desktop only */}
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className="hidden h-8 w-8 p-0 lg:flex shadow-none"
             size="icon"
             onClick={() => goToPage(1)}
             disabled={!canGoPrevious}
@@ -111,7 +111,7 @@ export function AuditPagination({
           {/* Previous page button */}
           <Button
             variant="outline"
-            className="h-8 w-8"
+            className="h-8 w-8 shadow-none"
             size="icon"
             onClick={() => goToPage(currentPage - 1)}
             disabled={!canGoPrevious}
@@ -123,7 +123,7 @@ export function AuditPagination({
           {/* Next page button */}
           <Button
             variant="outline"
-            className="h-8 w-8"
+            className="h-8 w-8 shadow-none"
             size="icon"
             onClick={() => goToPage(currentPage + 1)}
             disabled={!canGoNext}
@@ -135,7 +135,7 @@ export function AuditPagination({
           {/* Last page button - desktop only */}
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className="hidden h-8 w-8 p-0 lg:flex shadow-none"
             size="icon"
             onClick={() => goToPage(totalPages)}
             disabled={!canGoNext}

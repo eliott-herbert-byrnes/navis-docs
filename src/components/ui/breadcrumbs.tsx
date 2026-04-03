@@ -1,6 +1,6 @@
 import { LucideChevronDown } from "lucide-react";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,7 +21,7 @@ import {
 type BreadcrumbsProps = {
   breadcrumbs: {
     id?: string;
-    title: string;
+    title: ReactNode;
     href?: string;
     dropdownAriaLabel?: string;
     dropdown?: {
@@ -50,7 +50,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
               <BreadcrumbLink asChild>
                 <Link
                   href={breadcrumb.href}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-secondary-foreground hover:text-secondary-foreground/80"
                 >
                   {breadcrumb.title}
                 </Link>
@@ -62,21 +62,23 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
             breadcrumbItem = (
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-secondary-foreground hover:text-secondary-foreground/80 transition-colors cursor-pointer"
                   aria-label={breadcrumb.dropdownAriaLabel}
                 >
                   {breadcrumb.title}
                   <LucideChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent align="end">
                   {breadcrumb.dropdownGroups.map((group) => (
                     <DropdownMenuGroup key={group.label}>
-                      <DropdownMenuLabel className="bg-neutral-800">
+                      <DropdownMenuLabel className="m-0 ml-2 py-2 px-0">
                         {group.label}
                       </DropdownMenuLabel>
                       {group.items.map((item) => (
-                        <DropdownMenuItem asChild key={item.id ?? item.href}>
-                          <Link href={item.href}>{item.title}</Link>
+                        <DropdownMenuItem asChild key={item.id ?? item.href} className="py-2">
+                          <Link href={item.href}>
+                          {item.title}
+                          </Link>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuGroup>
@@ -90,15 +92,15 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
             breadcrumbItem = (
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-secondary-foreground hover:text-secondary-foreground/80 transition-colors cursor-pointer"
                   aria-label={breadcrumb.dropdownAriaLabel}
                 >
                   {breadcrumb.title}
                   <LucideChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent align="end">
                   {breadcrumb.dropdown.map((item) => (
-                    <DropdownMenuItem asChild key={item.id ?? item.href}>
+                    <DropdownMenuItem asChild key={item.id ?? item.href} className="py-2">
                       <Link href={item.href}>{item.title}</Link>
                     </DropdownMenuItem>
                   ))}
@@ -109,7 +111,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
 
           return (
             <Fragment
-              key={breadcrumb.id ?? breadcrumb.href ?? breadcrumb.title}
+              key={breadcrumb.id ?? breadcrumb.href ?? `breadcrumb-${index}`}
             >
               <BreadcrumbItem>{breadcrumbItem}</BreadcrumbItem>
               {index < breadcrumbs.length - 1 && (

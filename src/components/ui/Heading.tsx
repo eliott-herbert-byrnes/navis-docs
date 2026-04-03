@@ -15,17 +15,17 @@ const Heading = ({
 }: HeadingProps) => {
   return (
     <>
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-col gap-0.5 mt-3">
-          <h1 className="text-2xl font-bold">{title}</h1>
+      <div className="flex flex-col sm:flex-row justify-between my-auto">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-4xl font-medium font-serif">{title}</h1>
           <p className="text-sm text-muted-foreground">{description}</p>
           {breadcrumbs && (
             <div className="flex items-center gap-2 mt-1">{breadcrumbs}</div>
           )}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
+        {actions && <div className="flex items-center gap-2 mt-5">{actions}</div>}
       </div>
-      <Separator className="my-4" />
+      <Separator className="my-6 mb-8" />
     </>
   );
 };

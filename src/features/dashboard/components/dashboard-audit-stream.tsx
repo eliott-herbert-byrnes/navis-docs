@@ -1,23 +1,22 @@
 import { EmptyState } from "@/components/ui/empty-state";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AuditLogCard } from "@/features/audit/components/audit-log-card";
 import { getAuditLogsWithCount } from "@/features/audit/utils/audit";
-import { getSessionUser, getUserById, getUserOrgWithRole } from "@/lib/auth";
-import { trpc } from "@/trpc/client";
+import { getSessionContext, getUserById } from "@/lib/auth";
 import { JsonObject } from "@prisma/client/runtime/client";
 
-function toJsonObject(value: unknown): JsonObject | null {
-    if (value !== null && typeof value === "object" && !Array.isArray(value)) {
-        return value as JsonObject;
-    }
-    return null;
-}
-
 export async function DashboardAuditStream() {
-    const user = await getSessionUser();
-    const { org } = await getUserOrgWithRole(user?.userId ?? "");
+    const ctx = await getSessionContext();
+    const orgId = ctx?.org?.id;
+    if (!orgId) {
+        return (
+            <EmptyState
+                title="No audit logs found"
+                body="There are no audit logs matching your filters. Try adjusting your search or filters."
+            />
+        );
+    }
 
-    const { logs: rawLogs, } = await getAuditLogsWithCount(org?.id ?? "", {
+    const { logs: rawLogs, } = await getAuditLogsWithCount(orgId, {
         limit: 5,
     });
 
@@ -52,7 +51,7 @@ export async function DashboardAuditStream() {
     );
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-4 mb-8">
             {logs.map((log) => (
                 <AuditLogCard
                     key={log.id}

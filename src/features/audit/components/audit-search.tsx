@@ -98,24 +98,29 @@ export const AuditSearch = () => {
         params.set("page", "1");
       }
 
+      const nextQuery = params.toString();
+      if (nextQuery === searchParams.toString()) {
+        return;
+      }
+
       startTransition(() => {
-        router.push(`${pathname}?${params.toString()}`);
+        router.push(`${pathname}?${nextQuery}`);
       });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [search, pathname, router, searchParams, entityType, dateRange]);
+  }, [search, pathname, router, searchParams.toString(), entityType, dateRange]);
 
   return (
-    <div className="relative w-full flex items-center gap-2 justify-between">
+    <div className="relative w-full flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
       <div>
-        <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <SearchIcon className="absolute left-3 sm:top-1/2 top-1/4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           placeholder="Search by user..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
+          className="pl-9 shadow-none border sm:w-80"
           disabled={isPending}
         />
       </div>
@@ -129,7 +134,7 @@ export const AuditSearch = () => {
         />
 
         <Select value={entityType} onValueChange={setEntityType}>
-          <SelectTrigger className="w-30">
+          <SelectTrigger className="w-full sm:w-30 shadow-none">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
           <SelectContent>

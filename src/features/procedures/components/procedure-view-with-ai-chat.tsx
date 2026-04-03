@@ -10,6 +10,18 @@ import { ProcedureForViewWithRelations } from "../types/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 
+function ProcedureContentSkeleton() {
+  return (
+    <div className="rounded-md border p-4 space-y-3">
+      <Skeleton className="h-6 w-2/3" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-11/12" />
+      <Skeleton className="h-4 w-5/6" />
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+}
+
 function buildAskAIMessage(procedureTitle: string): string {
   const name = procedureTitle?.trim() || "this procedure";
   return `Please can you read the '${name}' so I can ask you questions about it?`;
@@ -56,7 +68,6 @@ export function ProcedureViewWithAIChat({
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div className="procedure-view-actions" data-print-hide>
           <ProcedureViewActions
             procedure={procedure}
             procedureId={procedureId}
@@ -70,13 +81,10 @@ export function ProcedureViewWithAIChat({
             showAuditLogs={showAuditLogs}
             onViewAuditLogs={() => setShowAuditLogs((prev) => !prev)}
           />
-        </div>
       </div>
 
-      <ProcedureViewMetadata procedure={procedure} />
-
       {!showAuditLogs ? (
-        <Suspense fallback={<Skeleton />}>
+        <Suspense fallback={<ProcedureContentSkeleton />}>
           <ProcedureContent
             procedure={procedure}
             showDocView={procedure.style === "FLOW" ? showDocView : undefined}
@@ -89,7 +97,7 @@ export function ProcedureViewWithAIChat({
             <button
               type="button"
               onClick={() => setShowAuditLogs(false)}
-              className="text-sm text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
+              className="text-sm light:text-black hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
             >
               Back to procedure
             </button>

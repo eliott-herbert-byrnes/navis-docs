@@ -59,7 +59,7 @@ const AddressCreateDialog = ({
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-4">
-            <div className="grid gap-2">
+            <div className="grid gap-2 py-2">
               <Label htmlFor="name">Name *</Label>
               <Input
                 id="name"
@@ -68,6 +68,7 @@ const AddressCreateDialog = ({
                 maxLength={100}
                 required
                 disabled={isPending}
+                className="shadow-none border"
               />
             </div>
 
@@ -80,6 +81,7 @@ const AddressCreateDialog = ({
                 maxLength={255}
                 required
                 disabled={isPending}
+                className="shadow-none border"
               />
             </div>
 
@@ -91,6 +93,7 @@ const AddressCreateDialog = ({
                 placeholder="Phone number"
                 maxLength={20}
                 disabled={isPending}
+                className="shadow-none border"
               />
             </div>
 
@@ -102,6 +105,7 @@ const AddressCreateDialog = ({
                 placeholder="Email address"
                 type="email"
                 disabled={isPending}
+                className="shadow-none border"
               />
             </div>
 
@@ -112,12 +116,13 @@ const AddressCreateDialog = ({
                 name="website"
                 placeholder="https://navisdocs.com"
                 disabled={isPending}
+                className="shadow-none border"
               />
             </div>
           </div>
 
-          <DialogFooter className="flex flex-row gap-2">
-            <Button type="submit" disabled={!isAdmin || isPending}>
+          <DialogFooter className="flex flex-row gap-2 pt-2">
+            <Button type="submit" disabled={!isAdmin || isPending} className="shadow-none border">
               {isPending ? (
                 <>
                   <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
@@ -127,7 +132,7 @@ const AddressCreateDialog = ({
               )}
             </Button>
             <Button
-              className="w-[75px]"
+              className="w-[75px] shadow-none border"
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}

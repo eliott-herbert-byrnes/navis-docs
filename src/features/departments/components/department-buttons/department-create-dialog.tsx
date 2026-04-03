@@ -80,8 +80,7 @@ const DepartmentDialog = ({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" disabled={!isAdmin}>
-          <PlusIcon className="w-4 h-4" />
-          Create Department
+          Actions
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -97,6 +96,7 @@ const DepartmentDialog = ({
           required
           value={departmentName}
           onChange={(e) => setDepartmentName(e.target.value)}
+          className="border shadow-none"
         />
         <Collapsible
           open={isOpen}
@@ -112,7 +112,6 @@ const DepartmentDialog = ({
               </Button>
             </CollapsibleTrigger>
           </div>
-          <div className="rounded-md border px-4 py-2 font-mono text-sm">
             <Input
               id="teamName1"
               name="teamName1"
@@ -121,10 +120,9 @@ const DepartmentDialog = ({
               required
               value={teamName1}
               onChange={(e) => setTeamName1(e.target.value)}
+              className="shadow-none border"
             />
-          </div>
           <CollapsibleContent className="flex flex-col gap-2">
-            <div className="rounded-md border px-4 py-2 font-mono text-sm">
               <Input
                 id="teamName2"
                 name="teamName2"
@@ -132,9 +130,8 @@ const DepartmentDialog = ({
                 placeholder="Team Name"
                 value={teamName2}
                 onChange={(e) => setTeamName2(e.target.value)}
+                className="shadow-none border"
               />
-            </div>
-            <div className="rounded-md border px-4 py-2 font-mono text-sm">
               <Input
                 id="teamName3"
                 name="teamName3"
@@ -142,20 +139,11 @@ const DepartmentDialog = ({
                 placeholder="Team Name"
                 value={teamName3}
                 onChange={(e) => setTeamName3(e.target.value)}
+                className="shadow-none border"
               />
-            </div>
           </CollapsibleContent>
         </Collapsible>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-          <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => handleOpenChange(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
           <Button
             className="w-[75px]"
             type="button"
@@ -164,6 +152,15 @@ const DepartmentDialog = ({
             disabled={isPending || !isValid}
           >
             Create
+          </Button>
+          <Button
+            className="w-[75px]"
+            type="button"
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

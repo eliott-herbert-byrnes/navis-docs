@@ -1,6 +1,6 @@
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
@@ -8,8 +8,8 @@ import { homePath } from "@/app/paths";
 import { ImportProcedurePage } from "@/features/import/components/import-procedure-page";
 
 const ProcedureImportPage = async () => {
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org || !isAdmin) {
     redirect(homePath());
   }

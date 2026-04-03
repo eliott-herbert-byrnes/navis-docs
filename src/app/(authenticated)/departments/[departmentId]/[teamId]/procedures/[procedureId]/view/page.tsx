@@ -1,9 +1,27 @@
 import { Heading } from "@/components/ui/Heading";
 import { ProcedureViewWithAIChat } from "@/features/procedures/components/procedure-view-with-ai-chat";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
+
+function ProcedureViewSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="h-9 w-28" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+      <div className="rounded-md border p-4 space-y-3">
+        <Skeleton className="h-6 w-2/3" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-56 w-full" />
+      </div>
+    </div>
+  );
+}
 
 type ProcedureViewPageProps = {
   params: Promise<{ procedureId: string }>;
@@ -12,8 +30,8 @@ type ProcedureViewPageProps = {
 const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
   const { procedureId } = await params;
 
-  const user = await getSessionUser();
-  const canViewProcedureAudit = await isOrgAdminOrOwner(user!.userId);
+  const ctx = await getSessionContext();
+  const canViewProcedureAudit = ctx?.isAdmin ?? false;
 
   const trpc = await serverTrpc();
   const {
@@ -32,7 +50,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
         description={procedure.description || ""}
       />
 
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<ProcedureViewSkeleton />}>
         <ProcedureViewWithAIChat
           procedure={procedure}
           procedureId={procedureId}

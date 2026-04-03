@@ -27,7 +27,7 @@ const CustomerPortalForm = ({ children }: CustomerPortalFormProps) => {
         <TooltipTrigger asChild>
           <div>
             <Button
-              className="text-sm"
+              className="text-sm shadow-none"
               variant="outline"
               type="submit"
               disabled

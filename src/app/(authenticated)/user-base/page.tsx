@@ -1,9 +1,10 @@
 import { homePath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
+import { PageContainer } from "@/components/ui/page-container";
 import { ExportUserOrgDataButton } from "@/features/settings/components/export-user-org-data-button";
 import { UserList } from "@/features/user-base/components/user-list";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { TRPCError } from "@trpc/server";
 import { redirect } from "next/navigation";
@@ -19,8 +20,8 @@ type UserBasePageProps = {
 export default async function UserBasePage({
   searchParams,
 }: UserBasePageProps) {
-  const user = await getSessionUser();
-  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { isAdmin } = ctx ?? {};
   if (!isAdmin) redirect(homePath());
   const params = await searchParams;
   const search = params.search;
@@ -42,7 +43,7 @@ export default async function UserBasePage({
   }
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title="Userbase"
         description="View and manage users for your organization"
@@ -51,6 +52,6 @@ export default async function UserBasePage({
       <Suspense fallback={<ListSkeleton />} key={`${search ?? ""}-${page}`}>
         <UserList data={members} />
       </Suspense>
-    </>
+    </PageContainer>
   );
 }

@@ -36,13 +36,11 @@ const DepartmentDeleteDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
+        <Button variant="ghost" className="rounded-none justify-start font-normal">
+          <div className="flex flex-row gap-2 items-center">
           <TrashIcon className="w-4 h-4" />
           Delete
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -54,16 +52,7 @@ const DepartmentDeleteDialog = ({
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleConfirm}
@@ -75,9 +64,18 @@ const DepartmentDeleteDialog = ({
               "Delete"
             )}
           </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </Dialog >
   );
 };
 

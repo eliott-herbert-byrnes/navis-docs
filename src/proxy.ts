@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { auth } from "./auth.edge";
 
-export async function proxy(req: NextRequest) {
+export default auth(async (req) => {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
-  const sessionToken =
-    req.cookies.get("authjs.session-token")?.value ||
-    req.cookies.get("__Secure-authjs.session-token")?.value;
-
-  if (!sessionToken) {
+  if (!req.auth) {
     return NextResponse.redirect(new URL("/auth/sign-in", req.url));
   }
 
@@ -45,7 +41,7 @@ export async function proxy(req: NextRequest) {
   );
 
   return response;
-}
+});
 
 export const config = {
   matcher: ["/((?!_next|api|auth|favicon.ico|.*\\..*).*)"],

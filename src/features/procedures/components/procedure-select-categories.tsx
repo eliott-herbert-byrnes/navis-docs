@@ -20,7 +20,7 @@ const ProcedureSelectCategories = ({
   if (categories.length === 0) {
     return (
       <Select name={name} disabled>
-        <SelectTrigger>
+        <SelectTrigger className="shadow-none border max-w-1/3">
           <SelectValue placeholder="No categories available" />
         </SelectTrigger>
         <SelectContent>
@@ -38,7 +38,7 @@ const ProcedureSelectCategories = ({
       disabled={isDisabled}
       value={isDisabled ? "" : undefined}
     >
-      <SelectTrigger>
+      <SelectTrigger className="shadow-none border max-w-1/3">
         <SelectValue placeholder="Select a category" />
       </SelectTrigger>
       <SelectContent>

@@ -1,6 +1,6 @@
 "use server";
 import { homePath, onboardingPath } from "@/app/paths";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
@@ -13,6 +13,27 @@ import { AuditPagination } from "@/features/audit/components/audit-pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/ui/Heading";
 import { JsonObject } from "@prisma/client/runtime/client";
+import { PageContainer } from "@/components/ui/page-container";
+
+function AuditLogViewerSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-4 pt-2">
+        <Skeleton className="h-4 w-36" />
+        <div className="h-px flex-1 bg-border" />
+      </div>
+      <div className="space-y-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="rounded-md border p-4 space-y-2">
+            <Skeleton className="h-5 w-1/3" />
+            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 type AuditPageProps = {
   searchParams: Promise<{
@@ -27,8 +48,8 @@ type AuditPageProps = {
 
 const AuditPage = async ({ searchParams }: AuditPageProps) => {
   // Authentication & authorization
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
 
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
@@ -70,19 +91,19 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   }));
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title="Audit Logs"
         description="View the audit logs for your organization"
       />
 
       {/* Search and filters */}
-      <div className="px-1 mb-4">
+      <div className="mb-4">
         <AuditSearch />
       </div>
 
       {/* Audit logs with pagination */}
-      <Suspense fallback={<Skeleton className="h-96" />}>
+      <Suspense fallback={<AuditLogViewerSkeleton />}>
         <div className="space-y-4">
           <AuditLogViewer logs={logs} />
 
@@ -96,7 +117,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
           )}
         </div>
       </Suspense>
-    </>
+    </PageContainer>
   );
 };
 

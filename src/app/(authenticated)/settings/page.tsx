@@ -1,27 +1,42 @@
-import { homePath, onboardingPath } from "@/app/paths";
+import { homePath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
+import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+function OrganizationOverviewSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div key={index} className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-9 w-full" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const SettingsPage = async () => {
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  if (!ctx) redirect(signInPath());
+  const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
   return (
-    <>
+    <PageContainer>
       <Heading
         title="Settings"
         description="Manage your organization's settings"
       />
-      <Suspense fallback={<Skeleton />}>
+      <Suspense fallback={<OrganizationOverviewSkeleton />}>
         <OrganizationOverview org={org} />
       </Suspense>
-    </>
+    </PageContainer>
   );
 };
 

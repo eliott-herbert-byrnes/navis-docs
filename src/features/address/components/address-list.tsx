@@ -75,13 +75,13 @@ export function AddressList() {
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
+      cell: ({ row }) => <div className="font-medium ml-2">{row.original.name}</div>,
     },
     {
       accessorKey: "address",
       header: "Address",
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-xs truncate">
+        <div className="text-sm max-w-xs truncate">
           {row.original.address}
         </div>
       ),
@@ -90,8 +90,8 @@ export function AddressList() {
       accessorKey: "phone",
       header: "Phone",
       cell: ({ row }) => (
-        <div className="text-sm">
-          <Badge variant="outline">{row.original.phone}</Badge>
+          <div className="text-sm max-w-xs truncate">
+          {row.original.phone}
         </div>
       ),
     },
@@ -101,9 +101,9 @@ export function AddressList() {
       cell: ({ row }) => (
         <div className="text-sm">
           {row.original.email ? (
-            <Badge variant="outline" className="text-muted-foreground">
+            <div className="text-sm max-w-xs truncate">
               {row.original.email}
-            </Badge>
+              </div>
           ) : (
             <span className="text-muted-foreground">—</span>
           )}
@@ -175,15 +175,15 @@ export function AddressList() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 px-1">
-      <div className="overflow-hidden rounded-lg border">
+    <div className="flex w-full flex-col gap-4">
+      <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="pl-4">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -240,7 +240,7 @@ export function AddressList() {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -257,7 +257,7 @@ export function AddressList() {
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none border"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -266,7 +266,7 @@ export function AddressList() {
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -276,7 +276,7 @@ export function AddressList() {
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -286,7 +286,7 @@ export function AddressList() {
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none border" 
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

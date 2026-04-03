@@ -1,5 +1,6 @@
 import { prisma } from "./prisma";
 import { auth } from "@/auth";
+import { cache } from "react"
 
 export const getSessionUser = async () => {
   const session = await auth();
@@ -7,45 +8,23 @@ export const getSessionUser = async () => {
   return { email: session.user.email, userId: session.user.id };
 };
 
-export const getUserOrgWithRole = async (userId: string) => {
+export const getSessionContext = cache(async () => {
+  const session = await auth()
+  if (!session?.user?.id || !session.user.email) return null
+
   const membership = await prisma.orgMembership.findFirst({
-    where: { userId },
+    where: { userId: session.user.id },
     include: { org: true },
-  });
-
-  if (!membership) {
-    return { org: null, isAdmin: false, role: null };
-  }
-
-  const isAdmin = membership.role === "ADMIN" || membership.role === "OWNER";
+  })
 
   return {
-    org: membership.org,
-    isAdmin,
-    role: membership.role,
-  };
-};
-
-export const getUserOrg = async (userId: string) => {
-  const membership = await prisma.orgMembership.findFirst({
-    where: { userId },
-    include: {
-      org: true,
-      user: { select: { memberships: { select: { role: true } } } },
-    },
-  });
-  return {
+    userId: session.user.id,
+    email: session.user.email,
     org: membership?.org ?? null,
-    role: membership?.user?.memberships[0]?.role ?? null,
-  };
-};
-
-export const isOrgAdminOrOwner = async (userId: string) => {
-  const membership = await prisma.orgMembership.findFirst({
-    where: { userId, role: { in: ["ADMIN", "OWNER"] } },
-  });
-  return membership !== null;
-};
+    isAdmin: membership?.role === "ADMIN" || membership?.role === "OWNER",
+    role: membership?.role ?? null,
+  }
+})
 
 export const getUserById = async (userId: string) => {
   const user = await prisma.user.findUnique({

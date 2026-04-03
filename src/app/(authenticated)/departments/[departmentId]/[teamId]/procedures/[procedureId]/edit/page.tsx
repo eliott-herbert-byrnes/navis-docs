@@ -1,11 +1,20 @@
-import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { teamProcedurePath } from "@/app/paths";
-import { EditProcedureForm } from "@/features/procedures/components/procedure-edit-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
+import { EditProcedurePageClient } from "./edit-procedure-page-client";
+
+function EditProcedureFormSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-64" />
+      <Skeleton className="h-5 w-96" />
+      <Skeleton className="h-96 w-full" />
+    </div>
+  );
+}
 
 export default async function ProcedureEditPage({
   params,
@@ -18,8 +27,8 @@ export default async function ProcedureEditPage({
 }) {
   const { departmentId, teamId, procedureId } = await params;
 
-  const user = await getSessionUser();
-  const { org, isAdmin } = await getUserOrgWithRole(user!.userId);
+  const ctx = await getSessionContext();
+  const { org, isAdmin } = ctx ?? {};
   if (!org || !isAdmin) redirect(teamProcedurePath(departmentId, teamId));
 
   const trpc = await serverTrpc();
@@ -30,14 +39,11 @@ export default async function ProcedureEditPage({
   }
 
   return (
-    <>
-      <Heading
-        title={`Edit Procedure`}
-        description="Edit a procedure and ship to documentation"
+    <Suspense fallback={<EditProcedureFormSkeleton />}>
+      <EditProcedurePageClient
+        procedureId={procedureId}
+        procedure={procedure}
       />
-      <Suspense fallback={<Skeleton />}>
-        <EditProcedureForm procedureId={procedureId} procedure={procedure} />
-      </Suspense>
-    </>
+    </Suspense>
   );
 }

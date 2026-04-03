@@ -21,8 +21,8 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EyeIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { DepartmentDeleteButton } from "../department-buttons/department-delete-button";
 import { DepartmentTeamTable } from "./department-team-table";
+import { DepartmentDeleteButtonSettings } from "../department-buttons/department-delete-button-settings";
 
 type DepartmentOverviewProps = {
   title: string;
@@ -40,6 +40,7 @@ const DepartmentOverview = ({
 }: DepartmentOverviewProps) => {
   const [open, setOpen] = useState(false);
   const [newDepartmentName, setNewDepartmentName] = useState(title);
+  const [currentTab, setCurrentTab] = useState('Settings');
 
   const handleUpdate = () => {
     onConfirm(title, newDepartmentName);
@@ -49,77 +50,73 @@ const DepartmentOverview = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
-          <EyeIcon className="w-4 h-4" />
-          Overview
+        <Button variant="ghost" className="rounded-none justify-start font-normal">
+          <div className="flex flex-row gap-2 items-center">
+            <EyeIcon className="w-4 h-4" />
+            Overview
+          </div>
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+      <DialogContent className="flex flex-col max-h-[90dvh] overflow-hidden">
+        <DialogHeader className="shrink-0">
+          <DialogTitle className="mt-4">{title}</DialogTitle>
         </DialogHeader>
-        <Separator />
+        <Separator className="shrink-0" />
 
-        <div className="flex w-full flex-col">
-          <Tabs defaultValue="Settings">
-            <TabsList className="flex flex-row gap-2 mb-2">
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <Tabs value={currentTab} onValueChange={setCurrentTab}>
+            <TabsList className="flex flex-row gap-2 mb-0 bg-primary/0">
               <TabsTrigger value="Settings">Settings</TabsTrigger>
               <TabsTrigger value="Teams">Teams</TabsTrigger>
             </TabsList>
 
             <TabsContent value="Settings">
-              <Card className="animate-fade-from-top">
-                <CardHeader>
-                  <CardTitle>Department Settings</CardTitle>
+              <Card className="animate-fade-from-top border-none shadow-none py-2 px-1 bg-primary/0">
+                <CardHeader className="px-1 gap-1">
+                  <CardTitle className="text-md">Department Settings</CardTitle>
                   <CardDescription>
                     Manage the department settings
-                    <p className="text-sm text-red-500 mt-2">
-                      Export Department disabled for MVP
-                    </p>
                   </CardDescription>
+                  <Separator className="mt-2" />
                 </CardHeader>
-                <Separator />
 
-                <CardContent className="flex flex-col gap-4">
+                <CardContent className="flex flex-col gap-4 px-1">
                   <div className="grid gap-3">
-                    <Label htmlFor="newDepartmentName">Rename Department</Label>
+                    <Label htmlFor="newDepartmentName" className="text-md">Rename Department</Label>
                     <Input
                       name="newDepartmentName"
                       id="newDepartmentName"
                       type="text"
                       value={newDepartmentName}
                       onChange={(e) => setNewDepartmentName(e.target.value)}
+                      className="border-1 shadow-none"
                     />
                   </div>
                   <Separator />
                   <div className="grid gap-3">
                     <div className="flex flex-col gap-1">
-                      <CardTitle>Export</CardTitle>
+                      <CardTitle className="text-md">Export</CardTitle>
                       <CardDescription>
                         Export the department and user data
                       </CardDescription>
                     </div>
-                    <Button className="max-w-[150px]" disabled>
+                    <Button className="w-full sm:max-w-[150px]" disabled>
                       Department Data
                     </Button>
-                    <Button className="max-w-[150px]" disabled>
+                    <Button className="w-full sm:max-w-[150px]" disabled>
                       User Data
                     </Button>
                   </div>
                   <Separator />
                   <div className="grid gap-3">
                     <div className="flex flex-col gap-1">
-                      <CardTitle>Delete Department</CardTitle>
+                      <CardTitle className="text-md">Delete Department</CardTitle>
                       <CardDescription>
                         Delete the department and all its data
                       </CardDescription>
                     </div>
-                    <DepartmentDeleteButton
+                    <DepartmentDeleteButtonSettings
                       departmentId={departmentId}
                       departmentName={title}
                     />
@@ -129,47 +126,51 @@ const DepartmentOverview = ({
             </TabsContent>
 
             <TabsContent value="Teams">
-              <Card className="max-w-[450px] animate-fade-from-top">
-                <CardHeader>
-                  <CardTitle>Teams</CardTitle>
+              <Card className="w-full animate-fade-from-top shadow-none gap-2 py-2 bg-primary/0">
+                <CardHeader className="px-1 mb-4">
+                  <CardTitle className="mt-1">Teams</CardTitle>
                   <CardDescription>
                     Manage teams in the department
                   </CardDescription>
                 </CardHeader>
                 <Separator />
-
-                <CardContent className="">
+                <CardContent className="px-1">
                   <DepartmentTeamTable departmentId={departmentId} />
                 </CardContent>
               </Card>
             </TabsContent>
           </Tabs>
         </div>
-        <Separator />
-        <DialogFooter className="flex flex-row gap-2">
-          <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
-            type="button"
-            variant="default"
-            onClick={handleUpdate}
-            disabled={isPending}
-          >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Update"
-            )}
-          </Button>
-        </DialogFooter>
+
+        {currentTab === 'Settings' && (
+          <div className="flex flex-col gap-2 px-1 shrink-0">
+            <Separator />
+            <DialogFooter className="mt-2">
+              <Button
+                className="shadow-none border"
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="shadow-none border"
+                type="button"
+                variant="default"
+                onClick={handleUpdate}
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Update"
+                )}
+              </Button>
+            </DialogFooter>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

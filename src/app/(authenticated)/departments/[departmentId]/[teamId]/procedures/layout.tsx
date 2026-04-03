@@ -1,10 +1,7 @@
-"use server";
-
 import { ProcedureSidebar } from "@/features/procedures/components/procedure-sidebar";
-import { Providers } from "@/app/providers";
 import { serverTrpc } from "@/server/trpc/server";
 import { ProcedureRouteProvider } from "@/contexts/procedure-route-context";
-import { getSessionUser, isOrgAdminOrOwner } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 
 export default async function ProcedureLayout({
   children,
@@ -14,10 +11,9 @@ export default async function ProcedureLayout({
   params: Promise<{ departmentId: string; teamId: string }>;
 }) {
   const { departmentId, teamId } = await params;
-  const user = await getSessionUser();
-
-  if (!user) return <div className="h-full invisible" aria-hidden></div>;
-  const isAdmin = await isOrgAdminOrOwner(user.userId);
+  const ctx = await getSessionContext();
+  if (!ctx) return <div className="h-full invisible" aria-hidden></div>;
+  const { isAdmin } = ctx;
 
   const trpc = await serverTrpc();
   const [
@@ -38,19 +34,18 @@ export default async function ProcedureLayout({
     ) ?? [];
 
   return (
-    <Providers>
       <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
-        <div className="flex h-full w-full">
-          <ProcedureSidebar
-            isAdmin={isAdmin}
-            uncategorizedProcedures={procedures}
-            categories={categories}
-            unreadProcedureVersionIds={unreadProcedureVersionIds}
-            unreadNewsCount={unreadNewsCount ?? 0}
-          />
-          <main className="flex-1 overflow-auto p-4">{children}</main>
+        <div className="sm:grid sm:col-span-24 sm:grid-cols-24">
+            <ProcedureSidebar
+              isAdmin={isAdmin}
+              uncategorizedProcedures={procedures}
+              categories={categories}
+              unreadProcedureVersionIds={unreadProcedureVersionIds}
+              unreadNewsCount={unreadNewsCount ?? 0}
+            />
+
+            <main className="sm:col-span-14 sm:col-start-8 lg:col-span-16 lg:col-start-6">{children}</main>
         </div>
       </ProcedureRouteProvider>
-    </Providers>
   );
 }

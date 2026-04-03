@@ -84,14 +84,14 @@ export function ProcedureEditorSelector({
 
   if (procedureStyle === "FLOW") {
     return (
-      <Card className="p-4 min-h-[600px] overflow-hidden animate-fade-from-top">
+      <Card className="p-4 min-h-[600px] overflow-hidden animate-fade-from-top mb-2 shadow-none border">
         {renderEditor()}
       </Card>
     );
   }
 
   return (
-    <Card className="p-6 min-h-[600px] animate-fade-from-top">
+    <Card className="p-2 min-h-[600px] animate-fade-from-top shadow-none bg-background">
       {renderEditor()}
     </Card>
   );

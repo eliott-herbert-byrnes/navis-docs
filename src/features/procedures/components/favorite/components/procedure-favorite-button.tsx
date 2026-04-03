@@ -9,14 +9,12 @@ type ProcedureFavoriteButtonProps = {
   procedureId: string;
   initialIsFavorite: boolean;
   showLabel?: boolean;
-  size?: "default" | "sm" | "lg" | "icon";
 };
 
 export function ProcedureFavoriteButton({
   procedureId,
   initialIsFavorite,
   showLabel = false,
-  size = "sm",
 }: ProcedureFavoriteButtonProps) {
   const { toggleFavorite, isPending } = useToggleFavorite();
   const [optimisticIsFavorite, setOptimisticIsFavorite] =
@@ -33,23 +31,20 @@ export function ProcedureFavoriteButton({
 
   return (
     <Button
-      variant={optimisticIsFavorite ? "default" : "outline"}
-      size={size}
+      variant="ghost"
       onClick={handleToggle}
       disabled={isPending}
-      className={
-        optimisticIsFavorite ? "bg-yellow-500 hover:bg-yellow-600" : ""
-      }
+      className="rounded-none justify-start hover:bg-accent/0"
     >
       {isPending ? (
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
         <Star
-          className={`w-4 h-4 ${optimisticIsFavorite ? "fill-current" : ""}`}
+          className={`w-4 h-4 ${optimisticIsFavorite ? "light:fill-brand light:text-brand dark:fill-white " : ""}`}
         />
       )}
       {showLabel && (
-        <span className="ml-2">
+        <span className="ml-1 font-normal">
           {optimisticIsFavorite ? "Unfavorite" : "Favorite"}
         </span>
       )}

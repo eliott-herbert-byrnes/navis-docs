@@ -43,7 +43,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -161,7 +160,7 @@ function TableCellViewer({ item }: { item: User }) {
               ) : outstanding.length > 0 ? (
                 <div className="list-disc list-inside space-y-1 text-muted-foreground">
                   {outstanding.map((proc) => (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" key={proc.procedureId}>
                       <span key={`${proc.procedureId}-${proc.versionId}`}>
                         {`${proc.procedureTitle}`}
                       </span>
@@ -220,6 +219,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -308,14 +308,13 @@ export function UserList({ data: initialData }: { data: User[] }) {
               </Button>
             ) : null}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuContent align="end" className="">
             <DropdownMenuItem asChild>
               <UserRoleChangeButton
                 userId={row.original.user.id}
                 role={row.original.role}
               />
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <UserDeleteButton userId={row.original.user.id} />
             </DropdownMenuItem>
@@ -364,7 +363,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 justify-between gap-4">
+        <div className="flex flex-col sm:flex-row flex-1 justify-between gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -375,13 +374,13 @@ export function UserList({ data: initialData }: { data: User[] }) {
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2"
+              className="pl-10 mr-2 shadow-none border-1 mb-1 w-80"
             />
           </div>
 
           <div className="flex gap-2">
             <Select value={userFilter} onValueChange={handleUserFilterChange}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] shadow-none">
                 <SelectValue placeholder={userFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -438,9 +437,9 @@ export function UserList({ data: initialData }: { data: User[] }) {
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -505,7 +504,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none border" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -526,7 +525,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none border"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -535,7 +534,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -545,7 +544,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none border"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -555,7 +554,7 @@ export function UserList({ data: initialData }: { data: User[] }) {
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none border"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

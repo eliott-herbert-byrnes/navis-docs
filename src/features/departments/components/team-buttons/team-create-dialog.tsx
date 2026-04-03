@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@radix-ui/react-separator";
 import { Loader2, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -53,13 +54,11 @@ const CreateTeamDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="w-full max-w-[125px]"
-        >
-          <PlusIcon className="w-4 h-4" />
-          Team
+        <Button variant="ghost" className="rounded-none justify-start font-normal">
+          <div className="flex flex-row gap-2 items-center">
+            <PlusIcon className="w-4 h-4" />
+            Team
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -71,6 +70,7 @@ const CreateTeamDialog = ({
             name="teamName"
             type="text"
             placeholder="Team Name"
+            className="shadow-none border w-2/3 mt-2"
             required
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
@@ -83,23 +83,24 @@ const CreateTeamDialog = ({
           />
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
+
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => handleOpenChange(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleConfirm}
             disabled={isPending || !teamName.trim()}
           >
             {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add"}
+          </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Trash } from "lucide-react";
-import { useState } from "react";
 import { useDeleteOrg } from "../hooks/use-org-mutations";
 
 const OrganizationDeleteButton = () => {
@@ -26,8 +25,8 @@ const OrganizationDeleteButton = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full flex justify-start gap-4">
-          <Trash className="w-4 h-4 text-muted-foreground" />
+        <Button variant="destructive" className="flex justify-start gap-4 max-w-[250px]">
+          <Trash className="w-4 h-4" />
           <span className="font-semibold">Delete Organization</span>
         </Button>
       </DialogTrigger>
@@ -38,19 +37,9 @@ const OrganizationDeleteButton = () => {
             Are you sure you want to complete this action? It cannot be undone.
           </DialogDescription>
         </DialogHeader>
-        <Separator />
         <DialogFooter className="flex flex-row gap-2 mt-4">
           <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleDelete}
@@ -61,6 +50,15 @@ const OrganizationDeleteButton = () => {
             ) : (
               "Delete"
             )}
+          </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

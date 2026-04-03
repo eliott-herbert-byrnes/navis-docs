@@ -96,7 +96,7 @@ export function StepsEditor({
           <Button
             variant="outline"
             onClick={() => addStep(steps, handleUpdateSteps)}
-            className="w-full"
+            className="w-full shadow-none border"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Step

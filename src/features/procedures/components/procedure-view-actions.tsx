@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Edit,
   Share2,
@@ -12,6 +11,9 @@ import {
   History,
   Check,
   CircleCheck,
+  ChevronDown,
+  Calendar,
+  FolderOpen,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcedurePath, teamProcedurePath } from "@/app/paths";
@@ -24,7 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
 import { ProcedureFavoriteButton } from "./favorite/components/procedure-favorite-button";
 import { ProcedureErrorButton } from "./error/components/procedure-error-button";
 import { ProcedureBaseDeleteButton } from "@/features/procedure-base/components/procedure-base-delete-button";
@@ -33,6 +34,7 @@ import { ProcedureForViewWithRelations } from "../types/types";
 import { hasFlowDocContent } from "../utils/generate-plain-text-from-tiptap";
 import { useMarkProcedureRead } from "../hooks/use-procedure-mutations";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type ProcedureViewActionsProps = {
   procedureId: string;
@@ -127,171 +129,155 @@ export function ProcedureViewActions({
     router.push(teamProcedurePath(departmentId, teamId));
   };
 
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      {/* Mark as read - show only when published and unread */}
-      <div className="flex gap-2">
-        {showMarkAsRead && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleMarkAsRead}
-            disabled={isMarkReadPending}
-            aria-label="Mark this procedure as read"
-          >
-            {isMarkReadPending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+  const dropdownButtons = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="shadow">
+          Actions <ChevronDown className="size-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
+        {canEdit && (
+          <DropdownMenuItem onClick={handleEdit} disabled={isPending} className="px-3 py-2">
+            {isPending ? (
+              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
             ) : (
-              <CircleCheck className="w-4 h-4 mr-1 animate-pulse" />
+              <Edit className="w-4 h-4 mr-1" />
             )}
-            Mark as read
-          </Button>
+            Edit
+          </DropdownMenuItem>
         )}
-        {/* Desktop Actions */}
-        <div className="hidden md:flex gap-2">
-          {canEdit && (
-            <Button onClick={handleEdit} size="sm" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Edit className="w-4 h-4 mr-2" />
-              )}
-              Edit
-            </Button>
-          )}
-          {isFlowWithDoc && onViewText && (
-            <Button
-              variant={showDocView ? "default" : "outline"}
-              size="sm"
-              onClick={onViewText}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              {showDocView ? "Hide text" : "View text"}
-            </Button>
-          )}
-          <Button variant="outline" size="sm" onClick={handleShare}>
-            <Share2 className="w-4 h-4 mr-2" />
-            Share
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExport}>
-            <FileIcon className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          {canEdit && (
-            <ProcedureBaseDeleteButton
-              procedureId={procedureId}
-              onSuccess={handleDeleteSuccess}
-              variant="outline"
-              size="sm"
-            />
-          )}
-          {onAskAI && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onAskAI}
-              aria-label="Ask AI about this procedure"
-            >
-              <Brain className="w-4 h-4 mr-2" />
-              Ask AI
-            </Button>
-          )}
-          {canViewProcedureAudit && onViewAuditLogs && (
-            <Button
-              variant={showAuditLogs ? "default" : "outline"}
-              size="sm"
-              onClick={onViewAuditLogs}
-              aria-label="View audit logs for this procedure"
-            >
-              <History className="w-4 h-4 mr-2" />
-              Audit Logs
-            </Button>
-          )}
+
+        {isFlowWithDoc && onViewText && (
+          <DropdownMenuItem onClick={onViewText} className="px-3 py-2">
+            {showDocView ? (
+              <Check className="w-4 h-4 mr-1" />
+            ) : (
+              <FileText className="w-4 h-4 mr-1" />
+            )}
+            {showDocView ? "Hide text" : "View text"}
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuItem onClick={handleShare} className="px-3 py-2">
+          <Share2 className="w-4 h-4 mr-1" />
+          Share
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={handleExport} className="px-3">
+          <FileIcon className="w-4 h-4 mr-1" />
+          Export
+        </DropdownMenuItem>
+
+        {onAskAI && (
+          <DropdownMenuItem
+            onClick={onAskAI}
+            aria-label="Ask AI about this procedure"
+            className="px-3 py-2"
+          >
+            <Brain className="w-4 h-4 mr-1" />
+            Ask AI
+          </DropdownMenuItem>
+        )}
+
+        {canViewProcedureAudit && onViewAuditLogs && (
+          <DropdownMenuItem
+            onClick={onViewAuditLogs}
+            aria-label="View audit logs for this procedure"
+            className="px-3 py-2"
+          >
+            {showAuditLogs ? (
+              <Check className="w-4 h-4 mr-1" />
+            ) : (
+              <History className="w-4 h-4 mr-1" />
+            )}
+            Audit Logs
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuItem asChild>
           <ProcedureFavoriteButton
             procedureId={procedureId}
             initialIsFavorite={isFavorite}
-            size="sm"
+            showLabel={true}
           />
-          <ProcedureErrorButton procedureId={procedureId} />
-        </div>
+        </DropdownMenuItem>
 
-        {/* Mobile Actions - Dropdown */}
-        <div className="md:hidden">
-          {canEdit && (
-            <Button
-              onClick={handleEdit}
-              size="sm"
-              className="mr-2"
-              disabled={isPending}
-            >
-              {isPending ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Edit className="w-4 h-4 mr-2" />
-              )}
-              Edit
-            </Button>
+        <DropdownMenuItem asChild>
+          <ProcedureErrorButton procedureId={procedureId} />
+        </DropdownMenuItem>
+
+        {/* <DropdownMenuSeparator /> */}
+        {canEdit && (
+          <DropdownMenuItem asChild>
+            <ProcedureBaseDeleteButton
+              procedureId={procedureId}
+              onSuccess={handleDeleteSuccess}
+            />
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  return (
+    <div className="w-full">
+      <Card className="p-4 animate-fade-from-top shadow-none border">
+        <div className="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3 text-sm">
+            {/* Published Date */}
+            <div className="flex items-center gap-2 text-muted-foreground ">
+              <Calendar className="w-4 h-4" />
+              <span>
+                Published{" "}
+                {procedure.publishedVersion
+                  ? formatDate(procedure.publishedVersion.createdAt)
+                  : "Unpublished"}
+              </span>
+            </div>
+            {/* Team/Category Badges */}
+          </div>
+          <div className="flex flex-row gap-2 sm:ml-4">
+          {procedure.category && (
+            <Badge variant="outline">
+              <FolderOpen className="w-3 h-3 mr-1" />
+              {procedure.category.name}
+            </Badge>
           )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <MoreVertical className="w-4 h-4" />
+          </div>
+          {/* Mark as read - show only when published and unread */}
+          <div className="flex flex-row items-center gap-2 sm:ml-auto flex-wrap">
+            {showMarkAsRead && (
+              <Button
+              size="sm"
+                variant="outline"
+                onClick={handleMarkAsRead}
+                disabled={isMarkReadPending}
+                aria-label="Mark this procedure as read"
+                className=""
+              >
+                {isMarkReadPending ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <CircleCheck className="w-4 h-4 mr-1 animate-pulse" />
+                )}
+                Mark as read
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {isFlowWithDoc && onViewText && (
-                <DropdownMenuItem onClick={onViewText}>
-                  <FileText className="w-4 h-4 mr-2" />
-                  {showDocView ? "Hide text" : "View text"}
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={handleShare}>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </DropdownMenuItem>
-              {onAskAI && (
-                <DropdownMenuItem
-                  onClick={onAskAI}
-                  aria-label="Ask AI about this procedure"
-                >
-                  <Brain className="w-4 h-4 mr-2" />
-                  Ask AI
-                </DropdownMenuItem>
-              )}
-              {canViewProcedureAudit && onViewAuditLogs && (
-                <DropdownMenuItem onClick={onViewAuditLogs}>
-                  {showAuditLogs ? (
-                    <Check className="w-4 h-4 mr-2" />
-                  ) : (
-                    <History className="w-4 h-4 mr-2" />
-                  )}
-                  Audit Logs
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <ProcedureFavoriteButton
-                  procedureId={procedureId}
-                  initialIsFavorite={isFavorite}
-                  showLabel={true}
-                  size="sm"
-                />
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <ProcedureErrorButton procedureId={procedureId} />
-              </DropdownMenuItem>
-              {canEdit && (
-                <DropdownMenuItem asChild>
-                  <ProcedureBaseDeleteButton
-                    procedureId={procedureId}
-                    onSuccess={handleDeleteSuccess}
-                  />
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            )}
+            {dropdownButtons}
+          </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

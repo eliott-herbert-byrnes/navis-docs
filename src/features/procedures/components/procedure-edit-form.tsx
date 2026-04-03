@@ -6,7 +6,6 @@ import { teamProcedurePath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle } from "lucide-react";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
-import { ProcedureHeader } from "./form/components/procedure-header";
 import { ProcedureActionButtons } from "./form/components/procedure-action-buttons";
 import { ProcedureEditorSelector } from "./form/components/procedure-editor-selector";
 import {
@@ -26,16 +25,21 @@ import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 type EditProcedureFormProps = {
   procedureId: string;
   procedure: ProcedureForEdit;
+  viewMode: "edit" | "preview";
+  editorPane: "flow" | "text";
+  onHeaderDisabledChange?: (disabled: boolean) => void;
 };
 
 export const EditProcedureForm = ({
   procedureId,
   procedure,
+  viewMode,
+  editorPane,
+  onHeaderDisabledChange,
 }: EditProcedureFormProps) => {
   const router = useRouter();
   const [isCancelling, startTransition] = useTransition();
   const [isSaving, setIsSaving] = useState(false);
-  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
 
@@ -46,8 +50,6 @@ export const EditProcedureForm = ({
 
   const [content, setContent] = useState<ProcedureContent>(initialContent);
 
-  const [editorPane, setEditorPane] = useState<"flow" | "text">("flow");
-
   const { updateProcedureContent } = useUpdateProcedureContent();
   const { publishProcedure, isPending } = usePublishProcedure(
     departmentId,
@@ -57,6 +59,13 @@ export const EditProcedureForm = ({
     departmentId,
     teamId,
   );
+
+  const isHeaderDisabled =
+    isSaving || isCancelling || isPending || isDeleting;
+
+  useEffect(() => {
+    onHeaderDisabledChange?.(isHeaderDisabled);
+  }, [onHeaderDisabledChange, isHeaderDisabled]);
 
   const isDraft = procedure.status === "DRAFT";
 
@@ -86,6 +95,7 @@ export const EditProcedureForm = ({
     trigger: (isLoading) => (
       <Button
         variant="outline"
+        className="shadow-none"
         disabled={
           isLoading || isCancelling || isSaving || isPending || isDeleting
         }
@@ -113,6 +123,7 @@ export const EditProcedureForm = ({
     trigger: (isLoading) => (
       <Button
         variant="outline"
+        className="shadow-none"
         disabled={isLoading || isCancelling || isSaving || isPending}
       >
         {isLoading || isCancelling ? (
@@ -141,12 +152,6 @@ export const EditProcedureForm = ({
       teamProcedurePath,
     );
   };
-
-  const handleViewMode = () =>
-    setViewMode((m) => (m === "edit" ? "preview" : "edit"));
-
-  const handleEditorMode = () =>
-    setEditorPane((m) => (m === "flow" ? "text" : "flow"));
 
   const handleContentChange = useCallback((newContent: ProcedureContent) => {
     setContent(newContent);
@@ -187,16 +192,7 @@ export const EditProcedureForm = ({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4">
-      <ProcedureHeader
-        procedure={procedure}
-        viewMode={viewMode}
-        onViewModeChange={handleViewMode}
-        editorMode={editorPane}
-        onEditorChange={handleEditorMode}
-        isDisabled={isSaving || isCancelling || isPending || isDeleting}
-      />
-
+    <div className="w-full">
       <ProcedureEditorSelector
         procedureId={procedureId}
         procedureStyle={procedure.style}
@@ -204,7 +200,7 @@ export const EditProcedureForm = ({
         onChange={handleContentChange}
         isPreview={viewMode === "preview"}
         editorMode={editorPane}
-      />
+        />
 
       <ProcedureActionButtons
         hasUnsavedChanges={hasUnsavedChanges}
@@ -220,6 +216,7 @@ export const EditProcedureForm = ({
         discardDraftTrigger={isDraft ? discardDraftTrigger : undefined}
         discardDraftDialog={isDraft ? discardDraftDialog : undefined}
       />
+
     </div>
   );
 };

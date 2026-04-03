@@ -1,11 +1,11 @@
 import { Heading } from "@/components/ui/Heading";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
+import { getSessionContext } from "@/lib/auth";
 import { AddressList } from "@/features/address/components/address-list";
 import { AddressCreateButton } from "@/features/address/components/address-create-button";
 
 export default async function AddressPage() {
-  const user = await getSessionUser();
-  const { isAdmin } = await getUserOrgWithRole(user?.userId ?? "");
+  const ctx = await getSessionContext();
+  const { isAdmin } = ctx ?? {};
 
   return (
     <>

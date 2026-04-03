@@ -47,8 +47,9 @@ export const ProcedureErrorDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Flag className="w-4 h-4" />
+        <Button variant="ghost" className="m-0 p-0 justify-start rounded-none">
+          <Flag className="w-4 h-4 text-muted-foreground" />
+          <span className="font-normal ml-1">Report</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

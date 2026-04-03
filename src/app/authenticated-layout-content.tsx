@@ -5,77 +5,82 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getSessionUser, getUserOrgWithRole } from "@/lib/auth";
-import { AuthProvider } from "@/contexts/auth-context";
+import { AsyncAuthContextLoader } from "@/contexts/async-auth-context-loader";
 import { MainHeaderBreadcrumbs } from "@/features/breadcrumbs/components/main-header-breadcrumbs";
 import { OrgBadge } from "@/features/org/components/org-badge";
 
-function LayoutFallback() {
+function SidebarFallback() {
   return (
-    <div className="flex h-screen w-full items-center justify-center">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-32" />
+    <div className="hidden md:flex w-14 shrink-0 flex-col gap-2 border-r px-2 py-3">
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <Skeleton className="h-8 w-8 rounded-md" />
+      <div className="mt-auto">
+        <Skeleton className="h-8 w-8 rounded-md" />
       </div>
     </div>
   );
 }
 
-export async function AuthenticatedLayoutContent({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const user = await getSessionUser();
-
-  if (!user) {
-    return <>{children}</>;
-  }
-
-  const { org, isAdmin } = await getUserOrgWithRole(user.userId);
-
-  if (!org) {
-    return <>{children}</>;
-  }
-
+function ContentAreaFallback() {
   return (
-    <AuthProvider isAdmin={isAdmin} userId={user.userId}>
-      <SidebarProvider defaultOpen={false}>
-        <AppSidebar />
-        <SidebarInset className="p-2">
-          <div className="flex flex-row h-full">
-            <div className="flex h-full w-full flex-col rounded-sm pl-4 pr-4 pt-2">
-              <div className="flex flex-row items-center justify-between">
-                <div className="flex flex-row items-center gap-2">
-                  <div className="sm:hidden">
-                    <SidebarTrigger />
-                  </div>
-                  <div className="hidden md:inline">
-                    <MainHeaderBreadcrumbs />
-                  </div>
-                </div>
-                <OrgBadge />
-              </div>
-              <Separator className="mt-2" />
-              {children}
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </AuthProvider>
+    <div className="flex h-full w-full flex-col pl-4 pr-4">
+      <div className="flex flex-row items-center justify-between pt-5 px-8">
+        <div className="flex flex-row items-center gap-2">
+          <Skeleton className="h-8 w-8 sm:hidden" />
+          <Skeleton className="h-6 w-56 hidden md:block" />
+        </div>
+        <Skeleton className="h-6 w-28" />
+      </div>
+      <div className="grid grid-cols-12 gap-x-4 pt-12 px-6">
+        <div className="col-span-8 col-start-3 space-y-3">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-56 w-full" />
+        </div>
+      </div>
+    </div>
   );
 }
 
-export function AuthenticatedLayoutWithSuspense({
+export function AuthenticatedLayoutContent({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={<LayoutFallback />}>
-      <AuthenticatedLayoutContent>{children}</AuthenticatedLayoutContent>
-    </Suspense>
+    <SidebarProvider defaultOpen={false}>
+      <Suspense fallback={<SidebarFallback />}>
+        <AppSidebar/>
+      </Suspense>
+      <SidebarInset className="">
+        <div className="flex flex-row h-full">
+          <Suspense fallback={<ContentAreaFallback />}>
+            <AsyncAuthContextLoader>
+              <div className="flex h-full w-full flex-col sm:pl-4 sm:pr-4">
+                <div className="flex flex-row items-center justify-between pt-6.5 px-4 sm:px-8">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="sm:hidden">
+                      <SidebarTrigger />
+                    </div>
+                    <div className="hidden md:inline">
+                      <MainHeaderBreadcrumbs />
+                    </div>
+                  </div>
+                  <Suspense fallback={<Skeleton className="h-6 w-28" />}>
+                    <OrgBadge />
+                  </Suspense>
+                </div>
+                <div className="flex flex-col w-full min-w-0 sm:grid sm:grid-cols-24 gap-x-4 pt-10 px-6 ">
+                  {children}
+                </div>
+              </div>
+            </AsyncAuthContextLoader>
+          </Suspense>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

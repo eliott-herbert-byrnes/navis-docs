@@ -14,7 +14,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { demoPath, onboardingPath } from "@/app/paths";
+import { homePath, onboardingPath } from "@/app/paths";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useTransition, useState } from "react";
@@ -108,7 +108,7 @@ export function SignInForm({
       } else {
         toast.error(
           res.message ??
-            "Failed to load demo credentials, try again or refresh the page",
+          "Failed to load demo credentials, try again or refresh the page",
         );
       }
     });
@@ -124,24 +124,24 @@ export function SignInForm({
         toast.success("Demo code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
-          demoPath();
+          homePath();
         window.location.assign(cb);
       } else {
         toast.error(
           res.message ??
-            "Demo verification failed, try again or use a new code",
+          "Demo verification failed, try again or use a new code",
         );
       }
     });
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 ", className)} {...props}>
       {!sent && (
-        <Card className="animate-fade-from-top">
+        <Card className="animate-fade-from-top max-w-sm shadow-none bg-brand text-black">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome back</CardTitle>
-            <CardDescription>Login with your Google account</CardDescription>
+            <CardDescription className="text-black">Login with your Google account</CardDescription>
           </CardHeader>
           <CardContent>
             <form>
@@ -151,11 +151,10 @@ export function SignInForm({
                     <TooltipTrigger asChild>
                       <div className="flex items-center justify-center">
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           type="button"
                           onClick={continueWithGoogle}
-                          className="w-full"
-                          disabled
+                          className="bg-black w-full rounded-3xl"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -179,8 +178,8 @@ export function SignInForm({
                     </TooltipContent>
                   </Tooltip>
                 </Field>
-                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                  Or continue with demo
+                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-brand">
+                  <span className="text-black">Or continue with demo</span>
                 </FieldSeparator>
                 {/* <Field>
                   <Input
@@ -219,7 +218,7 @@ export function SignInForm({
                     <Field>
                       <Button
                         variant="default"
-                        className="w-full cursor-pointer"
+                        className="w-full cursor-pointer rounded-3xl"
                         onClick={signInWithDemo}
                         disabled={pending}
                         type="button"
@@ -240,10 +239,10 @@ export function SignInForm({
       )}
       {sent && (
         <>
-          <Card className="animate-fade-from-top" {...props}>
+          <Card className="animate-fade-from-top shadow-none bg-brand" {...props}>
             <CardHeader className="text-center">
-              <CardTitle className="text-xl">Enter verification code</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl text-black">Enter verification code</CardTitle>
+              <CardDescription className="text-black">
                 We sent a 6-digit code to your email.
               </CardDescription>
             </CardHeader>
@@ -261,19 +260,19 @@ export function SignInForm({
                       pattern={REGEXP_ONLY_DIGITS}
                       id="otp"
                       required
-                      containerClassName="w-full justify-center"
+                      containerClassName="w-full justify-center text-black font-medium"
                     >
-                      <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border">
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
+                      <InputOTPGroup className="gap-3 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border-2 border-black">
+                        <InputOTPSlot index={0} className="border-black"/>
+                        <InputOTPSlot index={1} className="border-black"/>
+                        <InputOTPSlot index={2} className="border-black"/>
+                        <InputOTPSlot index={3} className="border-black"/>
+                        <InputOTPSlot index={4} className="border-black"/>
                       </InputOTPGroup>
                     </InputOTP>
-                    <FieldDescription className="text-center">
+                    {/* <FieldDescription className="text-center text-black">
                       Enter the 6-digit code sent to your email.
-                    </FieldDescription>
+                    </FieldDescription> */}
                     {msg && msg === "Invalid code" ? (
                       <div className="text-center text-sm text-red-500">
                         {msg}
@@ -282,14 +281,14 @@ export function SignInForm({
                       <div className="text-center text-sm">{msg}</div>
                     )}
                   </Field>
-                  <Button type="submit" onClick={verifyCode} disabled={pending}>
+                  <Button type="submit" onClick={verifyCode} disabled={pending} className="rounded-3xl ">
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
                       "Verify"
                     )}
                   </Button>
-                  <FieldDescription className="text-center">
+                  <FieldDescription className="text-center text-black">
                     Didn&apos;t receive the code?{" "}
                     <a href="#" onClick={requestCode}>
                       Resend
@@ -301,10 +300,10 @@ export function SignInForm({
           </Card>
         </>
       )}
-      <FieldDescription className="px-6 text-center">
+      {!sent ? (<FieldDescription className="px-6 text-center pt-1 text-black">
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+      </FieldDescription>) : null}
     </div>
   );
 }

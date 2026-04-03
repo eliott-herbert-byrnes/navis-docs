@@ -46,7 +46,7 @@ const ProcedureBaseDeleteDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <DialogTrigger asChild>
-          <Button variant="ghost" className="w-full flex justify-start gap-4">
+          <Button variant="ghost" className="w-full flex justify-start gap-3 rounded-none">
             <TrashIcon className="w-4 h-4 text-muted-foreground" />
             <span className="font-normal">Delete</span>
           </Button>
@@ -60,17 +60,8 @@ const ProcedureBaseDeleteDialog = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-          <Button
-            className="w-[75px]"
-            type="button"
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="w-[75px]"
+        <Button
+            className="w-[75px] shadow-none border"
             type="button"
             variant="default"
             onClick={handleClose}
@@ -82,6 +73,16 @@ const ProcedureBaseDeleteDialog = ({
               "Delete"
             )}
           </Button>
+          <Button
+            className="w-[75px] shadow-none border"
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+
         </DialogFooter>
       </DialogContent>
     </Dialog>

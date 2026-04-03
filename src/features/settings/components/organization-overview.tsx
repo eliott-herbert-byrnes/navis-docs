@@ -44,85 +44,84 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-[450px] mx-auto">
+    <div className="flex flex-col w-full">
       <div className="flex w-full flex-col">
-        <Card className="animate-fade-from-top">
-          <CardHeader>
-            <CardTitle>Organization Settings</CardTitle>
-            <CardDescription>Manage the organization settings</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-5">
-            <Separator />
-            <div className="grid gap-3">
-              <Input
-                name="orgName"
-                id="orgName"
-                type="text"
-                value={orgName}
-                onChange={(e) => setOrgName(e.target.value)}
-              />
-              <Button
-                onClick={handleUpdate}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full flex justify-start gap-4"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <FolderPen className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-semibold">Rename Organization</span>
-                  </>
-                )}
-              </Button>
+        <div className="flex flex-col gap-5">
+          <div className="grid gap-4">
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold">Rename</span>
+              <span className="text-sm">
+                Rename the organization
+              </span>
             </div>
-            <Separator />
-            <div className="grid gap-3">
-              <div className="flex flex-col gap-1">
-                <CardTitle>Export</CardTitle>
-                <CardDescription>
-                  Export the organization and user data
-                </CardDescription>
-              </div>
-              <ExportProcedureOrgDataButton />
-              <ExportUserOrgDataButton />
+            <Input
+              name="orgName"
+              id="orgName"
+              type="text"
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              className="shadow-none border max-w-[250px]"
+            />
+            <Button
+              onClick={handleUpdate}
+              disabled={isLoading}
+              variant="outline"
+              className="w-full flex justify-start gap-2 shadow-none border max-w-[250px]"
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <FolderPen className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-semibold">Rename Organization</span>
+                </>
+              )}
+            </Button>
+          </div>
+          <Separator />
+          <div className="grid gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold">Export</span>
+              <span className="text-sm">
+                Export the organization and user data
+              </span>
             </div>
-            <Separator />
-            <div className="grid gap-3">
-              <div className="flex flex-col gap-1">
-                <CardTitle>Billing</CardTitle>
-                <CardDescription>
-                  Manage your organizations subscription
-                </CardDescription>
-              </div>
-              <Button
-                variant="outline"
-                className="w-full flex justify-start gap-4"
-                onClick={handleManageSubscription}
-              >
-                {isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                ) : (
-                  <CreditCard className="w-4 h-4 text-muted-foreground" />
-                )}
-                <span className="font-semibold">Manage Subscription</span>
-              </Button>
+            <ExportProcedureOrgDataButton />
+            <ExportUserOrgDataButton />
+          </div>
+          <Separator />
+          <div className="grid gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold">Billing</span>
+              <span className="text-sm">
+                Manage your organizations subscription
+              </span >
             </div>
-            <Separator />
-            <div className="grid gap-3">
-              <div className="flex flex-col gap-1">
-                <CardTitle>Delete Organization</CardTitle>
-                <CardDescription>
-                  Delete the organization and all its data. This action will
-                  also automatically cancel any active subscriptions.
-                </CardDescription>
-              </div>
-              {/* TODO: Implement OrganizationDeleteButton component */}
-              <OrganizationDeleteButton />
+            <Button
+              variant="outline"
+              className="w-full flex justify-start gap-4 shadow-none max-w-[250px]"
+              onClick={handleManageSubscription}
+            >
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+              ) : (
+                <CreditCard className="w-4 h-4 text-muted-foreground" />
+              )}
+              <span className="font-semibold">Manage Subscription</span>
+            </Button>
+          </div>
+          <Separator />
+          <div className="grid gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold">Delete Organization</span>
+              <span className="text-sm">
+                Delete the organization and all its data. This action will
+                also automatically cancel any active subscriptions.
+              </span>
             </div>
-          </CardContent>
-        </Card>
+            <OrganizationDeleteButton />
+          </div>
+        </div>
       </div>
     </div>
   );

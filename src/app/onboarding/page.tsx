@@ -1,28 +1,20 @@
-import { OnboardForm } from "@/features/onboarding/components/onboard-form";
-import { getSessionUser, getUserOrg } from "@/lib/auth";
-import { GalleryVerticalEnd } from "lucide-react";
-import { redirect } from "next/navigation";
-import { homePath } from "../paths";
+import { Suspense } from "react";
+import { OnboardingContent } from "./onboarding-content";
 
-const OnboardingPage = async () => {
-  const user = await getSessionUser();
-
-  const ExistingOrg = await getUserOrg(user!.userId);
-  if (ExistingOrg?.org) redirect(homePath());
-
+function OnboardingFallback() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <a href="#" className="flex items-center gap-2 self-center font-medium">
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <GalleryVerticalEnd className="size-4" />
-          </div>
-          Onboarding
-        </a>
-        <OnboardForm />
+        <p className="text-sm text-muted-foreground text-center">Loading…</p>
       </div>
     </div>
   );
-};
+}
 
-export default OnboardingPage;
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<OnboardingFallback />}>
+      <OnboardingContent />
+    </Suspense>
+  );
+}

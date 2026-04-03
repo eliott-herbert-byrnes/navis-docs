@@ -109,6 +109,7 @@ export function CategoriesList({
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
+            className="border-black/20"
           />
         </div>
       ),
@@ -215,7 +216,7 @@ export function CategoriesList({
   return (
     <div className="flex w-full flex-col gap-4 px-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-1 justify-between gap-4">
+        <div className="flex flex-col sm:flex-row flex-1 justify-between gap-3 sm:gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -226,7 +227,7 @@ export function CategoriesList({
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2"
+              className="pl-10 mr-2 shadow-none border-1 mb-1 w-full"
             />
           </div>
 
@@ -235,7 +236,7 @@ export function CategoriesList({
               value={departmentFilter}
               onValueChange={handleDepartmentFilterChange}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[125px] shadow-none border-1">
                 <SelectValue placeholder={departmentFilter} />
               </SelectTrigger>
               <SelectContent>
@@ -293,9 +294,9 @@ export function CategoriesList({
         isPending={isBulkDeletePending}
       />
 
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-sm border-b-1">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-secondary sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -358,7 +359,7 @@ export function CategoriesList({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -379,7 +380,7 @@ export function CategoriesList({
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
               variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex shadow-none"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -388,7 +389,7 @@ export function CategoriesList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none"
               size="icon"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -398,7 +399,7 @@ export function CategoriesList({
             </Button>
             <Button
               variant="outline"
-              className="size-8"
+              className="size-8 shadow-none"
               size="icon"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -408,7 +409,7 @@ export function CategoriesList({
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex"
+              className="hidden size-8 lg:flex shadow-none"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
