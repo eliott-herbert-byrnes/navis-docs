@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Navis Docs",
   description: "Welcome to the Navis Docs",
   icons: {
-    icon: "/navis-docs-logo-svg.svg",
+    icon: "/nd-square-blue.svg",
   },
 };
 
