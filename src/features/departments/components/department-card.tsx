@@ -71,7 +71,7 @@ const DepartmentCard = ({ department }: DepartmentCardProps) => {
       <div className="min-w-0 w-full">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="w-full text-black" variant="default" >
+            <Button className="w-full shadow-none" variant="outline">
               <SquareArrowUpRight className="w-4 h-4" />
               Actions
             </Button>

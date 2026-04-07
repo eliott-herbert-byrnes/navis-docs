@@ -138,7 +138,7 @@ export function SignInForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       {!sent && (
-        <Card className="animate-fade-from-top max-w-sm border">
+        <Card className="animate-fade-from-top max-w-sm border-none">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome back</CardTitle>
             <CardDescription className="">Login with your Google account</CardDescription>
@@ -239,7 +239,7 @@ export function SignInForm({
       )}
       {sent && (
         <>
-          <Card className="animate-fade-from-top border" {...props}>
+          <Card className="animate-fade-from-top border-none" {...props}>
             <CardHeader className="text-center">
               <CardTitle className="text-xl">Enter verification code</CardTitle>
               <CardDescription className="mb-2">

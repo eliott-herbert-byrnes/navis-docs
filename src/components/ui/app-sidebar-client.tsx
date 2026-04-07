@@ -41,23 +41,19 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
         <SidebarGroup className="flex flex-col gap-2 h-full">
           <SidebarGroupContent>
             <SidebarMenu>
-              <div className="flex flex-row size-8 gap-2 items-center pt-2 mb-2 mt-1">
-                <Image
-                  src="/navis-docs-logo-black-png.png"
-                  alt="Navis Docs Logo"
-                  className="rounded-xs mx-auto dark:hidden"
-                  width="25"
-                  height="25"
-                />
-                <Image
-                  src="/navis-docs-logo-blue-2.png"
-                  alt="Navis Docs Logo"
-                  className="rounded-xs mx-auto hidden dark:block"
-                  width="25"
-                  height="25"
-                />
-              </div>
-              <Separator className="light:bg-foreground"/>
+              <SidebarMenuItem>
+                <div className="flex flex-row w-full size-8 items-center pt-2 mb-2 mt-1 gap-2">
+                  <Image
+                    src="/nd-square-blue-png.png"
+                    alt="Navis Docs Logo"
+                    className="rounded-xs dark:block"
+                    width="30"
+                    height="30"
+                  />
+                  <span className="block sm:hidden">Navis Docs</span>
+                </div>
+              </SidebarMenuItem>
+              <Separator className="light:bg-foreground" />
               {items
                 .filter((item) => ("isAdmin" in item && item.isAdmin ? isAdmin : true))
                 .map((item) => {
@@ -86,7 +82,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                     return (
                       <Fragment key={item.title}>
                         {menuItem}
-                        <Separator className="light:bg-foreground"/>
+                        <Separator className="light:bg-foreground" />
                       </Fragment>
                     );
                   }
@@ -99,14 +95,14 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu className="rounded-sm shadow">
+        <SidebarMenu className="rounded-sm ">
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild >
-                <SidebarMenuButton className="dark:bg-accent light:bg-white light:hover:bg-accent flex justify-center ">
-                  <span className="flex size-4 shrink-0 items-center justify-center">
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton asChild className="shadow-none border-none bg-brand hover:bg-brand/80 text-black hover:text-black">
+                  <div className="flex size-2 shrink-0 items-center justify-center">
                     <User2 />
-                  </span>
+                  </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
