@@ -387,7 +387,8 @@ export function RawTextEditor({
           <ToolbarGroup>
             <HeadingDropdownMenu levels={[1, 2, 3]} />
             <ListDropdownMenu types={["bulletList", "orderedList"]} />
-            <Button
+            {/* Disabled for MVP */}
+            {/* <Button
               type="button"
               data-style="ghost"
               tooltip="Insert Step"
@@ -395,7 +396,7 @@ export function RawTextEditor({
               disabled={!editor.isEditable}
             >
               <span className="tiptap-button-text">Step</span>
-            </Button>
+            </Button> */}
             <CodeBlockButton
               disabled={stepEditorContext === "stepTitle"}
               tooltip={
