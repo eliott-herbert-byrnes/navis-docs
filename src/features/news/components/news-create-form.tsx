@@ -70,7 +70,7 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
                     name="newsPostTitle"
                     required
                     disabled={isPending}
-                    className="shadow-none border max-w-1/3"
+                    className="shadow-none border sm:max-w-1/3"
                   />
                 </Field>
                 <Field>
@@ -82,7 +82,7 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
                     rows={10}
                     required
                     disabled={isPending}
-                    className="shadow-none border max-w-1/2"
+                    className="shadow-none border sm:max-w-1/2"
                   />
                 </Field>
               </FieldGroup>
