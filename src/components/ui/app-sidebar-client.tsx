@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 import { items } from "@/config/navigation";
 import { signOutAction } from "@/features/auth/actions/sign-out";
 import { cn } from "@/lib/utils";
-
 import {
   Sidebar,
   SidebarContent,
@@ -42,7 +41,7 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
         <SidebarGroup className="flex flex-col gap-2 h-full">
           <SidebarGroupContent>
             <SidebarMenu>
-              <div className="flex flex-row gap-2 items-center pt-2 mb-2 mt-1">
+              <div className="flex flex-row size-8 gap-2 items-center pt-2 mb-2 mt-1">
                 <Image
                   src="/navis-docs-logo-black-png.png"
                   alt="Navis Docs Logo"

@@ -7,17 +7,17 @@ import Image from "next/image";
 const SignInPage = () => {
   return (
     <PageContainer>
-      <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10 rounded-lg bg-brand">
-        <div className="flex w-full max-w-sm flex-col gap-6">
-          <a className="flex items-center gap-6 self-center font-medium font-serif text-8xl text-black">
-            <div className="flex items-center justify-center">
-              <Image src="/nd-square-black-png.png" alt="" width="90" height="90" className="rounded-xs shrink-0" />
-            </div>
-            Navis.docs
-          </a>
-          <SignInForm />
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <div className="flex items-center gap-2 self-center font-medium font-serif text-4xl">
+          <div className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Image src="/nd-square-blue-png.png" width={80} height={80} alt="Navis Docs logo" />
+          </div>
+          Navis.docs
         </div>
+        <SignInForm />
       </div>
+    </div>
     </PageContainer>
   );
 };
