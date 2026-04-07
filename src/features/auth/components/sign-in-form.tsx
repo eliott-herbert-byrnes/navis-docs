@@ -136,12 +136,12 @@ export function SignInForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6 ", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       {!sent && (
-        <Card className="animate-fade-from-top max-w-sm shadow-none bg-brand text-black">
+        <Card className="animate-fade-from-top max-w-sm border">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome back</CardTitle>
-            <CardDescription className="text-black">Login with your Google account</CardDescription>
+            <CardDescription className="">Login with your Google account</CardDescription>
           </CardHeader>
           <CardContent>
             <form>
@@ -154,7 +154,7 @@ export function SignInForm({
                           variant="secondary"
                           type="button"
                           onClick={continueWithGoogle}
-                          className="bg-black w-full rounded-3xl"
+                          className="w-full"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -173,13 +173,13 @@ export function SignInForm({
                         </Button>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Disabled for MVP</p>
+                    <TooltipContent className="text-black">
+                      Disabled for MVP
                     </TooltipContent>
                   </Tooltip>
                 </Field>
-                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-brand">
-                  <span className="text-black">Or continue with demo</span>
+                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                  Or continue with demo
                 </FieldSeparator>
                 {/* <Field>
                   <Input
@@ -218,7 +218,7 @@ export function SignInForm({
                     <Field>
                       <Button
                         variant="default"
-                        className="w-full cursor-pointer rounded-3xl"
+                        className="w-full cursor-pointer bg-brand hover:bg-brand/75"
                         onClick={signInWithDemo}
                         disabled={pending}
                         type="button"
@@ -239,10 +239,10 @@ export function SignInForm({
       )}
       {sent && (
         <>
-          <Card className="animate-fade-from-top shadow-none bg-brand" {...props}>
+          <Card className="animate-fade-from-top border" {...props}>
             <CardHeader className="text-center">
-              <CardTitle className="text-xl text-black">Enter verification code</CardTitle>
-              <CardDescription className="text-black">
+              <CardTitle className="text-xl">Enter verification code</CardTitle>
+              <CardDescription className="mb-2">
                 We sent a 6-digit code to your email.
               </CardDescription>
             </CardHeader>
@@ -260,19 +260,16 @@ export function SignInForm({
                       pattern={REGEXP_ONLY_DIGITS}
                       id="otp"
                       required
-                      containerClassName="w-full justify-center text-black font-medium"
+                      containerClassName="w-full justify-center"
                     >
-                      <InputOTPGroup className="gap-3 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border-2 border-black">
-                        <InputOTPSlot index={0} className="border-black"/>
-                        <InputOTPSlot index={1} className="border-black"/>
-                        <InputOTPSlot index={2} className="border-black"/>
-                        <InputOTPSlot index={3} className="border-black"/>
-                        <InputOTPSlot index={4} className="border-black"/>
+                      <InputOTPGroup className="gap-3 *:data-[slot=input-otp-slot]:rounded-md">
+                        <InputOTPSlot index={0} className="border"/>
+                        <InputOTPSlot index={1} className="border"/>
+                        <InputOTPSlot index={2} className="border"/>
+                        <InputOTPSlot index={3} className="border"/>
+                        <InputOTPSlot index={4} className="border"/>
                       </InputOTPGroup>
                     </InputOTP>
-                    {/* <FieldDescription className="text-center text-black">
-                      Enter the 6-digit code sent to your email.
-                    </FieldDescription> */}
                     {msg && msg === "Invalid code" ? (
                       <div className="text-center text-sm text-red-500">
                         {msg}
@@ -281,16 +278,16 @@ export function SignInForm({
                       <div className="text-center text-sm">{msg}</div>
                     )}
                   </Field>
-                  <Button type="submit" onClick={verifyCode} disabled={pending} className="rounded-3xl ">
+                  <Button type="submit" onClick={verifyCode} disabled={pending} className="bg-brand hover:bg-brand/75">
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
                       "Verify"
                     )}
                   </Button>
-                  <FieldDescription className="text-center text-black">
+                  <FieldDescription className="text-center">
                     Didn&apos;t receive the code?{" "}
-                    <a href="#" onClick={requestCode}>
+                    <a href="#" className="hover:!text-brand" onClick={requestCode}>
                       Resend
                     </a>
                   </FieldDescription>
@@ -300,9 +297,9 @@ export function SignInForm({
           </Card>
         </>
       )}
-      {!sent ? (<FieldDescription className="px-6 text-center pt-1 text-black">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+      {!sent ? (<FieldDescription className="px-6 text-center pt-1 ">
+        By clicking continue, you agree to our <a href="#" className="hover:!text-brand">Terms of Service</a>{" "}
+        and <a href="#" className="hover:!text-brand">Privacy Policy</a>.
       </FieldDescription>) : null}
     </div>
   );
