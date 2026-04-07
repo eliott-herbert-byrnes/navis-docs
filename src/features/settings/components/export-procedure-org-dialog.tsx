@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { FileInput, Loader2 } from "lucide-react";
 import { useState } from "react";
 import {

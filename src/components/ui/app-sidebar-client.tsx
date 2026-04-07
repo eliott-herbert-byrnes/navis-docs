@@ -47,8 +47,8 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                     src="/nd-square-blue-png.png"
                     alt="Navis Docs Logo"
                     className="rounded-xs dark:block"
-                    width="30"
-                    height="30"
+                    width={"30"}
+                    height={"30"}
                   />
                   <span className="block sm:hidden">Navis Docs</span>
                 </div>

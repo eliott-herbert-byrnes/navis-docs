@@ -6,7 +6,7 @@ import { trpc } from "@/trpc/client";
 import { AuditLogCard } from "./audit-log-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { AuditLogWithActorName } from "../utils/audit";
+import type { AuditLogWithActorName } from "../utils/audit-export-filters";
 
 const PAGE_SIZE = 20;
 

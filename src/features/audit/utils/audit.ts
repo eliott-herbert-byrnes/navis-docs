@@ -1,7 +1,11 @@
-"use server";
+import "server-only";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { getUserById } from "@/lib/auth";
+import {
+  buildAuditExportQueryOptions,
+  type AuditExportFilterSnapshot,
+} from "@/features/audit/utils/audit-export-filters";
 
 export type AuditAction =
   // Department actions
@@ -49,7 +53,12 @@ export type AuditAction =
   | "INVITATION_ACCEPTED"
   // News Actions
   | "NEWS_CREATED"
-  | "NEWS_DELETED";
+  | "NEWS_DELETED"
+  // Org audit log JSON export (async job)
+  | "AUDIT_EXPORT_REQUESTED"
+  | "AUDIT_EXPORT_READY"
+  | "AUDIT_EXPORT_DOWNLOADED"
+  | "AUDIT_EXPORT_FAILED";
 
 export type AuditEntityType =
   | "DEPARTMENT"
@@ -102,6 +111,79 @@ export async function createAuditLog(data: AuditLogData) {
   }
 }
 
+export async function logAuditExportRequested(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+  filtersSnapshot: Prisma.JsonValue;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_REQUESTED",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: {
+      jobId: input.jobId,
+      filters: input.filtersSnapshot,
+    },
+  });
+}
+
+
+export async function logAuditExportReady(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+  fileKey: string;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_READY",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: {
+      jobId: input.jobId,
+      fileKey: input.fileKey,
+    },
+  });
+}
+
+export async function logAuditExportDownloaded(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_DOWNLOADED",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: { jobId: input.jobId },
+  });
+}
+
+export async function logAuditExportFailed(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+  error: string;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_FAILED",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: {
+      jobId: input.jobId,
+      error: input.error,
+    },
+  });
+}
+
 export async function getAuditLogsWithCount(
   orgId: string,
   options?: {
@@ -113,6 +195,8 @@ export async function getAuditLogsWithCount(
     endDate?: Date;
     limit?: number;
     offset?: number;
+    /** Default `desc` (newest first). Use `asc` for export pagination. */
+    orderAt?: "asc" | "desc";
   },
 ) {
   const where: Prisma.AuditLogWhereInput = {
@@ -142,10 +226,12 @@ export async function getAuditLogsWithCount(
     }),
   };
 
+  const orderAt = options?.orderAt ?? "desc";
+
   const [logs, totalCount] = await prisma.$transaction([
     prisma.auditLog.findMany({
       where,
-      orderBy: { at: "desc" },
+      orderBy: { at: orderAt },
       take: options?.limit ?? 50,
       skip: options?.offset ?? 0,
     }),
@@ -154,6 +240,24 @@ export async function getAuditLogsWithCount(
 
   return { logs, totalCount };
 }
+
+
+export async function getAuditLogsWithCountForExport(
+  orgId: string,
+  filters: AuditExportFilterSnapshot,
+  options: { limit: number; offset: number; orderAt?: "asc" | "desc" },
+) {
+  const query = buildAuditExportQueryOptions(filters);
+  return getAuditLogsWithCount(orgId, {
+    ...query,
+    limit: options.limit,
+    offset: options.offset,
+    orderAt: options.orderAt ?? "asc",
+  });
+}
+
+export type { AuditExportFilterSnapshot } from "@/features/audit/utils/audit-export-filters";
+export { normalizeAuditExportDateRange } from "@/features/audit/utils/audit-export-filters";
 
 export type AuditLogWithActorName = {
   id: string;

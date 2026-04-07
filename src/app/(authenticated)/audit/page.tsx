@@ -1,4 +1,3 @@
-"use server";
 import { homePath, onboardingPath } from "@/app/paths";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -6,7 +5,8 @@ import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
 import {
   AuditEntityType,
-  getAuditLogsWithCount, // Changed from getAuditLogs
+  getAuditLogsWithCount,
+  normalizeAuditExportDateRange,
 } from "@/features/audit/utils/audit";
 import { AuditSearch } from "@/features/audit/components/audit-search";
 import { AuditPagination } from "@/features/audit/components/audit-pagination";
@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/ui/Heading";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { PageContainer } from "@/components/ui/page-container";
+import { AuditExportOrgButton } from "@/features/audit/components/audit-export-org-button";
 
 function AuditLogViewerSkeleton() {
   return (
@@ -61,9 +62,11 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   const search = params.search;
   const entityType = params.entityType;
 
-  // Date range params - convert ISO strings to Date objects
-  const startDate = params.startDate ? new Date(params.startDate) : undefined;
-  const endDate = params.endDate ? new Date(params.endDate) : undefined;
+  // Date range: same UTC normalization as async JSON export (calendar end = end-of-day UTC)
+  const { startDate, endDate } = normalizeAuditExportDateRange({
+    startDate: params.startDate,
+    endDate: params.endDate,
+  });
 
   // Pagination params - validate and provide defaults
   const page = Math.max(1, Number(params.page) || 1); // Ensure minimum page 1
@@ -95,6 +98,17 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
       <Heading
         title="Audit Logs"
         description="View the audit logs for your organization"
+        // Disabled for public MVP - available for OSS users.
+        // actions={
+        //   <AuditExportOrgButton
+        //     filters={{
+        //       search,
+        //       entityType,
+        //       startDate: params.startDate,
+        //       endDate: params.endDate,
+        //     }}
+        //   />
+        // }
       />
 
       {/* Search and filters */}
