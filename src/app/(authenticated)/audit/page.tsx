@@ -6,7 +6,8 @@ import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
 import {
   AuditEntityType,
-  getAuditLogsWithCount, // Changed from getAuditLogs
+  getAuditLogsWithCount,
+  normalizeAuditExportDateRange,
 } from "@/features/audit/utils/audit";
 import { AuditSearch } from "@/features/audit/components/audit-search";
 import { AuditPagination } from "@/features/audit/components/audit-pagination";
@@ -61,9 +62,11 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   const search = params.search;
   const entityType = params.entityType;
 
-  // Date range params - convert ISO strings to Date objects
-  const startDate = params.startDate ? new Date(params.startDate) : undefined;
-  const endDate = params.endDate ? new Date(params.endDate) : undefined;
+  // Date range: same UTC normalization as async JSON export (calendar end = end-of-day UTC)
+  const { startDate, endDate } = normalizeAuditExportDateRange({
+    startDate: params.startDate,
+    endDate: params.endDate,
+  });
 
   // Pagination params - validate and provide defaults
   const page = Math.max(1, Number(params.page) || 1); // Ensure minimum page 1

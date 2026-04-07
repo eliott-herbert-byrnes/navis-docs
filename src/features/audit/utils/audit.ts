@@ -2,6 +2,10 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { getUserById } from "@/lib/auth";
+import {
+  buildAuditExportQueryOptions,
+  type AuditExportFilterSnapshot,
+} from "@/features/audit/utils/audit-export-filters";
 
 export type AuditAction =
   // Department actions
@@ -191,6 +195,8 @@ export async function getAuditLogsWithCount(
     endDate?: Date;
     limit?: number;
     offset?: number;
+    /** Default `desc` (newest first). Use `asc` for export pagination. */
+    orderAt?: "asc" | "desc";
   },
 ) {
   const where: Prisma.AuditLogWhereInput = {
@@ -220,10 +226,12 @@ export async function getAuditLogsWithCount(
     }),
   };
 
+  const orderAt = options?.orderAt ?? "desc";
+
   const [logs, totalCount] = await prisma.$transaction([
     prisma.auditLog.findMany({
       where,
-      orderBy: { at: "desc" },
+      orderBy: { at: orderAt },
       take: options?.limit ?? 50,
       skip: options?.offset ?? 0,
     }),
@@ -232,6 +240,24 @@ export async function getAuditLogsWithCount(
 
   return { logs, totalCount };
 }
+
+
+export async function getAuditLogsWithCountForExport(
+  orgId: string,
+  filters: AuditExportFilterSnapshot,
+  options: { limit: number; offset: number; orderAt?: "asc" | "desc" },
+) {
+  const query = buildAuditExportQueryOptions(filters);
+  return getAuditLogsWithCount(orgId, {
+    ...query,
+    limit: options.limit,
+    offset: options.offset,
+    orderAt: options.orderAt ?? "asc",
+  });
+}
+
+export type { AuditExportFilterSnapshot } from "@/features/audit/utils/audit-export-filters";
+export { normalizeAuditExportDateRange } from "@/features/audit/utils/audit-export-filters";
 
 export type AuditLogWithActorName = {
   id: string;
