@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { AuditEntityType } from "@/features/audit/utils/audit";
+import type { AuditEntityType } from "@/features/audit/utils/audit-export-filters";
 import { trpc } from "@/trpc/client";
 import { FileJson, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

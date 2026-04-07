@@ -98,16 +98,17 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
       <Heading
         title="Audit Logs"
         description="View the audit logs for your organization"
-        actions={
-          <AuditExportOrgButton
-            filters={{
-              search,
-              entityType,
-              startDate: params.startDate,
-              endDate: params.endDate,
-            }}
-          />
-        }
+        // Disabled for public MVP - available for OSS users.
+        // actions={
+        //   <AuditExportOrgButton
+        //     filters={{
+        //       search,
+        //       entityType,
+        //       startDate: params.startDate,
+        //       endDate: params.endDate,
+        //     }}
+        //   />
+        // }
       />
 
       {/* Search and filters */}

@@ -2,6 +2,9 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { AuditEntityType } from "./audit";
 
+export type { AuditEntityType };
+export type { AuditLogWithActorName } from "./audit";
+
 const auditExportFilterSnapshotSchema = z.object({
   search: z.string().nullable().optional(),
   entityType: z
