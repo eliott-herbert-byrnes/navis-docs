@@ -1,4 +1,3 @@
-"use server";
 import { homePath, onboardingPath } from "@/app/paths";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -15,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/ui/Heading";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { PageContainer } from "@/components/ui/page-container";
+import { AuditExportOrgButton } from "@/features/audit/components/audit-export-org-button";
 
 function AuditLogViewerSkeleton() {
   return (
@@ -98,6 +98,16 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
       <Heading
         title="Audit Logs"
         description="View the audit logs for your organization"
+        actions={
+          <AuditExportOrgButton
+            filters={{
+              search,
+              entityType,
+              startDate: params.startDate,
+              endDate: params.endDate,
+            }}
+          />
+        }
       />
 
       {/* Search and filters */}

@@ -1,9 +1,38 @@
+import type { Prisma } from "@prisma/client";
+import { z } from "zod";
 import type { AuditEntityType } from "./audit";
 
-/**
- * Snapshot stored on {@link AuditExportJob} and echoed in export JSON `filters`.
- * Dates are ISO strings or null (calendar dates use YYYY-MM-DD; normalized on read).
- */
+const auditExportFilterSnapshotSchema = z.object({
+  search: z.string().nullable().optional(),
+  entityType: z
+    .enum([
+      "DEPARTMENT",
+      "TEAM",
+      "PROCEDURE",
+      "CATEGORY",
+      "USER",
+      "USER_ROLE",
+      "ORGANIZATION",
+      "ADDRESS",
+      "NEWS",
+      "INVITATION",
+      "INGESTION_JOB",
+    ])
+    .nullable()
+    .optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+});
+
+/** Parse `AuditExportJob.filtersJson` from the DB (best-effort; invalid → empty snapshot). */
+export function parseAuditExportFiltersFromJson(
+  json: Prisma.JsonValue,
+): AuditExportFilterSnapshot {
+  const parsed = auditExportFilterSnapshotSchema.safeParse(json);
+  if (!parsed.success) return {};
+  return parsed.data;
+}
+
 export type AuditExportFilterSnapshot = {
   search?: string | null;
   entityType?: AuditEntityType | null;
@@ -32,11 +61,7 @@ function parseCalendarDateOnlyString(s: string): { y: number; m: number; d: numb
   return { y, m: m - 1, d };
 }
 
-/**
- * Normalize date range for audit export queries (UTC).
- * - Calendar date strings (`YYYY-MM-DD`): start → start-of-day UTC; end → end-of-day UTC.
- * - Full ISO datetimes: used as-is (instant semantics).
- */
+
 export function normalizeAuditExportDateRange(input: {
   startDate?: Date | string | null;
   endDate?: Date | string | null;
@@ -78,7 +103,7 @@ export function normalizeAuditExportDateRange(input: {
   return out;
 }
 
-/** Maps stored export filters to the same query shape as {@link getAuditLogsWithCount} (Audit page semantics). */
+
 export function buildAuditExportQueryOptions(filters: AuditExportFilterSnapshot): {
   search?: string;
   entityType?: AuditEntityType;
