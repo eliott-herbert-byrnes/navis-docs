@@ -49,7 +49,12 @@ export type AuditAction =
   | "INVITATION_ACCEPTED"
   // News Actions
   | "NEWS_CREATED"
-  | "NEWS_DELETED";
+  | "NEWS_DELETED"
+  // Org audit log JSON export (async job)
+  | "AUDIT_EXPORT_REQUESTED"
+  | "AUDIT_EXPORT_READY"
+  | "AUDIT_EXPORT_DOWNLOADED"
+  | "AUDIT_EXPORT_FAILED";
 
 export type AuditEntityType =
   | "DEPARTMENT"
@@ -100,6 +105,79 @@ export async function createAuditLog(data: AuditLogData) {
     console.error("Failed to create audit log", error);
     return null;
   }
+}
+
+export async function logAuditExportRequested(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+  filtersSnapshot: Prisma.JsonValue;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_REQUESTED",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: {
+      jobId: input.jobId,
+      filters: input.filtersSnapshot,
+    },
+  });
+}
+
+
+export async function logAuditExportReady(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+  fileKey: string;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_READY",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: {
+      jobId: input.jobId,
+      fileKey: input.fileKey,
+    },
+  });
+}
+
+export async function logAuditExportDownloaded(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_DOWNLOADED",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: { jobId: input.jobId },
+  });
+}
+
+export async function logAuditExportFailed(input: {
+  orgId: string;
+  actorId: string;
+  jobId: string;
+  error: string;
+}) {
+  await createAuditLog({
+    orgId: input.orgId,
+    actorId: input.actorId,
+    action: "AUDIT_EXPORT_FAILED",
+    entityType: "ORGANIZATION",
+    entityId: input.orgId,
+    afterJSON: {
+      jobId: input.jobId,
+      error: input.error,
+    },
+  });
 }
 
 export async function getAuditLogsWithCount(
