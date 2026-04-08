@@ -11,11 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { PlusIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useCreateInvitation } from "../hooks/use-invite-mutations";
@@ -33,22 +28,18 @@ const InvitationCreateButton = () => {
     createInvitation(email);
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) setEmail("");
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <Button variant="outline" className="shadow-none">
-                <PlusIcon className="w-4 h-4" />
-                Invite Team Member
-              </Button>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Disabled for MVP</p>
-          </TooltipContent>
-        </Tooltip>
+        <Button variant="outline" className="shadow-none">
+          <PlusIcon className="w-4 h-4" />
+          Invite Team Member
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -73,7 +64,7 @@ const InvitationCreateButton = () => {
               className="w-[75px]"
               type="button"
               variant="outline"
-              onClick={() => setOpen(false)}
+              onClick={() => { setOpen(false); setEmail(""); }}
               disabled={isPending}
             >
               Cancel
