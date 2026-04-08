@@ -11,6 +11,10 @@ import { randomBytes } from "crypto";
 import { OrgMembershipRole } from "@prisma/client";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { revalidateTag } from "next/cache";
+import React from "react";
+import { render } from "@react-email/render";
+import { getResend } from "@/lib/resend";
+import { InviteEmail } from "@/emails/invite";
 
 export const invitesRouter = router({
   // Query: Get Invites with pagination
@@ -138,9 +142,18 @@ export const invitesRouter = router({
           },
       });
 
-      // Generate invite link (for logging/email sending)
-      const link = `${process.env.NEXTAUTH_URL}/accept-invite/${rawToken}`;
-      console.log("Invite link:", link);
+      const link = `${process.env.NEXTAUTH_URL}/auth/accept-invite?token=${rawToken}`;
+
+      const resend = getResend();
+      const html = await render(
+        React.createElement(InviteEmail, { orgName: ctx.org.name, inviteUrl: link }),
+      );
+      await resend.emails.send({
+        from: "Navis Docs <no-reply@app.navisdocs.com>",
+        to: email,
+        subject: `You've been invited to join ${ctx.org.name}`,
+        html,
+      });
 
       return {
         data: invitation,

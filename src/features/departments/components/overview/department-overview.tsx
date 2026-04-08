@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EyeIcon, Loader2 } from "lucide-react";
+import { EyeIcon, FileInput, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { DepartmentTeamTable } from "./department-team-table";
 import { DepartmentDeleteButtonSettings } from "../department-buttons/department-delete-button-settings";
@@ -98,14 +98,18 @@ const DepartmentOverview = ({
                     <div className="flex flex-col gap-1">
                       <CardTitle className="text-md">Export</CardTitle>
                       <CardDescription>
-                        Export the department and user data
+                        Export the department procedure data
                       </CardDescription>
                     </div>
-                    <Button className="w-full sm:max-w-[150px]" disabled>
-                      Department Data
-                    </Button>
-                    <Button className="w-full sm:max-w-[150px]" disabled>
-                      User Data
+                    <Button
+                      variant={"outline"}
+                      className={"flex justify-start gap-2 max-w-[230px] shadow-none"}
+                    >
+                      <FileInput
+                        className={
+                          "w-4 h-4 text-muted-foreground"}
+                      />
+                      <span className="font-semibold">Department Procedure Data</span>
                     </Button>
                   </div>
                   <Separator />
@@ -149,15 +153,6 @@ const DepartmentOverview = ({
               <Button
                 className="shadow-none border"
                 type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="shadow-none border"
-                type="button"
                 variant="default"
                 onClick={handleUpdate}
                 disabled={isPending}
@@ -167,6 +162,15 @@ const DepartmentOverview = ({
                 ) : (
                   "Update"
                 )}
+              </Button>
+              <Button
+                className="shadow-none border"
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={isPending}
+              >
+                Cancel
               </Button>
             </DialogFooter>
           </div>

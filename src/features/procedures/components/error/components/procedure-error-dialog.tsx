@@ -19,6 +19,8 @@ type ProcedureErrorDialogProps = {
   description: string;
   onSubmit: (data: { procedureId: string; errorReport: string }) => void;
   isPending: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export const ProcedureErrorDialog = ({
@@ -27,8 +29,15 @@ export const ProcedureErrorDialog = ({
   description,
   onSubmit,
   isPending,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: ProcedureErrorDialogProps) => {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled =
+    controlledOpen !== undefined && controlledOnOpenChange !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,12 +55,14 @@ export const ProcedureErrorDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" className="m-0 p-0 justify-start rounded-none">
-          <Flag className="w-4 h-4 text-muted-foreground" />
-          <span className="font-normal ml-1">Report</span>
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant="ghost" className="m-0 p-0 justify-start rounded-none">
+            <Flag className="w-4 h-4 text-muted-foreground" />
+            <span className="font-normal ml-1">Report</span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -67,6 +78,13 @@ export const ProcedureErrorDialog = ({
             maxLength={1000}
           />
           <DialogFooter className="flex flex-row gap-2 mt-4">
+            <Button className="w-[75px]" type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Report"
+              )}
+            </Button>
             <Button
               className="w-[75px]"
               type="button"
@@ -75,13 +93,6 @@ export const ProcedureErrorDialog = ({
               disabled={isPending}
             >
               Cancel
-            </Button>
-            <Button className="w-[75px]" type="submit" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Report"
-              )}
             </Button>
           </DialogFooter>
         </form>

@@ -1,17 +1,21 @@
 "use server";
 
+import React from "react";
 import { z } from "zod";
 import { createOtpFor } from "@/lib/otp";
-// import { Resend } from "resend";
+import { getResend } from "@/lib/resend";
+import { render } from "@react-email/render";
+import { headers } from "next/headers";
 import { limiter } from "../lib/rate-limit";
+import { SignInOtpEmail } from "@/emails/sign-in-otp";
 
 const schema = z.object({
   email: z.email().min(1, { message: "Is Required" }).max(191),
 });
-// const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const requestOtpAction = async (emailRaw: string) => {
-  const { success } = await limiter("otp:request");
+  const ip = (await headers()).get("x-forwarded-for") ?? "anon";
+  const { success } = await limiter(`otp:request:${ip}`);
   if (!success)
     return { ok: false, message: "Too many requests, try again later" };
 
@@ -25,17 +29,16 @@ export const requestOtpAction = async (emailRaw: string) => {
     };
   const email = parsedEmail.data.email;
 
-  const { code, expiresAt } = await createOtpFor(email);
+  const { code } = await createOtpFor(email);
 
-  console.log(code, expiresAt);
-
-  // TODO: purchase domain and add emails
-  //   await resend.emails.send({
-  //     from: "Navis Docs <no-reply@app.navisdocs.com>",
-  //     to: email,
-  //     subject: "Your sign-in code",
-  //     text: `Your Navis Docs sign-in code is ${code}. It expires at ${expiresAt.toISOString()}.`,
-  //   });
+  const resend = getResend();
+  const html = await render(React.createElement(SignInOtpEmail, { code }));
+  await resend.emails.send({
+    from: "Navis Docs <no-reply@app.navisdocs.com>",
+    to: email,
+    subject: "Your sign-in code",
+    html,
+  });
 
   return { ok: true, message: "Code sent. Check your email" };
 };
