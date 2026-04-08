@@ -14,11 +14,13 @@ import {
   ChevronDown,
   Calendar,
   FolderOpen,
+  Flag,
+  TrashIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { editProcedurePath, teamProcedurePath } from "@/app/paths";
 import { toast } from "sonner";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,14 +29,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ProcedureFavoriteButton } from "./favorite/components/procedure-favorite-button";
-import { ProcedureErrorButton } from "./error/components/procedure-error-button";
-import { ProcedureBaseDeleteButton } from "@/features/procedure-base/components/procedure-base-delete-button";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { ProcedureForViewWithRelations } from "../types/types";
 import { hasFlowDocContent } from "../utils/generate-plain-text-from-tiptap";
 import { useMarkProcedureRead } from "../hooks/use-procedure-mutations";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ProcedureBaseDeleteDialog } from "@/features/procedure-base/components/procedure-base-delete-dialog";
+import { ProcedureErrorDialog } from "./error/components/procedure-error-dialog";
+import { useCreateErrorReport } from "./error/hooks/use-errors-mutations";
+import { useDeleteProcedureFromBase } from "@/features/procedure-base/hook/use-procedure-base-mutations";
 
 type ProcedureViewActionsProps = {
   procedureId: string;
@@ -68,6 +72,9 @@ export function ProcedureViewActions({
   const { departmentId, teamId } = useProcedureRouteContext();
   const { markProcedureRead, isPending: isMarkReadPending } =
     useMarkProcedureRead();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const { createErrorReport, isPending: isErrorPending } = useCreateErrorReport();
   const isFlowWithDoc =
     procedure.style === "FLOW" &&
     hasFlowDocContent(procedure.publishedVersion?.contentJSON);
@@ -128,6 +135,9 @@ export function ProcedureViewActions({
   const handleDeleteSuccess = () => {
     router.push(teamProcedurePath(departmentId, teamId));
   };
+
+  const { deleteProcedure, isPending: isDeletePending } =
+    useDeleteProcedureFromBase({ onSuccess: handleDeleteSuccess });
 
   const dropdownButtons = (
     <DropdownMenu>
@@ -203,21 +213,49 @@ export function ProcedureViewActions({
           />
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
-          <ProcedureErrorButton procedureId={procedureId} />
+        <DropdownMenuItem
+          onClick={() => setErrorDialogOpen(true)}
+          className="px-3 py-2"
+        >
+          <Flag className="w-4 h-4 mr-1" />
+          Report
         </DropdownMenuItem>
 
-        {/* <DropdownMenuSeparator /> */}
         {canEdit && (
-          <DropdownMenuItem asChild>
-            <ProcedureBaseDeleteButton
-              procedureId={procedureId}
-              onSuccess={handleDeleteSuccess}
-            />
+          <DropdownMenuItem
+            onClick={() => setDeleteDialogOpen(true)}
+            className="px-3 py-2 text-destructive focus:text-destructive"
+          >
+            <TrashIcon className="w-4 h-4 mr-1" />
+            Delete
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+
+  const dialogs = (
+    <>
+      <ProcedureErrorDialog
+        title="Report Issue"
+        description="Report an issue with this procedure"
+        onSubmit={createErrorReport}
+        isPending={isErrorPending}
+        procedureId={procedureId}
+        open={errorDialogOpen}
+        onOpenChange={setErrorDialogOpen}
+      />
+      {canEdit && (
+        <ProcedureBaseDeleteDialog
+          title="Are you sure you want to delete this procedure?"
+          description="This action cannot be undone."
+          onConfirm={async () => { await deleteProcedure(procedureId); }}
+          isPending={isDeletePending}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+        />
+      )}
+    </>
   );
 
   const formatDate = (date: Date) => {
@@ -278,6 +316,7 @@ export function ProcedureViewActions({
           </div>
         </div>
       </Card>
+      {dialogs}
     </div>
   );
 }
