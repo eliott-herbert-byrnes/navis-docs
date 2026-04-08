@@ -35,13 +35,11 @@ const DepartmentDeleteDialogSettings = ({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger>
-                {/* <div className="flex flex-row text-sm gap-2 py-2 px-4 font-semibold items-center hover:bg-gray-100"> */}
+            <DialogTrigger asChild>
                 <Button className="flex w-38" variant="destructive">
                     <TrashIcon className="w-4 h-4" />
                     Delete
                 </Button>
-                {/* </div> */}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
