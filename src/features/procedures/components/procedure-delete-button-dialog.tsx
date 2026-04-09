@@ -18,15 +18,25 @@ type ProcedureDeleteButtonDialogProps = {
   description: string;
   isPending: boolean;
   onConfirm: () => void;
+  /** When set with onOpenChange, omits the default trigger (e.g. open from a menu). */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 const ProcedureDeleteButtonDialog = ({
   title,
   description,
   isPending,
   onConfirm,
+  open: openProp,
+  onOpenChange: onOpenChangeProp,
 }: ProcedureDeleteButtonDialogProps) => {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const { isAdmin } = useAuthContext();
+
+  const isControlled =
+    typeof openProp === "boolean" && typeof onOpenChangeProp === "function";
+  const open = isControlled ? openProp : internalOpen;
+  const setOpen = isControlled ? onOpenChangeProp! : setInternalOpen;
 
   const handleConfirm = () => {
     onConfirm();
@@ -35,12 +45,14 @@ const ProcedureDeleteButtonDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="destructive" size="sm" disabled={!isAdmin}>
-          <TrashIcon className="h-4 w-4 mr-2" />
-          {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete"}
-        </Button>
-      </DialogTrigger>
+      {!isControlled ? (
+        <DialogTrigger asChild>
+          <Button variant="destructive" size="sm" disabled={!isAdmin}>
+            <TrashIcon className="h-4 w-4 mr-2" />
+            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete"}
+          </Button>
+        </DialogTrigger>
+      ) : null}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
