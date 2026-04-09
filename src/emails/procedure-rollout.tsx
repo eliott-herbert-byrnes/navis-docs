@@ -36,10 +36,14 @@ export function ProcedureRolloutEmail({
   return (
     <Html lang="en">
       <Head />
+
       <Preview>New procedure: {procedureTitle}</Preview>
       <Tailwind>
         <Body className="bg-gray-50 font-sans text-gray-800">
           <Container className="bg-white shadow-sm rounded-lg my-10 mx-auto p-8 max-w-[560px] mb-16">
+            <Text className="font-serif text-3xl">
+              Navis Docs
+            </Text>
             <Section className="mb-6">
               <Text className="text-2xl font-bold text-gray-900 m-0">
                 Procedure published

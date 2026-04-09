@@ -23,7 +23,6 @@ export function SignInOtpEmail({ code }: SignInOtpEmailProps) {
         <Body className="bg-gray-50 font-sans text-gray-800">
           <Container className="bg-white shadow-sm rounded-lg my-10 mx-auto p-8 max-w-[560px] mb-16">
             <div className="flex flex-row items-center gap-2">
-              <Img src="https://navisdocs.com/nd-square-blue-png.png" width={35} height={35} alt="Navis Docs Logo" />
               <Text className="font-serif text-3xl">
                 Navis Docs
               </Text>
