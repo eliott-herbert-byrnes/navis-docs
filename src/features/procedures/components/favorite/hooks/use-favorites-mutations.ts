@@ -10,6 +10,7 @@ export function useToggleFavorite() {
 
   const mutation = trpc.favorites.toggleFavorite.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.favorites.getFavorites.invalidate();
       utils.procedures.getForView.invalidate();
 
