@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EyeIcon, FileInput, Loader2 } from "lucide-react";
+import { EyeIcon, FileInput } from "lucide-react";
 import { useState } from "react";
 import { DepartmentTeamTable } from "./department-team-table";
 import { DepartmentDeleteButtonSettings } from "../department-buttons/department-delete-button-settings";
@@ -155,13 +155,9 @@ const DepartmentOverview = ({
                 type="button"
                 variant="default"
                 onClick={handleUpdate}
-                disabled={isPending}
+                isLoading={isPending}
               >
-                {isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  "Update"
-                )}
+                Update
               </Button>
               <Button
                 className="shadow-none border"

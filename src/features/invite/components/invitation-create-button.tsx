@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { PlusIcon, Loader2 } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useCreateInvitation } from "../hooks/use-invite-mutations";
 
@@ -69,8 +69,7 @@ const InvitationCreateButton = () => {
             >
               Cancel
             </Button>
-            <Button className="w-[75px]" type="submit" disabled={isPending}>
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button className="w-[75px]" type="submit" isLoading={isPending}>
               Invite
             </Button>
           </DialogFooter>

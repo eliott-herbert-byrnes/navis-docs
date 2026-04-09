@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { TrashIcon, Loader2 } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 
 type ProcedureErrorDeleteDialogProps = {
@@ -63,13 +63,9 @@ const ProcedureErrorDeleteDialog = ({
           <Button
             className="w-[75px] shadow-none"
             onClick={handleConfirm}
-            disabled={isPending}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              "Delete"
-            )}
+            Delete
           </Button>
           <Button
             className="w-[75px] shadow-none"

@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Flag, Loader2 } from "lucide-react";
+import { Flag } from "lucide-react";
 import { useState, FormEvent } from "react";
 
 type ProcedureErrorDialogProps = {
@@ -78,12 +78,8 @@ export const ProcedureErrorDialog = ({
             maxLength={1000}
           />
           <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button className="w-[75px]" type="submit" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Report"
-              )}
+            <Button className="w-[75px]" type="submit" isLoading={isPending}>
+              Report
             </Button>
             <Button
               className="w-[75px]"

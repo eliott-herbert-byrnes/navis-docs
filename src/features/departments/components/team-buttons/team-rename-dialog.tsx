@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Loader2, PencilIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useState } from "react";
 
 type TeamRenameDialogProps = {
@@ -93,15 +93,10 @@ const TeamRenameDialog = ({
             type="button"
             variant="default"
             onClick={handleConfirm}
-            disabled={
-              isPending || !teamName.trim() || newTeamName.trim() === teamName
-            }
+            disabled={!teamName.trim() || newTeamName.trim() === teamName}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Rename"
-            )}
+            Rename
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 type NewsDeleteDialogProps = {
@@ -51,13 +51,9 @@ const NewsDeleteDialog = ({
             variant="default"
             size="sm"
             onClick={handleConfirm}
-            disabled={isPending}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Delete"
-            )}
+            Delete
           </Button>
           <Button
             className="w-[75px]"

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@radix-ui/react-separator";
-import { Loader2, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -89,9 +89,10 @@ const CreateTeamDialog = ({
             type="button"
             variant="default"
             onClick={handleConfirm}
-            disabled={isPending || !teamName.trim()}
+            disabled={!teamName.trim()}
+            isLoading={isPending}
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add"}
+            Add
           </Button>
           <Button
             className="w-[75px] shadow-none border"

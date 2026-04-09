@@ -150,14 +150,9 @@ export function AuditExportOrgButton({ filters }: AuditExportOrgButtonProps) {
           <Button
             type="button"
             onClick={handleStart}
-            disabled={busy}
-            className="min-w-[100px]"
+            isLoading={busy}
           >
-            {busy ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              "Start export"
-            )}
+            Start export
           </Button>
         </DialogFooter>
       </DialogContent>
