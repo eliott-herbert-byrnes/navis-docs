@@ -44,6 +44,7 @@ type SaveProcedureParams = {
   setIsSaving: (value: boolean) => void;
   setHasUnsavedChanges: (value: boolean) => void;
   silent?: boolean;
+  onSaveSuccess?: () => void;
 };
 
 type PublishProcedureParams = {
@@ -60,6 +61,7 @@ export const handleSaveProcedure = async ({
   setIsSaving,
   setHasUnsavedChanges,
   silent = false,
+  onSaveSuccess,
 }: SaveProcedureParams) => {
   if (!procedure.pendingVersion) {
     toast.error("No pending version found, save a draft first");
@@ -72,6 +74,9 @@ export const handleSaveProcedure = async ({
     onSuccess: () => {
       setHasUnsavedChanges(false);
       setIsSaving(false);
+      if (!silent) {
+        onSaveSuccess?.();
+      }
     },
     onError: (error) => {
       setIsSaving(false);

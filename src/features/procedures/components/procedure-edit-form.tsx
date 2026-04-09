@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, useCallback, useEffect } from "react";
-import { teamProcedurePath } from "@/app/paths";
+import { teamProcedurePath, viewProcedurePath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle } from "lucide-react";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -168,9 +168,14 @@ export const EditProcedureForm = ({
         setIsSaving,
         setHasUnsavedChanges,
         silent,
+        onSaveSuccess:
+          procedure.status === "PUBLISHED"
+            ? () =>
+                router.push(viewProcedurePath(departmentId, teamId, procedureId))
+            : undefined,
       });
     },
-    [procedure, procedureId, content, updateProcedureContent],
+    [procedure, procedureId, content, updateProcedureContent, departmentId, teamId, router],
   );
 
   useEffect(() => {
