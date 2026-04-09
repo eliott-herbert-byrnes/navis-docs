@@ -56,7 +56,7 @@ export function ProcedureSidebar({
     { teamId },
     {
       initialData,
-      staleTime: 1000 * 60, // 1 minute — contains user-specific activity data
+      staleTime: 1000 * 60, 
     },
   );
 

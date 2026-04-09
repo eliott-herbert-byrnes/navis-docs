@@ -14,6 +14,7 @@ export function useDeleteProcedureFromBase(
 
   const mutation = trpc.procedures.deleteProcedure.useMutation({
     onSuccess: () => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.getProceduresForBase.invalidate();
       utils.procedures.getForView.invalidate();
       utils.procedures.getOutstandingForCurrentUser.invalidate();
@@ -44,6 +45,7 @@ export function useDeleteProceduresFromBase() {
 
   const mutation = trpc.procedures.deleteProcedures.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.getProceduresForBase.invalidate();
       utils.favorites.getFavorites.invalidate();
       utils.procedures.getForView.invalidate();
@@ -76,7 +78,9 @@ export function useUpdateProcedureCategory() {
 
   const mutation = trpc.procedures.updateProcedureCategory.useMutation({
     onSuccess: () => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.getProceduresForBase.invalidate();
+      utils.procedures.categoriesWithProcedures.invalidate();
       toast.success("Category updated");
     },
     onError: (error) => {

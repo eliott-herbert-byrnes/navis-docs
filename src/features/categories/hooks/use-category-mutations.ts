@@ -8,6 +8,7 @@ export function useDeleteCategory() {
 
   const mutation = trpc.categories.deleteCategory.useMutation({
     onSuccess: () => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.categories.getCategoriesForList.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
       toast.success("Category deleted");
@@ -35,6 +36,7 @@ export function useDeleteCategories() {
 
   const mutation = trpc.categories.deleteCategories.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.categories.getCategoriesForList.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
       const count = data?.data?.deletedCount ?? 0;

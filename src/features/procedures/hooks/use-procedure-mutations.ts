@@ -20,6 +20,7 @@ export function useCreateProcedure(departmentId: string, teamId: string, options
   const router = useRouter();
   const mutation = trpc.procedures.createProcedure.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.list.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
       if (data?.data?.id) {
@@ -72,6 +73,7 @@ export function usePublishProcedure(departmentId: string, teamId: string) {
   const router = useRouter();
   const mutation = trpc.procedures.publishProcedure.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.list.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
       utils.procedures.getForView.invalidate();
@@ -109,6 +111,7 @@ export function useMarkProcedureRead() {
   const router = useRouter();
   const mutation = trpc.procedures.markProcedureRead.useMutation({
     onSuccess: (_data, variables) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.getForView.invalidate({
         procedureId: variables.procedureId,
       });
@@ -137,6 +140,7 @@ export function useUpdateProcedureContent() {
   const utils = trpc.useUtils();
   const mutation = trpc.procedures.updateProcedureContent.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       if (data?.data?.id) {
         utils.procedures.getForEdit.invalidate({ procedureId: data.data.id });
       }
@@ -192,6 +196,7 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
   const router = useRouter();
   const mutation = trpc.procedures.deleteProcedure.useMutation({
     onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
       utils.procedures.list.invalidate();
       utils.favorites.getFavorites.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
@@ -201,7 +206,6 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
       toast.success("Procedure deleted successfully, redirecting...");
 
       router.push(teamProcedurePath(departmentId, teamId));
-
     },
     onError: (error) => {
       toast.error(
