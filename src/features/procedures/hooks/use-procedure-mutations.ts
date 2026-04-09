@@ -26,7 +26,6 @@ export function useCreateProcedure(departmentId: string, teamId: string, options
         if (options?.redirectOnSuccess !== false) {
           toast.success("Procedure created successfully, redirecting to editor");
           router.push(editProcedurePath(departmentId, teamId, data.data.id));
-          router.refresh();
         } else {
           utils.procedures.getProceduresForBase.invalidate();
           toast.success("Procedure created successfully");
@@ -75,6 +74,8 @@ export function usePublishProcedure(departmentId: string, teamId: string) {
     onSuccess: (data) => {
       utils.procedures.list.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
+      utils.procedures.getForView.invalidate();
+      utils.procedures.getOutstandingForCurrentUser.invalidate();
       if (data?.data?.id) {
         utils.procedures.getForEdit.invalidate({ procedureId: data.data.id });
       }
@@ -82,7 +83,6 @@ export function usePublishProcedure(departmentId: string, teamId: string) {
       if (data?.data?.id) {
         router.push(viewProcedurePath(departmentId, teamId, data.data.id));
       }
-      router.refresh();
     },
     onError: (error) => {
       toast.error(
@@ -193,6 +193,7 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
   const mutation = trpc.procedures.deleteProcedure.useMutation({
     onSuccess: (data) => {
       utils.procedures.list.invalidate();
+      utils.favorites.getFavorites.invalidate();
       utils.procedures.categoriesWithProcedures.invalidate();
       if (data?.data?.id) {
         utils.procedures.getForEdit.invalidate({ procedureId: data.data.id });
@@ -201,7 +202,6 @@ export function useDeleteProcedure(departmentId: string, teamId: string) {
 
       router.push(teamProcedurePath(departmentId, teamId));
 
-      router.refresh();
     },
     onError: (error) => {
       toast.error(

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export function useDeleteOrg() {
-  const utils = trpc.useUtils();
   const [open, setOpen] = useState(false);
 
   const mutation = trpc.organization.deleteOrganization.useMutation({

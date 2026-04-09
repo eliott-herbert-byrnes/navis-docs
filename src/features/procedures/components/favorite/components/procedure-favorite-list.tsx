@@ -12,9 +12,10 @@ import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 
 export function FavoriteList() {
   const { departmentId, teamId } = useProcedureRouteContext();
-  const { data, isLoading, error } = trpc.favorites.getFavorites.useQuery({
-    teamId,
-  });
+  const { data, isLoading, error } = trpc.favorites.getFavorites.useQuery(
+    { teamId },
+    { staleTime: 1000 * 60 }, 
+  );
 
   if (isLoading) {
     return (

@@ -1,6 +1,7 @@
 import { router, orgProcedure, rateLimitMiddleware } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const procedureIdSchema = z.uuid();
@@ -81,6 +82,7 @@ export const favoritesRouter = router({
             },
           },
         },
+        select: { id: true, teamId: true, team: { select: { departmentId: true } } },
       });
 
       if (!procedure) {
@@ -114,6 +116,11 @@ export const favoritesRouter = router({
           update: {},
         });
       }
+
+      revalidatePath(
+        `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
+        "layout",
+      );
 
       return {
         data: {

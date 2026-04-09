@@ -16,32 +16,14 @@ export default async function ProcedureLayout({
   const { isAdmin } = ctx;
 
   const trpc = await serverTrpc();
-  const [
-    { data: procedures },
-    { data: categories },
-    { data: outstanding },
-    { count: unreadNewsCount },
-  ] = await Promise.all([
-    trpc.procedures.list({ teamId }),
-    trpc.procedures.categoriesWithProcedures({ teamId }),
-    trpc.procedures.getOutstandingForCurrentUser({}),
-    trpc.news.getUnreadNewsCountForCurrentUser({ teamId }),
-  ]);
-
-  const unreadProcedureVersionIds =
-    outstanding?.map(
-      ({ procedureId, versionId }) => `${procedureId}:${versionId}`,
-    ) ?? [];
+  const initialSidebarData = await trpc.sidebar.getSidebarData({ teamId });
 
   return (
       <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
         <div className="sm:grid sm:col-span-24 sm:grid-cols-24">
             <ProcedureSidebar
               isAdmin={isAdmin}
-              uncategorizedProcedures={procedures}
-              categories={categories}
-              unreadProcedureVersionIds={unreadProcedureVersionIds}
-              unreadNewsCount={unreadNewsCount ?? 0}
+              initialData={initialSidebarData}
             />
 
             <main className="sm:col-span-14 sm:col-start-8 lg:col-span-16 lg:col-start-6">{children}</main>

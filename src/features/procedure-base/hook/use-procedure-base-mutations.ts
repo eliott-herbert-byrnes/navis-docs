@@ -17,6 +17,7 @@ export function useDeleteProcedureFromBase(
       utils.procedures.getProceduresForBase.invalidate();
       utils.procedures.getForView.invalidate();
       utils.procedures.getOutstandingForCurrentUser.invalidate();
+      utils.favorites.getFavorites.invalidate();
       toast.success("Procedure deleted");
       options?.onSuccess?.();
     },
@@ -44,6 +45,9 @@ export function useDeleteProceduresFromBase() {
   const mutation = trpc.procedures.deleteProcedures.useMutation({
     onSuccess: (data) => {
       utils.procedures.getProceduresForBase.invalidate();
+      utils.favorites.getFavorites.invalidate();
+      utils.procedures.getForView.invalidate();
+      utils.procedures.getOutstandingForCurrentUser.invalidate();
       const count = data?.data?.deletedCount ?? 0;
       toast.success(
         count === 1 ? "Procedure deleted" : `${count} procedures deleted`,

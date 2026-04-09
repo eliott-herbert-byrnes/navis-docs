@@ -11,7 +11,6 @@ export function useCreateOrganization() {
     onSuccess: () => {
       toast.success("Organization created successfully");
       router.replace(homePath());
-      router.refresh();
     },
     onError: (error) => {
       toast.error(
