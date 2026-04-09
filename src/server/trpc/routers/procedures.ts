@@ -34,21 +34,44 @@ const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
 const procedureSchema = z.string();
 const procedureIdSchema = z.uuid();
-const createProcedureSchema = z.object({
-  departmentId: z.string().min(1, { message: "Department is required" }),
-  teamId: z.string().min(1, { message: "Team is required" }),
-  procedureTitle: z.string().min(1, { message: "Is Required" }).max(100),
-  procedureDescription: z.string().min(1, { message: "Is Required" }).max(500),
-  procedureCategoryId: z.string().optional(),
-  newProcedureCategory: z.boolean().optional(),
-  newProcedureCategoryName: z.string().optional(),
-  procedureStyle: z.enum(["raw", "steps", "flow", "yesno"]),
-  notifyOnPublish: z.boolean().optional(),
-  notifyRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
-  emailOnPublish: z.boolean().optional(),
-  emailRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
-  newsOnPublish: z.boolean().optional(),
+
+const procedureTitleFieldSchema = z
+  .string()
+  .min(1, { message: "Is Required" })
+  .max(100);
+
+const procedureDescriptionFieldSchema = z
+  .string()
+  .min(1, { message: "Is Required" })
+  .max(500);
+
+const procedureTitleDescriptionFieldsSchema = z.object({
+  procedureTitle: procedureTitleFieldSchema,
+  procedureDescription: procedureDescriptionFieldSchema,
 });
+
+const createProcedureSchema = z
+  .object({
+    departmentId: z.string().min(1, { message: "Department is required" }),
+    teamId: z.string().min(1, { message: "Team is required" }),
+    procedureCategoryId: z.string().optional(),
+    newProcedureCategory: z.boolean().optional(),
+    newProcedureCategoryName: z.string().optional(),
+    procedureStyle: z.enum(["raw", "steps", "flow", "yesno"]),
+    notifyOnPublish: z.boolean().optional(),
+    notifyRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
+    emailOnPublish: z.boolean().optional(),
+    emailRoleFilter: z.enum(RolloutRoleFilter).nullable().optional(),
+    newsOnPublish: z.boolean().optional(),
+  })
+  .merge(procedureTitleDescriptionFieldsSchema);
+
+const updateProcedureDetailsSchema = z
+  .object({
+    procedureId: procedureIdSchema,
+  })
+  .merge(procedureTitleDescriptionFieldsSchema);
+
 const updateProcedureContentSchema = z.object({
   procedureId: z.uuid(),
   versionId: z.uuid(),
@@ -1225,6 +1248,127 @@ export const procedureRouter = router({
         "layout",
       );
       return { data: { id: procedure.id, categoryId: input.categoryId } };
+    }),
+
+  updateProcedureDetails: adminProcedure
+    .use(rateLimitMiddleware("procedure-update-details"))
+    .input(updateProcedureDetailsSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found, reauthenticate your current session",
+        });
+      }
+
+      const procedure = await ctx.db.procedure.findFirst({
+        where: {
+          id: input.procedureId,
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          slug: true,
+          teamId: true,
+          team: { select: { departmentId: true } },
+        },
+      });
+
+      if (!procedure) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Procedure not found, refresh the page or select another procedure",
+        });
+      }
+
+      const procedureTitle = input.procedureTitle.trim();
+      const procedureDescription = input.procedureDescription.trim();
+
+      if (!procedureTitle.length || !procedureDescription.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Title and description cannot be empty",
+        });
+      }
+
+      const previousTitle = procedure.title.trim();
+      const previousDescription = (procedure.description ?? "").trim();
+
+      if (
+        procedureTitle === previousTitle &&
+        procedureDescription === previousDescription
+      ) {
+        return { data: { id: procedure.id } };
+      }
+
+      const titleChanged = procedureTitle !== previousTitle;
+
+      if (titleChanged) {
+        const existingName = await ctx.db.procedure.findFirst({
+          where: {
+            id: { not: input.procedureId },
+            title: procedureTitle,
+            team: {
+              department: {
+                orgId: ctx.org.id,
+              },
+            },
+          },
+        });
+
+        if (existingName) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "This title has already been taken, choose another",
+          });
+        }
+      }
+
+      const newSlug = titleChanged
+        ? makeSlugFromTitle(procedureTitle)
+        : procedure.slug;
+
+      await ctx.db.procedure.update({
+        where: { id: procedure.id },
+        data: {
+          title: procedureTitle,
+          description: procedureDescription,
+          ...(titleChanged ? { slug: newSlug } : {}),
+        },
+      });
+
+      await createAuditLog({
+        orgId: ctx.org.id,
+        actorId: ctx.user?.id ?? "",
+        action: "PROCEDURE_DETAILS_UPDATED",
+        entityType: "PROCEDURE",
+        entityId: procedure.id,
+        beforeJSON: {
+          title: procedure.title,
+          description: procedure.description,
+          slug: procedure.slug,
+        },
+        afterJSON: {
+          title: procedureTitle,
+          description: procedureDescription,
+          slug: newSlug,
+        },
+      });
+
+      revalidateTag(`org-dashboard-${ctx.org.id}`, "max");
+      revalidatePath(
+        `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
+        "layout",
+      );
+
+      return { data: { id: procedure.id } };
     }),
 
   // Mutate: Update Procedure Content

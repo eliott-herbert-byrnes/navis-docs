@@ -191,6 +191,57 @@ export function useUpdateProcedureContent() {
   };
 }
 
+export function useUpdateProcedureDetails() {
+  const utils = trpc.useUtils();
+  const mutation = trpc.procedures.updateProcedureDetails.useMutation({
+    onSuccess: (data) => {
+      utils.sidebar.getSidebarData.invalidate();
+      if (data?.data?.id) {
+        utils.procedures.getForEdit.invalidate({ procedureId: data.data.id });
+        utils.procedures.getForView.invalidate({ procedureId: data.data.id });
+      }
+      utils.procedures.list.invalidate();
+      utils.procedures.categoriesWithProcedures.invalidate();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ||
+          "Failed to update procedure details, try again or contact support",
+      );
+    },
+  });
+
+  const updateProcedureDetails = (
+    input: {
+      procedureId: string;
+      procedureTitle: string;
+      procedureDescription: string;
+    },
+    options?: {
+      onSuccess?: () => void;
+      onError?: (error: Error) => void;
+      silent?: boolean;
+    },
+  ) => {
+    mutation.mutate(input, {
+      onSuccess: () => {
+        if (!options?.silent) {
+          toast.success("Procedure details updated");
+        }
+        options?.onSuccess?.();
+      },
+      onError: (error) => {
+        options?.onError?.(error as unknown as Error);
+      },
+    });
+  };
+
+  return {
+    updateProcedureDetails,
+    isPending: mutation.isPending,
+  };
+}
+
 export function useDeleteProcedure(departmentId: string, teamId: string) {
   const utils = trpc.useUtils();
   const router = useRouter();
