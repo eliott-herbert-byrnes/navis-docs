@@ -19,6 +19,11 @@ vi.mock("@/lib/supabase/admin", () => ({
   },
 }));
 
+vi.mock("next/cache", () => ({
+  revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
+}));
+
 import { procedureRouter } from "@/server/trpc/routers/procedures";
 
 describe("Procedure Router - publishProcedure", () => {
@@ -55,8 +60,10 @@ describe("Procedure Router - publishProcedure", () => {
   it("publishes a procedure and stores extracted text from custom stepsContainer nodes in contentText", async () => {
     mockFindUnique.mockResolvedValue({
       id: procedureId,
+      teamId: "team-1",
       status: "DRAFT",
       publishedVersionId: null,
+      team: { departmentId: "dept-1" },
       pendingVersion: {
         id: versionId,
         contentJSON: {
@@ -124,8 +131,10 @@ describe("Procedure Router - publishProcedure", () => {
   it("publishes a procedure and stores extracted step heading/description in contentText", async () => {
     mockFindUnique.mockResolvedValue({
       id: procedureId,
+      teamId: "team-1",
       status: "DRAFT",
       publishedVersionId: null,
+      team: { departmentId: "dept-1" },
       pendingVersion: {
         id: versionId,
         contentJSON: {
