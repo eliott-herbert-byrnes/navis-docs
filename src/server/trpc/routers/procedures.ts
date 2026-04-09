@@ -118,6 +118,65 @@ export const procedureRouter = router({
       return { procedures };
     }),
 
+  // Query: GET-all procedures for export scoped to a department
+  listForExportByDepartment: adminProcedure
+    .use(rateLimitMiddleware("procedure-get-procedures-for-export-by-department"))
+    .input(z.object({ departmentId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found, reauthenticate your current session",
+        });
+      }
+
+      const procedures = await ctx.db.procedure.findMany({
+        where: {
+          team: {
+            department: {
+              id: input.departmentId,
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          description: true,
+          status: true,
+          createdAt: true,
+          pendingVersion: true,
+          publishedVersion: true,
+          category: {
+            select: { name: true },
+          },
+          team: {
+            select: {
+              name: true,
+              department: {
+                select: { name: true },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { team: { name: "asc" } },
+          { title: "asc" },
+        ],
+        take: 5000,
+      });
+
+      if (!procedures) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No procedures found for this department",
+        });
+      }
+
+      return { procedures };
+    }),
+
   // Query: GET-list uncategorized procedures
   list: orgProcedure
     .input(
