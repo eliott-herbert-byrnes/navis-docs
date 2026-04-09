@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useTransition } from "react";
+import { useState } from "react";
 import { useToggleFavorite } from "../hooks/use-favorites-mutations";
 import { Button } from "@/components/ui/button";
 import { Loader2, Star } from "lucide-react";
@@ -17,17 +17,12 @@ export function ProcedureFavoriteButton({
   showLabel = false,
 }: ProcedureFavoriteButtonProps) {
   const { toggleFavorite, isPending } = useToggleFavorite();
-  const [optimisticIsFavorite, setOptimisticIsFavorite] =
-    useOptimistic(initialIsFavorite);
-  const [, startTransition] = useTransition();
-
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
 
   const handleToggle = () => {
-    startTransition(() => {
-      setOptimisticIsFavorite(!optimisticIsFavorite);
-    });
-
-    toggleFavorite(procedureId, optimisticIsFavorite);
+    const next = !isFavorite;
+    setIsFavorite(next);
+    toggleFavorite(procedureId, isFavorite, () => setIsFavorite(!next));
   };
 
   return (
@@ -41,12 +36,12 @@ export function ProcedureFavoriteButton({
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
         <Star
-          className={`w-4 h-4 ${optimisticIsFavorite ? "fill-brand text-brand" : ""}`}
+          className={`w-4 h-4 ${isFavorite ? "fill-brand text-brand" : ""}`}
         />
       )}
       {showLabel && (
         <span className="ml-1 font-normal">
-          {optimisticIsFavorite ? "Unfavorite" : "Favorite"}
+          {isFavorite ? "Unfavorite" : "Favorite"}
         </span>
       )}
     </Button>

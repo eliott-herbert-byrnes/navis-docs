@@ -22,11 +22,12 @@ export function useToggleFavorite() {
     },
   });
 
-  const toggleFavorite = (procedureId: string, isFavorited: boolean) => {
-    mutation.mutate({
-      procedureId,
-      isFavorited,
-    });
+  const toggleFavorite = (
+    procedureId: string,
+    isFavorited: boolean,
+    onError?: () => void,
+  ) => {
+    mutation.mutate({ procedureId, isFavorited }, { onError });
   };
 
   return {
