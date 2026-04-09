@@ -2,11 +2,9 @@
 
 import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 export function useToggleFavorite() {
   const utils = trpc.useUtils();
-  const router = useRouter();
 
   const mutation = trpc.favorites.toggleFavorite.useMutation({
     onSuccess: (data) => {
@@ -15,8 +13,6 @@ export function useToggleFavorite() {
       utils.procedures.getForView.invalidate();
 
       toast.success(data.message);
-
-      router.refresh();
     },
     onError: (error) => {
       toast.error(

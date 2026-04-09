@@ -4,8 +4,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { viewProcedurePath } from "@/app/paths";
-import { ProcedureFavoriteButton } from "./procedure-favorite-button";
-import { FileText, Folder, Star } from "lucide-react";
+// import { ProcedureFavoriteButton } from "./procedure-favorite-button";
+import { Folder, Star } from "lucide-react";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
@@ -75,7 +75,7 @@ export function FavoriteList() {
                   {procedure.title}
                 </CardTitle>
                 <Star
-                  className={`mt-0 w-6 h-6 fill-brand text-brand`}
+                  className={`w-5 h-5 fill-brand text-brand`}
                 />
               </div>
             </CardHeader>
