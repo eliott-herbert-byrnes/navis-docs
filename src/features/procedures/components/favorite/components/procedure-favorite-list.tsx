@@ -74,10 +74,12 @@ export function FavoriteList() {
                 <CardTitle className="text-base light:hover:text-black/65 dark:hover:text-white/75 transition-colors line-clamp-2">
                   {procedure.title}
                 </CardTitle>
-                <ProcedureFavoriteButton
-                  procedureId={procedure.id}
-                  initialIsFavorite={true}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ProcedureFavoriteButton
+                    procedureId={procedure.id}
+                    initialIsFavorite={true}
+                  />
+                </div>
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
