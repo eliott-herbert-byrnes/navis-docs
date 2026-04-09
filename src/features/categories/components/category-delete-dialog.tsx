@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 
 type CategoryDeleteDialogProps = {
@@ -66,13 +66,9 @@ export function CategoryDeleteDialog({
             type="button"
             variant="default"
             onClick={handleConfirm}
-            disabled={isPending}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Delete"
-            )}
+            Delete
           </Button>
           <Button
             className="w-[75px] shadow-none border"

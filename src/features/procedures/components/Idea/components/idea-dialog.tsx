@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
-import { Lightbulb, Loader2 } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { useState, FormEvent } from "react";
 
 type ProcedureIdeaDialogProps = {
@@ -84,12 +84,8 @@ const ProcedureIdeaDialog = ({
             />
           </div>
           <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button className="w-[75px] shadow-none border" type="submit" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Submit"
-              )}
+            <Button className="w-[75px] shadow-none border" type="submit" isLoading={isPending}>
+              Submit
             </Button>
             <Button
               className="w-[75px] shadow-none border"

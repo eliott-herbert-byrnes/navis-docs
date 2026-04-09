@@ -28,7 +28,7 @@ import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generat
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
 import { inngest } from "@/inngest/client";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -112,6 +112,65 @@ export const procedureRouter = router({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "No procedures found, try a different search or team",
+        });
+      }
+
+      return { procedures };
+    }),
+
+  // Query: GET-all procedures for export scoped to a department
+  listForExportByDepartment: adminProcedure
+    .use(rateLimitMiddleware("procedure-get-procedures-for-export-by-department"))
+    .input(z.object({ departmentId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No organization found, reauthenticate your current session",
+        });
+      }
+
+      const procedures = await ctx.db.procedure.findMany({
+        where: {
+          team: {
+            department: {
+              id: input.departmentId,
+              orgId: ctx.org.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          description: true,
+          status: true,
+          createdAt: true,
+          pendingVersion: true,
+          publishedVersion: true,
+          category: {
+            select: { name: true },
+          },
+          team: {
+            select: {
+              name: true,
+              department: {
+                select: { name: true },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { team: { name: "asc" } },
+          { title: "asc" },
+        ],
+        take: 5000,
+      });
+
+      if (!procedures) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No procedures found for this department",
         });
       }
 
@@ -644,6 +703,7 @@ export const procedureRouter = router({
       });
 
       revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidatePath(`/departments/${input.departmentId}/${input.teamId}/procedures`, "layout");
 
       if (!procedure) {
         throw new TRPCError({
@@ -892,6 +952,11 @@ export const procedureRouter = router({
         },
       });
 
+      revalidatePath(
+        `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
+        "layout",
+      );
+
       return { data: procedure };
     }),
 
@@ -916,6 +981,7 @@ export const procedureRouter = router({
         include: {
           pendingVersion: true,
           publishedVersion: true,
+          team: { select: { departmentId: true } },
         },
       });
 
@@ -934,6 +1000,10 @@ export const procedureRouter = router({
       });
 
       revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidatePath(
+        `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
+        "layout",
+      );
 
 
       await createAuditLog({
@@ -1005,7 +1075,7 @@ export const procedureRouter = router({
             },
           },
         },
-        select: { id: true, categoryId: true },
+        select: { id: true, categoryId: true, teamId: true, team: { select: { departmentId: true } } },
       });
 
       if (!procedures) {
@@ -1029,6 +1099,14 @@ export const procedureRouter = router({
       });
 
       revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      const seenTeamPaths = new Set<string>();
+      for (const p of procedures) {
+        const key = `${p.team.departmentId}/${p.teamId}`;
+        if (!seenTeamPaths.has(key)) {
+          seenTeamPaths.add(key);
+          revalidatePath(`/departments/${key}/procedures`, "layout");
+        }
+      }
 
       for (const categoryIdToCheck of categoryIdsToCheck) {
         const remainingCount = await ctx.db.procedure.count({
@@ -1099,7 +1177,12 @@ export const procedureRouter = router({
             },
           },
         },
-        select: { id: true, teamId: true, categoryId: true },
+        select: {
+          id: true,
+          teamId: true,
+          categoryId: true,
+          team: { select: { departmentId: true } },
+        },
       });
       if (!procedure) {
         throw new TRPCError({
@@ -1137,6 +1220,10 @@ export const procedureRouter = router({
         beforeJSON: { categoryId: previousCategoryId },
         afterJSON: { categoryId: input.categoryId },
       });
+      revalidatePath(
+        `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
+        "layout",
+      );
       return { data: { id: procedure.id, categoryId: input.categoryId } };
     }),
 
@@ -1269,7 +1356,10 @@ export const procedureRouter = router({
             },
           },
         },
-        include: { publishedVersion: true },
+        include: {
+          publishedVersion: true,
+          team: { select: { departmentId: true } },
+        },
       });
       if (!procedure) {
         throw new TRPCError({
@@ -1311,6 +1401,11 @@ export const procedureRouter = router({
           readAt: new Date(),
         },
       });
+
+      revalidatePath(
+        `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
+        "layout",
+      );
 
       const orgId = ctx.org!.id;
 

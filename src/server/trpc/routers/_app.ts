@@ -14,6 +14,7 @@ import { invitesRouter } from "./invites";
 import { aiRouter } from "./ai";
 import { ingestionRouter } from "./inngestion";
 import { auditRouter } from "./audit";
+import { sidebarRouter } from "./sidebar";
 
 export const appRouter = router({
   department: departmentRouter,
@@ -31,6 +32,7 @@ export const appRouter = router({
   ai: aiRouter,
   ingestion: ingestionRouter,
   audit: auditRouter,
+  sidebar: sidebarRouter,
 });
 
 export type AppRouter = typeof appRouter;

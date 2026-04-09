@@ -7,6 +7,7 @@ import {
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 export const newsRouter = router({
   // Query: Get News Post
@@ -132,7 +133,7 @@ export const newsRouter = router({
           team: {
             include: {
               department: {
-                select: { orgId: true },
+                select: { orgId: true, id: true },
               },
             },
           },
@@ -161,6 +162,11 @@ export const newsRouter = router({
           readAt: new Date(),
         },
       });
+
+      revalidatePath(
+        `/departments/${newsPost.team.department.id}/${newsPost.teamId}/procedures`,
+        "layout",
+      );
 
       return {
         data: readRecord,
@@ -212,6 +218,17 @@ export const newsRouter = router({
         afterJSON: JSON.parse(JSON.stringify(news)),
       });
 
+      const newsTeam = await ctx.db.team.findUnique({
+        where: { id: input.teamId },
+        select: { departmentId: true },
+      });
+      if (newsTeam) {
+        revalidatePath(
+          `/departments/${newsTeam.departmentId}/${input.teamId}/procedures`,
+          "layout",
+        );
+      }
+
       return {
         data: news,
       };
@@ -231,7 +248,7 @@ export const newsRouter = router({
           team: {
             include: {
               department: {
-                select: { orgId: true },
+                select: { orgId: true, id: true },
               },
             },
           },
@@ -264,6 +281,11 @@ export const newsRouter = router({
         entityId: input.newsPostId,
         beforeJSON: JSON.parse(JSON.stringify(deletedNews)),
       });
+
+      revalidatePath(
+        `/departments/${newsPost.team.department.id}/${newsPost.teamId}/procedures`,
+        "layout",
+      );
 
       return {
         data: deletedNews,

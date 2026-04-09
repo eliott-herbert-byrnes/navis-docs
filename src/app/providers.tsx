@@ -21,6 +21,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         defaultOptions: {
           queries: {
             staleTime: 1000 * 60 * 2.5,
+            refetchOnWindowFocus: false
           },
         },
       }),

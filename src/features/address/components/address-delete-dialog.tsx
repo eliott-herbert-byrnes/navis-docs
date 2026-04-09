@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuthContext } from "@/contexts/auth-context";
-import { Loader2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 type AddressDeleteDialogProps = {
@@ -55,13 +55,10 @@ const AddressDeleteDialog = ({
             type="button"
             variant="default"
             onClick={handleSubmit}
-            disabled={!isAdmin || isPending}
+            disabled={!isAdmin}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Delete"
-            )}
+            Delete
           </Button>
           <Button
             className="w-[75px]"

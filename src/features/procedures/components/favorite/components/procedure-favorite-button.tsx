@@ -21,6 +21,7 @@ export function ProcedureFavoriteButton({
     useOptimistic(initialIsFavorite);
   const [, startTransition] = useTransition();
 
+
   const handleToggle = () => {
     startTransition(() => {
       setOptimisticIsFavorite(!optimisticIsFavorite);

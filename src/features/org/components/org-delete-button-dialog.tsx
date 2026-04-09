@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { useDeleteOrg } from "../hooks/use-org-mutations";
 
 const OrganizationDeleteButton = () => {
@@ -43,13 +43,9 @@ const OrganizationDeleteButton = () => {
             type="button"
             variant="default"
             onClick={handleDelete}
-            disabled={isPending}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Delete"
-            )}
+            Delete
           </Button>
           <Button
             className="w-[75px] shadow-none border"

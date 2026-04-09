@@ -73,10 +73,10 @@ export function NewsPostList({ userMap }: NewsPostListProps) {
   const { isAdmin } = useAuthContext();
   const { departmentId, teamId } = useProcedureRouteContext();
   const { markNewsRead, isPending: isMarkReadPending } = useMarkNewsRead();
-  const { data, isLoading, error } = trpc.news.getNews.useQuery({
-    departmentId,
-    teamId,
-  });
+  const { data, isLoading, error } = trpc.news.getNews.useQuery(
+    { departmentId, teamId },
+    { staleTime: 1000 * 60 }, 
+  );
 
   if (isLoading) {
     return <NewsListSkeleton />;

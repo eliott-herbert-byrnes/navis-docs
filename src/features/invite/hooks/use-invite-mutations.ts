@@ -66,7 +66,6 @@ export function useAcceptInvitation() {
       toast.success(data.message || "Invite accepted successfully");
       // Redirect to home page
       router.push("/");
-      router.refresh();
     },
     onError: (error) => {
       toast.error(

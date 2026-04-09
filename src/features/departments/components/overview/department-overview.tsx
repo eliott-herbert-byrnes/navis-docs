@@ -10,6 +10,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -17,12 +18,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EyeIcon, FileInput, Loader2 } from "lucide-react";
+import { EyeIcon, FileInput } from "lucide-react";
 import { useState } from "react";
 import { DepartmentTeamTable } from "./department-team-table";
 import { DepartmentDeleteButtonSettings } from "../department-buttons/department-delete-button-settings";
+import {
+  ExportFormat,
+  useExportDepartmentProcedureData,
+} from "../../hooks/use-export-department-procedure-data";
 
 type DepartmentOverviewProps = {
   title: string;
@@ -41,6 +53,15 @@ const DepartmentOverview = ({
   const [open, setOpen] = useState(false);
   const [newDepartmentName, setNewDepartmentName] = useState(title);
   const [currentTab, setCurrentTab] = useState('Settings');
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exportFormat, setExportFormat] = useState("json");
+  const { isLoading: isExportLoading, exportWithFormat } =
+    useExportDepartmentProcedureData(departmentId, exportOpen);
+
+  const handleExport = () => {
+    exportWithFormat(exportFormat as ExportFormat);
+    setExportOpen(false);
+  };
 
   const handleUpdate = () => {
     onConfirm(title, newDepartmentName);
@@ -101,16 +122,59 @@ const DepartmentOverview = ({
                         Export the department procedure data
                       </CardDescription>
                     </div>
-                    <Button
-                      variant={"outline"}
-                      className={"flex justify-start gap-2 max-w-[230px] shadow-none"}
-                    >
-                      <FileInput
-                        className={
-                          "w-4 h-4 text-muted-foreground"}
-                      />
-                      <span className="font-semibold">Department Procedure Data</span>
-                    </Button>
+                    <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={"flex justify-start gap-2 max-w-[230px] shadow-none"}
+                        >
+                          <FileInput className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-semibold">Department Procedure Data</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Export Department Procedures</DialogTitle>
+                          <DialogDescription>
+                            Export all procedure data for this department
+                          </DialogDescription>
+                        </DialogHeader>
+                        <Select
+                          name="format"
+                          value={exportFormat}
+                          onValueChange={setExportFormat}
+                        >
+                          <SelectTrigger className="w-1/2 shadow-none border">
+                            <SelectValue placeholder="Select a format" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="json">JSON</SelectItem>
+                            <SelectItem value="markdown">Markdown</SelectItem>
+                            <SelectItem value="csv">CSV</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <DialogFooter className="flex flex-row gap-2 mt-4">
+                          <Button
+                            className="w-[75px] shadow-none border"
+                            type="button"
+                            variant="default"
+                            onClick={handleExport}
+                            isLoading={isExportLoading}
+                          >
+                            Export
+                          </Button>
+                          <Button
+                            className="w-[75px] shadow-none border"
+                            type="button"
+                            variant="outline"
+                            onClick={() => setExportOpen(false)}
+                            disabled={isExportLoading}
+                          >
+                            Cancel
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                   <Separator />
                   <div className="grid gap-3">
@@ -155,13 +219,9 @@ const DepartmentOverview = ({
                 type="button"
                 variant="default"
                 onClick={handleUpdate}
-                disabled={isPending}
+                isLoading={isPending}
               >
-                {isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  "Update"
-                )}
+                Update
               </Button>
               <Button
                 className="shadow-none border"

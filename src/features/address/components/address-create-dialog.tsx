@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LucideLoaderCircle, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useCreateAddress } from "../hook/use-address-mutations";
 import { useAuthContext } from "@/contexts/auth-context";
@@ -122,14 +122,13 @@ const AddressCreateDialog = ({
           </div>
 
           <DialogFooter className="flex flex-row gap-2 pt-2">
-            <Button type="submit" disabled={!isAdmin || isPending} className="shadow-none border">
-              {isPending ? (
-                <>
-                  <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
-                </>
-              ) : (
-                "Create"
-              )}
+            <Button
+              type="submit"
+              disabled={!isAdmin}
+              isLoading={isPending}
+              className="shadow-none border"
+            >
+              Create
             </Button>
             <Button
               className="w-[75px] shadow-none border"

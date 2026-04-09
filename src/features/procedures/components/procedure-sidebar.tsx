@@ -24,7 +24,6 @@ import {
 } from "@/app/paths";
 import { ProcedureSearchButton } from "./procedure-search-button";
 import { IdeaButton } from "./Idea/components/idea-button";
-import { ProcedureStatus } from "@prisma/client";
 import { useMemo, useState } from "react";
 import {
   Sheet,
@@ -33,36 +32,45 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { CategoryWithProcedures } from "../types/types";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/trpc/client";
+import type { AppRouter } from "@/server/trpc/routers/_app";
+import type { inferProcedureOutput } from "@trpc/server";
+
+type SidebarData = inferProcedureOutput<AppRouter["sidebar"]["getSidebarData"]>;
 
 type ProcedureSidebarProps = {
   isAdmin: boolean;
-  uncategorizedProcedures: {
-    id: string;
-    status: ProcedureStatus;
-    slug: string;
-    title: string;
-  }[];
-  categories: CategoryWithProcedures;
-  unreadProcedureVersionIds?: string[];
-  unreadNewsCount?: number;
+  initialData: SidebarData;
 };
 
 export function ProcedureSidebar({
   isAdmin,
-  uncategorizedProcedures,
-  categories,
-  unreadProcedureVersionIds = [],
-  unreadNewsCount = 0,
+  initialData,
 }: ProcedureSidebarProps) {
   const [open, setOpen] = useState(false);
   const { departmentId, teamId } = useProcedureRouteContext();
 
+  const { data } = trpc.sidebar.getSidebarData.useQuery(
+    { teamId },
+    {
+      initialData,
+      staleTime: 1000 * 60, // 1 minute — contains user-specific activity data
+    },
+  );
+
+  const { uncategorizedProcedures, categories, outstanding, unreadNewsCount } =
+    data;
+
   const unreadSet = useMemo(
-    () => new Set(unreadProcedureVersionIds),
-    [unreadProcedureVersionIds],
+    () =>
+      new Set(
+        outstanding.map(
+          ({ procedureId, versionId }) => `${procedureId}:${versionId}`,
+        ),
+      ),
+    [outstanding],
   );
 
   const isProcedureUnread = (
@@ -301,7 +309,7 @@ export function ProcedureSidebar({
       </div>
 
       {/* Desktop: Regular Sidebar */}
-      <aside className="hidden sm:flex col-span-6 lg:col-span-4 bg-background flex-col h-full mt-5">
+      <aside className="hidden sm:flex col-span-6 lg:col-span-4 bg-background flex-col mt-5">
         {/* <div className="border-b"> */}
           <ProcedureSearchButton />
         {/* </div> */}

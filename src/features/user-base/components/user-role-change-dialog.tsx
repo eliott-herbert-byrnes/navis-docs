@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { OrgMembershipRole } from "@prisma/client";
-import { Loader2, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 import { useState } from "react";
 
 type UserRoleChangeDialogProps = {
@@ -83,13 +83,9 @@ const UserRoleChangeDialog = ({
             type="button"
             variant="default"
             onClick={handleClose}
-            disabled={isPending}
+            isLoading={isPending}
           >
-            {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Change"
-            )}
+            Change
           </Button>
           <Button
             className="w-[75px] shadow-none border"

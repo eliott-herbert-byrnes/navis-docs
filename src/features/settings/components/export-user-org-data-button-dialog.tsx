@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { FileInput, Loader2 } from "lucide-react";
+import { FileInput } from "lucide-react";
 import { useState } from "react";
 import { ExportFormat } from "../hooks/use-export-procedure-data";
 import { useExportUserData } from "../hooks/use-export-user-data";
@@ -69,13 +69,9 @@ const ExportUserOrgDataButtonDialog = ({
             type="button"
             variant="default"
             onClick={handleExport}
-            disabled={isLoading}
+            isLoading={isLoading}
           >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Export"
-            )}
+            Export
           </Button>
           <Button
             className="w-[75px] shadow-none border"

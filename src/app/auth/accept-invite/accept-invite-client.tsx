@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useAcceptInvitation } from "@/features/invite/hooks/use-invite-mutations";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -47,12 +46,10 @@ export function AcceptInviteClient() {
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button
               onClick={handleAccept}
-              disabled={isPending || !token || status === "loading"}
+              disabled={!token}
+              isLoading={isPending || status === "loading"}
               className="w-full"
             >
-              {(isPending || status === "loading") && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
               Accept Invitation
             </Button>
           </div>
