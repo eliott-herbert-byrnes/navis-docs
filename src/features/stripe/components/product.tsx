@@ -13,20 +13,16 @@ import { CheckoutSessionForm } from "./checkout-session-form";
 import { getStripeCustomerByOrg } from "../queries/get-stripe-customer";
 import Stripe from "stripe";
 
-type Plan = "pro" | "enterprise";
+const PRO_DESCRIPTION =
+  "Unlimited procedures, departments, and teams, AI assistant included, priority support & onboarding, advanced analytics (coming soon).";
 
-// Add plan descriptions
-const PLAN_DESCRIPTIONS: Record<Plan, string> = {
-  pro: "Up to 100 procedures, up to 3 departments, 1 team per department, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
-  enterprise:
-    "Up to 1000 procedures, unlimited departments, unlimited teams, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
-};
+const ENTERPRISE_DESCRIPTION =
+  "Up to 1000 procedures, unlimited departments, unlimited teams, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).";
 
 type PricesProps = {
   orgSlug: string | null | undefined;
   productId: string;
   activePlan: string | null | undefined;
-  targetPlan: Plan;
   activeSubscription: boolean;
 };
 
@@ -34,7 +30,6 @@ const Prices = async ({
   orgSlug,
   productId,
   activePlan,
-  targetPlan,
   activeSubscription,
 }: PricesProps) => {
   const prices = await getStripe().prices.list({
@@ -48,7 +43,6 @@ const Prices = async ({
       orgSlug={orgSlug}
       priceId={price.id}
       activePlan={activePlan}
-      targetPlan={targetPlan}
       activeSubscription={activeSubscription}
     >
       <span className="font-bold text-lg">
@@ -78,51 +72,70 @@ const Products = async ({ orgSlug }: ProductsProps) => {
     } catch {}
   }
 
-  const activeSubscription = subscriptionStatus === "active";
+  const activeSubscription =
+    subscriptionStatus === "active" || subscriptionStatus === "trialing";
   const activePlan = stripeCustomer?.plan;
+
+  if (stripeCustomer?.plan === "enterprise") {
+    return (
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mx-auto my-auto">
+        <Card className="w-[275px] h-full flex animate-fade-from-top">
+          <CardHeader>
+            <CardTitle>Enterprise</CardTitle>
+            <CardDescription className="mt-2 text-sm whitespace-normal">
+              {ENTERPRISE_DESCRIPTION}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <p className="text-sm text-muted-foreground">
+              Enterprise is provisioned manually. Contact your account team to
+              change billing or seats.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const proProduct =
+    products.data.find((p) => p.metadata?.plan === "pro") ?? products.data[0];
+
+  if (!proProduct) {
+    return (
+      <p className="text-center text-sm text-muted-foreground">
+        No Pro product is configured in Stripe.
+      </p>
+    );
+  }
 
   return (
     <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mx-auto my-auto">
-      {products.data.map((product: Stripe.Product) => {
-        const targetPlan: Plan = product.name
-          .toLowerCase()
-          .includes("enterprise")
-          ? "enterprise"
-          : "pro";
-
-        return (
-          <Card
-            key={product.id}
-            className="w-[275px] h-full flex animate-fade-from-top"
-          >
-            <CardHeader>
-              <CardTitle>{product.name}</CardTitle>
-              <CardDescription className="mt-2 text-sm whitespace-normal">
-                {PLAN_DESCRIPTIONS[targetPlan]}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              {product.marketing_features.map(
-                (feature: Stripe.Product.MarketingFeature) => (
-                  <div key={feature.name} className="flex gap-x-2 mb-2">
-                    <LucideCheck className="flex-shrink-0 mt-1" />
-                    <span className="text-sm">{feature.name}</span>
-                  </div>
-                ),
-              )}
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <Prices
-                orgSlug={orgSlug}
-                productId={product.id}
-                activePlan={activePlan}
-                targetPlan={targetPlan}
-                activeSubscription={activeSubscription}
-              />
-            </CardFooter>
-          </Card>
-        );
-      })}
+      <Card className="w-[275px] h-full flex animate-fade-from-top">
+        <CardHeader>
+          <CardTitle>{proProduct.name}</CardTitle>
+          <CardDescription className="mt-2 text-sm whitespace-normal">
+            {PRO_DESCRIPTION}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1">
+          {proProduct.marketing_features.map(
+            (feature: Stripe.Product.MarketingFeature) => (
+              <div key={feature.name} className="flex gap-x-2 mb-2">
+                <LucideCheck className="flex-shrink-0 mt-1" />
+                <span className="text-sm">{feature.name}</span>
+              </div>
+            ),
+          )}
+        </CardContent>
+        <CardFooter className="mt-auto">
+          <Prices
+            orgSlug={orgSlug}
+            productId={proProduct.id}
+            activePlan={activePlan}
+            activeSubscription={activeSubscription}
+          />
+        </CardFooter>
+      </Card>
     </div>
   );
 };

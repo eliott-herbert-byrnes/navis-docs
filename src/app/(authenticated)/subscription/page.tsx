@@ -2,6 +2,7 @@
 import { homePath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
+import { isCloud } from "@/lib/deploy-mode";
 import { redirect } from "next/navigation";
 import { Products } from "@/features/stripe/components/product";
 import { LucideSettings } from "lucide-react";
@@ -35,14 +36,14 @@ const SubscriptionPage = async () => {
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
-  const manageSubscription = (
+  const manageSubscription = isCloud() ? (
     <CustomerPortalForm orgSlug={org.slug}>
       <>
         <LucideSettings className="w-4 h-4" />
         Manage Subscription
       </>
     </CustomerPortalForm>
-  );
+  ) : null;
 
   return (
     <PageContainer>
@@ -51,9 +52,16 @@ const SubscriptionPage = async () => {
         description="Manage the subscription for this organization"
         actions={manageSubscription}
       />
-      <Suspense fallback={<ProductsSkeleton />}>
-        <Products orgSlug={org.slug} />
-      </Suspense>
+      {isCloud() ? (
+        <Suspense fallback={<ProductsSkeleton />}>
+          <Products orgSlug={org.slug} />
+        </Suspense>
+      ) : (
+        <p className="text-muted-foreground">
+          Billing and Stripe checkout are not available for self-hosted
+          deployments.
+        </p>
+      )}
     </PageContainer>
   );
 };
