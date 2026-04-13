@@ -90,13 +90,20 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+enum OrgPlan {
+  pro
+  enterprise
+}
+
 model Organization {
   id                       String                    @id @default(uuid())
   name                     String
   slug                     String                    @unique
   ownerUserId              String
-  plan                     String                    @default("business")
+  plan                     OrgPlan                   @default(pro)
   entitlementsJSON         Json                      @default("{}")
+  anthropicApiKey          String?
+  openAiApiKey             String?
   createdAt                DateTime                  @default(now())
   currentPeriodEnd         DateTime?
   stripeCustomerId         String?                   @unique

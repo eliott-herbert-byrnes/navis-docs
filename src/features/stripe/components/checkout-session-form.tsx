@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 import { TooltipTrigger } from "@/components/ui/tooltip";
 
-type Plan = "business" | "enterprise";
+type Plan = "pro" | "enterprise";
 
 type CheckoutSessionFormProps = {
   orgSlug: string | null | undefined;

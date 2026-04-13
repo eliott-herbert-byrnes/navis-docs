@@ -27,7 +27,7 @@ export const getStripeProvisionByOrg = async (
   }
 
   const defaults = {
-    business: { procedures: 100, departments: 3, teamsPerDepartment: 1 },
+    pro: { procedures: 100, departments: 3, teamsPerDepartment: 1 },
     enterprise: {
       procedures: 1000,
       departments: 1000,
@@ -35,9 +35,7 @@ export const getStripeProvisionByOrg = async (
     },
   } as const;
 
-  const planKey = (org.plan || "business").toLowerCase() as
-    | "business"
-    | "enterprise";
+  const planKey = (org.plan || "pro").toLowerCase() as "pro" | "enterprise";
   const ent =
     typeof org.entitlementsJSON === "object" && org.entitlementsJSON !== null
       ? (org.entitlementsJSON as Record<string, unknown>)

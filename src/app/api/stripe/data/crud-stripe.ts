@@ -1,6 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
+import { OrgPlan } from "@prisma/client";
 import { Stripe } from "stripe";
+
+/** Stripe product metadata may still use legacy `business` until products are re-seeded. */
+function stripeMetadataPlanToOrgPlan(raw: string | null): OrgPlan | null {
+  if (!raw) return null;
+  const p = raw.toLowerCase();
+  if (p === "enterprise") return OrgPlan.enterprise;
+  if (p === "pro" || p === "business") return OrgPlan.pro;
+  return null;
+}
 
 export const updateStripeSubscription = async (
   subscription: Stripe.Subscription,
@@ -58,6 +68,8 @@ export const updateStripeSubscription = async (
     }
   }
 
+  const orgPlan = stripeMetadataPlanToOrgPlan(plan);
+
   await prisma.organization.update({
     where: { stripeCustomerId: subscription.customer as string },
     data: {
@@ -66,7 +78,7 @@ export const updateStripeSubscription = async (
       currentPeriodEnd: currentPeriodEnd
         ? new Date(currentPeriodEnd * 1000)
         : null,
-      ...(plan && { plan }),
+      ...(orgPlan ? { plan: orgPlan } : {}),
       ...(Object.keys(entitlementsJSON).length > 0 && { entitlementsJSON }),
     },
   });

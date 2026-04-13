@@ -8,7 +8,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { inngest } from "@/inngest/client";
-import { OrgMembershipRole } from "@prisma/client";
+import { OrgMembershipRole, OrgPlan } from "@prisma/client";
 import { getStripe } from "@/lib/stripe";
 
 function isStripeResourceGone(error: unknown): boolean {
@@ -139,7 +139,7 @@ export const organizationRouter = router({
           name: input.name,
           slug,
           ownerUserId: userId as string,
-          plan: "business",
+          plan: OrgPlan.pro,
           entitlementsJSON: {
             maxProcedures: 100,
             maxDepartments: 3,

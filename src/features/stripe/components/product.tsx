@@ -13,12 +13,11 @@ import { CheckoutSessionForm } from "./checkout-session-form";
 import { getStripeCustomerByOrg } from "../queries/get-stripe-customer";
 import Stripe from "stripe";
 
-type Plan = "business" | "enterprise";
+type Plan = "pro" | "enterprise";
 
 // Add plan descriptions
 const PLAN_DESCRIPTIONS: Record<Plan, string> = {
-  business:
-    "Up to 100 procedures, up to 3 departments, 1 team per department, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
+  pro: "Up to 100 procedures, up to 3 departments, 1 team per department, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
   enterprise:
     "Up to 1000 procedures, unlimited departments, unlimited teams, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
 };
@@ -89,7 +88,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
           .toLowerCase()
           .includes("enterprise")
           ? "enterprise"
-          : "business";
+          : "pro";
 
         return (
           <Card
