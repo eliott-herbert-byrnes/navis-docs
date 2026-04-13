@@ -34,12 +34,12 @@ const CheckoutSessionForm = ({
     <Form
       action={action}
       actionState={actionState}
-      className="flex flex-row gap-2"
+      className="flex w-full flex-col gap-2 sm:flex-row sm:items-stretch"
     >
       <Button
         type="submit"
         disabled={isActivePlan}
-        className="flex flex-col gap-0"
+        className="flex w-full flex-col gap-0 sm:flex-1"
       >
         <div>{children}</div>
       </Button>

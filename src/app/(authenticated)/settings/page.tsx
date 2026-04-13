@@ -2,6 +2,7 @@ import { homePath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AiConfiguration } from "@/features/settings/components/ai-configuration";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -36,6 +37,7 @@ const SettingsPage = async () => {
       <Suspense fallback={<OrganizationOverviewSkeleton />}>
         <OrganizationOverview org={org} />
       </Suspense>
+      <AiConfiguration />
     </PageContainer>
   );
 };

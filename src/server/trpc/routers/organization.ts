@@ -1,6 +1,7 @@
 import {
   router,
   adminProcedure,
+  orgAdminProcedure,
   rateLimitMiddleware,
   protectedProcedure,
 } from "@/server/trpc/init";
@@ -9,6 +10,8 @@ import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { inngest } from "@/inngest/client";
 import { OrgMembershipRole, OrgPlan } from "@prisma/client";
+import { encrypt } from "@/lib/crypto";
+import { isCloud } from "@/lib/deploy-mode";
 import { getStripe } from "@/lib/stripe";
 
 function isStripeResourceGone(error: unknown): boolean {
@@ -241,5 +244,77 @@ export const organizationRouter = router({
       return {
         data: deleted,
       };
+    }),
+  getAiKeyStatus: orgAdminProcedure.query(async ({ ctx }) => {
+    if (!ctx.org) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No organization found",
+      });
+    }
+    if (!isCloud()) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "AI key configuration is only available in cloud deployments",
+      });
+    }
+
+    const org = await ctx.db.organization.findUnique({
+      where: { id: ctx.org.id },
+      select: { anthropicApiKey: true, openAiApiKey: true },
+    });
+
+    return {
+      hasAnthropicKey: Boolean(org?.anthropicApiKey),
+      hasOpenAiKey: Boolean(org?.openAiApiKey),
+    };
+  }),
+  saveAiKeys: orgAdminProcedure
+    .use(rateLimitMiddleware("organization-ai-keys"))
+    .input(
+      z.object({
+        anthropicApiKey: z.string().max(2048).optional(),
+        openAiApiKey: z.string().max(2048).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No organization found",
+        });
+      }
+      if (!isCloud()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "AI key configuration is only available in cloud deployments",
+        });
+      }
+
+      const data: {
+        anthropicApiKey?: string;
+        openAiApiKey?: string;
+      } = {};
+
+      const anthropic = input.anthropicApiKey?.trim();
+      if (anthropic) {
+        data.anthropicApiKey = encrypt(anthropic);
+      }
+
+      const openAi = input.openAiApiKey?.trim();
+      if (openAi) {
+        data.openAiApiKey = encrypt(openAi);
+      }
+
+      if (Object.keys(data).length === 0) {
+        return { updated: false as const };
+      }
+
+      await ctx.db.organization.update({
+        where: { id: ctx.org.id },
+        data,
+      });
+
+      return { updated: true as const };
     }),
 });
