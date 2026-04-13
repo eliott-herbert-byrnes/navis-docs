@@ -36,14 +36,15 @@ const SubscriptionPage = async () => {
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
-  const manageSubscription = isCloud() ? (
-    <CustomerPortalForm orgSlug={org.slug}>
-      <>
-        <LucideSettings className="w-4 h-4" />
-        Manage Subscription
-      </>
-    </CustomerPortalForm>
-  ) : null;
+  const manageSubscription =
+    isCloud() && org.stripeSubscriptionId ? (
+      <CustomerPortalForm>
+        <>
+          <LucideSettings className="w-4 h-4" />
+          Manage Subscription
+        </>
+      </CustomerPortalForm>
+    ) : null;
 
   return (
     <PageContainer>

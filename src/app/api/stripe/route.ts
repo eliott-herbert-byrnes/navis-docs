@@ -51,6 +51,19 @@ export async function POST(req: Request) {
           event.data.object as Stripe.Subscription,
         );
         break;
+      case "customer.subscription.trial_will_end":
+        await stripeData.sendTrialWillEndEmail(
+          event.data.object as Stripe.Subscription,
+        );
+        break;
+      case "invoice.payment_failed":
+        await stripeData.handleInvoicePaymentFailed(
+          event.data.object as Stripe.Invoice,
+        );
+        break;
+      case "invoice.paid":
+        await stripeData.handleInvoicePaid(event.data.object as Stripe.Invoice);
+        break;
       default:
         console.log(`Unhandled event type ${event.type}.`);
     }

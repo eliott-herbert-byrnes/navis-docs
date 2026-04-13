@@ -1,7 +1,28 @@
+import { getResend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
-import { OrgPlan } from "@prisma/client";
+import { OrgPlan, StripeSubscriptionStatus } from "@prisma/client";
 import { Stripe } from "stripe";
+
+/** Webhook payloads include subscription/customer ids; SDK Invoice typing can lag the API. */
+type InvoicePayload = Stripe.Invoice & {
+  subscription?: string | Stripe.Subscription | null;
+};
+
+function stripeCustomerIdFromInvoice(invoice: InvoicePayload): string | null {
+  const c = invoice.customer;
+  if (typeof c === "string") return c;
+  if (c && typeof c === "object" && "id" in c && typeof c.id === "string")
+    return c.id;
+  return null;
+}
+
+function subscriptionIdFromInvoice(invoice: InvoicePayload): string | null {
+  const s = invoice.subscription;
+  if (typeof s === "string") return s;
+  if (s && typeof s === "object" && "id" in s) return s.id;
+  return null;
+}
 
 /** Stripe product metadata may still use legacy `business` until products are re-seeded. */
 function stripeMetadataPlanToOrgPlan(raw: string | null): OrgPlan | null {
@@ -99,3 +120,85 @@ export const deleteStripeSubscription = async (
     },
   });
 };
+
+/** Subscription invoice payment failed — mark org as past_due. */
+export async function handleInvoicePaymentFailed(
+  invoice: InvoicePayload,
+): Promise<void> {
+  const subscriptionId = subscriptionIdFromInvoice(invoice);
+  const customerId = stripeCustomerIdFromInvoice(invoice);
+  if (!subscriptionId || !customerId) return;
+
+  await prisma.organization.update({
+    where: { stripeCustomerId: customerId },
+    data: { stripeSubscriptionStatus: StripeSubscriptionStatus.past_due },
+  });
+}
+
+/** Paid invoice — re-sync subscription status (e.g. active after successful renewal). */
+export async function handleInvoicePaid(invoice: InvoicePayload): Promise<void> {
+  const subscriptionId = subscriptionIdFromInvoice(invoice);
+  if (!subscriptionId) return;
+
+  const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
+  await updateStripeSubscription(subscription);
+}
+
+/**
+ * Trial ending soon — email org owner to add a payment method.
+ * Does not throw; logs on failure so the webhook can still return 200.
+ */
+export async function sendTrialWillEndEmail(
+  subscription: Stripe.Subscription,
+): Promise<void> {
+  const customerId =
+    typeof subscription.customer === "string"
+      ? subscription.customer
+      : subscription.customer?.id;
+  if (!customerId) return;
+
+  const org = await prisma.organization.findUnique({
+    where: { stripeCustomerId: customerId },
+    include: {
+      ownerUser: { select: { email: true, name: true } },
+    },
+  });
+  if (!org?.ownerUser?.email) {
+    console.warn(
+      `trial_will_end: no org or owner email for customer ${customerId}`,
+    );
+    return;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const billingUrl = baseUrl ? `${baseUrl}/subscription` : "/subscription";
+
+  const subject = "Your Navis Docs trial is ending soon";
+  const html = `
+    <p>Hi ${escapeHtml(org.ownerUser.name ?? "there")},</p>
+    <p>Your organization’s <strong>${escapeHtml(org.name)}</strong> subscription trial will end soon.</p>
+    <p>To keep uninterrupted access, add a payment method in billing before the trial ends.</p>
+    <p><a href="${escapeHtml(billingUrl)}">Manage billing</a></p>
+    <p>— Navis Docs</p>
+  `.trim();
+
+  try {
+    const resend = getResend();
+    await resend.emails.send({
+      from: "Navis Docs <no-reply@app.navisdocs.com>",
+      to: org.ownerUser.email,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("trial_will_end: failed to send email", err);
+  }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
