@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { OrgPlan } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getStripe } from "./index";
 
@@ -84,6 +85,11 @@ const seed = async () => {
     },
   });
 
+  const seatCount = await prisma.orgMembership.count({
+    where: { orgId: org.id },
+  });
+  const quantity = Math.max(1, seatCount);
+
   const testClock = await getStripe().testHelpers.testClocks.create({
     frozen_time: Math.round(new Date().getTime() / 1000),
   });
@@ -100,59 +106,42 @@ const seed = async () => {
     data: { stripeCustomerId: customer.id },
   });
 
-  const productOne = await getStripe().products.create({
-    name: "Navis-docs Business Plan",
-    description: "Your business plan.",
+  const product = await getStripe().products.create({
+    name: "Navis Docs Pro",
+    description: "Per-seat Pro subscription for Navis Docs (cloud).",
     marketing_features: [
-      { name: "Up to 100 procedures" },
-      { name: "Up to 3 departments" },
-      { name: "Up to 1 team per department" },
-      { name: "AI-assistant" },
-      { name: "Email support" },
+      { name: "Unlimited procedures, departments, and teams" },
+      { name: "AI assistant" },
+      { name: "14-day trial" },
     ],
-    metadata: { plan: "business" },
+    metadata: { plan: "pro" },
   });
 
-  const productTwo = await getStripe().products.create({
-    name: "Navis-docs Enterprise Plan",
-    description: "Your Enterprise plan.",
-    marketing_features: [
-      { name: "Up to 1000 procedures" },
-      { name: "Unlimited departments" },
-      { name: "Unlimited teams per department" },
-      { name: "AI-assistant" },
-      { name: "Priority support" },
-    ],
-    metadata: { plan: "enterprise" },
-  });
-
-  const businessPrice = await getStripe().prices.create({
-    product: productOne.id,
-    unit_amount: 4999,
+  const monthlyPrice = await getStripe().prices.create({
+    product: product.id,
+    unit_amount: 1000,
     currency: "usd",
     recurring: {
       interval: "month",
+      usage_type: "licensed",
     },
     metadata: {
-      plan: "business",
-      allowedProcedures: 100,
-      allowedDepartments: 3,
-      allowedTeamsPerDepartment: 1,
+      plan: "pro",
+      billing: "monthly",
     },
   });
 
-  const enterprisePrice = await getStripe().prices.create({
-    product: productTwo.id,
-    unit_amount: 29999,
+  const annualPrice = await getStripe().prices.create({
+    product: product.id,
+    unit_amount: 9600,
     currency: "usd",
     recurring: {
-      interval: "month",
+      interval: "year",
+      usage_type: "licensed",
     },
     metadata: {
-      plan: "enterprise",
-      allowedProcedures: 1000,
-      allowedDepartments: 1000,
-      allowedTeamsPerDepartment: 1000,
+      plan: "pro",
+      billing: "annual",
     },
   });
 
@@ -166,7 +155,7 @@ const seed = async () => {
 
   const subscription = await getStripe().subscriptions.create({
     customer: customer.id,
-    items: [{ price: enterprisePrice.id }, { price: businessPrice.id }],
+    items: [{ price: monthlyPrice.id, quantity }],
     automatic_tax: {
       enabled: false,
     },
@@ -182,19 +171,19 @@ const seed = async () => {
       stripeSubscriptionId: subscription.id,
       stripeSubscriptionStatus: subscription.status,
       currentPeriodEnd: currentPeriodEnd,
-      plan: "enterprise",
+      plan: OrgPlan.pro,
     },
   });
 
   const t1 = performance.now();
   console.log(`\n✅ Stripe Seed: Finished (${Math.round(t1 - t0)}ms)`);
-  console.log(`   - Created products: Business & Enterprise`);
+  console.log(`   - Product: Navis Docs Pro (${product.id})`);
   console.log(
-    `   - Created prices: Business ($49.99/mo) & Enterprise ($299.99/mo)`,
+    `   - Prices: monthly $10/seat (${monthlyPrice.id}), annual $96/seat (${annualPrice.id})`,
   );
   console.log(`   - Created customer: ${customer.email}`);
   console.log(
-    `   - Created subscription: ${subscription.id} (${subscription.status})`,
+    `   - Created subscription: ${subscription.id} (${subscription.status}), qty=${quantity}`,
   );
   console.log(`   - Organization updated with Stripe IDs\n`);
 };
