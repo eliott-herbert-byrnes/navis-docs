@@ -40,19 +40,22 @@ export const updateStripeSubscription = async (
       const price = await getStripe().prices.retrieve(priceId);
       if (price.metadata) {
         const {
+          allowedProcedures,
           allowedProcesses,
           allowedDepartments,
           allowedTeamsPerDepartment,
         } = price.metadata;
 
+        const proceduresRaw = allowedProcedures ?? allowedProcesses;
+
         if (
-          allowedProcesses ||
+          proceduresRaw ||
           allowedDepartments ||
           allowedTeamsPerDepartment
         ) {
           entitlementsJSON = {
-            allowedProcesses: allowedProcesses
-              ? Number(allowedProcesses)
+            allowedProcedures: proceduresRaw
+              ? Number(proceduresRaw)
               : undefined,
             allowedDepartments: allowedDepartments
               ? Number(allowedDepartments)

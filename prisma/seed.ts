@@ -54,11 +54,7 @@ async function main() {
       slug: "demo-organization",
       ownerUserId: user.id,
       plan: "enterprise",
-      entitlementsJSON: {
-        maxProcedures: 100,
-        maxDepartments: 3,
-        maxTeamsPerDepartment: 1,
-      },
+      entitlementsJSON: {},
     },
   });
 

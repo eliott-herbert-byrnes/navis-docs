@@ -140,11 +140,6 @@ export const organizationRouter = router({
           slug,
           ownerUserId: userId as string,
           plan: OrgPlan.pro,
-          entitlementsJSON: {
-            maxProcedures: 100,
-            maxDepartments: 3,
-            maxTeamsPerDepartment: 1,
-          },
         },
       });
 
