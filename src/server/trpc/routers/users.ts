@@ -8,6 +8,7 @@ import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { OrgMembershipRole } from "@prisma/client";
 import { revalidateTag } from "next/cache";
+import { syncStripeSeats } from "@/lib/stripe/sync-seats";
 
 export const usersRouter = router({
   // Query: Get users by IDs
@@ -245,6 +246,25 @@ export const usersRouter = router({
         },
       });
 
+      try {
+        await syncStripeSeats(ctx.org.id);
+      } catch (cause) {
+        await ctx.db.orgMembership.create({
+          data: {
+            orgId: membershipToDelete.orgId,
+            userId: membershipToDelete.userId,
+            role: membershipToDelete.role,
+            compliant: membershipToDelete.compliant,
+          },
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Could not update billing for your seat count. Please try again or contact support.",
+          cause,
+        });
+      }
+
       revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
 
       await createAuditLog({
@@ -300,14 +320,45 @@ export const usersRouter = router({
         });
       }
 
+      const restoreSnapshots = toDelete.map((m) => ({
+        orgId: m.orgId,
+        userId: m.userId,
+        role: m.role,
+        compliant: m.compliant,
+      }));
+
       for (const m of toDelete) {
         await ctx.db.orgMembership.delete({
           where: {
             orgId_userId: { orgId: ctx.org.id, userId: m.userId },
           },
         });
+      }
 
-        
+      try {
+        await syncStripeSeats(ctx.org.id);
+      } catch (cause) {
+        for (const s of restoreSnapshots) {
+          await ctx.db.orgMembership.create({
+            data: {
+              orgId: s.orgId,
+              userId: s.userId,
+              role: s.role,
+              compliant: s.compliant,
+            },
+          });
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Could not update billing for your seat count. Please try again or contact support.",
+          cause,
+        });
+      }
+
+      revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
+
+      for (const m of toDelete) {
         await createAuditLog({
           orgId: ctx.org.id,
           actorId: ctx.user.id ?? "",
@@ -321,8 +372,6 @@ export const usersRouter = router({
           },
         });
       }
-      
-      revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
 
       return {
         data: { deletedCount: toDelete.length },
