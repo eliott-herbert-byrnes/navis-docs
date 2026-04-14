@@ -5,11 +5,18 @@ import { getStripe } from "./index";
 
 const ORG_SLUG = process.env.SEED_ORG_SLUG ?? "demo-organization";
 
+const CANCELABLE_STATUSES = new Set([
+  "active",
+  "trialing",
+  "past_due",
+  "unpaid",
+  "incomplete",
+]);
+
 const seed = async () => {
   const t0 = performance.now();
   console.log("Stripe Seed: Started ...");
 
-  // clean up database stripe references first
   console.log("Cleaning up database Stripe references...");
   await prisma.organization.updateMany({
     data: {
@@ -20,44 +27,13 @@ const seed = async () => {
     },
   });
 
-  // clean up stripe
-
-  // 1) Fetch products and capture default price IDs
-  const products = await getStripe().products.list({ limit: 100 });
-  const defaultPriceIds = new Set(
-    products.data
-      .map((p) =>
-        typeof p.default_price === "string"
-          ? p.default_price
-          : p.default_price?.id,
-      )
-      .filter(Boolean) as string[],
-  );
-
-  // 2) Archive products first (this alone usually suffices)
-  for (const product of products.data) {
-    if (product.active) {
-      await getStripe().products.update(product.id, { active: false });
-    }
-  }
-
-  // 3) Archive non-default prices only
-  for await (const price of getStripe().prices.list({ limit: 100 })) {
-    if (!defaultPriceIds.has(price.id) && price.active) {
-      await getStripe().prices.update(price.id, { active: false });
-    }
-  }
-
-  // 4) Cancel all active subscriptions first
+  // 1) Cancel all non-terminal subscriptions before touching anything else
   for await (const subscription of getStripe().subscriptions.list({
     limit: 100,
     status: "all",
   })) {
     try {
-      if (
-        subscription.status === "active" ||
-        subscription.status === "trialing"
-      ) {
+      if (CANCELABLE_STATUSES.has(subscription.status)) {
         await getStripe().subscriptions.cancel(subscription.id);
         console.log(`Cancelled subscription ${subscription.id}`);
       }
@@ -66,13 +42,48 @@ const seed = async () => {
     }
   }
 
-  // 5) Delete customers (auto-paginate)
+  // 2) Delete customers (also removes their payment methods)
   for await (const customer of getStripe().customers.list({ limit: 100 })) {
     try {
       await getStripe().customers.del(customer.id);
       console.log(`Deleted customer ${customer.id}`);
     } catch (e) {
       console.warn(`Could not delete customer ${customer.id}`, e);
+    }
+  }
+
+  // 3) Archive all prices
+  for await (const price of getStripe().prices.list({ limit: 100 })) {
+    if (price.active) {
+      try {
+        await getStripe().prices.update(price.id, { active: false });
+      } catch (e) {
+        console.warn(`Could not archive price ${price.id}`, e);
+      }
+    }
+  }
+
+  // 4) Archive all products
+  const products = await getStripe().products.list({ limit: 100 });
+  for (const product of products.data) {
+    if (product.active) {
+      try {
+        await getStripe().products.update(product.id, { active: false });
+      } catch (e) {
+        console.warn(`Could not archive product ${product.id}`, e);
+      }
+    }
+  }
+
+  // 5) Delete old test clocks
+  for await (const clock of getStripe().testHelpers.testClocks.list({
+    limit: 100,
+  })) {
+    try {
+      await getStripe().testHelpers.testClocks.del(clock.id);
+      console.log(`Deleted test clock ${clock.id}`);
+    } catch (e) {
+      console.warn(`Could not delete test clock ${clock.id}`, e);
     }
   }
 
@@ -111,8 +122,11 @@ const seed = async () => {
     description: "Per-seat Pro subscription for Navis Docs (cloud).",
     marketing_features: [
       { name: "Unlimited procedures, departments, and teams" },
-      { name: "AI assistant" },
-      { name: "14-day trial" },
+      { name: "Audit logs, and metrics" },
+      { name: "AI assistant - Bring your own AI API keys" },
+      { name: "Configurable user roles and permissions" },
+      { name: "Priority support & onboarding" },
+      { name: "Advanced analytics (coming soon)" },
     ],
     metadata: { plan: "pro" },
   });
@@ -188,4 +202,11 @@ const seed = async () => {
   console.log(`   - Organization updated with Stripe IDs\n`);
 };
 
-seed();
+seed()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

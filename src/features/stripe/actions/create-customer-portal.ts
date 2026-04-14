@@ -87,9 +87,7 @@ export const createCustomerPortal = async () => {
     redirect(subscriptionPath());
   }
 
-  let customerId = org.stripeCustomerId;
-
-  if (!customerId) {
+  const createFreshCustomer = async () => {
     const customer = await getStripe().customers.create({
       email: undefined,
       name: org.name,
@@ -99,8 +97,10 @@ export const createCustomerPortal = async () => {
       where: { id: org.id },
       data: { stripeCustomerId: customer.id },
     });
-    customerId = customer.id;
-  }
+    return customer.id;
+  };
+
+  let customerId = org.stripeCustomerId ?? (await createFreshCustomer());
 
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL;
   const hasScheme = !!rawAppUrl && /^(http|https):\/\//i.test(rawAppUrl);
@@ -112,11 +112,28 @@ export const createCustomerPortal = async () => {
 
   const configurationId = await getOrCreateBillingPortalConfigurationId(baseUrl);
 
-  const session = await getStripe().billingPortal.sessions.create({
-    customer: customerId,
-    return_url: `${baseUrl}/subscription`,
-    configuration: configurationId,
-  });
+  let session: Stripe.BillingPortal.Session;
+  try {
+    session = await getStripe().billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${baseUrl}/subscription`,
+      configuration: configurationId,
+    });
+  } catch (err) {
+    if (
+      err instanceof Stripe.errors.StripeInvalidRequestError &&
+      err.code === "resource_missing"
+    ) {
+      customerId = await createFreshCustomer();
+      session = await getStripe().billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${baseUrl}/subscription`,
+        configuration: configurationId,
+      });
+    } else {
+      throw err;
+    }
+  }
 
   if (!session.url) {
     redirect(homePath());
