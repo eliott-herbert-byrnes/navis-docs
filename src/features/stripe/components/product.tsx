@@ -10,14 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStripe } from "@/lib/stripe";
 import { isSelfHosted } from "@/lib/deploy-mode";
-import { LucideBuilding2, LucideCheck } from "lucide-react";
+import { LucideCheck } from "lucide-react";
 import { getStripeCustomerByOrg } from "../queries/get-stripe-customer";
 import { OrgPlan } from "@prisma/client";
 import Stripe from "stripe";
 import { SubscriptionTiersClient } from "./subscription-tiers-client";
 
 const PRO_DESCRIPTION =
-  "Unlimited procedures, departments, and teams, AI assistant included, priority support & onboarding, advanced analytics (coming soon).";
+  "Unlimited procedures, departments, and teams, AI assistant included, priority support & onboarding.";
 
 const ENTERPRISE_DESCRIPTION =
   "Full platform access with contract-based billing. Your organization is provisioned for Enterprise — contact your account team for seat changes or billing updates.";
@@ -74,7 +74,6 @@ function EnterprisePlanCard({ isActive }: { isActive: boolean }) {
       <CardHeader className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2 text-xl">
-            <LucideBuilding2 className="size-5 text-muted-foreground" />
             Enterprise
           </CardTitle>
           {isActive ? (
@@ -87,7 +86,8 @@ function EnterprisePlanCard({ isActive }: { isActive: boolean }) {
             </Badge>
           )}
         </div>
-        <CardDescription className="whitespace-normal text-sm">
+        <p className="text-2xl font-medium tracking-tight">Contact Sales</p>
+        <CardDescription className="whitespace-normal text-sm h-[75px]">
           {ENTERPRISE_DESCRIPTION}
         </CardDescription>
       </CardHeader>
@@ -121,8 +121,8 @@ export function SelfHostedPlanCard() {
           <CardTitle className="text-xl">Self-Hosted</CardTitle>
           <Badge variant="secondary">Self-Hosted</Badge>
         </div>
-        <p className="text-2xl font-bold tracking-tight">Free</p>
-        <CardDescription className="whitespace-normal text-sm">
+        <p className="text-2xl font-medium tracking-tight">Free</p>
+        <CardDescription className="whitespace-normal text-sm h-[75px]">
           {SELF_HOSTED_DESCRIPTION}
         </CardDescription>
       </CardHeader>

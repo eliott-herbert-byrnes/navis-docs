@@ -79,11 +79,6 @@ export function ProPlanCardClient({
             </Badge>
           )}
         </div>
-        <CardDescription className="whitespace-normal text-sm">
-          {description}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 space-y-4">
         {!activeSubscription && (
           <>
             {billing === "monthly" &&
@@ -143,8 +138,13 @@ export function ProPlanCardClient({
             )}
           </>
         )}
+        <CardDescription className="whitespace-normal text-sm h-[68px]">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 space-y-4">
 
-        <ul className="space-y-2 border-t pt-2">
+        <ul className="space-y-2 border-t pt-4">
           {marketingFeatures.map((feature, index) => (
             <li
               key={feature.name ?? `feature-${index}`}
@@ -177,11 +177,6 @@ export function ProPlanCardClient({
             activeSubscription={activeSubscription}
           >
             <span className="font-semibold">Continue to checkout</span>
-            <span className="text-xs font-normal text-primary-foreground/80">
-              {billing === "monthly"
-                ? "14-day trial, then billed monthly per seat"
-                : "14-day trial, then billed annually per seat"}
-            </span>
           </CheckoutSessionForm>
         ) : null}
       </CardFooter>
