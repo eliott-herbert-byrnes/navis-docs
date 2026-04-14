@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
@@ -52,12 +52,12 @@ const ProcedureIdeaDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger>
         <Button variant="ghost" className="w-full justify-start gap-2">
           <Lightbulb className="h-4 w-4" />
           Submit Idea
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>

@@ -1,6 +1,7 @@
 import {
   router,
   adminProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
   protectedProcedure,
 } from "@/server/trpc/init";
@@ -76,7 +77,7 @@ export const invitesRouter = router({
     }),
 
   // Mutation: Create Invitation
-  createInvitation: adminProcedure
+  createInvitation: orgAdminActiveProcedure
     .use(rateLimitMiddleware("invite-create"))
     .input(
       z.object({
@@ -163,7 +164,7 @@ export const invitesRouter = router({
     }),
 
   // Mutation: Delete Invitation
-  deleteInvitation: adminProcedure
+  deleteInvitation: orgAdminActiveProcedure
     .use(rateLimitMiddleware("invite-delete"))
     .input(
       z.object({

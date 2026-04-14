@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Input } from "@/components/ui/input";
 import { PencilIcon } from "lucide-react";
 import { useState } from "react";
@@ -52,12 +52,12 @@ const TeamRenameDialog = ({
   };
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button variant="ghost" className="w-full max-w-[125px] rounded-none border-b-1">
           <PencilIcon className="w-4 h-4" />
           Rename
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

@@ -1,6 +1,7 @@
 import {
   router,
   adminProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
@@ -179,7 +180,7 @@ export const usersRouter = router({
     }),
 
   // Mutation: Delete user from base
-  deleteUser: adminProcedure
+  deleteUser: orgAdminActiveProcedure
     .use(rateLimitMiddleware("user-base-delete"))
     .input(
       z.object({
@@ -285,7 +286,7 @@ export const usersRouter = router({
       };
     }),
 
-  deleteUsers: adminProcedure
+  deleteUsers: orgAdminActiveProcedure
     .use(rateLimitMiddleware("user-base-delete"))
     .input(
       z.object({
@@ -383,7 +384,7 @@ export const usersRouter = router({
     }),
 
   // Mutation: Change user role
-  changeUserRole: adminProcedure
+  changeUserRole: orgAdminActiveProcedure
     .use(rateLimitMiddleware("user-change-role"))
     .input(
       z.object({

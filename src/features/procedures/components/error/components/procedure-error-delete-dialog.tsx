@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -45,12 +45,12 @@ const ProcedureErrorDeleteDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <DialogTrigger asChild>
+        <AccessDialogTrigger adminOnly>
           <Button variant="ghost" className="w-full flex justify-start gap-4">
             <TrashIcon className="w-4 h-4 text-muted-foreground" />
             <span className="font-normal">Delete</span>
           </Button>
-        </DialogTrigger>
+        </AccessDialogTrigger>
       )}
       <DialogContent>
         <DialogHeader>

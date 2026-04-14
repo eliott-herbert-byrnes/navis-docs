@@ -1,17 +1,15 @@
 "use client";
 
 import { teamProcedureCreatePath } from "@/app/paths";
-import { Button } from "@/components/ui/button";
+import { AccessButton } from "@/components/ui/access-button";
 import { LucideLoaderCircle, PlusIcon } from "lucide-react";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/contexts/auth-context";
 import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 
 const ProcedureCreateButton = () => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const { isAdmin } = useAuthContext();
   const { departmentId, teamId } = useProcedureRouteContext();
   const handleCreateProcedure = () => {
     startTransition(() => {
@@ -20,9 +18,9 @@ const ProcedureCreateButton = () => {
   };
 
   return (
-    <Button
+    <AccessButton
+      adminOnly
       variant="outline"
-      disabled={!isAdmin}
       onClick={handleCreateProcedure}
     >
       {isPending ? (
@@ -31,7 +29,7 @@ const ProcedureCreateButton = () => {
         <PlusIcon className="w-4 h-4" />
       )}
       Procedure
-    </Button>
+    </AccessButton>
   );
 };
 

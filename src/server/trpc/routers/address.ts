@@ -2,7 +2,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import {
   router,
   orgProcedure,
-  adminProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
@@ -23,7 +23,7 @@ export const addressRouter = router({
       data: addresses,
     };
   }),
-  createAddress: adminProcedure
+  createAddress: orgAdminActiveProcedure
     .use(rateLimitMiddleware("address-create"))
     .input(
       z.object({
@@ -66,7 +66,7 @@ export const addressRouter = router({
         data: newAddress,
       };
     }),
-  addressDelete: adminProcedure
+  addressDelete: orgAdminActiveProcedure
     .use(rateLimitMiddleware("address-delete"))
     .input(
       z.object({

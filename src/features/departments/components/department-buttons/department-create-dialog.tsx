@@ -12,14 +12,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { validateDepartmentForm } from "../../utils/validate-department";
-import { useAuthContext } from "@/contexts/auth-context";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 
 type DepartmentDialogProps = {
   title: string;
@@ -47,8 +46,6 @@ const DepartmentDialog = ({
   const [teamName1, setTeamName1] = useState("");
   const [teamName2, setTeamName2] = useState("");
   const [teamName3, setTeamName3] = useState("");
-  const { isAdmin } = useAuthContext();
-
   const handleCreate = () => {
     const validation = validateDepartmentForm({
       departmentName,
@@ -78,11 +75,9 @@ const DepartmentDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="outline" disabled={!isAdmin}>
-          Actions
-        </Button>
-      </DialogTrigger>
+      <AccessDialogTrigger adminOnly>
+        <Button variant="outline">Actions</Button>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

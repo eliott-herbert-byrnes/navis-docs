@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
 import {
   Card,
   CardContent,
@@ -123,7 +124,7 @@ const DepartmentOverview = ({
                       </CardDescription>
                     </div>
                     <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-                      <DialogTrigger asChild>
+                      <AccessDialogTrigger adminOnly>
                         <Button
                           variant="outline"
                           className={"flex justify-start gap-2 max-w-[230px] shadow-none"}
@@ -131,7 +132,7 @@ const DepartmentOverview = ({
                           <FileInput className="w-4 h-4 text-muted-foreground" />
                           <span className="font-semibold">Department Procedure Data</span>
                         </Button>
-                      </DialogTrigger>
+                      </AccessDialogTrigger>
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Export Department Procedures</DialogTitle>
@@ -154,7 +155,8 @@ const DepartmentOverview = ({
                           </SelectContent>
                         </Select>
                         <DialogFooter className="flex flex-row gap-2 mt-4">
-                          <Button
+                          <AccessButton
+                            adminOnly
                             className="w-[75px] shadow-none border"
                             type="button"
                             variant="default"
@@ -162,7 +164,7 @@ const DepartmentOverview = ({
                             isLoading={isExportLoading}
                           >
                             Export
-                          </Button>
+                          </AccessButton>
                           <Button
                             className="w-[75px] shadow-none border"
                             type="button"
@@ -214,7 +216,8 @@ const DepartmentOverview = ({
           <div className="flex flex-col gap-2 px-1 shrink-0">
             <Separator />
             <DialogFooter className="mt-2">
-              <Button
+              <AccessButton
+                adminOnly
                 className="shadow-none border"
                 type="button"
                 variant="default"
@@ -222,7 +225,7 @@ const DepartmentOverview = ({
                 isLoading={isPending}
               >
                 Update
-              </Button>
+              </AccessButton>
               <Button
                 className="shadow-none border"
                 type="button"

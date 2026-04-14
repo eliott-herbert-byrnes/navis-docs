@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
 import {
   Select,
   SelectContent,
@@ -47,7 +47,7 @@ const ExportProcedureOrgDataButtonDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button
           variant={isProcedureBaseRoute ? "ghost" : "outline"}
           className={cn("flex justify-start gap-2 max-w-[250px] shadow-none")}
@@ -60,7 +60,7 @@ const ExportProcedureOrgDataButtonDialog = ({
           />
           <span className="font-semibold">Export Org Procedure Data</span>
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -77,7 +77,8 @@ const ExportProcedureOrgDataButtonDialog = ({
           </SelectContent>
         </Select>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-          <Button
+          <AccessButton
+            adminOnly
             className="w-[75px] shadow-none border"
             type="button"
             variant="default"
@@ -85,7 +86,7 @@ const ExportProcedureOrgDataButtonDialog = ({
             isLoading={isLoading}
           >
             Export
-          </Button>
+          </AccessButton>
           <Button
             className="w-[75px] shadow-none border"
             type="button"

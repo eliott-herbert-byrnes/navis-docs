@@ -7,9 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuthContext } from "@/contexts/auth-context";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { TrashIcon } from "lucide-react";
 
 type TeamDeleteDialogProps = {
@@ -31,20 +30,19 @@ const TeamDeleteDialog = ({
   const handleConfirm = () => {
     onConfirm();
   };
-  const { isAdmin } = useAuthContext();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button
           variant="ghost"
           className="w-full max-w-[125px] border-b-1 rounded-none"
-          disabled={!isAdmin}
+          disabled={isPending}
         >
           <TrashIcon className="w-4 h-4" />
           Delete
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

@@ -52,6 +52,7 @@ import {
 import { CategoryDeleteButton } from "./category-delete-button";
 import { CategoryDeleteDialog } from "./category-delete-dialog";
 import { useDeleteCategories } from "../hooks/use-category-mutations";
+import { useAccessGate } from "@/components/ui/access-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
@@ -86,6 +87,7 @@ export function CategoriesList({
 
   const { deleteCategories, isPending: isBulkDeletePending } =
     useDeleteCategories();
+  const { allowed: canDeleteCategories } = useAccessGate(true);
 
   const departmentNames = React.useMemo(
     () =>
@@ -258,6 +260,7 @@ export function CategoriesList({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
                   <DropdownMenuItem
+                    disabled={!canDeleteCategories}
                     onSelect={() => {
                       if (selectedCount === 0) {
                         toast.error(

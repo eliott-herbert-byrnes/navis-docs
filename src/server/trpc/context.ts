@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { OrgPlan, StripeSubscriptionStatus } from "@prisma/client";
 
 export async function createContext() {
   const session = await auth();
@@ -19,12 +20,18 @@ export async function createContext() {
       (membership?.role === "ADMIN" || membership?.role === "OWNER") ?? false;
   }
 
+  const hasActiveAccess =
+    org?.plan === OrgPlan.enterprise ||
+    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.active ||
+    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.trialing;
+
   return {
     db: prisma,
     user,
     org,
     membership,
     isAdmin,
+    hasActiveAccess,
   };
 }
 

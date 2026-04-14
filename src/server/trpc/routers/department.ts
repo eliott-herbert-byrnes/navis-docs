@@ -2,7 +2,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import { getStripeProvisionByOrg } from "@/features/stripe/queries/get-stripe-provisioning";
 import {
   router,
-  adminProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
   orgProcedure,
 } from "@/server/trpc/init";
@@ -57,7 +57,7 @@ export const departmentRouter = router({
   }),
 
   // Mutation: Create department
-  create: adminProcedure
+  create: orgAdminActiveProcedure
     .use(rateLimitMiddleware("department-create"))
     .input(
       z.object({
@@ -163,7 +163,7 @@ export const departmentRouter = router({
     }),
 
   // Mutation: Delete department
-  delete: adminProcedure
+  delete: orgAdminActiveProcedure
     .use(rateLimitMiddleware("department-delete"))
     .input(
       z.object({
@@ -208,7 +208,7 @@ export const departmentRouter = router({
     }),
 
   // Mutation: Rename department
-  rename: adminProcedure
+  rename: orgAdminActiveProcedure
     .use(rateLimitMiddleware("department-rename"))
     .input(
       z.object({
@@ -257,7 +257,7 @@ export const departmentRouter = router({
     }),
 
   // Mutation: Set department icon
-  setIcon: adminProcedure
+  setIcon: orgAdminActiveProcedure
     .use(rateLimitMiddleware("department-set-icon"))
     .input(
       z.object({

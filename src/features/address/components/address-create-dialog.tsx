@@ -8,14 +8,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useCreateAddress } from "../hook/use-address-mutations";
-import { useAuthContext } from "@/contexts/auth-context";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 
 type AddressCreateDialogProps = {
   title: string;
@@ -28,7 +27,6 @@ const AddressCreateDialog = ({
 }: AddressCreateDialogProps) => {
   const [open, setOpen] = useState(false);
   const { createAddress, isPending } = useCreateAddress(() => setOpen(false));
-  const { isAdmin } = useAuthContext();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,12 +43,12 @@ const AddressCreateDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button className="flex items-center gap-2" variant="outline">
           <Plus className="w-4 h-4" />
           Add Address
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -124,7 +122,6 @@ const AddressCreateDialog = ({
           <DialogFooter className="flex flex-row gap-2 pt-2">
             <Button
               type="submit"
-              disabled={!isAdmin}
               isLoading={isPending}
               className="shadow-none border"
             >

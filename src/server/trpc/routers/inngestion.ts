@@ -6,6 +6,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import {
   router,
   orgAdminProcedure,
+  orgAdminActiveProcedure,
   rateLimitProcedureMiddleware,
 } from "@/server/trpc/init";
 import { JsonObject } from "@prisma/client/runtime/client";
@@ -25,7 +26,7 @@ const startImportSchema = z.object({
 });
 
 export const ingestionRouter = router({
-  startImport: orgAdminProcedure
+  startImport: orgAdminActiveProcedure
     .use(rateLimitProcedureMiddleware("procedure-import"))
     .input(startImportSchema)
     .mutation(async ({ ctx, input }) => {
@@ -148,7 +149,7 @@ export const ingestionRouter = router({
       };
     }),
 
-  approveImport: orgAdminProcedure
+  approveImport: orgAdminActiveProcedure
     .use(rateLimitProcedureMiddleware("procedure-import-approve"))
     .input(z.object({ jobId: z.uuid() }))
     .mutation(async ({ ctx, input }) => {
@@ -217,7 +218,7 @@ export const ingestionRouter = router({
       };
     }),
 
-  rejectImport: orgAdminProcedure
+  rejectImport: orgAdminActiveProcedure
     .use(rateLimitProcedureMiddleware("procedure-import-reject"))
     .input(z.object({ jobId: z.uuid() }))
     .mutation(async ({ ctx, input }) => {

@@ -39,6 +39,7 @@ import { ProcedureBaseDeleteDialog } from "@/features/procedure-base/components/
 import { ProcedureErrorDialog } from "./error/components/procedure-error-dialog";
 import { useCreateErrorReport } from "./error/hooks/use-errors-mutations";
 import { useDeleteProcedureFromBase } from "@/features/procedure-base/hook/use-procedure-base-mutations";
+import { useAccessGate } from "@/components/ui/access-button";
 
 type ProcedureViewActionsProps = {
   procedureId: string;
@@ -139,6 +140,9 @@ export function ProcedureViewActions({
   const { deleteProcedure, isPending: isDeletePending } =
     useDeleteProcedureFromBase({ onSuccess: handleDeleteSuccess });
 
+  const { allowed: canMutateAsAdmin } = useAccessGate(true);
+  const { allowed: canMutate } = useAccessGate(false);
+
   const dropdownButtons = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -148,7 +152,11 @@ export function ProcedureViewActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
         {canEdit && (
-          <DropdownMenuItem onClick={handleEdit} disabled={isPending} className="px-3 py-2">
+          <DropdownMenuItem
+            onClick={handleEdit}
+            disabled={isPending || !canMutateAsAdmin}
+            className="px-3 py-2"
+          >
             {isPending ? (
               <Loader2 className="w-4 h-4 mr-1 animate-spin" />
             ) : (
@@ -182,6 +190,7 @@ export function ProcedureViewActions({
         {onAskAI && (
           <DropdownMenuItem
             onClick={onAskAI}
+            disabled={!canMutate}
             aria-label="Ask AI about this procedure"
             className="px-3 py-2"
           >
@@ -215,6 +224,7 @@ export function ProcedureViewActions({
 
         <DropdownMenuItem
           onClick={() => setErrorDialogOpen(true)}
+          disabled={!canMutate}
           className="px-3 py-2"
         >
           <Flag className="w-4 h-4 mr-1" />
@@ -224,6 +234,7 @@ export function ProcedureViewActions({
         {canEdit && (
           <DropdownMenuItem
             onClick={() => setDeleteDialogOpen(true)}
+            disabled={!canMutateAsAdmin}
             className="px-3 py-2 text-destructive focus:text-destructive"
           >
             <TrashIcon className="w-4 h-4 mr-1" />
@@ -300,7 +311,7 @@ export function ProcedureViewActions({
               size="sm"
                 variant="outline"
                 onClick={handleMarkAsRead}
-                disabled={isMarkReadPending}
+                disabled={isMarkReadPending || !canMutate}
                 aria-label="Mark this procedure as read"
                 className=""
               >

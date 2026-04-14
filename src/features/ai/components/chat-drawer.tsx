@@ -1,6 +1,10 @@
 "use client";
 
+import { AccessButton, useAccessGate } from "@/components/ui/access-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/auth-context";
+import Link from "next/link";
 import {
   Sheet,
   SheetContent,
@@ -37,6 +41,8 @@ export function AIChatDrawer({
   const setIsOpen = isControlled ? onOpenChange : setInternalOpen;
 
   const { departmentId, teamId } = useProcedureRouteContext();
+  const { allowed: canUseAi } = useAccessGate(false);
+  const { isAdmin } = useAuthContext();
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
     teamId,
@@ -60,7 +66,7 @@ export function AIChatDrawer({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!canUseAi || !input.trim() || isLoading) return;
 
     const userMessage = input.trim();
     setInput("");
@@ -140,6 +146,27 @@ export function AIChatDrawer({
             <SheetTitle><span className="">AI Assistant</span></SheetTitle>
           </SheetHeader>
 
+          {!canUseAi ? (
+            <Alert className="mx-4 mt-3 shrink-0 border-muted">
+              <AlertTitle>Read-only mode</AlertTitle>
+              <AlertDescription className="flex flex-col gap-2">
+                <span>
+                  {isAdmin
+                    ? "An active subscription is required to use the AI assistant."
+                    : "Contact an organisation admin if you need access."}
+                </span>
+                {isAdmin ? (
+                  <Link
+                    href="/subscription"
+                    className="text-primary font-medium underline underline-offset-4"
+                  >
+                    View subscription
+                  </Link>
+                ) : null}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
           {/* Messages */}
           <ScrollArea className="flex-1 overflow-y-auto relative" ref={scrollRef}>
             {messages.length === 0 ? (
@@ -191,18 +218,18 @@ export function AIChatDrawer({
                   }
                 }}
                 placeholder="Ask about a procedure..."
-                disabled={isLoading}
+                disabled={isLoading || !canUseAi}
                 className="flex-1 shadow-none border"
               />
               <div className="flex flex-col gap-2">
-                <Button
+                <AccessButton
                   type="submit"
                   size="icon"
                   disabled={isLoading || !input.trim()}
                   className="bg-brand hover:bg-brand/75"
                 >
                   <Send className="h-4 w-4" />
-                </Button>
+                </AccessButton>
                 <ChatDeleteButton
                   isLoading={isLoading}
                   clearMessage={clearMessages}

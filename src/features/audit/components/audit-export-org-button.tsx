@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
 import type { AuditEntityType } from "@/features/audit/utils/audit-export-filters";
 import { trpc } from "@/trpc/client";
 import { FileJson, Loader2 } from "lucide-react";
@@ -118,12 +118,12 @@ export function AuditExportOrgButton({ filters }: AuditExportOrgButtonProps) {
         }
       }}
     >
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button type="button" variant="outline" size="sm" className="gap-2">
           <FileJson className="h-4 w-4" />
           Export JSON
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Export audit logs</DialogTitle>
@@ -147,13 +147,14 @@ export function AuditExportOrgButton({ filters }: AuditExportOrgButtonProps) {
           >
             Cancel
           </Button>
-          <Button
+          <AccessButton
+            adminOnly
             type="button"
             onClick={handleStart}
             isLoading={busy}
           >
             Start export
-          </Button>
+          </AccessButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

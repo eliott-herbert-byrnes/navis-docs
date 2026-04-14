@@ -7,9 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuthContext } from "@/contexts/auth-context";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Loader2, TrashIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -31,7 +30,6 @@ const ProcedureDeleteButtonDialog = ({
   onOpenChange: onOpenChangeProp,
 }: ProcedureDeleteButtonDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
-  const { isAdmin } = useAuthContext();
 
   const isControlled =
     typeof openProp === "boolean" && typeof onOpenChangeProp === "function";
@@ -46,12 +44,12 @@ const ProcedureDeleteButtonDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled ? (
-        <DialogTrigger asChild>
-          <Button variant="destructive" size="sm" disabled={!isAdmin}>
+        <AccessDialogTrigger adminOnly>
+          <Button variant="destructive" size="sm" disabled={isPending}>
             <TrashIcon className="h-4 w-4 mr-2" />
             {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete"}
           </Button>
-        </DialogTrigger>
+        </AccessDialogTrigger>
       ) : null}
       <DialogContent>
         <DialogHeader>

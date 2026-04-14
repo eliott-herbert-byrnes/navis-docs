@@ -10,8 +10,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { AccessAlertDialogTrigger } from "@/components/ui/access-button";
 import { LucideLoaderCircle, TrashIcon } from "lucide-react";
 import { useDeleteInvitation } from "../hooks/use-invite-mutations";
 import { useState } from "react";
@@ -36,7 +36,7 @@ const InvitationDeleteButton = ({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+      <AccessAlertDialogTrigger adminOnly>
         <Button variant="outline" disabled={isPending}>
           {isPending ? (
             <LucideLoaderCircle className="h-4 w-4 animate-spin" />
@@ -44,7 +44,7 @@ const InvitationDeleteButton = ({
             <TrashIcon className="h-4 w-4" />
           )}
         </Button>
-      </AlertDialogTrigger>
+      </AccessAlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

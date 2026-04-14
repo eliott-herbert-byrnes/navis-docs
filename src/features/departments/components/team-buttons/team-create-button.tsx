@@ -2,12 +2,9 @@
 
 import { CreateTeamDialog } from "./team-create-dialog";
 import { useCreateTeam } from "../../hooks/use-team-mutations";
-import { useAuthContext } from "@/contexts/auth-context";
-
 const CreateTeamButton = ({ departmentId }: { departmentId: string }) => {
   const { createTeam, isPending, isDialogOpen, setIsDialogOpen } =
     useCreateTeam();
-  const { isAdmin } = useAuthContext();
 
   const handleCreateTeam = (teamName: string) => {
     createTeam(departmentId, teamName);
@@ -21,7 +18,6 @@ const CreateTeamButton = ({ departmentId }: { departmentId: string }) => {
       isPending={isPending}
       open={isDialogOpen}
       onOpenChange={setIsDialogOpen}
-      disabled={!isAdmin}
     />
   );
 };

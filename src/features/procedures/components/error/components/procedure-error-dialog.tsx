@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Flag } from "lucide-react";
 import { useState, FormEvent } from "react";
@@ -56,12 +56,12 @@ export const ProcedureErrorDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <DialogTrigger asChild>
+        <AccessDialogTrigger>
           <Button variant="ghost" className="m-0 p-0 justify-start rounded-none">
             <Flag className="w-4 h-4 text-muted-foreground" />
             <span className="font-normal ml-1">Report</span>
           </Button>
-        </DialogTrigger>
+        </AccessDialogTrigger>
       )}
       <DialogContent>
         <DialogHeader>

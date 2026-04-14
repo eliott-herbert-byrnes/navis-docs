@@ -2,8 +2,6 @@
 
 import { DepartmentDeleteDialog } from "./department-delete-dialog";
 import { useDeleteDepartment } from "../../hooks/use-department-mutations";
-import { useAuthContext } from "@/contexts/auth-context";
-
 const DepartmentDeleteButton = ({
   departmentId,
   departmentName,
@@ -12,7 +10,6 @@ const DepartmentDeleteButton = ({
   departmentName: string;
 }) => {
   const { deleteDepartment, isPending } = useDeleteDepartment();
-  const { isAdmin } = useAuthContext();
 
   const handleDelete = () => {
     deleteDepartment({ departmentId, departmentName });
@@ -24,7 +21,6 @@ const DepartmentDeleteButton = ({
       description="All associated teams and procedures will be deleted as well. This action cannot be undone."
       onConfirm={handleDelete}
       isPending={isPending}
-      disabled={!isAdmin || isPending}
     />
   );
 };
