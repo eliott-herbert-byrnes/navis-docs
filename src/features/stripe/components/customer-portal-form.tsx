@@ -16,8 +16,8 @@ const CustomerPortalForm = ({ children }: CustomerPortalFormProps) => {
   );
 
   return (
-    <Form action={action} actionState={actionState}>
-      <Button className="text-sm shadow-none" variant="outline" type="submit">
+    <Form action={action} actionState={actionState} className="w-full">
+      <Button className="w-full text-sm shadow-none" variant="outline" type="submit">
         {children}
       </Button>
     </Form>

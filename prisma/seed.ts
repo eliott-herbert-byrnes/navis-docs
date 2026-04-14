@@ -53,7 +53,7 @@ async function main() {
       name: "Demo Organization",
       slug: "demo-organization",
       ownerUserId: user.id,
-      plan: "enterprise",
+      plan: "pro",
       entitlementsJSON: {},
     },
   });

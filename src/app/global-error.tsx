@@ -36,7 +36,7 @@ export default function GlobalError({
                   alt="Navis Docs logo"
                 />
               </div>
-              Navis.docs
+              Navis Docs
             </div>
             <Card className="animate-fade-from-top border-none">
               <CardHeader className="text-center">
