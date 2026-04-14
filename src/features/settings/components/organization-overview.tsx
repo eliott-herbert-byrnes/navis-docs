@@ -37,7 +37,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full mb-8">
       <div className="flex w-full flex-col">
         <div className="flex flex-col gap-5">
           <div className="grid gap-4">

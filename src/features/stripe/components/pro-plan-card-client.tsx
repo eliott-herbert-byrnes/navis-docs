@@ -89,7 +89,7 @@ export function ProPlanCardClient({
                     {toCurrencyFromCent(monthlyUnitAmount, monthlyCurrency)}
                     <span className="text-base font-normal text-muted-foreground">
                       {" "}
-                      / seat / month
+                      per user/month
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground">

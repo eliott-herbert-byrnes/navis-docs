@@ -28,7 +28,6 @@ function AiConfigurationInner() {
 
   return (
     <>
-      <Separator className="my-6" />
       <form onSubmit={handleSubmit} className="grid gap-5">
         <div className="flex flex-col gap-1">
           <span className="font-semibold">AI configuration</span>
@@ -101,6 +100,8 @@ function AiConfigurationInner() {
           </Button>
         </div>
       </form>
+      <Separator className="my-6" />
+
     </>
   );
 }
