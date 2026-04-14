@@ -11,6 +11,7 @@ export function getStripe() {
 
   if (!stripe) {
     stripe = new Stripe(key, {
+      apiVersion: "2025-09-30.clover",
       typescript: true,
     });
   }

@@ -4,27 +4,32 @@ import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Products } from "@/features/stripe/components/product";
-import { LucideSettings } from "lucide-react";
-import { CustomerPortalForm } from "@/features/stripe/components/customer-portal-form";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageContainer } from "@/components/ui/page-container";
 
 function ProductsSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <div key={index} className="rounded-lg border p-5">
-          <Skeleton className="h-6 w-28" />
-          <Skeleton className="mt-3 h-8 w-20" />
-          <div className="mt-4 space-y-2">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-4/5" />
+    <div className="flex w-full flex-col gap-6">
+      <div className="flex justify-center">
+        <Skeleton className="h-9 w-48 rounded-lg" />
+      </div>
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex flex-col gap-4 rounded-lg border p-6">
+            <Skeleton className="h-7 w-40" />
+            <Skeleton className="h-8 w-28" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+            <div className="space-y-2 pt-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-4/5" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
           </div>
-          <Skeleton className="mt-6 h-9 w-full" />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -35,21 +40,11 @@ const SubscriptionPage = async () => {
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(homePath());
 
-  const manageSubscription = (
-    <CustomerPortalForm orgSlug={org.slug}>
-      <>
-        <LucideSettings className="w-4 h-4" />
-        Manage Subscription
-      </>
-    </CustomerPortalForm>
-  );
-
   return (
     <PageContainer>
       <Heading
         title="Subscription"
         description="Manage the subscription for this organization"
-        actions={manageSubscription}
       />
       <Suspense fallback={<ProductsSkeleton />}>
         <Products orgSlug={org.slug} />

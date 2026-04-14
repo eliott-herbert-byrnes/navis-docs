@@ -15,6 +15,7 @@ import React from "react";
 import { render } from "@react-email/render";
 import { getResend } from "@/lib/resend";
 import { InviteEmail } from "@/emails/invite";
+import { syncStripeSeats } from "@/lib/stripe/sync-seats";
 
 export const invitesRouter = router({
   // Query: Get Invites with pagination
@@ -297,7 +298,34 @@ export const invitesRouter = router({
           data: { status: "ACCEPTED", acceptedAt: new Date() },
         }),
       ]);
-      
+
+      try {
+        await syncStripeSeats(invite.orgId);
+      } catch (cause) {
+        await ctx.db.$transaction([
+          ctx.db.orgMembership.delete({
+            where: {
+              orgId_userId: {
+                orgId: invite.orgId,
+                userId: ctx.user?.id ?? "",
+              },
+            },
+          }),
+          ctx.db.invitation.update({
+            where: {
+              invitationId: { orgId: invite.orgId, email: invite.email },
+            },
+            data: { status: "PENDING", acceptedAt: null },
+          }),
+        ]);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Could not update billing for your seat count. Please try again or contact support.",
+          cause,
+        });
+      }
+
       revalidateTag(`org-dashboard-${invite.orgId}`, 'max');
 
       await createAuditLog({

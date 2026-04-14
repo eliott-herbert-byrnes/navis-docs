@@ -1,15 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-let _client: Anthropic | null = null;
-
-export function getAnthropic() {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  // Never throw at import time. This only runs when called.
-  if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not set");
+export function getAnthropic(apiKey?: string) {
+  const key = apiKey || process.env.ANTHROPIC_API_KEY;
+  if (!key) {
+    throw new Error("No Anthropic API key available");
   }
-
-  if (!_client) _client = new Anthropic({ apiKey });
-  return _client;
+  return new Anthropic({ apiKey: key });
 }

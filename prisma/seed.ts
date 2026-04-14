@@ -2,6 +2,7 @@ import {
   OrgMembershipRole,
   ProcedureStyle,
   ProcedureStatus,
+  OrgPlan,
 } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -13,88 +14,74 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   await prisma.$transaction([
+    // Null out self-referencing FKs before deleting versions
+    prisma.procedure.updateMany({
+      data: { pendingVersionId: null, publishedVersionId: null },
+    }),
+
+    // Delete all child/leaf tables first
     prisma.ingestionJob.deleteMany(),
+    prisma.auditExportJob.deleteMany(),
+    prisma.auditLog.deleteMany(),
     prisma.errorReport.deleteMany(),
+    prisma.userNewsRead.deleteMany(),
     prisma.newsPost.deleteMany(),
     prisma.favorite.deleteMany(),
     prisma.idea.deleteMany(),
+    prisma.procedureChunk.deleteMany(),
+    prisma.userProcedureRead.deleteMany(),
+    prisma.procedureRollout.deleteMany(),
     prisma.procedureVersion.deleteMany(),
     prisma.procedure.deleteMany(),
     prisma.category.deleteMany(),
     prisma.team.deleteMany(),
     prisma.department.deleteMany(),
+    prisma.address.deleteMany(),
     prisma.orgMembership.deleteMany(),
     prisma.invitation.deleteMany(),
     prisma.account.deleteMany(),
     prisma.verificationToken.deleteMany(),
     prisma.emailOTP.deleteMany(),
-    prisma.auditLog.deleteMany(),
 
     prisma.organization.deleteMany(),
     prisma.user.deleteMany(),
   ]);
 
-  const user = await prisma.user.upsert({
-    where: { email: "demo@navisdocs.com" },
-    update: {},
-    create: { email: "demo@navisdocs.com", name: "Demo User" },
+  const user = await prisma.user.create({
+    data: { email: "demo@navisdocs.com", name: "Demo User" },
   });
 
-  const testUser = await prisma.user.upsert({
-    where: { email: "test@navisdocs.com" },
-    update: {},
-    create: { email: "test@navisdocs.com", name: "Test User" },
+  const testUser = await prisma.user.create({
+    data: { email: "test@navisdocs.com", name: "Test User" },
   });
 
-  const org = await prisma.organization.upsert({
-    where: { slug: "demo-organization" },
-    update: {},
-    create: {
+  const org = await prisma.organization.create({
+    data: {
       name: "Demo Organization",
       slug: "demo-organization",
       ownerUserId: user.id,
-      plan: "enterprise",
-      entitlementsJSON: {
-        maxProcedures: 100,
-        maxDepartments: 3,
-        maxTeamsPerDepartment: 1,
-      },
+      plan: OrgPlan.pro,
+      entitlementsJSON: {},
     },
   });
 
-  await prisma.orgMembership.upsert({
-    where: { orgId_userId: { orgId: org.id, userId: user.id } },
-    update: { role: OrgMembershipRole.OWNER },
-    create: { orgId: org.id, userId: user.id, role: OrgMembershipRole.OWNER },
+  await prisma.orgMembership.create({
+    data: { orgId: org.id, userId: user.id, role: OrgMembershipRole.OWNER },
   });
 
-  await prisma.orgMembership.upsert({
-    where: { orgId_userId: { orgId: org.id, userId: testUser.id } },
-    update: { role: OrgMembershipRole.MEMBER },
-    create: {
+  await prisma.orgMembership.create({
+    data: {
       orgId: org.id,
       userId: testUser.id,
       role: OrgMembershipRole.MEMBER,
     },
   });
 
-  const dept1 = await prisma.department.upsert({
-    where: { id: org.id.slice(0, 24) + "-dept-a" },
-    update: {},
-    create: {
-      id: org.id.slice(0, 24) + "-dept-a",
-      orgId: org.id,
-      name: "Customer Operations",
-    },
+  const dept1 = await prisma.department.create({
+    data: { orgId: org.id, name: "Customer Operations" },
   });
-  const dept2 = await prisma.department.upsert({
-    where: { id: org.id.slice(0, 24) + "-dept-b" },
-    update: {},
-    create: {
-      id: org.id.slice(0, 24) + "-dept-b",
-      orgId: org.id,
-      name: "Compliance & Risk",
-    },
+  const dept2 = await prisma.department.create({
+    data: { orgId: org.id, name: "Compliance & Risk" },
   });
 
   const teamOps = await prisma.team.create({
@@ -1406,4 +1393,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

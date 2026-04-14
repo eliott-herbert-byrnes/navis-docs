@@ -2,14 +2,7 @@
 
 import { Organization } from "@prisma/client";
 import { useRenameOrganization } from "../hooks/use-organization-mutations";
-import React, { useState, useTransition } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -89,27 +82,31 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
             <ExportProcedureOrgDataButton />
             <ExportUserOrgDataButton />
           </div>
-          <Separator />
-          <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold">Billing</span>
-              <span className="text-sm">
-                Manage your organizations subscription
-              </span >
-            </div>
-            <Button
-              variant="outline"
-              className="w-full flex justify-start gap-4 shadow-none max-w-[250px]"
-              onClick={handleManageSubscription}
-            >
-              {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-              ) : (
-                <CreditCard className="w-4 h-4 text-muted-foreground" />
-              )}
-              <span className="font-semibold">Manage Subscription</span>
-            </Button>
-          </div>
+          {org.stripeSubscriptionId ? (
+            <>
+              <Separator />
+              <div className="grid gap-3">
+                <div className="flex flex-col gap-1">
+                  <span className="font-semibold">Billing</span>
+                  <span className="text-sm">
+                    Manage your organizations subscription
+                  </span>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full flex justify-start gap-4 shadow-none max-w-[250px]"
+                  onClick={handleManageSubscription}
+                >
+                  {isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  ) : (
+                    <CreditCard className="w-4 h-4 text-muted-foreground" />
+                  )}
+                  <span className="font-semibold">Manage Subscription</span>
+                </Button>
+              </div>
+            </>
+          ) : null}
           <Separator />
           <div className="grid gap-3">
             <div className="flex flex-col gap-1">

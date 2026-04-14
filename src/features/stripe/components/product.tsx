@@ -6,125 +6,225 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getStripe } from "@/lib/stripe";
-import { toCurrencyFromCent } from "@/utils/currency";
+import { isSelfHosted } from "@/lib/deploy-mode";
 import { LucideCheck } from "lucide-react";
-import { CheckoutSessionForm } from "./checkout-session-form";
 import { getStripeCustomerByOrg } from "../queries/get-stripe-customer";
+import { OrgPlan } from "@prisma/client";
 import Stripe from "stripe";
+import { SubscriptionTiersClient } from "./subscription-tiers-client";
 
-type Plan = "business" | "enterprise";
+const PRO_DESCRIPTION =
+  "Unlimited procedures, departments, and teams, AI assistant included, priority support & onboarding.";
 
-// Add plan descriptions
-const PLAN_DESCRIPTIONS: Record<Plan, string> = {
-  business:
-    "Up to 100 procedures, up to 3 departments, 1 team per department, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
-  enterprise:
-    "Up to 1000 procedures, unlimited departments, unlimited teams, AI-assistant included, priority support & onboarding, advanced analytics (coming soon).",
-};
+const ENTERPRISE_DESCRIPTION =
+  "Full platform access with contract-based billing. Your organization is provisioned for Enterprise — contact your account team for seat changes or billing updates.";
 
-type PricesProps = {
-  orgSlug: string | null | undefined;
-  productId: string;
-  activePlan: string | null | undefined;
-  targetPlan: Plan;
-  activeSubscription: boolean;
-};
+const PRO_FEATURES = [
+  { name: "Unlimited procedures, departments, and teams" },
+  { name: "Audit logs, and metrics" },
+  { name: "AI assistant - Bring your own AI API keys" },
+  { name: "Configurable user roles and permissions" },
+  { name: "Priority support & onboarding" },
+  { name: "Advanced analytics (coming soon)" },
+];
 
-const Prices = async ({
-  orgSlug,
-  productId,
-  activePlan,
-  targetPlan,
-  activeSubscription,
-}: PricesProps) => {
-  const prices = await getStripe().prices.list({
-    active: true,
-    product: productId,
-  });
+const SELF_HOSTED_FEATURES = [
+  { name: "Full platform access on your own infrastructure" },
+  { name: "Complete data ownership & privacy" },
+  { name: "No seat-based billing" },
+  { name: "Bring your own AI API keys" },
+  { name: "All core features included" },
+  { name: "Community support via GitHub" },
+];
 
-  return prices.data.map((price: Stripe.Price) => (
-    <CheckoutSessionForm
-      key={price.id}
-      orgSlug={orgSlug}
-      priceId={price.id}
-      activePlan={activePlan}
-      targetPlan={targetPlan}
-      activeSubscription={activeSubscription}
-    >
-      <span className="font-bold text-lg">
-        {toCurrencyFromCent(price.unit_amount || 0, price.currency)}
-      </span>
-      &nbsp;/&nbsp;<span>{price.recurring?.interval}</span>
-    </CheckoutSessionForm>
-  ));
-};
+const ENTERPRISE_FEATURES = [
+  { name: "Everything in Pro" },
+  { name: "Contract-based, custom billing" },
+  { name: "Dedicated account manager" },
+  { name: "Custom onboarding & training" },
+  { name: "SLA-backed priority support" },
+  { name: "Advanced analytics (coming soon)" },
+];
+
+const SELF_HOSTED_DESCRIPTION =
+  "This deployment runs on your infrastructure. All product features are available without a cloud subscription or Stripe checkout.";
+
+function pickPrice(
+  prices: Stripe.Price[],
+  billing: "monthly" | "annual",
+) {
+  const meta = billing === "monthly" ? "monthly" : "annual";
+  return (
+    prices.find((p) => p.metadata?.billing === meta) ??
+    prices.find((p) =>
+      billing === "monthly"
+        ? p.recurring?.interval === "month"
+        : p.recurring?.interval === "year",
+    ) ??
+    null
+  );
+}
+
+function EnterprisePlanCard({ isActive }: { isActive: boolean }) {
+  return (
+    <Card className="flex w-full animate-fade-from-top flex-col border-muted">
+      <CardHeader className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-2 text-xl">
+            Enterprise
+          </CardTitle>
+          {isActive ? (
+            <Badge variant="outline" className="text-xs">
+              Active
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="text-xs">
+              Custom pricing
+            </Badge>
+          )}
+        </div>
+        <p className="text-2xl font-medium tracking-tight">Contact Sales</p>
+        <CardDescription className="whitespace-normal text-sm h-[75px]">
+          {ENTERPRISE_DESCRIPTION}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1">
+        <ul className="space-y-2 border-t pt-4">
+          {ENTERPRISE_FEATURES.map((f) => (
+            <li key={f.name} className="flex gap-x-2 text-sm">
+              <LucideCheck
+                className="mt-0.5 size-4 shrink-0 text-primary"
+                aria-hidden
+              />
+              <span>{f.name}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+      <CardFooter className="mt-auto border-t pt-6">
+        <Button asChild variant="outline" className="w-full">
+          <a href="mailto:hello@navisdocs.com">Contact us</a>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function SelfHostedPlanCard() {
+  return (
+    <Card className="flex w-full animate-fade-from-top flex-col border-dashed">
+      <CardHeader className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="text-xl">Self-Hosted</CardTitle>
+          <Badge variant="secondary">Self-Hosted</Badge>
+        </div>
+        <p className="text-2xl font-medium tracking-tight">Free</p>
+        <CardDescription className="whitespace-normal text-sm h-[75px]">
+          {SELF_HOSTED_DESCRIPTION}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1">
+        <ul className="space-y-2 border-t pt-4">
+          {SELF_HOSTED_FEATURES.map((f) => (
+            <li key={f.name} className="flex gap-x-2 text-sm">
+              <LucideCheck
+                className="mt-0.5 size-4 shrink-0 text-primary"
+                aria-hidden
+              />
+              <span>{f.name}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+      <CardFooter className="mt-auto border-t pt-6">
+        <Button asChild variant="outline" className="w-full">
+          <a
+            href="https://github.com/eliott-herbert-byrnes/navis-docs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on GitHub
+          </a>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
 
 type ProductsProps = {
   orgSlug: string | null | undefined;
 };
 
 const Products = async ({ orgSlug }: ProductsProps) => {
-  const products = await getStripe().products.list({ active: true });
-
   const stripeCustomer = await getStripeCustomerByOrg(orgSlug);
+  const plan = stripeCustomer?.plan;
+  const isEnterprise = plan === OrgPlan.enterprise;
 
   let subscriptionStatus = stripeCustomer?.stripeSubscriptionStatus;
-  if (stripeCustomer?.stripeSubscriptionId) {
+  if (
+    stripeCustomer?.stripeSubscriptionId &&
+    !isSelfHosted() &&
+    !isEnterprise
+  ) {
     try {
       const sub = await getStripe().subscriptions.retrieve(
         stripeCustomer.stripeSubscriptionId,
       );
       subscriptionStatus = sub.status;
-    } catch {}
+    } catch {
+      /* keep DB status */
+    }
   }
 
-  const activeSubscription = subscriptionStatus === "active";
-  const activePlan = stripeCustomer?.plan;
+  const activeSubscription =
+    subscriptionStatus === "active" || subscriptionStatus === "trialing";
+
+  let monthly: Stripe.Price | null = null;
+  let annual: Stripe.Price | null = null;
+  let proProduct: Stripe.Product | null = null;
+  let marketingFeatures: { name?: string | null }[] = PRO_FEATURES;
+
+  if (!isSelfHosted() && !isEnterprise) {
+    const products = await getStripe().products.list({ active: true });
+    proProduct =
+      products.data.find((p) => p.metadata?.plan === "pro") ??
+      products.data[0] ??
+      null;
+    if (proProduct) {
+      const prices = await getStripe().prices.list({
+        active: true,
+        product: proProduct.id,
+      });
+      monthly = pickPrice(prices.data, "monthly");
+      annual = pickPrice(prices.data, "annual");
+      if (proProduct.marketing_features?.some((f) => f.name)) {
+        marketingFeatures = proProduct.marketing_features;
+      }
+    }
+  }
 
   return (
-    <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mx-auto my-auto">
-      {products.data.map((product: Stripe.Product) => {
-        const targetPlan: Plan = product.name
-          .toLowerCase()
-          .includes("enterprise")
-          ? "enterprise"
-          : "business";
-
-        return (
-          <Card
-            key={product.id}
-            className="w-[275px] h-full flex animate-fade-from-top"
-          >
-            <CardHeader>
-              <CardTitle>{product.name}</CardTitle>
-              <CardDescription className="mt-2 text-sm whitespace-normal">
-                {PLAN_DESCRIPTIONS[targetPlan]}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              {product.marketing_features.map(
-                (feature: Stripe.Product.MarketingFeature) => (
-                  <div key={feature.name} className="flex gap-x-2 mb-2">
-                    <LucideCheck className="flex-shrink-0 mt-1" />
-                    <span className="text-sm">{feature.name}</span>
-                  </div>
-                ),
-              )}
-            </CardContent>
-            <CardFooter className="mt-auto">
-              <Prices
-                orgSlug={orgSlug}
-                productId={product.id}
-                activePlan={activePlan}
-                targetPlan={targetPlan}
-                activeSubscription={activeSubscription}
-              />
-            </CardFooter>
-          </Card>
-        );
-      })}
-    </div>
+    <SubscriptionTiersClient
+      selfHosted={<SelfHostedPlanCard />}
+      enterprise={<EnterprisePlanCard isActive={isEnterprise} />}
+      orgSlug={orgSlug}
+      productName={proProduct?.name ?? "Pro"}
+      description={PRO_DESCRIPTION}
+      marketingFeatures={marketingFeatures}
+      monthlyPriceId={monthly?.id ?? null}
+      annualPriceId={annual?.id ?? null}
+      monthlyUnitAmount={monthly?.unit_amount ?? null}
+      monthlyCurrency={monthly?.currency ?? "usd"}
+      annualUnitAmount={annual?.unit_amount ?? null}
+      annualCurrency={annual?.currency ?? "usd"}
+      activePlan={plan}
+      activeSubscription={activeSubscription}
+      isSelfHosted={isSelfHosted()}
+      isEnterprise={isEnterprise}
+    />
   );
 };
 

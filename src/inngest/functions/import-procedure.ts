@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import mammoth from "mammoth";
 import { getAnthropic } from "@/lib/ai/anthropic";
+import { resolveOrgAiKeys } from "@/lib/ai/resolve-org-ai-keys";
+import { isCloud } from "@/lib/deploy-mode";
 import { Prisma } from "@prisma/client";
 
 /** Minimal check that parsed AI output looks like a Tiptap doc we can store. */
@@ -103,7 +105,23 @@ export const eventImportProcedure = inngest.createFunction(
         data: { status: "GENERATING" },
       });
 
-      const client = getAnthropic();
+      let anthropicApiKey: string | undefined;
+      if (isCloud()) {
+        const resolved = await resolveOrgAiKeys(orgId);
+        if (!resolved.cloudEntitled) {
+          throw new Error(
+            "AI import requires an active Pro or Enterprise subscription.",
+          );
+        }
+        if (!resolved.anthropicKey) {
+          throw new Error(
+            "No Anthropic API key configured. Add your key in Settings → AI Configuration.",
+          );
+        }
+        anthropicApiKey = resolved.anthropicKey;
+      }
+
+      const client = getAnthropic(anthropicApiKey);
       const response = await client.messages.create({
         model: "claude-haiku-4-5-20251001",
         max_tokens: 2000,

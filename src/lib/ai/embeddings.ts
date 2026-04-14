@@ -1,20 +1,18 @@
 import OpenAI from "openai";
 
-let _client: OpenAI | null = null;
-
-export function getOpenAI() {
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not set");
+export function getOpenAI(apiKey?: string) {
+  const key = apiKey || process.env.OPENAI_API_KEY;
+  if (!key) {
+    throw new Error("No OpenAI API key available");
   }
-
-  if (!_client) _client = new OpenAI({ apiKey });
-  return _client;
+  return new OpenAI({ apiKey: key });
 }
 
-export async function generateEmbedding(text: string): Promise<number[]> {
-  const response = await getOpenAI().embeddings.create({
+export async function generateEmbedding(
+  text: string,
+  openAiApiKey?: string,
+): Promise<number[]> {
+  const response = await getOpenAI(openAiApiKey).embeddings.create({
     model: "text-embedding-3-small",
     input: text.substring(0, 8000),
   });

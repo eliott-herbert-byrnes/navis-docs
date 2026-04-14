@@ -5,7 +5,10 @@ import {
   searchProcedureChunks,
 } from "@/features/ai/queries/search-chunks";
 import { getAnthropic } from "@/lib/ai/anthropic";
+import { resolveOrgAiKeys } from "@/lib/ai/resolve-org-ai-keys";
 import { getSessionUser, getUserTeamIds } from "@/lib/auth";
+import { isCloud } from "@/lib/deploy-mode";
+import { prisma } from "@/lib/prisma";
 import { aiLimiter, getLimitByUser } from "@/lib/rate-limiter";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -85,6 +88,40 @@ export async function POST(req: NextRequest) {
     const userTeams = await getUserTeamIds(user.userId);
     if (!userTeams.includes(teamId)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      select: {
+        department: { select: { orgId: true } },
+      },
+    });
+    if (!team) {
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
+    }
+
+    let anthropicApiKey: string | undefined;
+    if (isCloud()) {
+      const resolved = await resolveOrgAiKeys(team.department.orgId);
+      if (!resolved.cloudEntitled) {
+        return NextResponse.json(
+          {
+            error:
+              "AI features require an active Pro or Enterprise subscription.",
+          },
+          { status: 403 },
+        );
+      }
+      if (!resolved.anthropicKey) {
+        return NextResponse.json(
+          {
+            error:
+              "No Anthropic API key configured for your organization. Add your key in Settings → AI Configuration.",
+          },
+          { status: 402 },
+        );
+      }
+      anthropicApiKey = resolved.anthropicKey;
     }
 
     // Tiered search
@@ -212,7 +249,7 @@ export async function POST(req: NextRequest) {
     - If a procedure cannot be located or does not exist, do not offer to make a note of it. Instead, inform the user that the procedure may not yet be documented and suggest they contact their organisation's support team to request it be added.`;
     }
 
-    const response = await getAnthropic().messages.create({
+    const response = await getAnthropic(anthropicApiKey).messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       system: systemPrompt,

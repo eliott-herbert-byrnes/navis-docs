@@ -13,7 +13,7 @@ const SignInPage = () => {
           <div className="flex size-10 items-center justify-center rounded-md text-primary-foreground">
             <Image src="/nd-square-blue-png.png" width={80} height={80} alt="Navis Docs logo" />
           </div>
-          Navis.docs
+          Navis Docs
         </div>
         <SignInForm />
       </div>

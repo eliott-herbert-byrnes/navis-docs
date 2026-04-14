@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { isSelfHosted } from "@/lib/deploy-mode";
 
 export type OrgProvisioning = {
   allowedDepartments: number;
@@ -8,6 +9,21 @@ export type OrgProvisioning = {
   currentDepartments: number;
   currentTeams: number;
 };
+
+function numFromEnt(
+  ent: Record<string, unknown>,
+  keys: string[],
+): number | undefined {
+  for (const key of keys) {
+    const v = ent[key];
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+    if (typeof v === "string" && v !== "") {
+      const n = Number(v);
+      if (Number.isFinite(n)) return n;
+    }
+  }
+  return undefined;
+}
 
 export const getStripeProvisionByOrg = async (
   orgSlug: string,
@@ -26,40 +42,47 @@ export const getStripeProvisionByOrg = async (
     };
   }
 
+  const [currentDepartments, currentTeams] = await prisma.$transaction([
+    prisma.department.count({ where: { orgId: org.id } }),
+    prisma.team.count({ where: { department: { orgId: org.id } } }),
+  ]);
+
+  if (isSelfHosted()) {
+    return {
+      allowedDepartments: Infinity,
+      allowedTeamsPerDepartment: Infinity,
+      currentDepartments,
+      currentTeams,
+    };
+  }
+
   const defaults = {
-    business: { procedures: 100, departments: 3, teamsPerDepartment: 1 },
+    pro: {
+      procedures: 2000,
+      departments: 500,
+      teamsPerDepartment: 100,
+    },
     enterprise: {
-      procedures: 1000,
-      departments: 1000,
-      teamsPerDepartment: 1000,
+      procedures: Infinity,
+      departments: Infinity,
+      teamsPerDepartment: Infinity,
     },
   } as const;
 
-  const planKey = (org.plan || "business").toLowerCase() as
-    | "business"
-    | "enterprise";
+  const planKey = (org.plan || "pro").toLowerCase() as "pro" | "enterprise";
   const ent =
     typeof org.entitlementsJSON === "object" && org.entitlementsJSON !== null
       ? (org.entitlementsJSON as Record<string, unknown>)
       : {};
 
-  const allowedDepartments = Number(
-    typeof ent.maxDepartments === "number" ||
-      typeof ent.maxDepartments === "string"
-      ? ent.maxDepartments
-      : defaults[planKey].departments,
-  );
-  const allowedTeamsPerDepartment = Number(
-    typeof ent.maxTeamsPerDepartment === "number" ||
-      typeof ent.maxTeamsPerDepartment === "string"
-      ? ent.maxTeamsPerDepartment
-      : defaults[planKey].teamsPerDepartment,
-  );
-
-  const [currentDepartments, currentTeams] = await prisma.$transaction([
-    prisma.department.count({ where: { orgId: org.id } }),
-    prisma.team.count({ where: { department: { orgId: org.id } } }),
-  ]);
+  const allowedDepartments =
+    numFromEnt(ent, ["allowedDepartments", "maxDepartments"]) ??
+    defaults[planKey].departments;
+  const allowedTeamsPerDepartment =
+    numFromEnt(ent, [
+      "allowedTeamsPerDepartment",
+      "maxTeamsPerDepartment",
+    ]) ?? defaults[planKey].teamsPerDepartment;
 
   return {
     allowedDepartments,

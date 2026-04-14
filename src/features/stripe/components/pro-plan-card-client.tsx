@@ -1,0 +1,185 @@
+"use client";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { LucideCheck, LucideSparkles } from "lucide-react";
+import { CheckoutSessionForm } from "./checkout-session-form";
+import { CustomerPortalForm } from "./customer-portal-form";
+import { toCurrencyFromCent } from "@/utils/currency";
+
+export type BillingInterval = "monthly" | "annual";
+
+type MarketingFeature = { name?: string | null };
+
+type ProPlanCardClientProps = {
+  orgSlug: string | null | undefined;
+  productName: string;
+  description: string;
+  marketingFeatures: MarketingFeature[];
+  monthlyPriceId: string | null;
+  annualPriceId: string | null;
+  monthlyUnitAmount: number | null;
+  monthlyCurrency: string;
+  annualUnitAmount: number | null;
+  annualCurrency: string;
+  activePlan: string | null | undefined;
+  activeSubscription: boolean;
+  billing: BillingInterval;
+  isSelfHosted: boolean;
+  isEnterprise: boolean;
+};
+
+export function ProPlanCardClient({
+  orgSlug,
+  productName,
+  description,
+  marketingFeatures,
+  monthlyPriceId,
+  annualPriceId,
+  monthlyUnitAmount,
+  monthlyCurrency,
+  annualUnitAmount,
+  annualCurrency,
+  activePlan,
+  activeSubscription,
+  billing,
+  isSelfHosted,
+  isEnterprise,
+}: ProPlanCardClientProps) {
+  const effectiveMonthlyFromAnnual =
+    annualUnitAmount != null ? Math.round(annualUnitAmount / 12) : null;
+
+  const selectedPriceId =
+    billing === "monthly" ? monthlyPriceId : annualPriceId;
+
+  return (
+    <Card className="flex w-full animate-fade-from-top flex-col border-primary/20 shadow-md">
+      <CardHeader className="space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <CardTitle className="text-xl">{productName}</CardTitle>
+          {activeSubscription ? (
+            <Badge variant="outline" className="text-xs">
+              Active
+            </Badge>
+          ) : (
+            <Badge
+              variant="secondary"
+              className="gap-1 border border-primary/20 bg-primary/10 text-primary"
+            >
+              <LucideSparkles className="size-3.5" aria-hidden />
+              14-day trial
+            </Badge>
+          )}
+        </div>
+        {!activeSubscription && (
+          <>
+            {billing === "monthly" &&
+              monthlyUnitAmount != null &&
+              monthlyPriceId && (
+                <div className="space-y-1">
+                  <p className="text-2xl font-bold tracking-tight">
+                    {toCurrencyFromCent(monthlyUnitAmount, monthlyCurrency)}
+                    <span className="text-base font-normal text-muted-foreground">
+                      {" "}
+                      / seat / month
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Billed monthly per seat in your organization.
+                  </p>
+                </div>
+              )}
+
+            {billing === "annual" &&
+              annualUnitAmount != null &&
+              effectiveMonthlyFromAnnual != null &&
+              annualPriceId && (
+                <div className="space-y-1">
+                  <p className="text-2xl font-bold tracking-tight">
+                    {toCurrencyFromCent(
+                      effectiveMonthlyFromAnnual,
+                      annualCurrency,
+                    )}
+                    <span className="text-base font-normal text-muted-foreground">
+                      {" "}
+                      / seat / month
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Billed annually —{" "}
+                    {toCurrencyFromCent(annualUnitAmount, annualCurrency)}/ year
+                    per seat (
+                    {toCurrencyFromCent(
+                      effectiveMonthlyFromAnnual,
+                      annualCurrency,
+                    )}
+                    / mo effective).
+                  </p>
+                </div>
+              )}
+
+            {billing === "monthly" && !monthlyPriceId && (
+              <p className="text-sm text-muted-foreground">
+                Monthly pricing is not configured in Stripe.
+              </p>
+            )}
+            {billing === "annual" && !annualPriceId && (
+              <p className="text-sm text-muted-foreground">
+                Annual pricing is not configured in Stripe.
+              </p>
+            )}
+          </>
+        )}
+        <CardDescription className="whitespace-normal text-sm h-[68px]">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 space-y-4">
+
+        <ul className="space-y-2 border-t pt-4">
+          {marketingFeatures.map((feature, index) => (
+            <li
+              key={feature.name ?? `feature-${index}`}
+              className="flex gap-x-2 text-sm"
+            >
+              <LucideCheck
+                className="mt-0.5 size-4 shrink-0 text-primary"
+                aria-hidden
+              />
+              <span>{feature.name}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+      <CardFooter className="mt-auto flex-col items-stretch gap-3 border-t pt-6">
+        {activeSubscription ? (
+          <CustomerPortalForm>
+            <span className="font-semibold">Manage Subscription</span>
+          </CustomerPortalForm>
+        ) : isSelfHosted || isEnterprise ? (
+          <Button disabled className="w-full">
+            <span className="font-semibold">Continue to checkout</span>
+          </Button>
+        ) : selectedPriceId ? (
+          <CheckoutSessionForm
+            key={selectedPriceId}
+            orgSlug={orgSlug}
+            priceId={selectedPriceId}
+            activePlan={activePlan}
+            activeSubscription={activeSubscription}
+          >
+            <span className="font-semibold">Continue to checkout</span>
+          </CheckoutSessionForm>
+        ) : null}
+      </CardFooter>
+    </Card>
+  );
+}

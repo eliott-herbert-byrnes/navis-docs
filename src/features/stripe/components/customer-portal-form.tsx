@@ -4,14 +4,8 @@ import { useActionState } from "@/components/form/hooks/use-action-state";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Button } from "@/components/ui/button";
 import { createCustomerPortal } from "../actions/create-customer-portal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 type CustomerPortalFormProps = {
-  orgSlug: string;
   children: React.ReactNode;
 };
 
@@ -22,24 +16,10 @@ const CustomerPortalForm = ({ children }: CustomerPortalFormProps) => {
   );
 
   return (
-    <Form action={action} actionState={actionState}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div>
-            <Button
-              className="text-sm shadow-none"
-              variant="outline"
-              type="submit"
-              disabled
-            >
-              {children}
-            </Button>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Disabled for MVP</p>
-        </TooltipContent>
-      </Tooltip>
+    <Form action={action} actionState={actionState} className="w-full">
+      <Button className="w-full text-sm shadow-none" variant="outline" type="submit">
+        {children}
+      </Button>
     </Form>
   );
 };
