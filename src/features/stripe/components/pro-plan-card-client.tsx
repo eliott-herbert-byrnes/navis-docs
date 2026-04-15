@@ -79,6 +79,13 @@ export function ProPlanCardClient({
             </Badge>
           )}
         </div>
+        {activeSubscription ? (
+        <p className="text-2xl font-bold tracking-tight">
+          Active
+        </p>
+        ) : (
+          null
+        )}
         {!activeSubscription && (
           <>
             {billing === "monthly" &&
@@ -166,7 +173,7 @@ export function ProPlanCardClient({
           </CustomerPortalForm>
         ) : isSelfHosted || isEnterprise ? (
           <Button disabled className="w-full">
-            <span className="font-semibold">Continue to checkout</span>
+            <span className="font-semibold">Checkout</span>
           </Button>
         ) : selectedPriceId ? (
           <CheckoutSessionForm
@@ -176,7 +183,7 @@ export function ProPlanCardClient({
             activePlan={activePlan}
             activeSubscription={activeSubscription}
           >
-            <span className="font-semibold">Continue to checkout</span>
+            <span className="font-semibold">Checkout</span>
           </CheckoutSessionForm>
         ) : null}
       </CardFooter>
