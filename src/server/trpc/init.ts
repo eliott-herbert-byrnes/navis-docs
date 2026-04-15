@@ -111,6 +111,16 @@ const orgMiddleware = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+const subscriptionMiddleware = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.hasActiveAccess) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "An active subscription is required to perform this action.",
+    });
+  }
+  return next({ ctx });
+});
+
 // EXPORTS
 export const router = t.router;
 export const publicProcedure = t.procedure;
@@ -120,3 +130,10 @@ export const adminProcedure = t.procedure
   .use(adminMiddleware);
 export const orgProcedure = protectedProcedure.use(orgMiddleware);
 export const orgAdminProcedure = adminProcedure.use(orgMiddleware);
+
+/** Member write operations that require an active trial or subscription */
+export const orgActiveProcedure = orgProcedure.use(subscriptionMiddleware);
+
+/** Admin write operations that require an active trial or subscription */
+export const orgAdminActiveProcedure =
+  orgAdminProcedure.use(subscriptionMiddleware);

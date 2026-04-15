@@ -1,6 +1,6 @@
 import { createAuditLog } from "@/features/audit/utils/audit";
 import {
-  adminProcedure,
+  orgAdminActiveProcedure,
   orgProcedure,
   rateLimitMiddleware,
   router,
@@ -30,7 +30,7 @@ export const teamRouter = router({
     }),
 
   // create team
-  create: adminProcedure
+  create: orgAdminActiveProcedure
     .use(rateLimitMiddleware("team-create"))
     .input(
       z.object({
@@ -102,7 +102,7 @@ export const teamRouter = router({
     }),
 
   // delete team
-  delete: adminProcedure
+  delete: orgAdminActiveProcedure
     .use(rateLimitMiddleware("team-delete"))
     .input(
       z.object({
@@ -169,7 +169,7 @@ export const teamRouter = router({
     }),
 
   // rename team
-  rename: adminProcedure
+  rename: orgAdminActiveProcedure
     .use(rateLimitMiddleware("team-rename"))
     .input(
       z.object({

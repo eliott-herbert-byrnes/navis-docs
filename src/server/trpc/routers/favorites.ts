@@ -1,4 +1,9 @@
-import { router, orgProcedure, rateLimitMiddleware } from "@/server/trpc/init";
+import {
+  router,
+  orgProcedure,
+  orgActiveProcedure,
+  rateLimitMiddleware,
+} from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -57,7 +62,7 @@ export const favoritesRouter = router({
     }),
 
   // Mutation: Toggle favorite
-  toggleFavorite: orgProcedure
+  toggleFavorite: orgActiveProcedure
     .use(rateLimitMiddleware("favorite-toggle"))
     .input(
       z.object({

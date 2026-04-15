@@ -1,7 +1,12 @@
+import { SubscriptionEndedEmail } from "@/emails/subscription-ended";
+import { TrialStartedEmail } from "@/emails/trial-started";
+import { TrialWillEndEmail } from "@/emails/trial-will-end";
 import { getResend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { OrgPlan, StripeSubscriptionStatus } from "@prisma/client";
+import { render } from "@react-email/render";
+import React from "react";
 import { Stripe } from "stripe";
 
 /** Webhook payloads include subscription/customer ids; SDK Invoice typing can lag the API. */
@@ -108,17 +113,46 @@ export const updateStripeSubscription = async (
   });
 };
 
+function stripeCustomerIdFromSubscription(
+  subscription: Stripe.Subscription,
+): string | null {
+  const c = subscription.customer;
+  if (typeof c === "string") return c;
+  if (c && typeof c === "object" && "id" in c && typeof c.id === "string")
+    return c.id;
+  return null;
+}
+
 export const deleteStripeSubscription = async (
   subscription: Stripe.Subscription,
 ) => {
+  const customerId = stripeCustomerIdFromSubscription(subscription);
+  if (!customerId) return;
+
+  const org = await prisma.organization.findUnique({
+    where: { stripeCustomerId: customerId },
+    include: { ownerUser: { select: { email: true, name: true } } },
+  });
+
   await prisma.organization.update({
-    where: { stripeCustomerId: subscription.customer as string },
+    where: { stripeCustomerId: customerId },
     data: {
       stripeSubscriptionId: null,
       stripeSubscriptionStatus: null,
       currentPeriodEnd: null,
     },
   });
+
+  if (org?.ownerUser?.email) {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+    const billingUrl = baseUrl ? `${baseUrl}/subscription` : "/subscription";
+    await sendSubscriptionEndedEmail({
+      to: org.ownerUser.email,
+      ownerName: org.ownerUser.name ?? "there",
+      orgName: org.name,
+      billingUrl,
+    });
+  }
 };
 
 /** Subscription invoice payment failed — mark org as past_due. */
@@ -151,10 +185,7 @@ export async function handleInvoicePaid(invoice: InvoicePayload): Promise<void> 
 export async function sendTrialWillEndEmail(
   subscription: Stripe.Subscription,
 ): Promise<void> {
-  const customerId =
-    typeof subscription.customer === "string"
-      ? subscription.customer
-      : subscription.customer?.id;
+  const customerId = stripeCustomerIdFromSubscription(subscription);
   if (!customerId) return;
 
   const org = await prisma.organization.findUnique({
@@ -173,21 +204,19 @@ export async function sendTrialWillEndEmail(
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const billingUrl = baseUrl ? `${baseUrl}/subscription` : "/subscription";
 
-  const subject = "Your Navis Docs trial is ending soon";
-  const html = `
-    <p>Hi ${escapeHtml(org.ownerUser.name ?? "there")},</p>
-    <p>Your organization’s <strong>${escapeHtml(org.name)}</strong> subscription trial will end soon.</p>
-    <p>To keep uninterrupted access, add a payment method in billing before the trial ends.</p>
-    <p><a href="${escapeHtml(billingUrl)}">Manage billing</a></p>
-    <p>— Navis Docs</p>
-  `.trim();
-
   try {
     const resend = getResend();
+    const html = await render(
+      React.createElement(TrialWillEndEmail, {
+        orgName: org.name,
+        ownerName: org.ownerUser.name ?? "there",
+        billingUrl,
+      }),
+    );
     await resend.emails.send({
       from: "Navis Docs <no-reply@app.navisdocs.com>",
       to: org.ownerUser.email,
-      subject,
+      subject: "Your Navis Docs trial is ending soon",
       html,
     });
   } catch (err) {
@@ -195,10 +224,68 @@ export async function sendTrialWillEndEmail(
   }
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+export type SendTrialStartedEmailInput = {
+  to: string;
+  ownerName: string;
+  orgName: string;
+  trialEndsAt: Date;
+  billingUrl: string;
+};
+
+/** Welcome email when a cloud org’s Stripe trial subscription is provisioned (e.g. via Inngest). */
+export async function sendTrialStartedEmail(
+  input: SendTrialStartedEmailInput,
+): Promise<void> {
+  const resend = getResend();
+  const html = await render(
+    React.createElement(TrialStartedEmail, {
+      orgName: input.orgName,
+      ownerName: input.ownerName,
+      trialEndsAt: input.trialEndsAt,
+      billingUrl: input.billingUrl,
+    }),
+  );
+  await resend.emails.send({
+    from: "Navis Docs <no-reply@app.navisdocs.com>",
+    to: input.to,
+    subject: `Your Navis Docs trial has started for ${input.orgName}`,
+    html,
+  });
+}
+
+export type SendSubscriptionEndedEmailInput = {
+  to: string;
+  ownerName: string;
+  orgName: string;
+  billingUrl: string;
+};
+
+/**
+ * Sent when Stripe removes a subscription (e.g. trial ended without payment).
+ * Does not throw; logs on failure so the webhook can still return 200.
+ */
+export async function sendSubscriptionEndedEmail(
+  input: SendSubscriptionEndedEmailInput,
+): Promise<void> {
+  try {
+    const resend = getResend();
+    const html = await render(
+      React.createElement(SubscriptionEndedEmail, {
+        orgName: input.orgName,
+        ownerName: input.ownerName,
+        billingUrl: input.billingUrl,
+      }),
+    );
+    await resend.emails.send({
+      from: "Navis Docs <no-reply@app.navisdocs.com>",
+      to: input.to,
+      subject: `Your Navis Docs access for ${input.orgName} has ended`,
+      html,
+    });
+  } catch (err) {
+    console.error(
+      "customer.subscription.deleted: failed to send subscription ended email",
+      err,
+    );
+  }
 }

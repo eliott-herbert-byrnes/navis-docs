@@ -2,6 +2,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import {
   router,
   adminProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
@@ -90,7 +91,7 @@ export const categoriesRouter = router({
       };
     }),
 
-  deleteCategory: adminProcedure
+  deleteCategory: orgAdminActiveProcedure
     .use(rateLimitMiddleware("category-delete"))
     .input(z.object({ categoryId: categoryIdSchema }))
     .mutation(async ({ ctx, input }) => {
@@ -146,7 +147,7 @@ export const categoriesRouter = router({
       return { data: { id: category.id } };
     }),
 
-  deleteCategories: adminProcedure
+  deleteCategories: orgAdminActiveProcedure
     .use(rateLimitMiddleware("category-delete"))
     .input(
       z.object({

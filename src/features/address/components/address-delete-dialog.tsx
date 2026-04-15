@@ -8,9 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuthContext } from "@/contexts/auth-context";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -28,7 +27,6 @@ const AddressDeleteDialog = ({
   isPending,
 }: AddressDeleteDialogProps) => {
   const [open, setOpen] = useState(false);
-  const { isAdmin } = useAuthContext();
 
   const handleSubmit = () => {
     onConfirm();
@@ -37,12 +35,12 @@ const AddressDeleteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button variant="ghost" className="w-full flex justify-start gap-4">
           <Trash2 className="w-4 h-4 text-muted-foreground" />
           <span className="font-normal">Delete</span>
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -55,7 +53,6 @@ const AddressDeleteDialog = ({
             type="button"
             variant="default"
             onClick={handleSubmit}
-            disabled={!isAdmin}
             isLoading={isPending}
           >
             Delete

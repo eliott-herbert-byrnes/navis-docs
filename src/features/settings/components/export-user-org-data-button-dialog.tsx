@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
 import {
   Select,
   SelectContent,
@@ -42,12 +42,12 @@ const ExportUserOrgDataButtonDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button variant="outline" className="flex justify-start gap-2 max-w-[250px] shadow-none">
         <FileInput className="w-4 h-4 text-muted-foreground" />
         <span className="font-semibold">Export Org User Data</span>
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -64,7 +64,8 @@ const ExportUserOrgDataButtonDialog = ({
           </SelectContent>
         </Select>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-          <Button
+          <AccessButton
+            adminOnly
             className="w-[75px] shadow-none border"
             type="button"
             variant="default"
@@ -72,7 +73,7 @@ const ExportUserOrgDataButtonDialog = ({
             isLoading={isLoading}
           >
             Export
-          </Button>
+          </AccessButton>
           <Button
             className="w-[75px] shadow-none border"
             type="button"

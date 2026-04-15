@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { AccessButton } from "@/components/ui/access-button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { homePath } from "@/app/paths";
 import { FormEvent, useState, useTransition } from "react";
@@ -416,7 +417,12 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
           </FieldSet>
 
           <Field orientation="horizontal">
-            <Button type="submit" disabled={isPending || isCancelPending || isSubmitBlocked} className="shadow-none border">
+            <AccessButton
+              adminOnly
+              type="submit"
+              disabled={isPending || isCancelPending || isSubmitBlocked}
+              className="shadow-none border"
+            >
               {isPending ? (
                 <>
                   <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
@@ -424,7 +430,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
               ) : (
                 "Submit"
               )}
-            </Button>
+            </AccessButton>
             <Button
               variant="outline"
               type="button"

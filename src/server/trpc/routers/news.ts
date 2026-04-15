@@ -2,7 +2,8 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import {
   router,
   orgProcedure,
-  adminProcedure,
+  orgActiveProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
@@ -119,7 +120,7 @@ export const newsRouter = router({
       return { count: unreadCount };
     }),
   // Mutate: Mark News as Read
-  markNewsRead: orgProcedure
+  markNewsRead: orgActiveProcedure
     .use(rateLimitMiddleware("news-mark-read"))
     .input(
       z.object({
@@ -173,7 +174,7 @@ export const newsRouter = router({
       };
     }),
   // Mutate: Create News
-  createNews: adminProcedure
+  createNews: orgAdminActiveProcedure
     .use(rateLimitMiddleware("news-create"))
     .input(
       z.object({
@@ -234,7 +235,7 @@ export const newsRouter = router({
       };
     }),
   // Mutate: Delete News
-  deleteNews: adminProcedure
+  deleteNews: orgAdminActiveProcedure
     .use(rateLimitMiddleware("news-delete"))
     .input(
       z.object({

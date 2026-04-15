@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -33,7 +33,7 @@ const ChatDeleteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger>
         <Button
           onClick={() => setOpen}
           variant="destructive"
@@ -42,7 +42,7 @@ const ChatDeleteDialog = ({
         >
           <Trash2 className="h-4 w-4" />
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, useCallback, useEffect } from "react";
 import { teamProcedurePath, viewProcedurePath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
+import { AccessButton } from "@/components/ui/access-button";
 import { LucideLoaderCircle } from "lucide-react";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProcedureActionButtons } from "./form/components/procedure-action-buttons";
@@ -93,7 +94,8 @@ export const EditProcedureForm = ({
       }
     },
     trigger: (isLoading) => (
-      <Button
+      <AccessButton
+        adminOnly
         variant="outline"
         className="shadow-none"
         disabled={
@@ -104,7 +106,7 @@ export const EditProcedureForm = ({
           <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
         ) : null}
         Cancel
-      </Button>
+      </AccessButton>
     ),
   });
 
@@ -121,7 +123,8 @@ export const EditProcedureForm = ({
       };
     },
     trigger: (isLoading) => (
-      <Button
+      <AccessButton
+        adminOnly
         variant="outline"
         className="shadow-none"
         disabled={isLoading || isCancelling || isSaving || isPending}
@@ -130,7 +133,7 @@ export const EditProcedureForm = ({
           <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
         ) : null}
         Cancel
-      </Button>
+      </AccessButton>
     ),
     onSuccess: () => {
       handleCancelEdit(

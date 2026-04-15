@@ -7,8 +7,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -17,14 +17,12 @@ type DepartmentDeleteDialogSettingsProps = {
     description: string;
     onConfirm: () => void;
     isPending: boolean;
-    disabled: boolean;
 };
 const DepartmentDeleteDialogSettings = ({
     title,
     description,
     onConfirm,
     isPending,
-    disabled,
 }: DepartmentDeleteDialogSettingsProps) => {
     const [open, setOpen] = useState(false);
 
@@ -35,12 +33,12 @@ const DepartmentDeleteDialogSettings = ({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button className="flex w-38" variant="destructive">
+            <AccessDialogTrigger adminOnly>
+                <Button className="flex w-38" variant="destructive" disabled={isPending}>
                     <TrashIcon className="w-4 h-4" />
                     Delete
                 </Button>
-            </DialogTrigger>
+            </AccessDialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>

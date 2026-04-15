@@ -12,6 +12,7 @@ import {
 } from "@/lib/supabase/audit-exports-storage";
 import {
   orgAdminProcedure,
+  orgAdminActiveProcedure,
   rateLimitProcedureMiddleware,
   router,
 } from "@/server/trpc/init";
@@ -61,7 +62,7 @@ export const auditRouter = router({
       return { logs };
     }),
 
-  startAuditExport: orgAdminProcedure
+  startAuditExport: orgAdminActiveProcedure
     .use(rateLimitProcedureMiddleware("audit-export-start"))
     .input(startAuditExportInput)
     .mutation(async ({ ctx, input }) => {
@@ -165,7 +166,7 @@ export const auditRouter = router({
       };
     }),
 
-  ackAuditExportDownloaded: orgAdminProcedure
+  ackAuditExportDownloaded: orgAdminActiveProcedure
     .input(z.object({ jobId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user?.id) {

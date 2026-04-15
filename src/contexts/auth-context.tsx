@@ -4,6 +4,7 @@ import { createContext, useContext, ReactNode } from "react";
 
 type AuthContextValue = {
   isAdmin: boolean;
+  hasActiveAccess: boolean;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -11,12 +12,14 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({
   children,
   isAdmin,
+  hasActiveAccess,
 }: {
   children: ReactNode;
   isAdmin: boolean;
+  hasActiveAccess: boolean;
 }) {
   return (
-    <AuthContext.Provider value={{ isAdmin }}>
+    <AuthContext.Provider value={{ isAdmin, hasActiveAccess }}>
       {children}
     </AuthContext.Provider>
   );

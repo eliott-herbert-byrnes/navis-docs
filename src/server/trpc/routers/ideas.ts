@@ -1,7 +1,8 @@
 import {
   router,
   orgProcedure,
-  adminProcedure,
+  orgActiveProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
@@ -130,7 +131,7 @@ export const ideasRouter = router({
     }),
 
   // Mutation: Create idea
-  createIdea: orgProcedure
+  createIdea: orgActiveProcedure
     .use(rateLimitMiddleware("idea-create"))
     .input(createIdeaSchema)
     .mutation(async ({ ctx, input }) => {
@@ -162,7 +163,7 @@ export const ideasRouter = router({
     }),
 
   // Mutation: Update idea status
-  updateIdeaStatus: adminProcedure
+  updateIdeaStatus: orgAdminActiveProcedure
     .input(
       z.object({
         ideaId: ideaIdSchema,
@@ -218,7 +219,7 @@ export const ideasRouter = router({
     }),
 
   // Mutation: Delete idea
-  deleteIdea: adminProcedure
+  deleteIdea: orgAdminActiveProcedure
     .use(rateLimitMiddleware("idea-delete"))
     .input(
       z.object({
@@ -265,7 +266,7 @@ export const ideasRouter = router({
       };
     }),
 
-  deleteIdeas: adminProcedure
+  deleteIdeas: orgAdminActiveProcedure
     .use(rateLimitMiddleware("idea-delete"))
     .input(
       z.object({

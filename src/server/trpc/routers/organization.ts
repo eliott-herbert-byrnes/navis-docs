@@ -2,6 +2,7 @@ import {
   router,
   adminProcedure,
   orgAdminProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
   protectedProcedure,
 } from "@/server/trpc/init";
@@ -9,7 +10,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { inngest } from "@/inngest/client";
-import { OrgMembershipRole, OrgPlan } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  OrgPlan,
+  StripeSubscriptionStatus,
+} from "@prisma/client";
 import { encrypt } from "@/lib/crypto";
 import { isCloud } from "@/lib/deploy-mode";
 import { getStripe } from "@/lib/stripe";
@@ -143,6 +148,9 @@ export const organizationRouter = router({
           slug,
           ownerUserId: userId as string,
           plan: OrgPlan.pro,
+          // Provisional trial values — overwritten by Stripe webhook once Inngest completes
+          stripeSubscriptionStatus: StripeSubscriptionStatus.trialing,
+          currentPeriodEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
         },
       });
 
@@ -269,7 +277,7 @@ export const organizationRouter = router({
       hasOpenAiKey: Boolean(org?.openAiApiKey),
     };
   }),
-  saveAiKeys: orgAdminProcedure
+  saveAiKeys: orgAdminActiveProcedure
     .use(rateLimitMiddleware("organization-ai-keys"))
     .input(
       z.object({

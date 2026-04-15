@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { AccessButton } from "@/components/ui/access-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -87,7 +87,8 @@ function AiConfigurationInner() {
             />
           </div>
 
-          <Button
+          <AccessButton
+            adminOnly
             type="submit"
             variant="outline"
             disabled={isLoading || saveMutation.isPending}
@@ -97,7 +98,7 @@ function AiConfigurationInner() {
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : null}
             <span className="font-semibold">Save API keys</span>
-          </Button>
+          </AccessButton>
         </div>
       </form>
       <Separator className="my-6" />

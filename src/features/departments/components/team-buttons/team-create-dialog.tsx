@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@radix-ui/react-separator";
 import { PlusIcon } from "lucide-react";
@@ -22,12 +22,10 @@ type CreateTeamDialogProps = {
   isPending: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  disabled: boolean;
 };
 const CreateTeamDialog = ({
   title,
   description,
-  disabled,
   onConfirm,
   isPending,
   open,
@@ -53,14 +51,14 @@ const CreateTeamDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button variant="ghost" className="rounded-none justify-start font-normal">
           <div className="flex flex-row gap-2 items-center">
             <PlusIcon className="w-4 h-4" />
             Team
           </div>
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { AccessDialogTrigger } from "@/components/ui/access-button";
 import {
   Select,
   SelectContent,
@@ -49,7 +49,7 @@ const UserRoleChangeDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <AccessDialogTrigger adminOnly>
         <Button
           variant="ghost"
           className="w-full flex justify-start gap-2 rounded-none"
@@ -58,7 +58,7 @@ const UserRoleChangeDialog = ({
           <UserIcon className="w-4 h-4 text-muted-foreground" />
           <span className="font-normal">Change Role</span>
         </Button>
-      </DialogTrigger>
+      </AccessDialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

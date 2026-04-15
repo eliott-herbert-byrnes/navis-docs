@@ -6,6 +6,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/contexts/auth-context";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   departmentIconKeys,
   getDepartmentIcon,
   getDepartmentIconLabel,
@@ -31,14 +36,14 @@ export function DepartmentIconSelector({
   departmentName,
   iconKey,
 }: DepartmentIconSelectorProps) {
-  const { isAdmin } = useAuthContext();
+  const { isAdmin, hasActiveAccess } = useAuthContext();
   const selectedIconKey = normalizeIconKey(iconKey);
 
   const [open, setOpen] = React.useState(false);
   const { setDepartmentIcon, isPending } = useSetDepartmentIcon();
 
   const handlePick = (nextIconKey: DepartmentIconKey) => {
-    if (!isAdmin) return;
+    if (!isAdmin || !hasActiveAccess) return;
 
     // No-op: do not write when selecting the already-selected icon.
     if (nextIconKey === selectedIconKey) {
@@ -62,6 +67,24 @@ export function DepartmentIconSelector({
         className="bg-secondary p-2 rounded-md border-1 mb-1"
         aria-label={`${departmentName} department icon: ${getDepartmentIconLabel(selectedIconKey)}`}
       />
+    );
+  }
+
+  if (!hasActiveAccess) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex rounded-md">
+            <CurrentIcon
+              width="45"
+              height="45"
+              className="bg-secondary p-2 rounded-md border-1 mb-1 opacity-60"
+              aria-label={`${departmentName} department icon: ${getDepartmentIconLabel(selectedIconKey)}`}
+            />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>Subscribe for access</TooltipContent>
+      </Tooltip>
     );
   }
 

@@ -1,5 +1,8 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AccessButton } from "@/components/ui/access-button";
 import { LucideLoaderCircle, Save } from "lucide-react";
 import { ProcedureForEdit } from "@/features/procedures/types/types";
 
@@ -82,7 +85,8 @@ export function ProcedureActionButtons({
             </Button>
           )}
 
-          <Button
+          <AccessButton
+            adminOnly
             variant="secondary"
             className="shadow-none border"
             onClick={onSave}
@@ -100,25 +104,28 @@ export function ProcedureActionButtons({
                 Save
               </>
             )}
-          </Button>
-          {procedure.status === "DRAFT" ? <Button
-          className="shadow-none border"
-            onClick={onPublish}
-            disabled={
-              isSaving ||
-              isCancelling ||
-              isPublishing ||
-              hasUnsavedChanges
-            }
-          >
-            {isPublishing ? (
-              <>
-                <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
-              </>
-            ) : (
-              "Publish"
-            )}
-          </Button> : null}
+          </AccessButton>
+          {procedure.status === "DRAFT" ? (
+            <AccessButton
+              adminOnly
+              className="shadow-none border"
+              onClick={onPublish}
+              disabled={
+                isSaving ||
+                isCancelling ||
+                isPublishing ||
+                hasUnsavedChanges
+              }
+            >
+              {isPublishing ? (
+                <>
+                  <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
+                </>
+              ) : (
+                "Publish"
+              )}
+            </AccessButton>
+          ) : null}
         </div>
       </div>
     </Card>

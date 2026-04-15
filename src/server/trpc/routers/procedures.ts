@@ -5,7 +5,9 @@ import {
 import {
   router,
   orgProcedure,
+  orgActiveProcedure,
   orgAdminProcedure,
+  orgAdminActiveProcedure,
   adminProcedure,
   rateLimitMiddleware,
   protectedProcedure,
@@ -609,7 +611,7 @@ export const procedureRouter = router({
     }),
 
   // Mutation: Create Procedure
-  createProcedure: adminProcedure
+  createProcedure: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-create"))
     .input(createProcedureSchema)
     .mutation(async ({ ctx, input }) => {
@@ -772,7 +774,7 @@ export const procedureRouter = router({
     }),
 
   // Mutation: Publish Procedure
-  publishProcedure: adminProcedure
+  publishProcedure: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-publish"))
     .input(
       z.object({
@@ -984,7 +986,7 @@ export const procedureRouter = router({
     }),
 
   // Mutation: Delete Procedure
-  deleteProcedure: adminProcedure
+  deleteProcedure: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-delete"))
     .input(
       z.object({
@@ -1074,7 +1076,7 @@ export const procedureRouter = router({
     }),
 
   // Mutation: Delete multiple procedures (bulk)
-  deleteProcedures: adminProcedure
+  deleteProcedures: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-bulk-delete"))
     .input(
       z.object({
@@ -1176,7 +1178,7 @@ export const procedureRouter = router({
     }),
 
   // Mutation: Update procedure category
-  updateProcedureCategory: adminProcedure
+  updateProcedureCategory: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-update-category"))
     .input(
       z.object({
@@ -1250,7 +1252,7 @@ export const procedureRouter = router({
       return { data: { id: procedure.id, categoryId: input.categoryId } };
     }),
 
-  updateProcedureDetails: adminProcedure
+  updateProcedureDetails: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-update-details"))
     .input(updateProcedureDetailsSchema)
     .mutation(async ({ ctx, input }) => {
@@ -1372,7 +1374,7 @@ export const procedureRouter = router({
     }),
 
   // Mutate: Update Procedure Content
-  updateProcedureContent: adminProcedure
+  updateProcedureContent: orgAdminActiveProcedure
     .use(rateLimitMiddleware("procedure-update"))
     .input(updateProcedureContentSchema)
     .mutation(async ({ ctx, input }) => {
@@ -1482,7 +1484,7 @@ export const procedureRouter = router({
       };
     }),
   // Mutate: Mark Procedure as Read
-  markProcedureRead: orgProcedure
+  markProcedureRead: orgActiveProcedure
     .use(rateLimitMiddleware("procedure-marked-as-read"))
     .input(
       z.object({

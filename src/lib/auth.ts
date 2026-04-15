@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { auth } from "@/auth";
-import { cache } from "react"
+import { cache } from "react";
+import { OrgPlan, StripeSubscriptionStatus } from "@prisma/client";
 
 export const getSessionUser = async () => {
   const session = await auth();
@@ -15,16 +16,23 @@ export const getSessionContext = cache(async () => {
   const membership = await prisma.orgMembership.findFirst({
     where: { userId: session.user.id },
     include: { org: true },
-  })
+  });
+
+  const org = membership?.org ?? null;
+  const hasActiveAccess =
+    org?.plan === OrgPlan.enterprise ||
+    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.active ||
+    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.trialing;
 
   return {
     userId: session.user.id,
     email: session.user.email,
-    org: membership?.org ?? null,
+    org,
     isAdmin: membership?.role === "ADMIN" || membership?.role === "OWNER",
     role: membership?.role ?? null,
-  }
-})
+    hasActiveAccess,
+  };
+});
 
 export const getUserById = async (userId: string) => {
   const user = await prisma.user.findUnique({

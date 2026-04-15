@@ -54,6 +54,7 @@ describe("Procedure Router - publishProcedure", () => {
       org: { id: "org-1", slug: "org" },
       membership: { role: "ADMIN" },
       isAdmin: true,
+      hasActiveAccess: true,
     };
   });
 

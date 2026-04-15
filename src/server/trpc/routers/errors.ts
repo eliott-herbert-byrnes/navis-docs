@@ -1,7 +1,8 @@
 import {
   router,
   orgProcedure,
-  adminProcedure,
+  orgActiveProcedure,
+  orgAdminActiveProcedure,
   rateLimitMiddleware,
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
@@ -83,7 +84,7 @@ export const errorsRouter = router({
     }),
 
   // Mutation: Create error report
-  createErrorReport: orgProcedure
+  createErrorReport: orgActiveProcedure
     .use(rateLimitMiddleware("error-report-create"))
     .input(createErrorReportSchema)
     .mutation(async ({ ctx, input }) => {
@@ -114,7 +115,7 @@ export const errorsRouter = router({
     }),
 
   // Mutation: Update error status
-  updateErrorStatus: adminProcedure
+  updateErrorStatus: orgAdminActiveProcedure
     .input(
       z.object({
         errorId: errorIdSchema,
@@ -184,7 +185,7 @@ export const errorsRouter = router({
     }),
 
   // Mutation: Delete error report
-  deleteError: adminProcedure
+  deleteError: orgAdminActiveProcedure
     .use(rateLimitMiddleware("error-delete"))
     .input(
       z.object({
@@ -244,7 +245,7 @@ export const errorsRouter = router({
       };
     }),
 
-  deleteErrors: adminProcedure
+  deleteErrors: orgAdminActiveProcedure
     .use(rateLimitMiddleware("error-delete"))
     .input(
       z.object({
