@@ -44,6 +44,7 @@ describe("procedures.updateProcedureContent image cleanup", () => {
       user: { id: "user-1" },
       org: { id: "org-1" },
       isAdmin: true,
+      hasActiveAccess: true,
     };
   });
 

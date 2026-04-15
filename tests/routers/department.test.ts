@@ -36,6 +36,7 @@ describe("Department Router", () => {
       org: { id: "org123", name: "Test Org", slug: "test" },
       membership: { role: "ADMIN" },
       isAdmin: true,
+      hasActiveAccess: true,
     };
   });
 
