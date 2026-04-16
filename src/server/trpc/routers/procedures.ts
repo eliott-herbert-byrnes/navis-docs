@@ -29,8 +29,8 @@ import { getInitialContentForStyle } from "@/features/procedures/utils/get-initi
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
-import { inngest } from "@/inngest/client";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { after } from "next/server";
 
 const teamSchema = z.string().min(1, { message: "Team is required" });
 const querySchema = z.string();
@@ -933,21 +933,25 @@ export const procedureRouter = router({
           },
         });
 
-        await inngest.send({
-          name: "procedure/roll-out",
-          data: {
-            rolloutId: rollout.id,
-            procedureId: procedure.id,
-            versionId: rollout.versionId,
-            orgId,
-            notifyRoleFilter: rollout.notifyRoleFilter,
-            emailOnPublish: !!emailOnPublish,
-            emailRoleFilter: rollout.emailRoleFilter,
-            newsOnPublish: !!newsOnPublish,
-            procedureTitle: procedure.title,
-            teamId: procedure.teamId,
-            createdBy: ctx.user?.id ?? "",
-          },
+        const rolloutPayload = {
+          rolloutId: rollout.id,
+          procedureId: procedure.id,
+          versionId: rollout.versionId,
+          orgId,
+          notifyRoleFilter: rollout.notifyRoleFilter,
+          emailOnPublish: !!emailOnPublish,
+          emailRoleFilter: rollout.emailRoleFilter,
+          newsOnPublish: !!newsOnPublish,
+          procedureTitle: procedure.title,
+          teamId: procedure.teamId,
+          createdBy: ctx.user?.id ?? "",
+        };
+
+        after(async () => {
+          const { runProcedureRollout } = await import(
+            "@/features/procedures/jobs/run-procedure-rollout"
+          );
+          await runProcedureRollout(rolloutPayload);
         });
       }
 

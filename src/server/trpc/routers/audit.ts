@@ -4,8 +4,8 @@ import {
   logAuditExportRequested,
 } from "@/features/audit/utils/audit";
 import type { AuditExportFilterSnapshot } from "@/features/audit/utils/audit-export-filters";
-import { inngest } from "@/inngest/client";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { after } from "next/server";
 import {
   AUDIT_EXPORTS_BUCKET,
   AUDIT_EXPORT_SIGNED_URL_TTL_SECONDS,
@@ -105,13 +105,15 @@ export const auditRouter = router({
         filtersSnapshot: snapshot,
       });
 
-      await inngest.send({
-        name: "audit/export-org",
-        data: {
+      after(async () => {
+        const { runAuditExport } = await import(
+          "@/features/audit/jobs/run-audit-export"
+        );
+        await runAuditExport({
           jobId: job.id,
           orgId,
           actorId: userId,
-        },
+        });
       });
 
       return { jobId: job.id, alreadyRunning: false };
