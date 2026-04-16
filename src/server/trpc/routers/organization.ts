@@ -8,16 +8,16 @@ import {
 } from "@/server/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { sendTrialStartedEmail } from "@/app/api/stripe/data/crud-stripe";
 import { createAuditLog } from "@/features/audit/utils/audit";
-import { inngest } from "@/inngest/client";
 import {
   OrgMembershipRole,
   OrgPlan,
-  StripeSubscriptionStatus,
 } from "@prisma/client";
 import { encrypt } from "@/lib/crypto";
 import { isCloud } from "@/lib/deploy-mode";
 import { getStripe } from "@/lib/stripe";
+import { after } from "next/server";
 
 function isStripeResourceGone(error: unknown): boolean {
   if (error && typeof error === "object" && "code" in error) {
@@ -111,7 +111,8 @@ export const organizationRouter = router({
         });
       }
 
-      const userId = ctx.user.id;
+      const user = ctx.user;
+      const userId = user.id;
 
       const existingMembership = await ctx.db.orgMembership.findFirst({
         where: { userId },
@@ -148,9 +149,6 @@ export const organizationRouter = router({
           slug,
           ownerUserId: userId as string,
           plan: OrgPlan.pro,
-          // Provisional trial values — overwritten by Stripe webhook once Inngest completes
-          stripeSubscriptionStatus: StripeSubscriptionStatus.trialing,
-          currentPeriodEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
         },
       });
 
@@ -170,22 +168,100 @@ export const organizationRouter = router({
         },
       });
 
-      try {
-        await inngest.send({
-          name: "onboarding/create-organization",
-          data: {
-            orgId: org.id,
-            orgSlug: org.slug,
-            orgName: org.name,
-            orgOwnerUserId: userId,
-          },
-        });
-      } catch (inngestError) {
-        console.warn("Failed to send Inngest event:", inngestError);
+      let orgForResponse = org;
+
+      if (isCloud()) {
+        const priceId = process.env.STRIPE_DEFAULT_PRICE_ID;
+        if (priceId) {
+          try {
+            const seatCount = Math.max(
+              1,
+              await ctx.db.orgMembership.count({
+                where: { orgId: org.id },
+              }),
+            );
+
+            const customer = await getStripe().customers.create({
+              email: user.email ?? undefined,
+              name: org.name,
+              metadata: { orgId: org.id, orgSlug: org.slug },
+            });
+
+            const subscription = await getStripe().subscriptions.create({
+              customer: customer.id,
+              items: [{ price: priceId, quantity: seatCount }],
+              trial_period_days: 14,
+              payment_behavior: "default_incomplete",
+              payment_settings: {
+                save_default_payment_method: "on_subscription",
+              },
+              metadata: { orgId: org.id, orgSlug: org.slug },
+            });
+
+            const currentPeriodEndSec =
+              subscription.items.data[0]?.current_period_end;
+
+            orgForResponse = await ctx.db.organization.update({
+              where: { id: org.id },
+              data: {
+                stripeCustomerId: customer.id,
+                stripeSubscriptionId: subscription.id,
+                stripeSubscriptionStatus: subscription.status,
+                currentPeriodEnd: currentPeriodEndSec
+                  ? new Date(currentPeriodEndSec * 1000)
+                  : null,
+              },
+            });
+
+            const ownerEmail = user.email;
+            const ownerName = user.name ?? "there";
+            if (ownerEmail) {
+              const trialEndSec = subscription.trial_end;
+              const trialEndsAt = trialEndSec
+                ? new Date(trialEndSec * 1000)
+                : new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+              const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+              const billingUrl = baseUrl
+                ? `${baseUrl}/subscription`
+                : "/subscription";
+              const orgNameForEmail = orgForResponse.name;
+
+              after(async () => {
+                try {
+                  await sendTrialStartedEmail({
+                    to: ownerEmail,
+                    ownerName,
+                    orgName: orgNameForEmail,
+                    trialEndsAt,
+                    billingUrl,
+                  });
+                } catch (err) {
+                  console.error(
+                    "[createOrganization] welcome email failed",
+                    err,
+                  );
+                }
+              });
+            }
+          } catch (error) {
+            await ctx.db.orgMembership.deleteMany({
+              where: { orgId: org.id },
+            });
+            await ctx.db.organization.delete({
+              where: { id: org.id },
+            });
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message:
+                "Failed to set up billing. Please try again or contact support.",
+              cause: error,
+            });
+          }
+        }
       }
 
       return {
-        data: org,
+        data: orgForResponse,
         message: "Organization created successfully",
       };
     }),

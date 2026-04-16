@@ -232,7 +232,7 @@ export type SendTrialStartedEmailInput = {
   billingUrl: string;
 };
 
-/** Welcome email when a cloud org’s Stripe trial subscription is provisioned (e.g. via Inngest). */
+/** Welcome email when a cloud org’s Stripe trial subscription is provisioned (e.g. on organization create). */
 export async function sendTrialStartedEmail(
   input: SendTrialStartedEmailInput,
 ): Promise<void> {

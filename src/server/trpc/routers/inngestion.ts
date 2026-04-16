@@ -1,8 +1,8 @@
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
-import { inngest } from "@/inngest/client";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { after } from "next/server";
 import {
   router,
   orgAdminProcedure,
@@ -78,16 +78,22 @@ export const ingestionRouter = router({
         },
       });
 
-      await inngest.send({
-        name: "procedure/import-file",
-        data: {
+      const orgId = ctx.org!.id;
+      const actorId = ctx.user?.id ?? "";
+      const procedureId = procedure.id;
+
+      after(async () => {
+        const { runImportProcedure } = await import(
+          "@/features/procedures/jobs/run-import-procedure"
+        );
+        await runImportProcedure({
           jobId: job.id,
           fileKey,
-          orgId: ctx.org!.id,
-          procedureId: procedure.id,
-          actorId: ctx.user?.id ?? "",
+          orgId,
+          procedureId,
+          actorId,
           sourceType,
-        },
+        });
       });
 
       return { jobId: job.id };

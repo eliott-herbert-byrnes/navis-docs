@@ -153,7 +153,7 @@ Navis Docs addresses these challenges through:
 - **Database**: PostgreSQL with pgvector extension
 - **ORM**: Prisma 6.16
 - **Authentication**: NextAuth.js 5 (OAuth, Email OTP)
-- **Background Jobs**: Inngest (for async processing)
+- **Background work**: Next.js `after()` for post-response jobs (exports, imports, rollout notifications); Stripe inline on org creation
 - **Email**: Resend (transactional emails)
 
 ### **AI & Machine Learning**
