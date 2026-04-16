@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "./auth.edge";
+import { auth } from "./auth";
 
-export default auth(async (req) => {
+export const proxy = auth(async (req) => {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/api/auth")) {
@@ -9,7 +9,9 @@ export default auth(async (req) => {
   }
 
   if (!req.auth) {
-    return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+    const signInUrl = new URL("/auth/sign-in", req.url);
+    signInUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(signInUrl);
   }
 
   const response = NextResponse.next();
@@ -26,19 +28,12 @@ export default auth(async (req) => {
     form-action 'self';
   `;
 
-  response.headers.set(
-    "Content-Security-Policy",
-    cspHeader.replace(/\s+/g, " ").trim(),
-  );
-
+  response.headers.set("Content-Security-Policy", cspHeader.replace(/\s+/g, " ").trim());
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-XSS-Protection", "1; mode=block");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set(
-    "Permissions-Policy",
-    "geolocation=(), microphone=(), camera=()",
-  );
+  response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
 
   return response;
 });
