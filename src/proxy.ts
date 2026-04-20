@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "./auth";
+import { signInPath } from "./app/paths";
 
 export const proxy = auth(async (req) => {
   const { pathname } = req.nextUrl;
@@ -9,7 +10,7 @@ export const proxy = auth(async (req) => {
   }
 
   if (!req.auth) {
-    const signInUrl = new URL("/auth/sign-in", req.url);
+    const signInUrl = new URL(signInPath(), req.url);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
   }
