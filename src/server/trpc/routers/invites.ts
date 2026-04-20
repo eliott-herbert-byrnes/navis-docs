@@ -17,6 +17,7 @@ import { render } from "@react-email/render";
 import { getResend } from "@/lib/resend";
 import { InviteEmail } from "@/emails/invite";
 import { syncStripeSeats } from "@/lib/stripe/sync-seats";
+import { canonicalEmail } from "@/lib/email-canonical";
 
 export const invitesRouter = router({
   // Query: Get Invites with pagination
@@ -92,13 +93,14 @@ export const invitesRouter = router({
         });
       }
 
-      const email = input.email.toLowerCase().trim();
+      const email = input.email.trim().toLowerCase();
+      const canonical = canonicalEmail(input.email);
 
       // Check for existing pending invitation
       const existingPending = await ctx.db.invitation.findFirst({
         where: {
           orgId: ctx.org.id,
-          email: email,
+          canonicalEmail: canonical,
           status: "PENDING",
           expiresAt: { gt: new Date() },
         },
@@ -123,6 +125,7 @@ export const invitesRouter = router({
         data: {
           orgId: ctx.org.id,
           email,
+          canonicalEmail: canonical,
           role: role,
           tokenHash,
           expiresAt,
@@ -172,11 +175,12 @@ export const invitesRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const canonical = canonicalEmail(input.email);
       const invite = await ctx.db.invitation.findUnique({
         where: {
           invitationId: {
             orgId: ctx.org?.id ?? "",
-            email: input.email,
+            canonicalEmail: canonical,
           },
         },
       });
@@ -190,7 +194,10 @@ export const invitesRouter = router({
 
       await ctx.db.invitation.delete({
         where: {
-          invitationId: { orgId: ctx.org?.id ?? "", email: input.email },
+          invitationId: {
+            orgId: ctx.org?.id ?? "",
+            canonicalEmail: canonical,
+          },
         },
       });
 
@@ -246,7 +253,12 @@ export const invitesRouter = router({
 
       if (invite.expiresAt < new Date()) {
         await ctx.db.invitation.update({
-          where: { invitationId: { orgId: invite.orgId, email: invite.email } },
+          where: {
+            invitationId: {
+              orgId: invite.orgId,
+              canonicalEmail: invite.canonicalEmail,
+            },
+          },
           data: { status: "EXPIRED" },
         });
         throw new TRPCError({
@@ -268,8 +280,10 @@ export const invitesRouter = router({
         });
       }
 
-      // After finding invite, verify email matches
-      if (invite.email.toLowerCase() !== ctx.user!.email?.toLowerCase()) {
+      // After finding invite, verify mailbox matches (canonical; dots/+tags significant)
+      if (
+        invite.canonicalEmail !== canonicalEmail(ctx.user!.email!)
+      ) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message:
@@ -295,7 +309,12 @@ export const invitesRouter = router({
           },
         }),
         ctx.db.invitation.update({
-          where: { invitationId: { orgId: invite.orgId, email: invite.email } },
+          where: {
+            invitationId: {
+              orgId: invite.orgId,
+              canonicalEmail: invite.canonicalEmail,
+            },
+          },
           data: { status: "ACCEPTED", acceptedAt: new Date() },
         }),
       ]);
@@ -314,7 +333,10 @@ export const invitesRouter = router({
           }),
           ctx.db.invitation.update({
             where: {
-              invitationId: { orgId: invite.orgId, email: invite.email },
+              invitationId: {
+                orgId: invite.orgId,
+                canonicalEmail: invite.canonicalEmail,
+              },
             },
             data: { status: "PENDING", acceptedAt: null },
           }),

@@ -9,6 +9,7 @@ datasource db {
 model User {
   id                  String          @id @default(uuid())
   email               String          @unique
+  canonicalEmail      String          @unique
   name                String?
   image               String?
   emailVerified       DateTime?       @map("emailVerifiedAt")
@@ -65,21 +66,23 @@ model EmailOTP {
 }
 
 model Invitation {
-  orgId           String
-  email           String
-  role            String
-  tokenHash       String           @unique
-  invitedByUserId String?
-  status          InvitationStatus @default(PENDING)
-  expiresAt       DateTime
-  acceptedAt      DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  invitedByUser   User?            @relation(fields: [invitedByUserId], references: [id])
-  org             Organization     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  orgId            String
+  email            String
+  canonicalEmail   String
+  role             String
+  tokenHash        String           @unique
+  invitedByUserId  String?
+  status           InvitationStatus @default(PENDING)
+  expiresAt        DateTime
+  acceptedAt       DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  invitedByUser    User?            @relation(fields: [invitedByUserId], references: [id])
+  org              Organization     @relation(fields: [orgId], references: [id], onDelete: Cascade)
 
-  @@id([orgId, email], name: "invitationId")
+  @@id([orgId, canonicalEmail], name: "invitationId")
   @@index([orgId, email, status])
+  @@index([orgId, canonicalEmail, status])
 }
 
 model VerificationToken {

@@ -4,6 +4,7 @@ import {
   ProcedureStatus,
   OrgPlan,
 } from "@prisma/client";
+import { canonicalEmail } from "../src/lib/email-canonical";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
@@ -48,11 +49,19 @@ async function main() {
   ]);
 
   const user = await prisma.user.create({
-    data: { email: "demo@navisdocs.com", name: "Demo User" },
+    data: {
+      email: "demo@navisdocs.com",
+      canonicalEmail: canonicalEmail("demo@navisdocs.com"),
+      name: "Demo User",
+    },
   });
 
   const testUser = await prisma.user.create({
-    data: { email: "test@navisdocs.com", name: "Test User" },
+    data: {
+      email: "test@navisdocs.com",
+      canonicalEmail: canonicalEmail("test@navisdocs.com"),
+      name: "Test User",
+    },
   });
 
   const org = await prisma.organization.create({

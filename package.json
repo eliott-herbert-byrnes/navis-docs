@@ -16,6 +16,8 @@
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
     "seed": "prisma db seed && tsx src/lib/stripe/seed.ts",
+    "stripe:reconcile": "tsx scripts/stripe-reconcile.ts",
+    "stripe:reconcile:apply": "tsx scripts/stripe-reconcile.ts --apply",
     "format": "prettier --write .",
     "email": "email dev --dir src/emails",
     "test": "vitest",
