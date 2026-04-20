@@ -1,16 +1,30 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { AccessButton } from "@/components/ui/access-button";
+import {
+  AccessAlertDialogTrigger,
+  AccessButton,
+} from "@/components/ui/access-button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useAiConfiguration } from "../hooks/use-ai-configuration";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 function AiConfigurationInner() {
-  const { statusQuery, saveMutation } = useAiConfiguration();
+  const { statusQuery, saveMutation, removeMutation } = useAiConfiguration();
   const [anthropic, setAnthropic] = useState("");
   const [openAi, setOpenAi] = useState("");
 
@@ -42,9 +56,45 @@ function AiConfigurationInner() {
           <div className="grid gap-2">
             <div className="flex flex-wrap items-center gap-2">
               <Label htmlFor="anthropic-api-key">Anthropic API key</Label>
-              <Badge variant={hasAnthropic ? "default" : "secondary"}>
+              <Badge variant={"default"}>
                 {hasAnthropic ? "Configured" : "Not set"}
               </Badge>
+              {hasAnthropic && (
+                <AlertDialog>
+                  <AccessAlertDialogTrigger adminOnly>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                      disabled={removeMutation.isPending}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span className="sr-only">Remove Anthropic key</span>
+                    </Button>
+                  </AccessAlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Remove Anthropic API key?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will disable AI chat for your organisation until a new
+                        key is added.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() =>
+                          removeMutation.mutate({ anthropic: true })
+                        }
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Remove key
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
             <Input
               id="anthropic-api-key"
@@ -66,9 +116,43 @@ function AiConfigurationInner() {
           <div className="grid gap-2">
             <div className="flex flex-wrap items-center gap-2">
               <Label htmlFor="openai-api-key">OpenAI API key</Label>
-              <Badge variant={hasOpenAi ? "default" : "secondary"}>
+              <Badge variant={"default"}>
                 {hasOpenAi ? "Configured" : "Not set"}
               </Badge>
+              {hasOpenAi && (
+                <AlertDialog>
+                  <AccessAlertDialogTrigger adminOnly>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                      disabled={removeMutation.isPending}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span className="sr-only">Remove OpenAI key</span>
+                    </Button>
+                  </AccessAlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Remove OpenAI API key?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This key is stored for future use and removing it will not
+                        affect AI chat.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => removeMutation.mutate({ openAi: true })}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Remove key
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
             <Input
               id="openai-api-key"

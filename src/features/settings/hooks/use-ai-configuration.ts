@@ -22,6 +22,7 @@ export function useAiConfiguration() {
         });
       }
       void utils.organization.getAiKeyStatus.invalidate();
+      void utils.organization.getAiAvailability.invalidate();
       router.refresh();
     },
     onError: (error) => {
@@ -32,8 +33,26 @@ export function useAiConfiguration() {
     },
   });
 
+  const removeMutation = trpc.organization.removeAiKeys.useMutation({
+    onSuccess: (result) => {
+      if (result.removed) {
+        toast.success("API key removed");
+      }
+      void utils.organization.getAiKeyStatus.invalidate();
+      void utils.organization.getAiAvailability.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(
+        error.message ||
+          "Could not remove API key, try again or contact support",
+      );
+    },
+  });
+
   return {
     statusQuery,
     saveMutation,
+    removeMutation,
   };
 }
