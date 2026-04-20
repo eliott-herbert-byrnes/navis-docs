@@ -181,6 +181,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
 
   const activeSubscription =
     subscriptionStatus === "active" || subscriptionStatus === "trialing";
+  const isTrialing = subscriptionStatus === "trialing";
 
   let monthly: Stripe.Price | null = null;
   let annual: Stripe.Price | null = null;
@@ -222,6 +223,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
       annualCurrency={annual?.currency ?? "usd"}
       activePlan={plan}
       activeSubscription={activeSubscription}
+      isTrialing={isTrialing}
       isSelfHosted={isSelfHosted()}
       isEnterprise={isEnterprise}
     />

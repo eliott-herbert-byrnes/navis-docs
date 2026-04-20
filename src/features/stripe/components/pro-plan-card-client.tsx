@@ -32,6 +32,7 @@ type ProPlanCardClientProps = {
   annualCurrency: string;
   activePlan: string | null | undefined;
   activeSubscription: boolean;
+  isTrialing: boolean;
   billing: BillingInterval;
   isSelfHosted: boolean;
   isEnterprise: boolean;
@@ -50,6 +51,7 @@ export function ProPlanCardClient({
   annualCurrency,
   activePlan,
   activeSubscription,
+  isTrialing,
   billing,
   isSelfHosted,
   isEnterprise,
@@ -80,12 +82,10 @@ export function ProPlanCardClient({
           )}
         </div>
         {activeSubscription ? (
-        <p className="text-2xl font-bold tracking-tight">
-          Active
-        </p>
-        ) : (
-          null
-        )}
+          <p className="text-2xl font-bold tracking-tight">
+            {isTrialing ? "Active Trial" : "Active"}
+          </p>
+        ) : null}
         {!activeSubscription && (
           <>
             {billing === "monthly" &&

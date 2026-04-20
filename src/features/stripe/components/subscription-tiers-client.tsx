@@ -21,6 +21,7 @@ type SubscriptionTiersClientProps = {
   annualCurrency: string;
   activePlan: string | null | undefined;
   activeSubscription: boolean;
+  isTrialing: boolean;
   isSelfHosted: boolean;
   isEnterprise: boolean;
 };
