@@ -20,6 +20,12 @@ import { useProcedureRouteContext } from "@/contexts/procedure-route-context";
 import { usePersistedChatState } from "../hooks/use-persisted-chat-state";
 import { ChatDeleteButton } from "./chat-delete-button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { trpc } from "@/trpc/client";
 
 type AIChatDrawerProps = {
   open?: boolean;
@@ -43,6 +49,12 @@ export function AIChatDrawer({
   const { departmentId, teamId } = useProcedureRouteContext();
   const { allowed: canUseAi } = useAccessGate(false);
   const { isAdmin } = useAuthContext();
+  const { data: aiAvailability } =
+    trpc.organization.getAiAvailability.useQuery(undefined, {
+      enabled: process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud",
+      staleTime: 1000 * 60 * 5,
+    });
+  const keysConfigured = aiAvailability?.keysConfigured ?? true;
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
     teamId,
@@ -98,7 +110,35 @@ export function AIChatDrawer({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to get response");
+      if (!response.ok) {
+        // Always read the body first — the server sends descriptive error messages
+        const body = (await response.json().catch(() => ({}))) as {
+          error?: string;
+        };
+
+        if (response.status === 402) {
+          // No Anthropic API key configured — tailor message by role
+          const content =
+            isAdmin && process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud"
+              ? "No Anthropic API key is configured for your organisation. Go to Settings → AI Configuration to add one."
+              : "AI chat is not available. Contact your organisation admin to configure an API key.";
+          setMessages((prev) => [...prev, { role: "assistant", content }]);
+          setIsLoading(false);
+          return;
+        }
+
+        if (response.status === 429) {
+          const content =
+            body.error ??
+            "Too many requests. Please wait a moment before sending another message.";
+          setMessages((prev) => [...prev, { role: "assistant", content }]);
+          setIsLoading(false);
+          return;
+        }
+
+        // All other non-OK responses fall through to the catch block
+        throw new Error(body.error ?? "Failed to get response");
+      }
 
       const data = await response.json();
 
@@ -127,14 +167,37 @@ export function AIChatDrawer({
   return (
     <>
       {/* Floating Button */}
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 bg-brand text-foreground dark:text-background dark:hover:bg-brand/75 hover:text-accent-foreground hover:bg-brand/75 border w-14 h-14"
-        variant="ghost"
-        aria-label="Open AI chat"
-      >
-        <Brain size={64} className="size-8" strokeWidth={1}/>
-      </Button>
+      {keysConfigured ? (
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 bg-brand text-foreground dark:text-background dark:hover:bg-brand/75 hover:text-accent-foreground hover:bg-brand/75 border w-14 h-14"
+          variant="ghost"
+          aria-label="Open AI chat"
+        >
+          <Brain size={64} className="size-8" strokeWidth={1} />
+        </Button>
+      ) : (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {/* Disabled buttons do not fire mouse events — wrap in span */}
+            <span className="fixed bottom-6 right-6 inline-flex">
+              <Button
+                className="rounded-full shadow-lg z-50 w-14 h-14 border bg-brand text-foreground dark:text-background opacity-50 cursor-not-allowed"
+                variant="ghost"
+                disabled
+                aria-label="AI chat unavailable"
+              >
+                <Brain size={64} className="size-8" strokeWidth={1} />
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            {isAdmin
+              ? "Add an Anthropic API key in Settings to enable AI chat"
+              : "AI chat is not configured. Contact your organisation admin."}
+          </TooltipContent>
+        </Tooltip>
+      )}
 
       {/* Drawer */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -161,6 +224,29 @@ export function AIChatDrawer({
                     className="text-primary font-medium underline underline-offset-4"
                   >
                     View subscription
+                  </Link>
+                ) : null}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
+          {canUseAi &&
+          !keysConfigured &&
+          process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud" ? (
+            <Alert className="mx-4 mt-3 shrink-0 border-muted">
+              <AlertTitle>AI chat not configured</AlertTitle>
+              <AlertDescription className="flex flex-col gap-2">
+                <span>
+                  {isAdmin
+                    ? "Add an Anthropic API key to enable the AI assistant."
+                    : "Contact your organisation admin to configure AI chat."}
+                </span>
+                {isAdmin ? (
+                  <Link
+                    href="/settings"
+                    className="text-primary font-medium underline underline-offset-4"
+                  >
+                    Go to Settings
                   </Link>
                 ) : null}
               </AlertDescription>

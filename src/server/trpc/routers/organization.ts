@@ -3,6 +3,7 @@ import {
   adminProcedure,
   orgAdminProcedure,
   orgAdminActiveProcedure,
+  orgProcedure,
   rateLimitMiddleware,
   protectedProcedure,
 } from "@/server/trpc/init";
@@ -353,6 +354,23 @@ export const organizationRouter = router({
       hasOpenAiKey: Boolean(org?.openAiApiKey),
     };
   }),
+  getAiAvailability: orgProcedure.query(async ({ ctx }) => {
+    if (!ctx.org) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "No organization found" });
+    }
+    // In self-hosted, keys come from env vars — always available
+    if (!isCloud()) {
+      return { keysConfigured: true };
+    }
+
+    const org = await ctx.db.organization.findUnique({
+      where: { id: ctx.org.id },
+      // Only Anthropic key drives the chat route — OpenAI is currently inert
+      select: { anthropicApiKey: true },
+    });
+
+    return { keysConfigured: Boolean(org?.anthropicApiKey) };
+  }),
   saveAiKeys: orgAdminActiveProcedure
     .use(rateLimitMiddleware("organization-ai-keys"))
     .input(
@@ -400,5 +418,39 @@ export const organizationRouter = router({
       });
 
       return { updated: true as const };
+    }),
+  removeAiKeys: orgAdminProcedure
+    .use(rateLimitMiddleware("organization-ai-keys"))
+    .input(
+      z.object({
+        anthropic: z.boolean().optional(),
+        openAi: z.boolean().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.org) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "No organization found" });
+      }
+      if (!isCloud()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "AI key configuration is only available in cloud deployments",
+        });
+      }
+
+      const data: { anthropicApiKey?: null; openAiApiKey?: null } = {};
+      if (input.anthropic) data.anthropicApiKey = null;
+      if (input.openAi) data.openAiApiKey = null;
+
+      if (Object.keys(data).length === 0) {
+        return { removed: false as const };
+      }
+
+      await ctx.db.organization.update({
+        where: { id: ctx.org.id },
+        data,
+      });
+
+      return { removed: true as const };
     }),
 });
