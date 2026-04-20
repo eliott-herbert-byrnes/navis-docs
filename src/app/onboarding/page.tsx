@@ -4,6 +4,7 @@ import { getSessionContext } from "@/lib/auth";
 import { homePath, signInPath } from "../paths";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { canonicalEmail } from "@/lib/email-canonical";
 
 function OnboardingFallback() {
   return (
@@ -22,7 +23,7 @@ export default async function OnboardingPage() {
 
   const pendingInvite = await prisma.invitation.findFirst({
     where: {
-      email: ctx.email.toLowerCase(),
+      canonicalEmail: canonicalEmail(ctx.email),
       status: "PENDING",
       expiresAt: { gt: new Date() },
     },

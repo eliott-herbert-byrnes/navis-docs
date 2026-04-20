@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import { canonicalEmail } from "@/lib/email-canonical";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -18,7 +19,34 @@ const pool =
 const adapter = new PrismaPg(pool);
 
 function newPrismaClient(): PrismaClient {
-  return new PrismaClient({ adapter });
+  const base = new PrismaClient({ adapter });
+  const extended = base.$extends({
+    query: {
+      user: {
+        create({ args, query }) {
+          const data = args.data as { email?: string; canonicalEmail?: string };
+          if (typeof data.email === "string" && data.canonicalEmail === undefined) {
+            data.canonicalEmail = canonicalEmail(data.email);
+          }
+          return query(args);
+        },
+        upsert({ args, query }) {
+          const create = args.create as {
+            email?: string;
+            canonicalEmail?: string;
+          };
+          if (
+            typeof create.email === "string" &&
+            create.canonicalEmail === undefined
+          ) {
+            create.canonicalEmail = canonicalEmail(create.email);
+          }
+          return query(args);
+        },
+      },
+    },
+  });
+  return extended as unknown as PrismaClient;
 }
 
 /**
