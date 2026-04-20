@@ -14,6 +14,8 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import {
   OrgMembershipRole,
   OrgPlan,
+  Prisma,
+  type Organization,
 } from "@prisma/client";
 import { encrypt } from "@/lib/crypto";
 import { isCloud } from "@/lib/deploy-mode";
@@ -132,48 +134,47 @@ export const organizationRouter = router({
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
 
-      const existingOrg = await ctx.db.organization.findFirst({
-        where: { slug },
-      });
-
-      if (existingOrg) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message:
-            "Organization with this name already exists, choose a different name",
+      let org: Organization;
+      try {
+        org = await ctx.db.$transaction(async (tx) => {
+          const created = await tx.organization.create({
+            data: {
+              name: input.name,
+              slug,
+              ownerUserId: userId as string,
+              plan: OrgPlan.pro,
+            },
+          });
+          await tx.orgMembership.create({
+            data: {
+              orgId: created.id,
+              userId: userId as string,
+              role: OrgMembershipRole.OWNER,
+            },
+          });
+          return created;
         });
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2002"
+        ) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message:
+              "Organization with this name already exists, choose a different name",
+          });
+        }
+        throw e;
       }
-
-      const org = await ctx.db.organization.create({
-        data: {
-          name: input.name,
-          slug,
-          ownerUserId: userId as string,
-          plan: OrgPlan.pro,
-        },
-      });
-
-      if (!org) {
-        throw new TRPCError({
-          code: "NOT_IMPLEMENTED",
-          message:
-            "Failed to create organization, try again or contact customer support",
-        });
-      }
-
-      await ctx.db.orgMembership.create({
-        data: {
-          orgId: org.id,
-          userId: userId as string,
-          role: OrgMembershipRole.OWNER,
-        },
-      });
 
       let orgForResponse = org;
 
       if (isCloud()) {
         const priceId = process.env.STRIPE_DEFAULT_PRICE_ID;
         if (priceId) {
+          let createdCustomerId: string | undefined;
+          let createdSubscriptionId: string | undefined;
           try {
             const seatCount = Math.max(
               1,
@@ -182,22 +183,30 @@ export const organizationRouter = router({
               }),
             );
 
-            const customer = await getStripe().customers.create({
-              email: user.email ?? undefined,
-              name: org.name,
-              metadata: { orgId: org.id, orgSlug: org.slug },
-            });
-
-            const subscription = await getStripe().subscriptions.create({
-              customer: customer.id,
-              items: [{ price: priceId, quantity: seatCount }],
-              trial_period_days: 14,
-              payment_behavior: "default_incomplete",
-              payment_settings: {
-                save_default_payment_method: "on_subscription",
+            const customer = await getStripe().customers.create(
+              {
+                email: user.email ?? undefined,
+                name: org.name,
+                metadata: { orgId: org.id, orgSlug: org.slug },
               },
-              metadata: { orgId: org.id, orgSlug: org.slug },
-            });
+              { idempotencyKey: `org:${org.id}:customer:v1` },
+            );
+            createdCustomerId = customer.id;
+
+            const subscription = await getStripe().subscriptions.create(
+              {
+                customer: customer.id,
+                items: [{ price: priceId, quantity: seatCount }],
+                trial_period_days: 14,
+                payment_behavior: "default_incomplete",
+                payment_settings: {
+                  save_default_payment_method: "on_subscription",
+                },
+                metadata: { orgId: org.id, orgSlug: org.slug },
+              },
+              { idempotencyKey: `org:${org.id}:subscription:v1` },
+            );
+            createdSubscriptionId = subscription.id;
 
             const currentPeriodEndSec =
               subscription.items.data[0]?.current_period_end;
@@ -245,12 +254,42 @@ export const organizationRouter = router({
               });
             }
           } catch (error) {
-            await ctx.db.orgMembership.deleteMany({
-              where: { orgId: org.id },
-            });
-            await ctx.db.organization.delete({
-              where: { id: org.id },
-            });
+            if (createdSubscriptionId) {
+              try {
+                await getStripe().subscriptions.cancel(createdSubscriptionId);
+              } catch (e) {
+                console.error(
+                  "[createOrganization] cleanup: cancel subscription failed",
+                  {
+                    orgId: org.id,
+                    subscriptionId: createdSubscriptionId,
+                    e,
+                  },
+                );
+              }
+            }
+            if (createdCustomerId) {
+              try {
+                await getStripe().customers.del(createdCustomerId);
+              } catch (e) {
+                console.error(
+                  "[createOrganization] cleanup: delete customer failed",
+                  {
+                    orgId: org.id,
+                    customerId: createdCustomerId,
+                    e,
+                  },
+                );
+              }
+            }
+            await ctx.db.$transaction([
+              ctx.db.orgMembership.deleteMany({
+                where: { orgId: org.id },
+              }),
+              ctx.db.organization.delete({
+                where: { id: org.id },
+              }),
+            ]);
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
               message:
