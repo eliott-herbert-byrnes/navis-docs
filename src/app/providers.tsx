@@ -1,12 +1,18 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/theme/theme-provider";
+// import { ThemeProvider } from "@/components/theme/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import superjson from "superjson";
 import { trpc } from "@/trpc/client";
+import dynamic from "next/dynamic";
+const ThemeProvider = dynamic(
+  () =>
+    import("@/components/theme/theme-provider").then((mod) => mod.ThemeProvider),
+  { ssr: false },
+);
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return "";

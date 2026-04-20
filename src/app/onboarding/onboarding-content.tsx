@@ -6,18 +6,6 @@ import { redirect } from "next/navigation";
 import { homePath, signInPath } from "../paths";
 
 export async function OnboardingContent() {
-  const ctx = await getSessionContext();
-  if (!ctx) redirect(signInPath());
-  if (ctx?.org) redirect(homePath());
-
-  const pendingInvite = await prisma.invitation.findFirst({
-    where: {
-      email: ctx.email.toLowerCase(),
-      status: "PENDING",
-      expiresAt: { gt: new Date() },
-    },
-  });
-  if (pendingInvite) redirect("/auth/pending-invite");
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
