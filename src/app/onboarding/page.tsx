@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { OnboardingContent } from "./onboarding-content";
 import { getSessionContext } from "@/lib/auth";
-import { homePath, signInPath } from "../paths";
+import { dashboardPath, signInPath } from "../paths";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { canonicalEmail } from "@/lib/email-canonical";
@@ -16,10 +16,18 @@ function OnboardingFallback() {
   );
 }
 
-export default async function OnboardingPage() {
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<OnboardingFallback />}>
+      <OnboardingPageInner />
+    </Suspense>
+  );
+}
+
+async function OnboardingPageInner() {
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
-  if (ctx?.org) redirect(homePath());
+  if (ctx?.org) redirect(dashboardPath());
 
   const pendingInvite = await prisma.invitation.findFirst({
     where: {
@@ -29,10 +37,6 @@ export default async function OnboardingPage() {
     },
   });
   if (pendingInvite) redirect("/auth/pending-invite");
-  
-  return (
-    <Suspense fallback={<OnboardingFallback />}>
-      <OnboardingContent />
-    </Suspense>
-  );
+
+  return <OnboardingContent />;
 }

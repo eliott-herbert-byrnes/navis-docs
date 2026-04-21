@@ -3,7 +3,7 @@ import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { departmentsPath, onboardingPath, signInPath } from "../paths";
+import { departmentsPath, onboardingPath, signInPath } from "../../paths";
 import { getDashboardStats } from "@/features/dashboard/queries/dashboard-stats";
 import { getProcedureChartData } from "@/features/dashboard/queries/procedure-chart-data";
 import { DashboardStatCards } from "@/features/dashboard/components/dashboard-stat-card";
@@ -28,7 +28,7 @@ function DashboardAuditStreamSkeleton() {
   );
 }
 
-export default async function Home() {
+export default async function DashboardPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
   const { org, isAdmin } = ctx;

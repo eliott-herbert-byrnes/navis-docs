@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { homePath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -46,7 +46,7 @@ const ImportStepOneForm = ({
   const isPending = startImportMutation.isPending;
 
   const handleCancel = () => {
-    router.replace(homePath());
+    router.replace(dashboardPath());
   };
 
   const selectedDepartment = departmentId

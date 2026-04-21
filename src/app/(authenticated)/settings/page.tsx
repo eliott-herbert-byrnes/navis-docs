@@ -1,4 +1,4 @@
-import { homePath, onboardingPath, signInPath } from "@/app/paths";
+import { dashboardPath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,7 +26,7 @@ const SettingsPage = async () => {
   if (!ctx) redirect(signInPath());
   const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   return (
     <PageContainer>

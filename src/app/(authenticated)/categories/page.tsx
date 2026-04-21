@@ -2,7 +2,7 @@ import { Heading } from "@/components/ui/Heading";
 import { CategoriesList } from "@/features/categories/components/categories-list";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { serverTrpc } from "@/server/trpc/server";
-import { onboardingPath, homePath } from "@/app/paths";
+import { onboardingPath, dashboardPath } from "@/app/paths";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -12,7 +12,7 @@ const CategoriesPage = async () => {
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   const trpc = await serverTrpc();
   const categoryResult = await trpc.categories.getCategoriesForList({

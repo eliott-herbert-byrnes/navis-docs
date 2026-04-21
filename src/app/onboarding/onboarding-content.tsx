@@ -1,12 +1,7 @@
 import { OnboardForm } from "@/features/onboarding/components/onboard-form";
-import { getSessionContext } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { GalleryVerticalEnd } from "lucide-react";
-import { redirect } from "next/navigation";
-import { homePath, signInPath } from "../paths";
 
 export async function OnboardingContent() {
-
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">

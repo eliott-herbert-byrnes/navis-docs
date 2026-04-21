@@ -14,7 +14,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { homePath, onboardingPath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useTransition, useState } from "react";
@@ -46,7 +46,7 @@ export function SignInForm({
     setPendingGoogle(true);
     const cb =
       new URLSearchParams(window.location.search).get("callbackUrl") ||
-      onboardingPath();
+      dashboardPath();
     void signIn("google", { callbackUrl: cb }).finally(() => {
       setPendingGoogle(false);
       toast.success("Redirecting to dashboard...");
@@ -75,7 +75,7 @@ export function SignInForm({
         toast.success("Code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
-          onboardingPath();
+          dashboardPath();
         window.location.assign(cb);
       } else {
         setMsg(res.message ?? null);
@@ -118,7 +118,7 @@ export function SignInForm({
         toast.success("Demo code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
-          homePath();
+          dashboardPath();
         window.location.assign(cb);
       } else {
         toast.error(

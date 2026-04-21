@@ -4,14 +4,14 @@ import { getSessionContext } from "@/lib/auth";
 import { serverTrpc } from "@/server/trpc/server";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { homePath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { ImportProcedurePage } from "@/features/import/components/import-procedure-page";
 
 const ProcedureImportPage = async () => {
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};
   if (!org || !isAdmin) {
-    redirect(homePath());
+    redirect(dashboardPath());
   }
 
   const trpc = await serverTrpc();

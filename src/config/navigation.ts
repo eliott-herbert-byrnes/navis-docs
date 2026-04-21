@@ -1,5 +1,4 @@
 import {
-  homePath,
   errorsPath,
   ideasPath,
   procedureBasePath,
@@ -47,7 +46,7 @@ export const items = [
   {
     id: "home",
     title: "Home",
-    path: homePath(),
+    path: dashboardPath(),
     icon: Home,
   },
   {

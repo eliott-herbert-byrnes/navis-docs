@@ -1,5 +1,5 @@
 "use server";
-import { homePath, onboardingPath } from "@/app/paths";
+import { dashboardPath, onboardingPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -38,7 +38,7 @@ const SubscriptionPage = async () => {
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   return (
     <PageContainer>

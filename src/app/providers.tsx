@@ -1,5 +1,7 @@
 "use client";
 
+// Mounted only from (authenticated)/layout so public routes stay free of session fetches
+// and compatible with cacheComponents static prerendering.
 import { SessionProvider } from "next-auth/react";
 // import { ThemeProvider } from "@/components/theme/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

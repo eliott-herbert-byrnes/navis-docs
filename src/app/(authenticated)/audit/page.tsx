@@ -1,4 +1,4 @@
-import { homePath, onboardingPath } from "@/app/paths";
+import { dashboardPath, onboardingPath } from "@/app/paths";
 import { getSessionContext } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -53,7 +53,7 @@ const AuditPage = async ({ searchParams }: AuditPageProps) => {
   const { org, isAdmin } = ctx ?? {};
 
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   // Parse all search params
   const params = await searchParams;
