@@ -29,43 +29,40 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   return (
-    <header className="border-border border-b">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="border-border fixed inset-x-0 top-0 z-40 border-b bg-background">
+      <div className="mx-auto flex h-14 items-center justify-between gap-4 px-12">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2 rounded-sm text-foreground outline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <Image
-            src="/nd-square-blue.svg"
-            width={32}
-            height={32}
+            src="/navis-docs-logo-svg.svg"
+            width={30}
+            height={30}
             alt=""
-            className="size-8"
             priority
           />
-          <span className="font-serif text-lg font-medium tracking-tight">
-            Navis Docs
-          </span>
         </Link>
 
+        <nav
+          aria-label="Primary"
+          className="hidden items-center gap-2 md:flex"
+        >
+          {primaryNav.map((item) => (
+            <Link key={item.href} href={item.href} className={navLinkClass}>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
         <div className="flex flex-1 items-center justify-end gap-2 md:gap-3">
-          <nav
-            aria-label="Primary"
-            className="hidden items-center gap-0.5 md:flex"
-          >
-            {primaryNav.map((item) => (
-              <Link key={item.href} href={item.href} className={navLinkClass}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
 
           <Button
             asChild
-            variant="default"
+            size={"default"}
+            variant="outline"
             className="hidden shrink-0 md:inline-flex"
           >
-            <Link href={dashboardPath()}>Go to app</Link>
+            <Link href={dashboardPath()}>App</Link>
           </Button>
 
           <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>

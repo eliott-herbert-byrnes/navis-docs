@@ -1,5 +1,22 @@
+export type CompanyLogo = {
+  id: string;
+  src: string;
+  width: number;
+  height: number;
+  /** Accessible label, e.g. company name */
+  alt: string;
+};
+
 export type Feature = {
   id: string;
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+};
+
+export type HeroFeatures = {
+  id: string;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
 };

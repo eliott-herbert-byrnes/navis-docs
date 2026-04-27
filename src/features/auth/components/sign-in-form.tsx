@@ -146,7 +146,7 @@ export function SignInForm({
                       variant="secondary"
                       type="button"
                       onClick={continueWithGoogle}
-                      className="w-full"
+                      className="w-full shadow"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -170,6 +170,7 @@ export function SignInForm({
                 </FieldSeparator>
                 <Field>
                   <Input
+                    className="border"
                     id="email"
                     type="email"
                     placeholder="captain.scott@example.com"
@@ -180,8 +181,8 @@ export function SignInForm({
                 </Field>
                 <Field>
                   <Button
-                    variant="default"
-                    className="w-full"
+                    variant="secondary"
+                    className="w-full shadow"
                     onClick={requestCode}
                     disabled={pending || !email}
                     type="submit"
@@ -204,8 +205,8 @@ export function SignInForm({
                   <>
                     <Field>
                       <Button
-                        variant="default"
-                        className="w-full cursor-pointer bg-brand hover:bg-brand/75"
+                        variant="secondary"
+                        className="w-full cursor-pointer shadow"
                         onClick={signInWithDemo}
                         disabled={pending}
                         type="button"
@@ -250,11 +251,11 @@ export function SignInForm({
                       containerClassName="w-full justify-center"
                     >
                       <InputOTPGroup className="gap-3 *:data-[slot=input-otp-slot]:rounded-md">
-                        <InputOTPSlot index={0} className="border"/>
-                        <InputOTPSlot index={1} className="border"/>
-                        <InputOTPSlot index={2} className="border"/>
-                        <InputOTPSlot index={3} className="border"/>
-                        <InputOTPSlot index={4} className="border"/>
+                        <InputOTPSlot index={0} className="border" />
+                        <InputOTPSlot index={1} className="border" />
+                        <InputOTPSlot index={2} className="border" />
+                        <InputOTPSlot index={3} className="border" />
+                        <InputOTPSlot index={4} className="border" />
                       </InputOTPGroup>
                     </InputOTP>
                     {msg && msg === "Invalid code" ? (
@@ -265,7 +266,7 @@ export function SignInForm({
                       <div className="text-center text-sm">{msg}</div>
                     )}
                   </Field>
-                  <Button type="submit" onClick={verifyCode} disabled={pending} className="bg-brand hover:bg-brand/75">
+                  <Button type="submit" onClick={verifyCode} disabled={pending} className="shadow" variant={"secondary"}>
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
