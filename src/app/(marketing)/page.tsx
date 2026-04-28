@@ -80,7 +80,6 @@ export default function MarketingHomePage() {
               height={730}
               alt=""
               priority
-              sizes="(min-width: 1024px) 80vw, 90vw"
             />
           </div>
           <div className="relative inset-x-0 z-0 pt-90">
@@ -90,7 +89,6 @@ export default function MarketingHomePage() {
               width={1840}
               height={520}
               alt=""
-              sizes="100vw"
             />
           </div>
         </div>

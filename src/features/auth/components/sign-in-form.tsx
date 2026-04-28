@@ -190,7 +190,7 @@ export function SignInForm({
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
-                      <FieldDescription className="text-black font-medium text-center">
+                      <FieldDescription className="text-black font-medium text-center dark:text-white">
                         Email me a code
                       </FieldDescription>
                     )}
