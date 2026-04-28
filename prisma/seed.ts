@@ -43,7 +43,6 @@ async function main() {
     prisma.account.deleteMany(),
     prisma.verificationToken.deleteMany(),
     prisma.emailOTP.deleteMany(),
-
     prisma.organization.deleteMany(),
     prisma.user.deleteMany(),
   ]);

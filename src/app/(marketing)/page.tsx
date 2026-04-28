@@ -253,7 +253,7 @@ export default function MarketingHomePage() {
 
       </section>
 
-      <section aria-labelledby="testimonial-heading" className="py-12">
+      {/* <section aria-labelledby="testimonial-heading" className="py-12">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
           <div className="w-full shrink-0 lg:w-140">
             <Image
@@ -277,8 +277,7 @@ export default function MarketingHomePage() {
             <p className="text-brand text-xl sm:text-xl">Risk Operations Senior Coordinator, Capital One Bank</p>
           </div>
         </div>
-
-      </section>
+      </section> */}
 
       <section aria-labelledby="faq-heading" className="py-12">
         <div className="flex flex-col gap-3">
