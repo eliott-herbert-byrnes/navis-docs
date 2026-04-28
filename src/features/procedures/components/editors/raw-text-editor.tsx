@@ -424,7 +424,7 @@ export function RawTextEditor({
               onClick={() => editor.chain().focus().setHorizontalRule().run()}
               disabled={!editor.can().chain().focus().setHorizontalRule().run()}
             >
-              <span className="flex items-center justify-center font-black text-1xl tiptap-button-text text-center">
+              <span className="flex items-center justify-center font-black text-xl tiptap-button-text text-center">
                 ⎯
               </span>
             </Button>

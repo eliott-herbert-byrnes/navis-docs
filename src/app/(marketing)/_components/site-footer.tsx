@@ -55,7 +55,16 @@ export function SiteFooter() {
                   <ul className="space-y-2 text-sm">
                     {column.links.map((link) => (
                       <li key={link.href}>
-                        <Link href={link.href} className={footerLinkClass}>
+                        <Link
+                          href={link.href}
+                          className={footerLinkClass}
+                          {...("target" in link && link.target
+                            ? {
+                                target: link.target,
+                                rel: "noopener noreferrer",
+                              }
+                            : {})}
+                        >
                           {link.label}
                         </Link>
                       </li>

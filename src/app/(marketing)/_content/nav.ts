@@ -2,9 +2,9 @@ import type { FooterColumn, NavLink } from "./types";
 
 /** Header: Features, Docs, Roadmap, Pricing (plan §2.3). */
 export const primaryNav = [
-  { href: "/features", label: "Features" },
+  { href: "/#features", label: "Features" },
   { href: "/docs", label: "Docs" },
-  { href: "/roadmap", label: "Roadmap" },
+  { href: "https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen", label: "Roadmap", target:"_blank" },
   { href: "/pricing", label: "Pricing" },
 ] as const satisfies readonly NavLink[];
 
@@ -14,15 +14,19 @@ export const footerNav = [
     title: "Documentation",
     links: [
       { href: "/docs", label: "Docs" },
-      { href: "/features", label: "Features" },
-      { href: "/faq", label: "FAQ" },
+      { href: "/#features", label: "Features" },
+      { href: "/#faq-heading", label: "FAQ" },
     ],
   },
   {
     title: "Company",
     links: [
-      { href: "/contact", label: "Contact" },
-      { href: "/roadmap", label: "Roadmap" },
+      { href: "mailto:hello@navisdocs.com", label: "Contact" },
+      {
+        href: "https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen",
+        label: "Roadmap",
+        target: "_blank",
+      },
     ],
   },
   {
@@ -50,7 +54,9 @@ export function getMarketingSitemapPaths(): string[] {
   const paths = new Set<string>(["/"]);
   for (const item of primaryNav) paths.add(item.href);
   for (const column of footerNav) {
-    for (const link of column.links) paths.add(link.href);
+    for (const link of column.links) {
+      paths.add(link.href);
+    }
   }
   return Array.from(paths).sort((a, b) => a.localeCompare(b));
 }

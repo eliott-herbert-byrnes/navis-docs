@@ -242,7 +242,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
           <FieldSet>
             <FieldGroup>
               <FieldSet>
-                <FieldLabel className="text-1xl" htmlFor="procedureStyle">
+                <FieldLabel className="text-xl" htmlFor="procedureStyle">
                   Procedure Style
                 </FieldLabel>
                 <FieldDescription>

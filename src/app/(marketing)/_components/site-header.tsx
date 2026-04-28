@@ -30,7 +30,7 @@ export function SiteHeader() {
 
   return (
     <header className="border-border fixed inset-x-0 top-0 z-40 border-b bg-background">
-      <div className="mx-auto flex h-14 items-center justify-between gap-4 px-12">
+      <div className="mx-auto flex h-14 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2 rounded-sm text-foreground outline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -49,7 +49,12 @@ export function SiteHeader() {
           className="hidden items-center gap-2 md:flex"
         >
           {primaryNav.map((item) => (
-            <Link key={item.href} href={item.href} className={navLinkClass}>
+            <Link key={item.href} href={item.href} className={navLinkClass} {...("target" in item && item.target
+              ? {
+                target: item.target,
+                rel: "noopener noreferrer",
+              }
+              : {})}>
               {item.label}
             </Link>
           ))}

@@ -38,7 +38,7 @@ const items = [
   },
 ];
 
-export function SiteAccordian() {
+export function SiteAccordion() {
   return (
     <Accordion
       type="single"

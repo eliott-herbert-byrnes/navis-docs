@@ -1,8 +1,6 @@
 export type CompanyLogo = {
   id: string;
   src: string;
-  width: number;
-  height: number;
   /** Accessible label, e.g. company name */
   alt: string;
 };
@@ -34,17 +32,10 @@ export type Faq = {
   answer: string;
 };
 
-/** Stripe / app subscription query param: `/subscription?plan=<slug>` */
-export type PricingPlan = {
-  id: string;
-  name: string;
-  planSlug: string;
-  blurb: string;
-};
-
 export type NavLink = {
   href: string;
   label: string;
+  target?: string;
 };
 
 export type FooterColumn = {

@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { companyLogos } from "@/app/(marketing)/_content/company-logos";
-import { faqs } from "@/app/(marketing)/_content/faqs";
 import { features } from "@/app/(marketing)/_content/features";
 import { HeroFeature } from "@/app/(marketing)/_content/hero-features";
-import { testimonials } from "@/app/(marketing)/_content/testimonials";
-import { dashboardPath, signInPath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { SiteAccordian } from "./_components/site-accordian";
+import { SiteAccordion } from "./_components/site-accordion";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -27,18 +25,21 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingHomePage() {
-  return (
-    // <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:px-6 lg:px-8">
-    <div className="grid grid-cols-12 space-y-16 px-12 py-24">
 
-      <section aria-labelledby="hero-heading" className="col-span-6 col-start-1 space-y-4">
+  return (
+    <div className="mx-auto space-y-16 px-4 py-12 sm:px-6 lg:px-8">
+
+      <section
+        aria-labelledby="hero-heading"
+        className="space-y-4 lg:max-w-[50%]"
+      >
         <h1
           id="hero-heading"
           className="font-serif text-4xl sm:text-5xl leading-14"
         >
           The open-source platform for knowledge and SOP management
         </h1>
-        <p className="text-muted-foreground text-1xl sm:text-2xl">
+        <p className="text-muted-foreground text-xl sm:text-2xl">
           Navis Docs helps teams capture, organize, and share SOPs, runbooks, and process knowledge from one place.
         </p>
         <div className="flex flex-row gap-2">
@@ -58,60 +59,73 @@ export default function MarketingHomePage() {
 
       </section>
 
-      <section aria-labelledby="hero-image" className="col-span-12 col-start-1 py-24">
-
-        <div className="relative">
-          <div className="z-10 absolute inset-x-0 flex justify-center">
+      <section aria-label="Product screenshot preview" className="py-24">
+        <div className="flex justify-center sm:hidden">
+          <Image
+            className="h-auto w-full max-w-4xl"
+            src="/hero-iframe-image.png"
+            width={1460}
+            height={730}
+            alt=""
+            priority
+            sizes="100vw"
+          />
+        </div>
+        <div className="relative hidden sm:block">
+          <div className="absolute inset-x-0 z-10 flex justify-center">
             <Image
-              className="w-auto h-auto"
+              className="h-auto w-auto"
               src="/hero-iframe-image.png"
               width={1460}
               height={730}
               alt=""
               priority
+              sizes="(min-width: 1024px) 80vw, 90vw"
             />
           </div>
-          <div className="z-0 relative inset-x-0  pt-90">
+          <div className="relative inset-x-0 z-0 pt-90">
             <Image
-              className="w-auto h-auto"
+              className="h-auto w-auto"
               src="/hero-background-image.png"
               width={1840}
               height={520}
               alt=""
-              priority
+              sizes="100vw"
             />
           </div>
         </div>
-
       </section>
 
-      <section aria-labelledby="company-logos" className="col-span-12 col-start-1">
+      <section aria-labelledby="company-logos">
 
         <div className="inset-x-0 flex justify-center">
-          <p className="text-muted-foreground text-1xl sm:text-2xl">
+          <p
+            id="company-logos"
+            className="text-muted-foreground text-xl sm:text-2xl"
+          >
             Trusted by fast moving teams around the world
           </p>
         </div>
 
-        <div className="py-24 flex flex-row gap-4 mx-auto justify-center">
+        <div className="py-24 flex flex-row flex-wrap gap-4 mx-auto justify-center">
           {companyLogos.map((logo) => (
             <div
               key={logo.id}
-              className="flex items-center justify-center bg-card w-auto h-auto px-12 rounded-lg"
+              className="flex items-center justify-center bg-card w-auto h-[4rem] sm:h-[4.5rem] md:h-[7.25rem] px-6 sm:px-8 md:px-12 rounded-lg"
             >
               <Image
                 src={logo.src}
-                width={logo.width}
-                height={logo.height}
+                width={150}
+                height={150}
                 alt={logo.alt}
-                priority
+                className="h-6 sm:h-7 md:h-8 w-25 sm:w-35 md:w-45 object-contain"
               />
             </div>
           ))}
         </div>
       </section>
 
-      <section aria-labelledby="hero-feature" className="col-start-1 col-span-12 py-0">
+      <section aria-labelledby="hero-feature-heading" className="py-0">
         <div className="flex flex-col gap-3">
           <h2
             id="hero-feature-heading"
@@ -119,58 +133,72 @@ export default function MarketingHomePage() {
           >
             Build around your organization
           </h2>
-          <p className="text-muted-foreground text-xl sm:text-1xl w-1/3">
+          <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Create your organisation, then structure it into departments and teams. Each team gets its own knowledge base.
           </p>
-          <Link className="text-brand text-xl sm:text-1xl hover:text-brand/75" href={"/"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
             See the documentation →
           </Link>
         </div>
 
-        <div className="relative">
-          <div className="z-10 absolute inset-x-0 flex justify-end">
+        <div className="mt-12 flex justify-center sm:hidden">
+          <Image
+            className="h-auto w-full max-w-2xl rounded-tl-lg rounded-tr-lg rounded-bl-lg border-4 border-secondary"
+            src="/hero-feature-image-2.png"
+            width={800}
+            height={680}
+            alt=""
+            priority
+            sizes="100vw"
+          />
+        </div>
+        <div className="relative hidden sm:block">
+          <div className="inset-x-0 z-10 mt-0 flex justify-end">
             <Image
-              className="border-secondary border-4 rounded-tl-lg rounded-bl-lg rounded-tr-lg w-auto h-auto"
+              className="absolute rounded-tl-lg rounded-tr-lg rounded-bl-lg border-4 border-secondary z-10"
               src="/hero-feature-image-2.png"
               width={800}
               height={680}
               alt=""
               priority
+              // sizes="(min-width: 1024px) 50vw, 80vw"
             />
           </div>
-          <div className="z-0 relative pt-90 inset-x-0 flex justify-end">
+          <div className="relative inset-x-0 z-0 flex justify-end pt-90">
             <Image
-              className="w-auto h-auto"
+              className="h-auto w-auto"
               src="/hero-feature-background-image-2.png"
               width={1070}
               height={520}
               alt=""
-              priority
+              // sizes="100vw"
             />
           </div>
         </div>
-
       </section>
 
-      <section aria-labelledby="sub-hero-feature" className="col-start-1 col-span-12 py-24">
+      <section
+        aria-labelledby="sub-hero-feature"
+        className="py-24"
+        id="four-formats"
+      >
 
         <div className="flex flex-col gap-3">
-          <p className="text-muted-foreground text-xl sm:text-1xl w-1/3">
+          <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Standardise
           </p>
           <h2
-            id="hero-feature-heading"
+            id="sub-hero-feature"
             className="font-serif text-3xl sm:text-4xl leading-14"
           >
             Four formats. One tool
           </h2>
-          <Link className="text-brand text-xl sm:text-1xl hover:text-brand/75" href={"/"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
             See the documentation →
           </Link>
         </div>
 
-        <div className="flex gap-6 pt-24">
-
+        <div className="grid grid-cols-1 gap-6 pt-12 sm:grid-cols-2 sm:pt-24 lg:grid-cols-4">
           {HeroFeature.map((feature) => {
             const Icon = feature.icon;
             return (
@@ -187,9 +215,9 @@ export default function MarketingHomePage() {
 
       </section>
 
-      <section aria-labelledby="features-heading" className="col-start-1 col-span-12 py-12">
-        <div className="flex flex-col gap-3 items-center text-center">
-          <p className="text-muted-foreground text-xl sm:text-1xl w-1/3">
+      <section aria-labelledby="features-heading" className="py-12" id="features">
+        <div className="flex flex-col gap-3 items-center text-center" >
+          <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Features
           </p>
           <h2
@@ -198,7 +226,7 @@ export default function MarketingHomePage() {
           >
             AI Integration - Bring Your Own Keys
           </h2>
-          <Link className="text-brand text-xl sm:text-1xl hover:text-brand/75" href={"/"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
             See our roadmap →
           </Link>
         </div>
@@ -227,29 +255,34 @@ export default function MarketingHomePage() {
 
       </section>
 
-      <section aria-labelledby="testimonial-heading" className="col-start-1 col-span-12 py-12">
-        <div className="flex">
-          <Image
-            className="w-auto h-auto"
-            src="/testimonial/ehb.png"
-            width={760}
-            height={900}
-            alt=""
-            priority
-          />
-          <div className="flex flex-col gap-6 px-48 my-auto">
-            <p className="font-serif text-3xl sm:text-4xl leading-14">I spent years in risk operations watching colleagues lose critical minutes digging through outdated wikis for procedures that should have taken seconds to find. In live customer cases, that friction has real consequences. I built Navis Docs because I wanted a tool that actually solved the problem.
+      <section aria-labelledby="testimonial-heading" className="py-12">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+          <div className="w-full shrink-0 lg:w-140">
+            <Image
+              className="h-auto w-full rounded-lg"
+              src="/testimonial/ehb.png"
+              width={760}
+              height={900}
+              alt="Eliott Herbert-Byrnes"
+            />
+          </div>
+          <div className="flex flex-col gap-6 lg:p-24">
+            <p
+              id="testimonial-heading"
+              className="font-serif text-3xl sm:text-4xl leading-14"
+            >
+              I spent years in risk operations watching colleagues lose critical minutes digging through outdated wikis for procedures that should have taken seconds to find. In live customer cases, that friction has real consequences. I built Navis Docs because I wanted a tool that actually solved the problem.
             </p>
-            <p className="text-muted-foreground text-xl sm:text-1xl w-1/3">
+            <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
               Eliott Herbert-Byrnes
             </p>
-            <p className="text-brand text-xl sm:text-1xl">Risk Operations Senior Coordinator, Capital One Bank</p>
+            <p className="text-brand text-xl sm:text-xl">Risk Operations Senior Coordinator, Capital One Bank</p>
           </div>
         </div>
 
       </section>
 
-      <section aria-labelledby="faq-heading" className="col-start-1 col-span-12 py-12">
+      <section aria-labelledby="faq-heading" className="py-12">
         <div className="flex flex-col gap-3">
           <h2
             id="faq-heading"
@@ -257,47 +290,44 @@ export default function MarketingHomePage() {
           >
             Questions?
           </h2>
-          <p className="text-muted-foreground text-xl sm:text-1xl w-1/3">
+          <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Find answers to common questions about Navis Docs. Can’t find what you’re looking for?
           </p>
-          <Link className="text-brand text-xl sm:text-1xl hover:text-brand/75" href={"/"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
             Contact us →
           </Link>
         </div>
 
         <div className="flex justify-center pt-24">
-          <SiteAccordian />
+          <SiteAccordion />
         </div>
       </section>
 
-      <section
-        aria-labelledby="get-started"
-        className="col-start-1 col-span-12 pt-12"
-      >
+      <section aria-labelledby="get-started-heading" className="pt-12">
         <div className="flex flex-col gap-4 text-center justify-center items-center h-125 rounded-lg bg-card">
-          <p className="text-muted-foreground text-xl sm:text-1xl w-1/3">
+          <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Get Started
           </p>
           <h2
-            id="features-heading"
+            id="get-started-heading"
             className="font-serif text-3xl sm:text-4xl leading-14"
           >
             Try Navis Docs now.
           </h2>
           <div className="flex flex-row gap-2">
-          <Button
-            variant={"outline"}
-          >
-            <Link href={dashboardPath()}>Cloud</Link>
-          </Button>
-          <Button
-            variant={"outline"}
-          >
-            <Link href={"https://github.com/eliott-herbert-byrnes/navis-docs"} target="_blank">
-              Self Host
-            </Link>
-          </Button>
-        </div>
+            <Button
+              variant={"outline"}
+            >
+              <Link href={dashboardPath()}>Cloud</Link>
+            </Button>
+            <Button
+              variant={"outline"}
+            >
+              <Link href={"https://github.com/eliott-herbert-byrnes/navis-docs"} target="_blank">
+                Self Host
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

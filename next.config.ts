@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   // out of public (marketing) trees so they stay static. SessionProvider lives only under
   // (authenticated) for the same reason — it would otherwise opt pages into client session work.
   cacheComponents: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.google.com",
+        pathname: "/s2/favicons/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {

@@ -286,8 +286,8 @@ export function SignInForm({
         </>
       )}
       {!sent ? (<FieldDescription className="px-6 text-center pt-1 ">
-        By clicking continue, you agree to our <a href="#" className="hover:!text-brand">Terms of Service</a>{" "}
-        and <a href="#" className="hover:!text-brand">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="/terms" className="hover:!text-brand">Terms of Service</a>{" "}
+        and <a href="/privacy" className="hover:!text-brand">Privacy Policy</a>.
       </FieldDescription>) : null}
     </div>
   );
