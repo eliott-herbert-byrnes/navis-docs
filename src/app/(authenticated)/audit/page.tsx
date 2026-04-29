@@ -1,7 +1,5 @@
 import { dashboardPath, onboardingPath } from "@/app/paths";
-import { DemoNotAvailable } from "@/components/demo/not-available";
 import { getSessionContext } from "@/lib/auth";
-import { isDemoContext } from "@/lib/demo";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
@@ -16,7 +14,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/ui/Heading";
 import { JsonObject } from "@prisma/client/runtime/client";
 import { PageContainer } from "@/components/ui/page-container";
-import { AuditExportOrgButton } from "@/features/audit/components/audit-export-org-button";
 
 function AuditLogViewerSkeleton() {
   return (
@@ -50,10 +47,6 @@ type AuditPageProps = {
 };
 
 const AuditPage = async ({ searchParams }: AuditPageProps) => {
-  if (await isDemoContext()) {
-    return <DemoNotAvailable feature="Audit Log" />;
-  }
-
   // Authentication & authorization
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};

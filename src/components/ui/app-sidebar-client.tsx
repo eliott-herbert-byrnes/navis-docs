@@ -156,19 +156,7 @@ export function AppSidebarClient({
                   </Button>
                 </DropdownMenuItem>
                 {isDemo ? (
-                  <DropdownMenuItem asChild>
-                    <Button
-                      variant="ghost"
-                      className="flex flex-row justify-start p-2 w-full rounded-none"
-                    >
-                      <Link
-                        href="/auth/sign-in"
-                        className="text-sm font-normal cursor-default ml-2"
-                      >
-                        Sign up
-                      </Link>
-                    </Button>
-                  </DropdownMenuItem>
+                  null
                 ) : (
                   <DropdownMenuItem asChild>
                     <Button

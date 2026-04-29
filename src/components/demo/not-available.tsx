@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { signInPath } from "@/app/paths";
-import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/ui/page-container";
 
 export function DemoNotAvailable({ feature }: { feature: string }) {
@@ -11,9 +8,6 @@ export function DemoNotAvailable({ feature }: { feature: string }) {
           {`${feature}`} is not part of the demo
         </h2>
         <p className="text-muted-foreground">Sign up for the full experience.</p>
-        <Button asChild>
-          <Link href={signInPath()}>Get started</Link>
-        </Button>
       </div>
     </PageContainer>
   );

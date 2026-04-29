@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { canonicalEmail } from "@/lib/email-canonical";
 import { applyOrgDemoContent } from "../../prisma/org-demo-content";
+import { seedDemoAuditLogs } from "../../prisma/seed-demo-audit-logs";
 import { wipeDemoOrg } from "../../prisma/wipe-demo-org";
 
 const DEMO_MEMBER_USER_ID =
@@ -73,6 +74,12 @@ export async function resetDemoData(): Promise<void> {
     });
 
     await applyOrgDemoContent(prisma, {
+      orgId,
+      ownerUserId,
+      memberUserId: DEMO_MEMBER_USER_ID,
+    });
+
+    await seedDemoAuditLogs(prisma, {
       orgId,
       ownerUserId,
       memberUserId: DEMO_MEMBER_USER_ID,
