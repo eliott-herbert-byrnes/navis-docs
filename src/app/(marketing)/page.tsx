@@ -144,7 +144,7 @@ export default function MarketingHomePage() {
           <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Create your organisation, then structure it into departments and teams. Each team gets its own knowledge base.
           </p>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/docs"}>
             See the documentation →
           </Link>
         </div>
@@ -201,7 +201,7 @@ export default function MarketingHomePage() {
           >
             Four formats. One tool
           </h2>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/docs"}>
             See the documentation →
           </Link>
         </div>
