@@ -458,7 +458,7 @@ export const organizationRouter = router({
 
       return { updated: true as const };
     }),
-  removeAiKeys: orgAdminProcedure
+  removeAiKeys: orgAdminActiveProcedure
     .use(rateLimitMiddleware("organization-ai-keys"))
     .input(
       z.object({

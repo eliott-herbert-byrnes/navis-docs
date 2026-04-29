@@ -3,6 +3,7 @@ import { canonicalEmail } from "../src/lib/email-canonical";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { applyOrgDemoContent } from "./org-demo-content";
+import { seedDemoAuditLogs } from "./seed-demo-audit-logs";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -73,6 +74,12 @@ async function main() {
   });
 
   await applyOrgDemoContent(prisma, {
+    orgId: org.id,
+    ownerUserId: user.id,
+    memberUserId: testUser.id,
+  });
+
+  await seedDemoAuditLogs(prisma, {
     orgId: org.id,
     ownerUserId: user.id,
     memberUserId: testUser.id,

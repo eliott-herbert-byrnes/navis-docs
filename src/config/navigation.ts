@@ -99,7 +99,6 @@ export const items = [
     path: auditPath(),
     icon: History,
     isAdmin: true,
-    hideInDemo: true,
     separator: true,
   },
   {
