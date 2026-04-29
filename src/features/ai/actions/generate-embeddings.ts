@@ -3,8 +3,15 @@
 import { prisma } from "@/lib/prisma";
 import { chunkProcedureContent } from "../utils/chunk-content";
 import { generateEmbedding } from "@/lib/ai/embeddings";
+import { isDemoContext } from "@/lib/demo";
 
 export async function generateProcedureEmbeddings(procedureId: string) {
+  try {
+    if (await isDemoContext()) return;
+  } catch {
+    /* Outside a Next request (e.g. prisma seed CLI): proceed. */
+  }
+
   const procedure = await prisma.procedure.findUnique({
     where: { id: procedureId },
     include: {

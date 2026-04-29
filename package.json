@@ -18,6 +18,7 @@
     "seed": "prisma db seed && tsx src/lib/stripe/seed.ts",
     "stripe:reconcile": "tsx scripts/stripe-reconcile.ts",
     "stripe:reconcile:apply": "tsx scripts/stripe-reconcile.ts --apply",
+    "demo:reset": "tsx scripts/reset-demo.ts",
     "format": "prettier --write .",
     "email": "email dev --dir src/emails",
     "test": "vitest",

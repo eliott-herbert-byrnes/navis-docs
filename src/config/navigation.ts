@@ -31,6 +31,7 @@ export type NavItem = {
   path: string;
   icon: React.ComponentType<{ className?: string }>;
   isAdmin?: boolean;
+  hideInDemo?: boolean;
   separator?: boolean;
 };
 
@@ -98,6 +99,7 @@ export const items = [
     path: auditPath(),
     icon: History,
     isAdmin: true,
+    hideInDemo: true,
     separator: true,
   },
   {
@@ -106,6 +108,7 @@ export const items = [
     path: invitePath(),
     icon: UserPlus,
     isAdmin: true,
+    hideInDemo: true,
   },
   {
     id: "subscription",
@@ -113,6 +116,7 @@ export const items = [
     path: subscriptionPath(),
     icon: CreditCard,
     isAdmin: true,
+    hideInDemo: true,
   },
   {
     id: "settings",
@@ -120,6 +124,7 @@ export const items = [
     path: settingsPath(),
     icon: Settings,
     isAdmin: true,
+    hideInDemo: true,
     separator: true,
   },
 ] as const satisfies NavItem[];

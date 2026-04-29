@@ -121,6 +121,16 @@ const subscriptionMiddleware = t.middleware(async ({ ctx, next }) => {
   return next({ ctx });
 });
 
+const demoBlockMiddleware = t.middleware(async ({ ctx, next }) => {
+  if (ctx.isDemo) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "This action is not available in the demo.",
+    });
+  }
+  return next({ ctx });
+});
+
 // EXPORTS
 export const router = t.router;
 export const publicProcedure = t.procedure;
@@ -132,8 +142,11 @@ export const orgProcedure = protectedProcedure.use(orgMiddleware);
 export const orgAdminProcedure = adminProcedure.use(orgMiddleware);
 
 /** Member write operations that require an active trial or subscription */
-export const orgActiveProcedure = orgProcedure.use(subscriptionMiddleware);
+export const orgActiveProcedure = orgProcedure
+  .use(subscriptionMiddleware)
+  .use(demoBlockMiddleware);
 
 /** Admin write operations that require an active trial or subscription */
-export const orgAdminActiveProcedure =
-  orgAdminProcedure.use(subscriptionMiddleware);
+export const orgAdminActiveProcedure = orgAdminProcedure
+  .use(subscriptionMiddleware)
+  .use(demoBlockMiddleware);

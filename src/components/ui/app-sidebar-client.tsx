@@ -33,7 +33,13 @@ function isPathActive(pathname: string, itemPath: string) {
   return pathname === itemPath || pathname.startsWith(itemPath + "/");
 }
 
-export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
+export function AppSidebarClient({
+  isAdmin,
+  isDemo,
+}: {
+  isAdmin: boolean;
+  isDemo: boolean;
+}) {
   const pathname = usePathname();
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -55,7 +61,13 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
               </SidebarMenuItem>
               <Separator className="light:bg-foreground" />
               {items
-                .filter((item) => ("isAdmin" in item && item.isAdmin ? isAdmin : true))
+                .filter((item) =>
+                  "isAdmin" in item && item.isAdmin ? isAdmin : true,
+                )
+                .filter(
+                  (item) =>
+                    !(isDemo && "hideInDemo" in item && item.hideInDemo),
+                )
                 .map((item) => {
                   const active = isPathActive(pathname, item.path);
                   const menuItem = (
@@ -143,16 +155,32 @@ export function AppSidebarClient({ isAdmin }: { isAdmin: boolean }) {
                     </Link>
                   </Button>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Button
-                    variant="ghost"
-                    className="flex flex-row justify-start p-2 w-full rounded-none"
-                    type="submit"
-                    onClick={signOutAction}
-                  >
-                    <p className="text-sm font-normal ml-2">Logout</p>
-                  </Button>
-                </DropdownMenuItem>
+                {isDemo ? (
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost"
+                      className="flex flex-row justify-start p-2 w-full rounded-none"
+                    >
+                      <Link
+                        href="/auth/sign-in"
+                        className="text-sm font-normal cursor-default ml-2"
+                      >
+                        Sign up
+                      </Link>
+                    </Button>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost"
+                      className="flex flex-row justify-start p-2 w-full rounded-none"
+                      type="submit"
+                      onClick={signOutAction}
+                    >
+                      <p className="text-sm font-normal ml-2">Logout</p>
+                    </Button>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

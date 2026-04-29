@@ -1,7 +1,12 @@
 import { prisma } from "./prisma";
 import { auth } from "@/auth";
 import { cache } from "react";
-import { OrgPlan, StripeSubscriptionStatus } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  OrgPlan,
+  StripeSubscriptionStatus,
+} from "@prisma/client";
+import { isDemoContext } from "./demo";
 
 export const getSessionUser = async () => {
   const session = await auth();
@@ -9,7 +14,25 @@ export const getSessionUser = async () => {
   return { email: session.user.email, userId: session.user.id };
 };
 
+async function getDemoSessionContext() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { id: process.env.DEMO_ORG_ID! },
+  });
+  return {
+    userId: process.env.DEMO_USER_ID!,
+    email: "demo@navis-docs.com",
+    org,
+    isAdmin: true,
+    role: OrgMembershipRole.ADMIN,
+    hasActiveAccess: true,
+  };
+}
+
 export const getSessionContext = cache(async () => {
+  if (await isDemoContext()) {
+    return getDemoSessionContext();
+  }
+
   const session = await auth()
   if (!session?.user?.id || !session.user.email) return null
 

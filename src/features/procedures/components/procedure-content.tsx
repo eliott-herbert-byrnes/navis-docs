@@ -16,11 +16,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export type ProcedureContentProps = {
   procedure: ProcedureForViewWithRelations;
   showDocView?: boolean;
+  isDemo?: boolean;
 };
 
 const ProcedureContent = ({
   procedure,
   showDocView = false,
+  isDemo = false,
 }: ProcedureContentProps) => {
   const content = procedure.publishedVersion
     ?.contentJSON as ProcedureContentType;
@@ -43,11 +45,17 @@ const ProcedureContent = ({
             content={content}
             onChange={() => {}}
             isPreview={true}
+            isDemo={isDemo}
           />
         );
       case "STEPS":
         return (
-          <StepsEditor content={content} onChange={() => {}} isPreview={true} />
+          <StepsEditor
+            content={content}
+            onChange={() => {}}
+            isPreview={true}
+            isDemo={isDemo}
+          />
         );
       case "FLOW":
         return (
@@ -56,6 +64,7 @@ const ProcedureContent = ({
               content={content}
               onChange={() => {}}
               isPreview={true}
+              isDemo={isDemo}
             />
           </ReactFlowProvider>
         );
@@ -65,6 +74,7 @@ const ProcedureContent = ({
             content={content}
             onChange={() => {}}
             isPreview={true}
+            isDemo={isDemo}
           />
         );
       default:
@@ -81,7 +91,12 @@ const ProcedureContent = ({
     const flowPanel = (
       <div className="min-h-[400px] flex flex-col overflow-hidden">
         <ReactFlowProvider>
-          <FlowEditor content={content} onChange={() => {}} isPreview={true} />
+          <FlowEditor
+            content={content}
+            onChange={() => {}}
+            isPreview={true}
+            isDemo={isDemo}
+          />
         </ReactFlowProvider>
       </div>
     );
@@ -92,6 +107,7 @@ const ProcedureContent = ({
           content={{ tiptap: content?.tiptap }}
           onChange={() => {}}
           isPreview={true}
+          isDemo={isDemo}
         />
       </div>
     );

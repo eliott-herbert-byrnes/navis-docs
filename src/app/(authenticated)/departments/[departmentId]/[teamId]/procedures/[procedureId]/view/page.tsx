@@ -1,6 +1,7 @@
 import { Heading } from "@/components/ui/Heading";
 import { ProcedureViewWithAIChat } from "@/features/procedures/components/procedure-view-with-ai-chat";
 import { getSessionContext } from "@/lib/auth";
+import { isDemoContext } from "@/lib/demo";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
@@ -32,6 +33,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
 
   const ctx = await getSessionContext();
   const canViewProcedureAudit = ctx?.isAdmin ?? false;
+  const isDemo = await isDemoContext();
 
   const trpc = await serverTrpc();
   const {
@@ -58,6 +60,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
           isFavorite={isFavorite}
           isRead={isRead}
           canViewProcedureAudit={canViewProcedureAudit}
+          isDemo={isDemo}
         />
       </Suspense>
     </div>

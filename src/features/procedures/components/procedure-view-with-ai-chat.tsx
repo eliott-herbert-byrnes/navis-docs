@@ -1,14 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { ProcedureViewActions } from "./procedure-view-actions";
 import { ProcedureViewMetadata } from "./procedure-view-metadata";
 import { ProcedureContent } from "./procedure-content";
 import { ProcedureAuditLogList } from "@/features/audit/components/procedure-audit-log-list";
-import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
 import { ProcedureForViewWithRelations } from "../types/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
+
+const DynamicAIChatDrawer = dynamic(
+  () =>
+    import("@/features/ai/components/chat-drawer").then(
+      (mod) => mod.AIChatDrawer,
+    ),
+  { loading: () => <Skeleton /> },
+);
 
 function ProcedureContentSkeleton() {
   return (
@@ -34,6 +42,8 @@ type ProcedureViewWithAIChatProps = {
   isFavorite: boolean;
   isRead: boolean;
   canViewProcedureAudit: boolean;
+  /** Omits Ask AI + drawer on demo host (server-detected). */
+  isDemo?: boolean;
 };
 
 export function ProcedureViewWithAIChat({
@@ -43,6 +53,7 @@ export function ProcedureViewWithAIChat({
   isFavorite,
   isRead,
   canViewProcedureAudit,
+  isDemo = false,
 }: ProcedureViewWithAIChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState<
@@ -74,7 +85,7 @@ export function ProcedureViewWithAIChat({
             canEdit={canEdit}
             isFavorite={isFavorite}
             isRead={isRead}
-            onAskAI={handleAskAI}
+            onAskAI={isDemo ? undefined : handleAskAI}
             showDocView={showDocView}
             onViewText={() => setShowDocView((prev) => !prev)}
             canViewProcedureAudit={canViewProcedureAudit}
@@ -88,6 +99,7 @@ export function ProcedureViewWithAIChat({
           <ProcedureContent
             procedure={procedure}
             showDocView={procedure.style === "FLOW" ? showDocView : undefined}
+            isDemo={isDemo}
           />
         </Suspense>
       ) : (
@@ -115,14 +127,14 @@ export function ProcedureViewWithAIChat({
         </div>
       )}
 
-      <Suspense fallback={<Skeleton />}>
-        <AIChatDrawer
+      {!isDemo ? (
+        <DynamicAIChatDrawer
           open={isChatOpen}
           onOpenChange={handleChatOpenChange}
           initialMessage={initialChatMessage}
           onInitialMessageConsumed={() => setInitialChatMessage(undefined)}
         />
-      </Suspense>
+      ) : null}
     </>
   );
 }

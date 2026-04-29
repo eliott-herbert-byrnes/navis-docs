@@ -56,7 +56,7 @@ export default async function DashboardPage() {
           <div>
             <h2 className="text-sm font-semibold mb-4">Recent Activity</h2>
             <Suspense fallback={<DashboardAuditStreamSkeleton />}>
-              <DashboardAuditStream />
+              <DashboardAuditStream orgId={org.id} />
             </Suspense>
           </div>
         </div>

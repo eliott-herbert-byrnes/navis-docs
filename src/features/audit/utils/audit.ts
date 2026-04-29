@@ -84,7 +84,16 @@ type AuditLogData = {
   afterJSON?: Prisma.JsonValue;
 };
 
+/** Skip audit rows for the seeded demo org (demo host shares this org; see demo plan step 10). */
+function shouldSkipAuditForDemoOrg(orgId: string): boolean {
+  const demoOrgId = process.env.DEMO_ORG_ID;
+  return Boolean(demoOrgId?.length && orgId === demoOrgId);
+}
+
 export async function createAuditLog(data: AuditLogData) {
+  if (shouldSkipAuditForDemoOrg(data.orgId)) {
+    return null;
+  }
   try {
     const {
       orgId,

@@ -53,6 +53,7 @@ type FlowEditorProps = {
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
   isPreview: boolean;
+  isDemo?: boolean;
 };
 
 const nodeTypes = {
@@ -62,7 +63,13 @@ const nodeTypes = {
   end: EndNode,
 };
 
-export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
+export function FlowEditor({
+  content,
+  onChange,
+  isPreview,
+  isDemo = false,
+}: FlowEditorProps) {
+  const readOnly = isPreview || isDemo;
   const { fitView, getNodes } = useReactFlow();
 
   const updateNodeData = useCallback(
@@ -301,7 +308,7 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
 
   return (
     <div className="h-[690px] w-full relative bg-background">
-      {!isPreview && (
+      {!readOnly && (
         <FlowToolbar
           onAddNode={addNode}
           onAutoLayout={handleAutoLayout}
@@ -323,9 +330,9 @@ export function FlowEditor({ content, onChange, isPreview }: FlowEditorProps) {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
-        nodesDraggable={!isPreview}
-        nodesConnectable={!isPreview}
-        elementsSelectable={!isPreview}
+        nodesDraggable={!readOnly}
+        nodesConnectable={!readOnly}
+        elementsSelectable={!readOnly}
       >
         <Background />
         <Controls />

@@ -72,6 +72,8 @@ type RawTextEditorProps = {
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
   isPreview: boolean;
+  /** Hostname-based demo org: forces read-only regardless of editing mode */
+  isDemo?: boolean;
 };
 
 export function RawTextEditor({
@@ -79,7 +81,9 @@ export function RawTextEditor({
   content,
   onChange,
   isPreview,
+  isDemo = false,
 }: RawTextEditorProps) {
+  const readOnly = isPreview || isDemo;
   const initialContent = content?.tiptap || {
     type: "doc",
     content: [{ type: "paragraph" }],
@@ -183,7 +187,7 @@ export function RawTextEditor({
       }),
     ],
     content: initialContent,
-    editable: !isPreview,
+    editable: !readOnly,
     editorProps: {
       attributes: {
         class:
@@ -348,9 +352,9 @@ export function RawTextEditor({
 
   useEffect(() => {
     if (editor) {
-      editor.setEditable(!isPreview);
+      editor.setEditable(!readOnly);
     }
-  }, [isPreview, editor]);
+  }, [readOnly, editor]);
 
   if (!editor) {
     return (
@@ -363,7 +367,7 @@ export function RawTextEditor({
     );
   }
 
-  if (isPreview) {
+  if (readOnly) {
     return (
       <div className="rounded-sm bg-background shadow-none">
         <EditorContent editor={editor} />

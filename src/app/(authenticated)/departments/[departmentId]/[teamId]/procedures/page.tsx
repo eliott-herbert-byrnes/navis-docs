@@ -2,7 +2,7 @@ import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
 import { Suspense } from "react";
 import { ProcedureCreateButton } from "@/features/procedures/components/procedure-create-button";
-import { AIChatDrawer } from "@/features/ai/components/chat-drawer";
+import { AIChatDrawerServer } from "@/features/ai/components/chat-drawer.server";
 import { Skeleton } from "@/components/ui/skeleton";
 import { serverTrpc } from "@/server/trpc/server";
 import { FavoriteList } from "@/features/procedures/components/favorite/components/procedure-favorite-list";
@@ -33,7 +33,7 @@ export default async function ProcedurePage({
       />
       <FavoriteList />
       <Suspense fallback={<Skeleton />}>
-        <AIChatDrawer />
+        <AIChatDrawerServer />
       </Suspense>
     </>
   );

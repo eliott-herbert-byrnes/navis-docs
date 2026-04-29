@@ -1,5 +1,5 @@
-import { cacheTag, cacheLife } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { applyOrgDashboardCachePolicy } from "@/lib/org-dashboard-cache";
 import { subMonths, startOfMonth, format } from "date-fns";
 
 export type ProcedureChartData = { month: string; count: number }[];
@@ -8,8 +8,7 @@ export async function getProcedureChartData(
   orgId: string,
 ): Promise<ProcedureChartData> {
   "use cache";
-  cacheTag(`org-dashboard-${orgId}`);
-  cacheLife("minutes");
+  applyOrgDashboardCachePolicy(orgId);
 
   const sixMonthsAgo = subMonths(new Date(), 6);
 

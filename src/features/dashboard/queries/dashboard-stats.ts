@@ -1,5 +1,5 @@
-import { cacheTag, cacheLife } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { applyOrgDashboardCachePolicy } from "@/lib/org-dashboard-cache";
 
 export type DashboardStats = {
   totalUsers: number;
@@ -12,8 +12,7 @@ export type DashboardStats = {
 
 export async function getDashboardStats(orgId: string): Promise<DashboardStats> {
   "use cache";
-  cacheTag(`org-dashboard-${orgId}`);
-  cacheLife("minutes"); // stale: 5 min, revalidate: 15 min
+  applyOrgDashboardCachePolicy(orgId);
 
   const [
     totalUsers,

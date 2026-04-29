@@ -29,13 +29,16 @@ type StepsEditorProps = {
   content: ProcedureContent;
   onChange: (newContent: ProcedureContent) => void;
   isPreview: boolean;
+  isDemo?: boolean;
 };
 
 export function StepsEditor({
   content,
   onChange,
   isPreview,
+  isDemo = false,
 }: StepsEditorProps) {
+  const readOnly = isPreview || isDemo;
   const initialSteps = content?.steps?.length
     ? content.steps.map((step, index) => ({
         ...step,
@@ -52,7 +55,7 @@ export function StepsEditor({
 
   return (
     <div className="space-y-4">
-      {isPreview ? (
+      {readOnly ? (
         <div className="space-y-4">
           {steps.map((step, index) => (
             <StepItem

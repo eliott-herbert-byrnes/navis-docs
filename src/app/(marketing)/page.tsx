@@ -73,14 +73,24 @@ export default function MarketingHomePage() {
         </div>
         <div className="relative hidden sm:block">
           <div className="absolute inset-x-0 z-10 flex justify-center">
-            <Image
-              className="h-auto w-auto"
-              src="/hero-iframe-image.png"
-              width={1460}
-              height={730}
-              alt=""
-              priority
-            />
+            {process.env.NEXT_PUBLIC_DEMO_URL ? (
+              <iframe
+                src={process.env.NEXT_PUBLIC_DEMO_URL}
+                title="Navis Docs live demo"
+                loading="lazy"
+                className="aspect-[1460/730] w-full max-w-[1460px] rounded-lg border-4 border-secondary"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              />
+            ) : (
+              <Image
+                className="h-auto w-auto"
+                src="/hero-iframe-image.png"
+                width={1460}
+                height={730}
+                alt=""
+                priority
+              />
+            )}
           </div>
           <div className="relative inset-x-0 z-0 pt-90">
             <Image
