@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { isDemoHost } from "@/lib/demo";
 import { prisma } from "@/lib/prisma";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import { headers } from "next/headers";
 import {
   OrgMembershipRole,
   OrgPlan,
@@ -54,7 +55,14 @@ async function createDemoContext() {
 }
 
 export async function createContext(opts?: FetchCreateContextFnOptions) {
-  const host = opts?.req.headers.get("host");
+  // When invoked from the fetch adapter (`/api/trpc/...`), the host comes from
+  // the incoming request. When invoked directly via `serverTrpc()` from a
+  // Server Component, `opts` is undefined, so fall back to `next/headers`.
+  // Without this fallback, the demo host check fails on the server-side
+  // caller path and demo pages that fetch via `serverTrpc()` are treated as
+  // unauthenticated.
+  const host =
+    opts?.req.headers.get("host") ?? (await headers()).get("host");
   if (isDemoHost(host)) {
     return createDemoContext();
   }
