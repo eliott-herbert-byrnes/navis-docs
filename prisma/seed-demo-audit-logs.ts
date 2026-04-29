@@ -48,7 +48,7 @@ export async function seedDemoAuditLogs(
       action: "ORGANIZATION_UPDATED",
       entityType: "ORGANIZATION",
       entityId: orgId,
-      at: new Date("2024-09-02T14:30:00.000Z"),
+      at: new Date("2026-01-01T14:30:00.000Z"),
       beforeJSON: { name: "Acme Corp (draft)" },
       afterJSON: { name: "Demo Organization" },
     },
@@ -58,7 +58,7 @@ export async function seedDemoAuditLogs(
       action: "DEPARTMENT_CREATED",
       entityType: "DEPARTMENT",
       entityId: department.id,
-      at: new Date("2024-09-05T10:15:00.000Z"),
+      at: new Date("2026-01-03T10:15:00.000Z"),
       afterJSON: { name: department.name },
     },
     {
@@ -67,7 +67,7 @@ export async function seedDemoAuditLogs(
       action: "TEAM_CREATED",
       entityType: "TEAM",
       entityId: team.id,
-      at: new Date("2024-09-05T11:00:00.000Z"),
+      at: new Date("2026-01-03T11:00:00.000Z"),
       afterJSON: { name: team.name, departmentId: department.id },
     },
     {
@@ -76,7 +76,7 @@ export async function seedDemoAuditLogs(
       action: "CATEGORY_CREATED",
       entityType: "CATEGORY",
       entityId: category.id,
-      at: new Date("2024-09-06T09:20:00.000Z"),
+      at: new Date("2026-01-02T09:20:00.000Z"),
       afterJSON: { name: category.name, teamId: team.id },
     },
     {
@@ -85,7 +85,7 @@ export async function seedDemoAuditLogs(
       action: "PROCEDURE_CREATED",
       entityType: "PROCEDURE",
       entityId: procedure.id,
-      at: new Date("2024-09-07T16:45:00.000Z"),
+      at: new Date("2026-01-02T16:45:00.000Z"),
       afterJSON: { title: procedure.title, teamId: team.id },
     },
     {
@@ -94,7 +94,7 @@ export async function seedDemoAuditLogs(
       action: "PROCEDURE_PUBLISHED",
       entityType: "PROCEDURE",
       entityId: procedure.id,
-      at: new Date("2024-09-08T08:00:00.000Z"),
+      at: new Date("2026-01-02T08:00:00.000Z"),
       afterJSON: { status: "PUBLISHED" },
     },
     {
@@ -103,7 +103,7 @@ export async function seedDemoAuditLogs(
       action: "PROCEDURE_EDITED",
       entityType: "PROCEDURE",
       entityId: procedure.id,
-      at: new Date("2024-09-12T13:22:00.000Z"),
+      at: new Date("2026-01-02T13:22:00.000Z"),
       beforeJSON: { summary: "v1" },
       afterJSON: { summary: "v2 — clarification on verification steps" },
     },
@@ -116,7 +116,7 @@ export async function seedDemoAuditLogs(
       action: "USER_ROLE_CHANGED",
       entityType: "USER_ROLE",
       entityId: memberUserId,
-      at: new Date("2024-09-09T12:00:00.000Z"),
+      at: new Date("2026-01-02T12:00:00.000Z"),
       beforeJSON: "ADMIN",
       afterJSON: "MEMBER",
     });
