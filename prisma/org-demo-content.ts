@@ -157,6 +157,14 @@ export async function applyOrgDemoContent(
     },
   });
 
+  await prisma.favorite.createMany({
+    data: [p1, p2, p3, p4, p5, p6, p7, p8].map((p) => ({
+      userId: ownerUserId,
+      procedureId: p.id,
+    })),
+    skipDuplicates: true,
+  });
+
   const pv1 = await prisma.procedureVersion.create({
     data: {
       procedureId: p1.id,
