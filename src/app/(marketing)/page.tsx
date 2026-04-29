@@ -95,7 +95,7 @@ export default function MarketingHomePage() {
           <div className="relative inset-x-0 z-0 pt-90">
             <Image
               className="h-auto w-auto"
-              src="/hero-background-image.png"
+              src="/iframe-background-image.png"
               width={1840}
               height={520}
               alt=""
@@ -175,7 +175,7 @@ export default function MarketingHomePage() {
           <div className="relative inset-x-0 z-0 flex justify-end pt-90">
             <Image
               className="h-auto w-auto"
-              src="/hero-feature-background-image-2.png"
+              src="/hero-feature-background-image.png"
               width={1070}
               height={520}
               alt=""

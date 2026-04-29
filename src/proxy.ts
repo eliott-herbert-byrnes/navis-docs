@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { isDemoHost } from "@/lib/demo";
 
 const ALLOWED_FRAME_ANCESTORS = [
-  "https://navis-docs.com",
-  "https://www.navis-docs.com",
+  "https://navisdocs.com",
+  "https://www.navisdocs.com",
 ];
 
 export function proxy(req: NextRequest) {
