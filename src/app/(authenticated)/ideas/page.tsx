@@ -1,4 +1,4 @@
-import { homePath, onboardingPath, signInPath } from "@/app/paths";
+import { dashboardPath, onboardingPath, signInPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { PageContainer } from "@/components/ui/page-container";
@@ -19,7 +19,7 @@ const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   if (!ctx) redirect(signInPath());
   const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   const params = await searchParams;
   const search = params.search;

@@ -523,7 +523,7 @@ const response = await anthropic.messages.create({
 
 ### **About This Project**
 
-NavisDocs was built to demonstrate:
+Navis Docs was built to demonstrate:
 
 - **Full-stack proficiency**: Next.js 15 with App Router, Server Components, Server Actions
 - **AI/ML integration**: Vector embeddings, semantic search, LLM integration
@@ -538,7 +538,7 @@ NavisDocs was built to demonstrate:
 
 ## License
 
-This project is private and proprietary. All rights reserved.
+This project is open-source. All rights reserved.
 
 ---
 

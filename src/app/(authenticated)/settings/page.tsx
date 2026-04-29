@@ -1,10 +1,12 @@
-import { homePath, onboardingPath, signInPath } from "@/app/paths";
+import { dashboardPath, onboardingPath, signInPath } from "@/app/paths";
+import { DemoNotAvailable } from "@/components/demo/not-available";
 import { Heading } from "@/components/ui/Heading";
 import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AiConfiguration } from "@/features/settings/components/ai-configuration";
 import { OrganizationOverview } from "@/features/settings/components/organization-overview";
 import { getSessionContext } from "@/lib/auth";
+import { isDemoContext } from "@/lib/demo";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -22,11 +24,15 @@ function OrganizationOverviewSkeleton() {
 }
 
 const SettingsPage = async () => {
+  if (await isDemoContext()) {
+    return <DemoNotAvailable feature="Settings" />;
+  }
+
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
   const { org, isAdmin } = ctx;
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   return (
     <PageContainer>

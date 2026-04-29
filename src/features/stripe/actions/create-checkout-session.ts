@@ -1,5 +1,5 @@
 "use server";
-import { homePath, signInPath } from "@/app/paths";
+import { dashboardPath, signInPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getSessionUser } from "@/lib/auth";
 import { isSelfHosted } from "@/lib/deploy-mode";
@@ -63,7 +63,7 @@ export const createCheckoutSession = async (
     },
   });
 
-  if (!membership) redirect(homePath());
+  if (!membership) redirect(dashboardPath());
 
   const seatCount = Math.max(
     1,

@@ -1,5 +1,5 @@
 "use server";
-import { homePath, signInPath, subscriptionPath } from "@/app/paths";
+import { dashboardPath, signInPath, subscriptionPath } from "@/app/paths";
 import { getSessionContext } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
@@ -77,10 +77,10 @@ export const createCustomerPortal = async () => {
 
   const { org, isAdmin } = ctx;
   if (!isAdmin) {
-    redirect(homePath());
+    redirect(dashboardPath());
   }
   if (!org) {
-    redirect(homePath());
+    redirect(dashboardPath());
   }
 
   if (!org.stripeSubscriptionId) {
@@ -136,7 +136,7 @@ export const createCustomerPortal = async () => {
   }
 
   if (!session.url) {
-    redirect(homePath());
+    redirect(dashboardPath());
   }
 
   redirect(session.url);

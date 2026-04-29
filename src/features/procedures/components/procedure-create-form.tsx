@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { AccessButton } from "@/components/ui/access-button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { homePath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LucideLoaderCircle } from "lucide-react";
@@ -73,11 +73,11 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
   const { createProcedure, isPending } = useCreateProcedure(
     effectiveDepartmentId,
     effectiveTeamId,
-    { redirectOnSuccess: redirectOnSuccess ?? true, onSuccess: () => router.replace(cancelPath ?? homePath()) },
+    { redirectOnSuccess: redirectOnSuccess ?? true, onSuccess: () => router.replace(cancelPath ?? dashboardPath()) },
   );
 
   const handleCancel = () => {
-    startTransition(() => router.replace(cancelPath ?? homePath()));
+    startTransition(() => router.replace(cancelPath ?? dashboardPath()));
   };
 
   const isSubmitBlocked = !hasContext && (!selectedDepartmentId || !selectedTeamId);
@@ -242,7 +242,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
           <FieldSet>
             <FieldGroup>
               <FieldSet>
-                <FieldLabel className="text-1xl" htmlFor="procedureStyle">
+                <FieldLabel className="text-xl" htmlFor="procedureStyle">
                   Procedure Style
                 </FieldLabel>
                 <FieldDescription>

@@ -1,4 +1,4 @@
-import { homePath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { Heading } from "@/components/ui/Heading";
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { PageContainer } from "@/components/ui/page-container";
@@ -22,7 +22,7 @@ export default async function UserBasePage({
 }: UserBasePageProps) {
   const ctx = await getSessionContext();
   const { isAdmin } = ctx ?? {};
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
   const params = await searchParams;
   const search = params.search;
   const page = parseInt(params.page ?? "1", 10);
@@ -37,7 +37,7 @@ export default async function UserBasePage({
     members = data.members ?? [];
   } catch (err) {
     if (err instanceof TRPCError && err.code === "FORBIDDEN") {
-      redirect(homePath());
+      redirect(dashboardPath());
     }
     throw err;
   }

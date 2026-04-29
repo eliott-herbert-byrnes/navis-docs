@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/sonner";
+
 const GeistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  ),
   title: "Navis Docs",
   description: "Welcome to the Navis Docs",
   icons: {
@@ -30,10 +32,8 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet"></link>
       </head>
       <body className={`${GeistSans.variable} antialiased min-h-screen`}>
-        <Providers>
           <Toaster />
           {children}
-        </Providers>
       </body>
     </html>
   );

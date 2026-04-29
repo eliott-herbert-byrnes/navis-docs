@@ -14,7 +14,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { homePath, onboardingPath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useTransition, useState } from "react";
@@ -46,7 +46,7 @@ export function SignInForm({
     setPendingGoogle(true);
     const cb =
       new URLSearchParams(window.location.search).get("callbackUrl") ||
-      onboardingPath();
+      dashboardPath();
     void signIn("google", { callbackUrl: cb }).finally(() => {
       setPendingGoogle(false);
       toast.success("Redirecting to dashboard...");
@@ -75,7 +75,7 @@ export function SignInForm({
         toast.success("Code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
-          onboardingPath();
+          dashboardPath();
         window.location.assign(cb);
       } else {
         setMsg(res.message ?? null);
@@ -118,7 +118,7 @@ export function SignInForm({
         toast.success("Demo code verified. Redirecting...");
         const cb =
           new URLSearchParams(window.location.search).get("callbackUrl") ||
-          homePath();
+          dashboardPath();
         window.location.assign(cb);
       } else {
         toast.error(
@@ -146,7 +146,7 @@ export function SignInForm({
                       variant="secondary"
                       type="button"
                       onClick={continueWithGoogle}
-                      className="w-full"
+                      className="w-full shadow"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -170,6 +170,7 @@ export function SignInForm({
                 </FieldSeparator>
                 <Field>
                   <Input
+                    className="border"
                     id="email"
                     type="email"
                     placeholder="captain.scott@example.com"
@@ -180,8 +181,8 @@ export function SignInForm({
                 </Field>
                 <Field>
                   <Button
-                    variant="default"
-                    className="w-full"
+                    variant="secondary"
+                    className="w-full shadow"
                     onClick={requestCode}
                     disabled={pending || !email}
                     type="submit"
@@ -189,7 +190,7 @@ export function SignInForm({
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
-                      <FieldDescription className="text-black font-medium text-center">
+                      <FieldDescription className="text-black font-medium text-center dark:text-white">
                         Email me a code
                       </FieldDescription>
                     )}
@@ -204,8 +205,8 @@ export function SignInForm({
                   <>
                     <Field>
                       <Button
-                        variant="default"
-                        className="w-full cursor-pointer bg-brand hover:bg-brand/75"
+                        variant="secondary"
+                        className="w-full cursor-pointer shadow"
                         onClick={signInWithDemo}
                         disabled={pending}
                         type="button"
@@ -250,11 +251,11 @@ export function SignInForm({
                       containerClassName="w-full justify-center"
                     >
                       <InputOTPGroup className="gap-3 *:data-[slot=input-otp-slot]:rounded-md">
-                        <InputOTPSlot index={0} className="border"/>
-                        <InputOTPSlot index={1} className="border"/>
-                        <InputOTPSlot index={2} className="border"/>
-                        <InputOTPSlot index={3} className="border"/>
-                        <InputOTPSlot index={4} className="border"/>
+                        <InputOTPSlot index={0} className="border" />
+                        <InputOTPSlot index={1} className="border" />
+                        <InputOTPSlot index={2} className="border" />
+                        <InputOTPSlot index={3} className="border" />
+                        <InputOTPSlot index={4} className="border" />
                       </InputOTPGroup>
                     </InputOTP>
                     {msg && msg === "Invalid code" ? (
@@ -265,7 +266,7 @@ export function SignInForm({
                       <div className="text-center text-sm">{msg}</div>
                     )}
                   </Field>
-                  <Button type="submit" onClick={verifyCode} disabled={pending} className="bg-brand hover:bg-brand/75">
+                  <Button type="submit" onClick={verifyCode} disabled={pending} className="shadow" variant={"secondary"}>
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
@@ -285,8 +286,8 @@ export function SignInForm({
         </>
       )}
       {!sent ? (<FieldDescription className="px-6 text-center pt-1 ">
-        By clicking continue, you agree to our <a href="#" className="hover:!text-brand">Terms of Service</a>{" "}
-        and <a href="#" className="hover:!text-brand">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="/terms" className="hover:!text-brand">Terms of Service</a>{" "}
+        and <a href="/privacy" className="hover:!text-brand">Privacy Policy</a>.
       </FieldDescription>) : null}
     </div>
   );

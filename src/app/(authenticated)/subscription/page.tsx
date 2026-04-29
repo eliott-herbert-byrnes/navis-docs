@@ -1,7 +1,9 @@
 "use server";
-import { homePath, onboardingPath } from "@/app/paths";
+import { dashboardPath, onboardingPath } from "@/app/paths";
+import { DemoNotAvailable } from "@/components/demo/not-available";
 import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
+import { isDemoContext } from "@/lib/demo";
 import { redirect } from "next/navigation";
 import { Products } from "@/features/stripe/components/product";
 import { Suspense } from "react";
@@ -35,10 +37,14 @@ function ProductsSkeleton() {
 }
 
 const SubscriptionPage = async () => {
+  if (await isDemoContext()) {
+    return <DemoNotAvailable feature="Subscription" />;
+  }
+
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   return (
     <PageContainer>

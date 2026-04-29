@@ -5,7 +5,7 @@ import { usePathParse } from "../hooks/use-path-parse";
 import { useAuthContext } from "@/contexts/auth-context";
 import { trpc } from "@/trpc/client";
 import { items } from "@/config/navigation";
-import { homePath, teamProcedurePath } from "@/app/paths";
+import { dashboardPath, teamProcedurePath } from "@/app/paths";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function MainHeaderBreadcrumbs() {
@@ -45,7 +45,7 @@ export function MainHeaderBreadcrumbs() {
   if (parsed.type === "home") {
     return (
       <Breadcrumbs
-        breadcrumbs={[{ id: "home", title: "Home", href: homePath() }]}
+        breadcrumbs={[{ id: "home", title: "Home", href: dashboardPath() }]}
       />
     );
   }
@@ -58,7 +58,8 @@ export function MainHeaderBreadcrumbs() {
     const title = matched?.title ?? segment ?? "Route";
 
     const secondCrumb = {
-      id: segment ?? "route",
+      // Prefix so this never collides with the root crumb id "home" when segment === "home"
+      id: segment != null ? `segment-${segment}` : "route",
       title,
       // dropdownGroups: [buildRoutesGroup(), buildDepartmentsGroup()],
       dropdownGroups: [buildRoutesGroup()],
@@ -68,7 +69,7 @@ export function MainHeaderBreadcrumbs() {
     return (
       <Breadcrumbs
         breadcrumbs={[
-          { id: "home", title: "Home", href: homePath() },
+          { id: "home", title: "Home", href: dashboardPath() },
           secondCrumb,
         ]}
       />
@@ -119,7 +120,7 @@ export function MainHeaderBreadcrumbs() {
     return (
       <Breadcrumbs
         breadcrumbs={[
-          { id: "home", title: "Home", href: homePath() },
+          { id: "home", title: "Home", href: dashboardPath() },
           departmentCrumb,
           teamCrumb,
         ]}
@@ -129,7 +130,7 @@ export function MainHeaderBreadcrumbs() {
 
   return (
     <Breadcrumbs
-      breadcrumbs={[{ id: "home", title: "Home", href: homePath() }]}
+      breadcrumbs={[{ id: "home", title: "Home", href: dashboardPath() }]}
     />
   );
 }

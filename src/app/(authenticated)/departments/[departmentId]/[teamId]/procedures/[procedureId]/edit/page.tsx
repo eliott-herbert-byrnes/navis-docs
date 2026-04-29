@@ -1,4 +1,6 @@
+import { DemoNotAvailable } from "@/components/demo/not-available";
 import { getSessionContext } from "@/lib/auth";
+import { isDemoContext } from "@/lib/demo";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { teamProcedurePath } from "@/app/paths";
@@ -26,6 +28,10 @@ export default async function ProcedureEditPage({
   }>;
 }) {
   const { departmentId, teamId, procedureId } = await params;
+
+  if (await isDemoContext()) {
+    return <DemoNotAvailable feature="Procedure editing" />;
+  }
 
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};

@@ -1,5 +1,7 @@
-import { homePath, onboardingPath } from "@/app/paths";
+import { dashboardPath, onboardingPath } from "@/app/paths";
+import { DemoNotAvailable } from "@/components/demo/not-available";
 import { getSessionContext } from "@/lib/auth";
+import { isDemoContext } from "@/lib/demo";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AuditLogViewer } from "@/features/audit/components/audit-log-viewer";
@@ -48,12 +50,16 @@ type AuditPageProps = {
 };
 
 const AuditPage = async ({ searchParams }: AuditPageProps) => {
+  if (await isDemoContext()) {
+    return <DemoNotAvailable feature="Audit Log" />;
+  }
+
   // Authentication & authorization
   const ctx = await getSessionContext();
   const { org, isAdmin } = ctx ?? {};
 
   if (!org) redirect(onboardingPath());
-  if (!isAdmin) redirect(homePath());
+  if (!isAdmin) redirect(dashboardPath());
 
   // Parse all search params
   const params = await searchParams;

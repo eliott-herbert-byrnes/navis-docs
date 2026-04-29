@@ -15,21 +15,10 @@ import { getStripeCustomerByOrg } from "../queries/get-stripe-customer";
 import { OrgPlan } from "@prisma/client";
 import Stripe from "stripe";
 import { SubscriptionTiersClient } from "./subscription-tiers-client";
-
-const PRO_DESCRIPTION =
-  "Unlimited procedures, departments, and teams, AI assistant included, priority support & onboarding.";
+import { PRO_DESCRIPTION, PRO_FEATURES } from "../plan-content";
 
 const ENTERPRISE_DESCRIPTION =
   "Full platform access with contract-based billing. Your organization is provisioned for Enterprise — contact your account team for seat changes or billing updates.";
-
-const PRO_FEATURES = [
-  { name: "Unlimited procedures, departments, and teams" },
-  { name: "Audit logs, and metrics" },
-  { name: "AI assistant - Bring your own AI API keys" },
-  { name: "Configurable user roles and permissions" },
-  { name: "Priority support & onboarding" },
-  { name: "Advanced analytics (coming soon)" },
-];
 
 const SELF_HOSTED_FEATURES = [
   { name: "Full platform access on your own infrastructure" },
@@ -68,7 +57,7 @@ function pickPrice(
   );
 }
 
-function EnterprisePlanCard({ isActive }: { isActive: boolean }) {
+export function EnterprisePlanCard({ isActive }: { isActive: boolean }) {
   return (
     <Card className="flex w-full animate-fade-from-top flex-col border-muted">
       <CardHeader className="space-y-2">
@@ -186,7 +175,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
   let monthly: Stripe.Price | null = null;
   let annual: Stripe.Price | null = null;
   let proProduct: Stripe.Product | null = null;
-  let marketingFeatures: { name?: string | null }[] = PRO_FEATURES;
+  let marketingFeatures: { name?: string | null }[] = [...PRO_FEATURES];
 
   if (!isSelfHosted() && !isEnterprise) {
     const products = await getStripe().products.list({ active: true });

@@ -1,5 +1,4 @@
 // Main Application Paths
-export const homePath = () => "/";
 export const departmentsPath = () => "/departments";
 export const invitePath = () => "/invite";
 export const signInPath = () => "/auth/sign-in";

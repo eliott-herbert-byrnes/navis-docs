@@ -3,14 +3,14 @@
 import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { homePath } from "@/app/paths";
+import { dashboardPath } from "@/app/paths";
 
 export function useCreateOrganization() {
   const router = useRouter();
   const mutation = trpc.organization.createOrganization.useMutation({
     onSuccess: () => {
       toast.success("Organization created successfully");
-      router.replace(homePath());
+      router.replace(dashboardPath());
     },
     onError: (error) => {
       toast.error(

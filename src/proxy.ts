@@ -1,44 +1,30 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { auth } from "./auth";
-import { signInPath } from "./app/paths";
+import { isDemoHost } from "@/lib/demo";
 
-export const proxy = auth(async (req) => {
-  const { pathname } = req.nextUrl;
+const ALLOWED_FRAME_ANCESTORS = [
+  "https://navis-docs.com",
+  "https://www.navis-docs.com",
+];
 
-  if (pathname.startsWith("/api/auth")) {
-    return NextResponse.next();
+export function proxy(req: NextRequest) {
+  const host = req.headers.get("host") ?? "";
+  const res = NextResponse.next();
+
+  if (isDemoHost(host)) {
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    res.headers.delete("X-Frame-Options");
+    res.headers.set(
+      "Content-Security-Policy",
+      `frame-ancestors ${ALLOWED_FRAME_ANCESTORS.join(" ")};`,
+    );
+  } else {
+    res.headers.set("X-Frame-Options", "DENY");
   }
 
-  if (!req.auth) {
-    const signInUrl = new URL(signInPath(), req.url);
-    signInUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(signInUrl);
-  }
-
-  const response = NextResponse.next();
-
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://js.sentry-cdn.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' data: https:;
-    connect-src 'self' https://api.github.com https://*.sentry.io https://api.anthropic.com;
-    frame-ancestors 'none';
-    base-uri 'self';
-    form-action 'self';
-  `;
-
-  response.headers.set("Content-Security-Policy", cspHeader.replace(/\s+/g, " ").trim());
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-XSS-Protection", "1; mode=block");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
-
-  return response;
-});
+  return res;
+}
 
 export const config = {
-  matcher: ["/((?!_next|api|auth|favicon.ico|.*\\..*).*)"],
+  matcher: "/((?!_next/static|_next/image|favicon.ico).*)",
 };

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 @import "../styles/_variables.scss";
 @import "../styles/_keyframe-animations.scss";
@@ -15,6 +16,7 @@
 
 ::selection {
   background-color: #8ebeca;
+  color: white;
 }
 
 @theme inline {
@@ -96,9 +98,29 @@
     }
   }
 
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
   --animate-fade-from-top: fade-from-top 0.5s ease-out;
   --animate-header-from-top: fade-from-top 0.5s ease-out;
   --animate-nav-from-side: fade-from-side 0.5s ease-out;
+  --animate-accordion-down: accordion-down 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-accordion-up: accordion-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

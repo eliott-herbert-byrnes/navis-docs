@@ -22,13 +22,16 @@ type YesNoPairsEditorProps = {
   content: ProcedureContent;
   onChange: (content: ProcedureContent) => void;
   isPreview: boolean;
+  isDemo?: boolean;
 };
 
 export function YesNoPairsEditor({
   content,
   onChange,
   isPreview,
+  isDemo = false,
 }: YesNoPairsEditorProps) {
+  const readOnly = isPreview || isDemo;
   const initialContent: YesNoContent = content?.yesno || {
     nodes: [
       {
@@ -289,7 +292,7 @@ export function YesNoPairsEditor({
             <Home className="w-4 h-4 mr-2" /> Start
           </Button>
         </div>
-        {isPreview ? (
+        {readOnly ? (
           <>
             <h3 className="text-xl font-semibold mb-2">
               {currentNode.question || "End of procedure"}
@@ -342,14 +345,14 @@ export function YesNoPairsEditor({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left card */}
         <Card className="p-4 shadow-none border">
-          {!isPreview
+          {!readOnly
             ? renderChildEditor(leftChild, "yes")
             : renderChildPreview(leftChild)}
         </Card>
 
         {/* Right card */}
         <Card className="p-4 shadow-none border">
-          {!isPreview
+          {!readOnly
             ? renderChildEditor(rightChild, "no")
             : renderChildPreview(rightChild)}
         </Card>
