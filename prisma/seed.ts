@@ -7,6 +7,8 @@ import { applyOrgDemoContent } from "./org-demo-content";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+const DEMO_USER_ID = process.env.DEMO_USER_ID!;
+const DEMO_ORG_ID = process.env.DEMO_ORG_ID!;
 
 async function main() {
   await prisma.$transaction([
@@ -44,6 +46,7 @@ async function main() {
 
   const user = await prisma.user.create({
     data: {
+      id: DEMO_USER_ID,
       email: "demo@navisdocs.com",
       canonicalEmail: canonicalEmail("demo@navisdocs.com"),
       name: "Demo User",
@@ -60,6 +63,7 @@ async function main() {
 
   const org = await prisma.organization.create({
     data: {
+      id: DEMO_ORG_ID,
       name: "Demo Organization",
       slug: "demo-organization",
       ownerUserId: user.id,
