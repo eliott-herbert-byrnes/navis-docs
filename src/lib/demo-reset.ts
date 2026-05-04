@@ -5,9 +5,9 @@ import { canonicalEmail } from "@/lib/email-canonical";
 import { applyOrgDemoContent } from "../../prisma/org-demo-content";
 import { seedDemoAuditLogs } from "../../prisma/seed-demo-audit-logs";
 import { wipeDemoOrg } from "../../prisma/wipe-demo-org";
-
-const DEMO_MEMBER_USER_ID =
-  process.env.DEMO_MEMBER_USER_ID ?? "00000000-0000-4000-8000-000000000002";
+import { DEMO_USER_EMAIL, DEMO_MEMBER_EMAIL } from "@/lib/demo-constants";
+ 
+const DEMO_MEMBER_USER_ID = requireEnv("DEMO_MEMBER_USER_ID");
 
 function requireEnv(name: string): string {
   const v = process.env[name];
@@ -29,9 +29,9 @@ export async function resetDemoData(): Promise<void> {
   try {
     await wipeDemoOrg(prisma, orgId);
 
-    const ownerEmail = "demo@navis-docs.com";
-    const memberEmail = "test@navisdocs.com";
-
+    const ownerEmail = DEMO_USER_EMAIL;   
+    const memberEmail = DEMO_MEMBER_EMAIL; 
+    
     await prisma.user.upsert({
       where: { id: ownerUserId },
       create: {

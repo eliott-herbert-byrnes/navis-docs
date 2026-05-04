@@ -7,6 +7,7 @@ import {
   StripeSubscriptionStatus,
 } from "@prisma/client";
 import { isDemoContext } from "./demo";
+import { DEMO_USER_EMAIL } from "./demo-constants";
 
 export const getSessionUser = async () => {
   const session = await auth();
@@ -20,7 +21,7 @@ async function getDemoSessionContext() {
   });
   return {
     userId: process.env.DEMO_USER_ID!,
-    email: "demo@navis-docs.com",
+    email: DEMO_USER_EMAIL,
     org,
     isAdmin: true,
     role: OrgMembershipRole.ADMIN,
