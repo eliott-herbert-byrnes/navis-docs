@@ -4,7 +4,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { viewProcedurePath } from "@/app/paths";
-// import { ProcedureFavoriteButton } from "./procedure-favorite-button";
 import { Folder, Star } from "lucide-react";
 import { trpc } from "@/trpc/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -93,12 +92,6 @@ export function FavoriteList() {
                   </p>
                 )}
               </div>
-              {/* <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
-                <FileText className="w-3 h-3" />
-                <span className="capitalize">
-                  {procedure.style.toLowerCase()}
-                </span>
-              </div> */}
             </CardContent>
         </Link>
           </Card>

@@ -59,6 +59,4 @@ export async function generateProcedureEmbeddings(procedureId: string) {
       throw error;
     }
   }
-
-  console.log(`Generated ${chunks.length} chunks for procedure ${procedureId}`);
 }

@@ -8,6 +8,18 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { SiteAccordion } from "./_components/site-accordion";
 
+/** Shared alt text for repeated marketing screenshots (a11y + SEO). */
+const marketingAlt = {
+  heroProductUi:
+    "Screenshot of Navis Docs showing the main application workspace and navigation.",
+  heroBackdrop:
+    "Wide decorative background graphic behind the product preview area.",
+  orgStructureUi:
+    "Screenshot of Navis Docs illustrating departments and teams within an organization.",
+  orgFeatureBackdrop:
+    "Wide decorative background graphic behind the organization structure preview.",
+} as const;
+
 export const metadata: Metadata = {
   title: "Home",
   description:
@@ -66,7 +78,7 @@ export default function MarketingHomePage() {
             src="/webp/hero-iframe-image.webp"
             width={1460}
             height={730}
-            alt=""
+            alt={marketingAlt.heroProductUi}
             priority
             sizes="100vw"
           />
@@ -87,14 +99,14 @@ export default function MarketingHomePage() {
                 src="/webp/hero-iframe-image.webp"
                 width={1460}
                 height={730}
-                alt=""
+                alt={marketingAlt.heroProductUi}
               />
             )}
           </div>
           <div className="relative inset-x-0 z-0 w-full pt-90">
             <div className="relative mx-auto aspect-[1840/520] w-full max-w-[1840px]">
               <Image
-                alt=""
+                alt={marketingAlt.heroBackdrop}
                 className="object-cover"
                 fill
                 sizes="(min-width: 1840px) 1840px, 100vw"
@@ -156,7 +168,7 @@ export default function MarketingHomePage() {
             src="/webp/hero-feature-image-2.webp"
             width={800}
             height={680}
-            alt=""
+            alt={marketingAlt.orgStructureUi}
             sizes="100vw"
           />
         </div>
@@ -167,14 +179,14 @@ export default function MarketingHomePage() {
               src="/webp/hero-feature-image-2.webp"
               width={800}
               height={680}
-              alt=""
+              alt={marketingAlt.orgStructureUi}
               // sizes="(min-width: 1024px) 50vw, 80vw"
             />
           </div>
           <div className="relative inset-x-0 z-0 flex justify-end pt-90">
             <div className="relative ml-auto aspect-[1070/520] w-full max-w-[1070px]">
               <Image
-                alt=""
+                alt={marketingAlt.orgFeatureBackdrop}
                 className="object-cover"
                 fill
                 sizes="(min-width: 1070px) 1070px, 100vw"

@@ -1,17 +1,59 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   ProcedureForViewWithRelations,
   ProcedureContentType,
 } from "../types/types";
-import { RawTextEditor } from "./editors/raw-text-editor";
-import { StepsEditor } from "./editors/steps-editor";
-import { FlowEditor } from "./editors/flow-editor";
-import { YesNoPairsEditor } from "./editors/yesno-pairs-editor";
 import { Card } from "@/components/ui/card";
-import { ReactFlowProvider } from "reactflow";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function ProcedureContentSkeleton() {
+  return (
+    <div className="rounded-md border p-4 space-y-3">
+      <Skeleton className="h-6 w-2/3" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-11/12" />
+      <Skeleton className="h-4 w-5/6" />
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+}
+
+const RawTextEditor = dynamic(
+  () =>
+    import("./editors/raw-text-editor").then((mod) => ({
+      default: mod.RawTextEditor,
+    })),
+  { ssr: false },
+);
+
+const StepsEditor = dynamic(
+  () =>
+    import("./editors/steps-editor").then((mod) => ({
+      default: mod.StepsEditor,
+    })),
+  { ssr: false },
+);
+
+const FlowEditor = dynamic(
+  () =>
+    import("./editors/flow-editor").then((mod) => ({
+      default: mod.FlowEditor,
+    })),
+  { ssr: false },
+);
+
+const YesNoPairsEditor = dynamic(
+  () =>
+    import("./editors/yesno-pairs-editor").then((mod) => ({
+      default: mod.YesNoPairsEditor,
+    })),
+  { ssr: false },
+);
 
 export type ProcedureContentProps = {
   procedure: ProcedureForViewWithRelations;
@@ -19,22 +61,13 @@ export type ProcedureContentProps = {
   isDemo?: boolean;
 };
 
-const ProcedureContent = ({
+function ProcedureContentLoaded({
   procedure,
   showDocView = false,
   isDemo = false,
-}: ProcedureContentProps) => {
+}: ProcedureContentProps) {
   const content = procedure.publishedVersion
     ?.contentJSON as ProcedureContentType;
-
-  if (!procedure.publishedVersion) {
-    return (
-      <EmptyState
-        title="No content found"
-        body="This procedure has no published version. Please publish the procedure to view the content."
-      />
-    );
-  }
 
   const renderProcedureContent = () => {
     switch (procedure.style) {
@@ -59,14 +92,12 @@ const ProcedureContent = ({
         );
       case "FLOW":
         return (
-          <ReactFlowProvider>
-            <FlowEditor
-              content={content}
-              onChange={() => {}}
-              isPreview={true}
-              isDemo={isDemo}
-            />
-          </ReactFlowProvider>
+          <FlowEditor
+            content={content}
+            onChange={() => {}}
+            isPreview={true}
+            isDemo={isDemo}
+          />
         );
       case "YESNO":
         return (
@@ -90,14 +121,12 @@ const ProcedureContent = ({
   if (procedure.style === "FLOW" && showDocView) {
     const flowPanel = (
       <div className="min-h-[400px] flex flex-col overflow-hidden">
-        <ReactFlowProvider>
-          <FlowEditor
-            content={content}
-            onChange={() => {}}
-            isPreview={true}
-            isDemo={isDemo}
-          />
-        </ReactFlowProvider>
+        <FlowEditor
+          content={content}
+          onChange={() => {}}
+          isPreview={true}
+          isDemo={isDemo}
+        />
       </div>
     );
     const docPanel = (
@@ -152,6 +181,31 @@ const ProcedureContent = ({
     <Card className="p-0 min-h-[600px] animate-fade-from-top shadow-none bg-background">
       {renderProcedureContent()}
     </Card>
+  );
+}
+
+const ProcedureContent = ({
+  procedure,
+  showDocView = false,
+  isDemo = false,
+}: ProcedureContentProps) => {
+  if (!procedure.publishedVersion) {
+    return (
+      <EmptyState
+        title="No content found"
+        body="This procedure has no published version. Please publish the procedure to view the content."
+      />
+    );
+  }
+
+  return (
+    <Suspense fallback={<ProcedureContentSkeleton />}>
+      <ProcedureContentLoaded
+        procedure={procedure}
+        showDocView={showDocView}
+        isDemo={isDemo}
+      />
+    </Suspense>
   );
 };
 

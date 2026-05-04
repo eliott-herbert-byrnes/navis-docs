@@ -25,7 +25,6 @@ export const metadata: Metadata = {
     description: siteDescription,
   },
   twitter: {
-    card: "summary_large_image",
     title: "Navis Docs",
     description: siteDescription,
   },

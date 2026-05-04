@@ -10,12 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
 import { Trash } from "lucide-react";
 import { useDeleteOrg } from "../hooks/use-org-mutations";
 
 const OrganizationDeleteButton = () => {
-  // const [open, setOpen] = useState(false);
   const { open, setOpen, deleteOrganization, isPending } = useDeleteOrg();
 
   const handleDelete = () => {

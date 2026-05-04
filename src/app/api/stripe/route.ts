@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import * as stripeData from "./data";
 
-// export const runtime = "nodejs";
-
 const handleSubscriptionCreated = async (subscription: Stripe.Subscription) => {
   await stripeData.updateStripeSubscription(subscription);
 };
@@ -28,13 +26,22 @@ export async function POST(req: Request) {
   if (!signature)
     return new NextResponse("Missing Stripe Signature", { status: 400 });
 
+  let event: Stripe.Event;
   try {
-    const event = getStripe().webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       signature,
       webhookSecret,
     );
+  } catch (err) {
+    if (err instanceof Stripe.errors.StripeSignatureVerificationError) {
+      return new NextResponse("Invalid Stripe Signature", { status: 400 });
+    }
+    console.error("Stripe webhook: signature verification failed unexpectedly", err);
+    return new NextResponse("Webhook verification error", { status: 500 });
+  }
 
+  try {
     switch (event.type) {
       case "customer.subscription.created":
         await handleSubscriptionCreated(
@@ -65,11 +72,14 @@ export async function POST(req: Request) {
         await stripeData.handleInvoicePaid(event.data.object as Stripe.Invoice);
         break;
       default:
-        console.log(`Unhandled event type ${event.type}.`);
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Unhandled event type ${event.type}.`);
+        }
     }
 
     return new NextResponse(null, { status: 200 });
-  } catch {
-    return new NextResponse("Invalid Stripe Signature", { status: 400 });
+  } catch (err) {
+    console.error("Stripe webhook: handler error", err);
+    return new NextResponse("Webhook handler error", { status: 500 });
   }
 }

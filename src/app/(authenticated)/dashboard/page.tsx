@@ -8,9 +8,9 @@ import { getDashboardStats } from "@/features/dashboard/queries/dashboard-stats"
 import { getProcedureChartData } from "@/features/dashboard/queries/procedure-chart-data";
 import { DashboardStatCards } from "@/features/dashboard/components/dashboard-stat-card";
 import { DashboardAuditStream } from "@/features/dashboard/components/dashboard-audit-stream";
-import { DashboardProcedureChart } from "@/features/dashboard/components/dashoard-procedure-chart";
 import { PageContainer } from "@/components/ui/page-container";
 import { DashboardActionsDropdown } from "@/features/dashboard/components/dashboard-actions-dropdown";
+import { DashboardProcedureChart } from "@/features/dashboard/components/dashboard-procedure-chart";
 
 function DashboardAuditStreamSkeleton() {
   return (
