@@ -1,5 +1,6 @@
 import { OrgPlan, PrismaClient } from "@prisma/client";
 import { canonicalEmail } from "../src/lib/email-canonical";
+import { DEMO_FALLBACK_MEMBER_USER_ID } from "../src/lib/demo-constants";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { applyOrgDemoContent } from "./org-demo-content";
@@ -10,8 +11,19 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 const DEMO_USER_ID = process.env.DEMO_USER_ID!;
 const DEMO_ORG_ID = process.env.DEMO_ORG_ID!;
+const memberUserIdFromEnv = process.env.DEMO_MEMBER_USER_ID?.trim();
+const DEMO_MEMBER_USER_ID =
+  memberUserIdFromEnv && memberUserIdFromEnv !== DEMO_USER_ID
+    ? memberUserIdFromEnv
+    : DEMO_FALLBACK_MEMBER_USER_ID;
 
 async function main() {
+  if (DEMO_MEMBER_USER_ID === DEMO_USER_ID) {
+    throw new Error(
+      "DEMO_USER_ID must not equal the demo member user id (including the built-in fallback).",
+    );
+  }
+
   await prisma.$transaction([
     // Null out self-referencing FKs before deleting versions
     prisma.procedure.updateMany({
@@ -56,6 +68,7 @@ async function main() {
 
   const testUser = await prisma.user.create({
     data: {
+      id: DEMO_MEMBER_USER_ID,
       email: "test@navisdocs.com",
       canonicalEmail: canonicalEmail("test@navisdocs.com"),
       name: "Test User",
