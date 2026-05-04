@@ -48,13 +48,13 @@ export function AppSidebarClient({
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <div className="flex flex-row w-full size-8 items-center pt-2 mb-2 mt-1 gap-2">
+                <div className="flex flex-row w-full size-8 items-center justify-center pt-2 mb-2 mt-1 gap-2">
                   <Image
-                    src="/nd-square-blue-png.png"
+                    src="/navis-docs-logo-svg.svg"
                     alt="Navis Docs Logo"
                     className="rounded-xs dark:block"
-                    width={"30"}
-                    height={"30"}
+                    width={"28"}
+                    height={"28"}
                   />
                   <span className="block sm:hidden">Navis Docs</span>
                 </div>

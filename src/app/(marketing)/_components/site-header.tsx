@@ -43,7 +43,6 @@ export function SiteHeader() {
             width={30}
             height={30}
             alt=""
-            priority
           />
         </Link>
 

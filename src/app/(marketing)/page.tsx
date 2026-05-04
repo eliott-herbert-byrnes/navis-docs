@@ -63,7 +63,7 @@ export default function MarketingHomePage() {
         <div className="flex justify-center sm:hidden">
           <Image
             className="h-auto w-full max-w-4xl"
-            src="/hero-iframe-image.png"
+            src="/webp/hero-iframe-image.webp"
             width={1460}
             height={730}
             alt=""
@@ -84,22 +84,23 @@ export default function MarketingHomePage() {
             ) : (
               <Image
                 className="h-auto w-auto"
-                src="/hero-iframe-image.png"
+                src="/webp/hero-iframe-image.webp"
                 width={1460}
                 height={730}
                 alt=""
-                priority
               />
             )}
           </div>
-          <div className="relative inset-x-0 z-0 pt-90">
-            <Image
-              className="h-auto w-auto"
-              src="/iframe-background-image.png"
-              width={1840}
-              height={520}
-              alt=""
-            />
+          <div className="relative inset-x-0 z-0 w-full pt-90">
+            <div className="relative mx-auto aspect-[1840/520] w-full max-w-[1840px]">
+              <Image
+                alt=""
+                className="object-cover"
+                fill
+                sizes="(min-width: 1840px) 1840px, 100vw"
+                src="/webp/iframe-background-image.webp"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -152,11 +153,10 @@ export default function MarketingHomePage() {
         <div className="mt-12 flex justify-center sm:hidden">
           <Image
             className="h-auto w-full max-w-2xl rounded-tl-lg rounded-tr-lg rounded-bl-lg border-4 border-secondary"
-            src="/hero-feature-image-2.png"
+            src="/webp/hero-feature-image-2.webp"
             width={800}
             height={680}
             alt=""
-            priority
             sizes="100vw"
           />
         </div>
@@ -164,23 +164,23 @@ export default function MarketingHomePage() {
           <div className="inset-x-0 z-10 mt-0 flex justify-end">
             <Image
               className="absolute rounded-tl-lg rounded-tr-lg rounded-bl-lg border-4 border-secondary z-10"
-              src="/hero-feature-image-2.png"
+              src="/webp/hero-feature-image-2.webp"
               width={800}
               height={680}
               alt=""
-              priority
               // sizes="(min-width: 1024px) 50vw, 80vw"
             />
           </div>
           <div className="relative inset-x-0 z-0 flex justify-end pt-90">
-            <Image
-              className="h-auto w-auto"
-              src="/hero-feature-background-image.png"
-              width={1070}
-              height={520}
-              alt=""
-              // sizes="100vw"
-            />
+            <div className="relative ml-auto aspect-[1070/520] w-full max-w-[1070px]">
+              <Image
+                alt=""
+                className="object-cover"
+                fill
+                sizes="(min-width: 1070px) 1070px, 100vw"
+                src="/webp/feature-background-image.webp"
+              />
+            </div>
           </div>
         </div>
       </section>

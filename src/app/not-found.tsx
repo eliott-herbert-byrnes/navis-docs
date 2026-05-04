@@ -22,7 +22,7 @@ export default function NotFound() {
         <div className="flex items-center gap-2 self-center font-medium font-serif text-4xl">
           <div className="flex size-10 items-center justify-center rounded-md text-primary-foreground">
             <Image
-              src="/nd-square-blue-png.png"
+              src="/navis-docs-logo-svg.svg"
               width={80}
               height={80}
               alt="Navis Docs logo"
