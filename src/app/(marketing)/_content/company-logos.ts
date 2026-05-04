@@ -17,11 +17,6 @@ export const companyLogos = [
     alt: "Couchbase",
   },
   {
-    id: "fastcompany",
-    src: "/logos/fastcompany.svg",
-    alt: "Fast Company",
-  },
-  {
     id: "exness",
     src: "/logos/exness.svg",
     alt: "Exness",
