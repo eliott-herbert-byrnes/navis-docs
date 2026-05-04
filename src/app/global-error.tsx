@@ -1,6 +1,7 @@
 "use client";
 
 import "./globals.css";
+import Image from "next/image";
 import { Geist } from "next/font/google";
 import {
   Card,
@@ -29,7 +30,7 @@ export default function GlobalError({
           <div className="flex w-full max-w-sm flex-col gap-6">
             <div className="flex items-center gap-2 self-center font-medium font-serif text-4xl">
               <div className="flex size-10 items-center justify-center rounded-md text-primary-foreground">
-                <img
+                <Image
                   src="/navis-docs-logo-svg.svg"
                   width={80}
                   height={80}

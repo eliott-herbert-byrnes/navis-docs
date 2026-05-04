@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import ReactFlow, {
   Background,
   Controls,
+  ReactFlowProvider,
   addEdge,
   useNodesState,
   useEdgesState,
@@ -63,7 +64,7 @@ const nodeTypes = {
   end: EndNode,
 };
 
-export function FlowEditor({
+function FlowEditorInner({
   content,
   onChange,
   isPreview,
@@ -338,5 +339,13 @@ export function FlowEditor({
         <Controls />
       </ReactFlow>
     </div>
+  );
+}
+
+export function FlowEditor(props: FlowEditorProps) {
+  return (
+    <ReactFlowProvider>
+      <FlowEditorInner {...props} />
+    </ReactFlowProvider>
   );
 }

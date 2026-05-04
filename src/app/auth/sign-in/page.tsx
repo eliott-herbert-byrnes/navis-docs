@@ -1,5 +1,3 @@
-"use client";
-
 import { PageContainer } from "@/components/ui/page-container";
 import { SignInForm } from "@/features/auth/components/sign-in-form";
 import Image from "next/image";

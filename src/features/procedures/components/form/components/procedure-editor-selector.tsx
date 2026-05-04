@@ -3,7 +3,6 @@ import { RawTextEditor } from "../../editors/raw-text-editor";
 import { StepsEditor } from "../../editors/steps-editor";
 import { FlowEditor } from "../../editors/flow-editor";
 import { ProcedureContent } from "../utils/procedure-edit-utils";
-import { ReactFlowProvider } from "reactflow";
 import { YesNoPairsEditor } from "@/features/procedures/components/editors/yesno-pairs-editor";
 
 type ProcedureEditorSelectorProps = {
@@ -45,13 +44,11 @@ export function ProcedureEditorSelector({
       case "FLOW":
         if (editorMode === "flow") {
           return (
-            <ReactFlowProvider>
-              <FlowEditor
-                content={content}
-                onChange={onChange}
-                isPreview={isPreview}
-              />
-            </ReactFlowProvider>
+            <FlowEditor
+              content={content}
+              onChange={onChange}
+              isPreview={isPreview}
+            />
           );
         } else {
           return (

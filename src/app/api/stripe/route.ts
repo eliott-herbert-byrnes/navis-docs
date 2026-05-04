@@ -26,13 +26,22 @@ export async function POST(req: Request) {
   if (!signature)
     return new NextResponse("Missing Stripe Signature", { status: 400 });
 
+  let event: Stripe.Event;
   try {
-    const event = getStripe().webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       signature,
       webhookSecret,
     );
+  } catch (err) {
+    if (err instanceof Stripe.errors.StripeSignatureVerificationError) {
+      return new NextResponse("Invalid Stripe Signature", { status: 400 });
+    }
+    console.error("Stripe webhook: signature verification failed unexpectedly", err);
+    return new NextResponse("Webhook verification error", { status: 500 });
+  }
 
+  try {
     switch (event.type) {
       case "customer.subscription.created":
         await handleSubscriptionCreated(
@@ -69,7 +78,8 @@ export async function POST(req: Request) {
     }
 
     return new NextResponse(null, { status: 200 });
-  } catch {
-    return new NextResponse("Invalid Stripe Signature", { status: 400 });
+  } catch (err) {
+    console.error("Stripe webhook: handler error", err);
+    return new NextResponse("Webhook handler error", { status: 500 });
   }
 }

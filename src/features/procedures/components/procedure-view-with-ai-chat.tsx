@@ -8,7 +8,6 @@ import { ProcedureContent } from "./procedure-content";
 import { ProcedureAuditLogList } from "@/features/audit/components/procedure-audit-log-list";
 import { ProcedureForViewWithRelations } from "../types/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense } from "react";
 
 const DynamicAIChatDrawer = dynamic(
   () =>
@@ -17,18 +16,6 @@ const DynamicAIChatDrawer = dynamic(
     ),
   { loading: () => <Skeleton /> },
 );
-
-function ProcedureContentSkeleton() {
-  return (
-    <div className="rounded-md border p-4 space-y-3">
-      <Skeleton className="h-6 w-2/3" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-11/12" />
-      <Skeleton className="h-4 w-5/6" />
-      <Skeleton className="h-40 w-full" />
-    </div>
-  );
-}
 
 function buildAskAIMessage(procedureTitle: string): string {
   const name = procedureTitle?.trim() || "this procedure";
@@ -95,13 +82,11 @@ export function ProcedureViewWithAIChat({
       </div>
 
       {!showAuditLogs ? (
-        <Suspense fallback={<ProcedureContentSkeleton />}>
-          <ProcedureContent
-            procedure={procedure}
-            showDocView={procedure.style === "FLOW" ? showDocView : undefined}
-            isDemo={isDemo}
-          />
-        </Suspense>
+        <ProcedureContent
+          procedure={procedure}
+          showDocView={procedure.style === "FLOW" ? showDocView : undefined}
+          isDemo={isDemo}
+        />
       ) : (
         <div className="rounded-md border overflow-hidden flex flex-col min-h-[400px] max-h-[70vh] animate-fade-from-top">
           <div className="flex items-center justify-between gap-2 px-4 py-2 border-b bg-muted/50 shrink-0">

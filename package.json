@@ -30,6 +30,7 @@
     "@auth/core": "^0.40.0",
     "@auth/prisma-adapter": "^2.10.0",
     "@floating-ui/react": "^0.27.17",
+    "@fontsource-variable/hedvig-letters-serif": "^5.2.8",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "@radix-ui/react-accordion": "^1.2.12",
