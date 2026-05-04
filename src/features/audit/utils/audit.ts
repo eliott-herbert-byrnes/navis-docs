@@ -29,7 +29,6 @@ export type AuditAction =
   | "PROCEDURE_CATEGORY_UPDATED"
   | "PROCEDURE_DETAILS_UPDATED"
   | "PROCEDURE_ROLLOUT"
-  // TODO: IngestionJob actions
   | "PROCEDURE_IMPORTED"
   // Category actions
   | "CATEGORY_CREATED"

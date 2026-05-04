@@ -13,13 +13,15 @@ export const requestDemoOtpAction = async () => {
   }
 
   try {
-    const { code, expiresAt } = await createOtpFor(DEMO_EMAIL);
+    const otp = await createOtpFor(DEMO_EMAIL);
 
-    console.log(
-      `[DEMO] Demo account OTP: ${code} (expires at ${expiresAt.toISOString()})`,
-    );
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[DEMO] Demo account OTP: ${otp.code} (expires at ${otp.expiresAt.toISOString()})`,
+      );
+    }
 
-    return { ok: true, message: "Demo code generated", code };
+    return { ok: true, message: "Demo code generated", code: otp.code };
   } catch (error) {
     console.error("Failed to generate demo code:", error);
     return {

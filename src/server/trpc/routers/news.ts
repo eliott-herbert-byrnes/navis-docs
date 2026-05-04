@@ -62,7 +62,7 @@ export const newsRouter = router({
           });
           readSet = new Set(readRecords.map((r) => r.newsPostId));
         } catch (error) {
-          console.log(error)
+          console.error(error)
         }
       }
 

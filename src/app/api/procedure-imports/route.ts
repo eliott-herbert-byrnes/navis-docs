@@ -3,8 +3,6 @@ import { getSessionContext } from "@/lib/auth";
 import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-// export const runtime = "nodejs";
-
 const BUCKET =
   process.env.SUPABASE_PROCEDURE_IMPORTS_BUCKET ?? "procedure-imports";
 

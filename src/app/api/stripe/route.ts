@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 import { Stripe } from "stripe";
 import * as stripeData from "./data";
 
-// export const runtime = "nodejs";
-
 const handleSubscriptionCreated = async (subscription: Stripe.Subscription) => {
   await stripeData.updateStripeSubscription(subscription);
 };
@@ -65,7 +63,9 @@ export async function POST(req: Request) {
         await stripeData.handleInvoicePaid(event.data.object as Stripe.Invoice);
         break;
       default:
-        console.log(`Unhandled event type ${event.type}.`);
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Unhandled event type ${event.type}.`);
+        }
     }
 
     return new NextResponse(null, { status: 200 });
