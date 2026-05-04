@@ -9,6 +9,7 @@ import {
   Prisma,
   StripeSubscriptionStatus,
 } from "@prisma/client";
+import { DEMO_USER_EMAIL } from "@/lib/demo-constants";
 
 type MembershipWithOrg = Prisma.OrgMembershipGetPayload<{
   include: { org: true };
@@ -18,6 +19,9 @@ async function createDemoContext() {
   const userId = process.env.DEMO_USER_ID!;
   const orgId = process.env.DEMO_ORG_ID!;
 
+  const org = await prisma.organization.findUnique({ where: { id: orgId } });
+  if (!org) return null;
+
   let membership: MembershipWithOrg | null =
     await prisma.orgMembership.findFirst({
       where: { userId, orgId },
@@ -25,9 +29,6 @@ async function createDemoContext() {
     });
 
   if (!membership) {
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { id: orgId },
-    });
     membership = {
       id: "00000000-0000-4000-8000-000000000001",
       orgId: org.id,
@@ -43,7 +44,7 @@ async function createDemoContext() {
     db: prisma,
     user: {
       id: userId,
-      email: "demo@navis-docs.com",
+      email: DEMO_USER_EMAIL,
       name: "Demo",
     },
     org: membership.org,
@@ -64,7 +65,17 @@ export async function createContext(opts?: FetchCreateContextFnOptions) {
   const host =
     opts?.req.headers.get("host") ?? (await headers()).get("host");
   if (isDemoHost(host)) {
-    return createDemoContext();
+    const demoCtx = await createDemoContext();
+    if (demoCtx) return demoCtx;
+    return {
+      db: prisma,
+      user: null,
+      org: null,
+      membership: null,
+      isAdmin: false,
+      hasActiveAccess: false,
+      isDemo: true,
+    };
   }
 
   const session = await auth();

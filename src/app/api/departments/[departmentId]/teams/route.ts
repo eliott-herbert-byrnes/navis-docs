@@ -1,4 +1,4 @@
-// navis-docs/src/app/api/departments/[departmentId]/teams/route.ts
+// navisdocs/src/app/api/departments/[departmentId]/teams/route.ts
 import { getSessionContext } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
