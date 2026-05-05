@@ -1,2 +1,9 @@
 onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - "@prisma/engines"
+  - "@tailwindcss/oxide"
   - esbuild
+  - prisma
+  - sharp
+  - supabase
+  - unrs-resolver

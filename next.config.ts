@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   // Static routes prerender aggressively; keep session/auth reads and cookies()/headers()
   // out of public (marketing) trees so they stay static. SessionProvider lives only under
   // (authenticated) for the same reason — it would otherwise opt pages into client session work.
