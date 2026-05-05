@@ -8,14 +8,10 @@ vi.mock("@/features/audit/utils/audit", () => ({
   createAuditLog: (...args: unknown[]) => mockCreateAuditLog(...args),
 }));
 
-vi.mock("@/lib/supabase/admin", () => ({
-  supabaseAdmin: {
-    storage: {
-      from: () => ({
-        list: (...args: unknown[]) => mockSupabaseList(...args),
-        remove: (...args: unknown[]) => mockSupabaseRemove(...args),
-      }),
-    },
+vi.mock("@/lib/storage", () => ({
+  storage: {
+    list: (...args: unknown[]) => mockSupabaseList(...args),
+    remove: (...args: unknown[]) => mockSupabaseRemove(...args),
   },
 }));
 
@@ -94,10 +90,10 @@ describe("procedures.updateProcedureContent image cleanup", () => {
     mockVersionUpdate.mockResolvedValue({
       id: "11111111-1111-1111-8111-111111111111",
     });
-    mockSupabaseList.mockResolvedValue({
-      data: [{ name: "old.png" }, { name: "keep.png" }],
-      error: null,
-    });
+    mockSupabaseList.mockResolvedValue([
+      { name: "old.png" },
+      { name: "keep.png" },
+    ]);
     mockSupabaseRemove.mockResolvedValue({ error: null });
     mockCreateAuditLog.mockResolvedValue(undefined);
 
@@ -108,7 +104,7 @@ describe("procedures.updateProcedureContent image cleanup", () => {
       contentJSON: newContent,
     });
 
-    expect(mockSupabaseRemove).toHaveBeenCalledWith([
+    expect(mockSupabaseRemove).toHaveBeenCalledWith("procedure-images", [
       "orgs/org-1/procedures/8f4d4470-4f6b-4b9a-a2dc-f1ca74b04801/old.png",
     ]);
   });
@@ -132,10 +128,7 @@ describe("procedures.updateProcedureContent image cleanup", () => {
     mockVersionUpdate.mockResolvedValue({
       id: "11111111-1111-1111-8111-111111111111",
     });
-    mockSupabaseList.mockResolvedValue({
-      data: [{ name: "temp-upload.png" }],
-      error: null,
-    });
+    mockSupabaseList.mockResolvedValue([{ name: "temp-upload.png" }]);
     mockSupabaseRemove.mockResolvedValue({ error: null });
     mockCreateAuditLog.mockResolvedValue(undefined);
 
@@ -146,7 +139,7 @@ describe("procedures.updateProcedureContent image cleanup", () => {
       contentJSON: newContent,
     });
 
-    expect(mockSupabaseRemove).toHaveBeenCalledWith([
+    expect(mockSupabaseRemove).toHaveBeenCalledWith("procedure-images", [
       "orgs/org-1/procedures/8f4d4470-4f6b-4b9a-a2dc-f1ca74b04801/temp-upload.png",
     ]);
   });

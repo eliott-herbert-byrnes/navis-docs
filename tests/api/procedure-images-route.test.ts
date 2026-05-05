@@ -20,13 +20,9 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-vi.mock("@/lib/supabase/admin", () => ({
-  supabaseAdmin: {
-    storage: {
-      from: () => ({
-        download: (...args: unknown[]) => mockDownload(...args),
-      }),
-    },
+vi.mock("@/lib/storage", () => ({
+  storage: {
+    download: (...args: unknown[]) => mockDownload(...args),
   },
 }));
 
@@ -66,10 +62,7 @@ describe("GET /api/procedure-images", () => {
     mockAuth.mockResolvedValue({ user: { id: "user-1" } });
     mockFindFirstMembership.mockResolvedValue({ orgId: "org-1" });
     mockFindFirstProcedure.mockResolvedValue({ id: "proc-1" });
-    mockDownload.mockResolvedValue({
-      data: new Blob([new Uint8Array([1, 2, 3])], { type: "image/png" }),
-      error: null,
-    });
+    mockDownload.mockResolvedValue(Buffer.from([1, 2, 3]));
 
     const response = await GET(
       new Request(

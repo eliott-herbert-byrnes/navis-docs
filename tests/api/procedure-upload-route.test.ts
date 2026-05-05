@@ -20,13 +20,9 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-vi.mock("@/lib/supabase/admin", () => ({
-  supabaseAdmin: {
-    storage: {
-      from: () => ({
-        upload: (...args: unknown[]) => mockUpload(...args),
-      }),
-    },
+vi.mock("@/lib/storage", () => ({
+  storage: {
+    upload: (...args: unknown[]) => mockUpload(...args),
   },
 }));
 
