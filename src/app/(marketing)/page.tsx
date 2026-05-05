@@ -49,7 +49,7 @@ export default function MarketingHomePage() {
           id="hero-heading"
           className="font-serif text-4xl sm:text-5xl leading-14"
         >
-          The open-source platform for knowledge and SOP management
+          The open source platform for knowledge and SOP management
         </h1>
         <p className="text-muted-foreground text-xl sm:text-2xl">
           Navis Docs helps teams capture, organize, and share SOPs, runbooks, and process knowledge from one place.

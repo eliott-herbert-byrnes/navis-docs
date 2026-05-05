@@ -4,7 +4,7 @@ import { OSS_FRIENDS } from "@/app/(marketing)/_content/oss-friends";
 import { OssFriendCard } from "@/app/(marketing)/_components/oss-friend-card";
 
 const description =
-  "Open-source projects we admire and recommend — built by teams across the community.";
+  "Open source projects we admire and recommend — built by teams across the community.";
 
 export const metadata: Metadata = {
   title: "OSS friends",
