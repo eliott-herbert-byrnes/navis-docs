@@ -212,12 +212,13 @@ export async function sendTrialWillEndEmail(
         orgName: org.name,
         ownerName: org.ownerUser.name ?? "there",
         billingUrl,
+        daysRemaining: 3,
       }),
     );
     await resend.emails.send({
       from: getEmailFrom(),
       to: org.ownerUser.email,
-      subject: "Your Navis Docs trial is ending soon",
+      subject: `Your Navis Docs trial for ${org.name} ends in 3 days`,
       html,
     });
   } catch (err) {
