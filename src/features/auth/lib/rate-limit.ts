@@ -1,25 +1,30 @@
 "use server";
 
-import { Ratelimit } from "@upstash/ratelimit";
 import { headers } from "next/headers";
+import { RateLimiterRedis } from "rate-limiter-flexible";
 import { getRedis } from "@/lib/redis";
 
-let _base: Ratelimit | null = null;
+let _authLimiter: RateLimiterRedis | null = null;
 
-function getBase() {
-  if (!_base) {
-    _base = new Ratelimit({
-      redis: getRedis(),
-      limiter: Ratelimit.slidingWindow(10, "10s"),
-      analytics: true,
-      prefix: `rl:${process.env.NODE_ENV === "production" ? "prod" : "dev"}:auth`,
+function getAuthLimiter(): RateLimiterRedis {
+  if (!_authLimiter) {
+    _authLimiter = new RateLimiterRedis({
+      storeClient: getRedis(),
+      keyPrefix: `rl:${process.env.NODE_ENV === "production" ? "prod" : "dev"}:auth`,
+      points: 10,
+      duration: 10,
     });
   }
-  return _base;
+  return _authLimiter;
 }
 
-export async function limiter(scope: string) {
+export async function limiter(scope: string): Promise<{ success: boolean }> {
   const h = await headers();
   const ip = (h.get("x-forwarded-for") ?? "unknown").split(",")[0]!.trim();
-  return getBase().limit(`${scope}:${ip}`);
+  try {
+    await getAuthLimiter().consume(`${scope}:${ip}`);
+    return { success: true };
+  } catch {
+    return { success: false };
+  }
 }
