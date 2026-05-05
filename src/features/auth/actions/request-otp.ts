@@ -2,6 +2,7 @@
 
 import React from "react";
 import { z } from "zod";
+import { getEmailFrom } from "@/lib/email";
 import { createOtpFor } from "@/lib/otp";
 import { getResend } from "@/lib/resend";
 import { render } from "@react-email/render";
@@ -34,7 +35,7 @@ export const requestOtpAction = async (emailRaw: string) => {
   const resend = getResend();
   const html = await render(React.createElement(SignInOtpEmail, { code }));
   await resend.emails.send({
-    from: "Navis Docs <no-reply@app.navisdocs.com>",
+    from: getEmailFrom(),
     to: email,
     subject: "Your sign-in code",
     html,

@@ -1,6 +1,7 @@
 import { SubscriptionEndedEmail } from "@/emails/subscription-ended";
 import { TrialStartedEmail } from "@/emails/trial-started";
 import { TrialWillEndEmail } from "@/emails/trial-will-end";
+import { getEmailFrom } from "@/lib/email";
 import { getResend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
@@ -214,7 +215,7 @@ export async function sendTrialWillEndEmail(
       }),
     );
     await resend.emails.send({
-      from: "Navis Docs <no-reply@app.navisdocs.com>",
+      from: getEmailFrom(),
       to: org.ownerUser.email,
       subject: "Your Navis Docs trial is ending soon",
       html,
@@ -246,7 +247,7 @@ export async function sendTrialStartedEmail(
     }),
   );
   await resend.emails.send({
-    from: "Navis Docs <no-reply@app.navisdocs.com>",
+    from: getEmailFrom(),
     to: input.to,
     subject: `Your Navis Docs trial has started for ${input.orgName}`,
     html,
@@ -277,7 +278,7 @@ export async function sendSubscriptionEndedEmail(
       }),
     );
     await resend.emails.send({
-      from: "Navis Docs <no-reply@app.navisdocs.com>",
+      from: getEmailFrom(),
       to: input.to,
       subject: `Your Navis Docs access for ${input.orgName} has ended`,
       html,

@@ -87,20 +87,28 @@ export async function runImportProcedure({
       data: { status: "GENERATING" },
     });
 
+    const resolved = await resolveOrgAiKeys(orgId);
+    if (!resolved.cloudEntitled) {
+      throw new Error(
+        "AI import requires an active Pro or Enterprise subscription.",
+      );
+    }
+
     let anthropicApiKey: string | undefined;
     if (isCloud()) {
-      const resolved = await resolveOrgAiKeys(orgId);
-      if (!resolved.cloudEntitled) {
-        throw new Error(
-          "AI import requires an active Pro or Enterprise subscription.",
-        );
-      }
       if (!resolved.anthropicKey) {
         throw new Error(
           "No Anthropic API key configured. Add your key in Settings → AI Configuration.",
         );
       }
       anthropicApiKey = resolved.anthropicKey;
+    } else {
+      anthropicApiKey = resolved.anthropicKey ?? undefined;
+      if (!anthropicApiKey && !process.env.ANTHROPIC_API_KEY) {
+        throw new Error(
+          "No Anthropic API key configured. Add your key in Settings → AI Configuration or set ANTHROPIC_API_KEY.",
+        );
+      }
     }
 
     const client = getAnthropic(anthropicApiKey);

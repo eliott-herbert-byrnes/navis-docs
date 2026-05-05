@@ -51,7 +51,6 @@ export function AIChatDrawer({
   const { isAdmin } = useAuthContext();
   const { data: aiAvailability } =
     trpc.organization.getAiAvailability.useQuery(undefined, {
-      enabled: process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud",
       staleTime: 1000 * 60 * 5,
     });
   const keysConfigured = aiAvailability?.keysConfigured ?? true;
@@ -118,10 +117,9 @@ export function AIChatDrawer({
 
         if (response.status === 402) {
           // No Anthropic API key configured — tailor message by role
-          const content =
-            isAdmin && process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud"
-              ? "No Anthropic API key is configured for your organisation. Go to Settings → AI Configuration to add one."
-              : "AI chat is not available. Contact your organisation admin to configure an API key.";
+          const content = isAdmin
+            ? "No Anthropic API key is configured for your organisation. Go to Settings → AI Configuration to add one, or set ANTHROPIC_API_KEY on the server."
+            : "AI chat is not available. Contact your organisation admin to configure an API key.";
           setMessages((prev) => [...prev, { role: "assistant", content }]);
           setIsLoading(false);
           return;
@@ -230,9 +228,7 @@ export function AIChatDrawer({
             </Alert>
           ) : null}
 
-          {canUseAi &&
-          !keysConfigured &&
-          process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud" ? (
+          {canUseAi && !keysConfigured ? (
             <Alert className="mx-4 mt-3 shrink-0 border-muted">
               <AlertTitle>AI chat not configured</AlertTitle>
               <AlertDescription className="flex flex-col gap-2">

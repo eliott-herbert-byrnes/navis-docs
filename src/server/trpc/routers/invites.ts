@@ -14,6 +14,7 @@ import { createAuditLog } from "@/features/audit/utils/audit";
 import { revalidateTag } from "next/cache";
 import React from "react";
 import { render } from "@react-email/render";
+import { getEmailFrom } from "@/lib/email";
 import { getResend } from "@/lib/resend";
 import { InviteEmail } from "@/emails/invite";
 import { syncStripeSeats } from "@/lib/stripe/sync-seats";
@@ -154,7 +155,7 @@ export const invitesRouter = router({
         React.createElement(InviteEmail, { orgName: ctx.org.name, inviteUrl: link }),
       );
       await resend.emails.send({
-        from: "Navis Docs <no-reply@app.navisdocs.com>",
+        from: getEmailFrom(),
         to: email,
         subject: `You've been invited to join ${ctx.org.name}`,
         html,

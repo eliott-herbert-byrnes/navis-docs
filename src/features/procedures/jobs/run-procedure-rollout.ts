@@ -1,11 +1,11 @@
 import { ProcedureRolloutEmail } from "@/emails/procedure-rollout";
+import { getEmailFrom } from "@/lib/email";
 import { getResend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { OrgMembershipRole, RolloutRoleFilter } from "@prisma/client";
 import { render } from "@react-email/render";
 import React from "react";
 
-const FROM_EMAIL = "Navis Docs <no-reply@app.navisdocs.com>";
 const BATCH_SIZE = 50;
 
 export type RunProcedureRolloutParams = {
@@ -88,11 +88,12 @@ export async function runProcedureRollout({
       );
 
       const resend = getResend();
+      const emailFrom = getEmailFrom();
 
       for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
         const batchRecipients = recipients.slice(i, i + BATCH_SIZE);
         const batchPayload = batchRecipients.map((to) => ({
-          from: FROM_EMAIL,
+          from: emailFrom,
           to,
           subject,
           html,

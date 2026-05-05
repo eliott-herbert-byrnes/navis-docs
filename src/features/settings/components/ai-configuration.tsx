@@ -23,7 +23,7 @@ import { useAiConfiguration } from "../hooks/use-ai-configuration";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 
-function AiConfigurationInner() {
+export function AiConfiguration() {
   const { statusQuery, saveMutation, removeMutation } = useAiConfiguration();
   const [anthropic, setAnthropic] = useState("");
   const [openAi, setOpenAi] = useState("");
@@ -189,15 +189,4 @@ function AiConfigurationInner() {
 
     </>
   );
-}
-
-/**
- * Cloud-only: per-org encrypted AI keys. Hidden when self-hosted.
- */
-export function AiConfiguration() {
-  if (process.env.NEXT_PUBLIC_DEPLOY_MODE !== "cloud") {
-    return null;
-  }
-
-  return <AiConfigurationInner />;
 }

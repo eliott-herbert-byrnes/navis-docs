@@ -376,12 +376,6 @@ export const organizationRouter = router({
         message: "No organization found",
       });
     }
-    if (!isCloud()) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "AI key configuration is only available in cloud deployments",
-      });
-    }
 
     const org = await ctx.db.organization.findUnique({
       where: { id: ctx.org.id },
@@ -397,18 +391,19 @@ export const organizationRouter = router({
     if (!ctx.org) {
       throw new TRPCError({ code: "BAD_REQUEST", message: "No organization found" });
     }
-    // In self-hosted, keys come from env vars — always available
-    if (!isCloud()) {
-      return { keysConfigured: true };
-    }
 
     const org = await ctx.db.organization.findUnique({
       where: { id: ctx.org.id },
       // Only Anthropic key drives the chat route — OpenAI is currently inert
       select: { anthropicApiKey: true },
     });
+    const hasOrgKey = Boolean(org?.anthropicApiKey);
+    if (!isCloud()) {
+      const hasEnvKey = Boolean(process.env.ANTHROPIC_API_KEY);
+      return { keysConfigured: hasOrgKey || hasEnvKey };
+    }
 
-    return { keysConfigured: Boolean(org?.anthropicApiKey) };
+    return { keysConfigured: hasOrgKey };
   }),
   saveAiKeys: orgAdminActiveProcedure
     .use(rateLimitMiddleware("organization-ai-keys"))
@@ -423,12 +418,6 @@ export const organizationRouter = router({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "No organization found",
-        });
-      }
-      if (!isCloud()) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "AI key configuration is only available in cloud deployments",
         });
       }
 
@@ -469,12 +458,6 @@ export const organizationRouter = router({
     .mutation(async ({ ctx, input }) => {
       if (!ctx.org) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "No organization found" });
-      }
-      if (!isCloud()) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "AI key configuration is only available in cloud deployments",
-        });
       }
 
       const data: { anthropicApiKey?: null; openAiApiKey?: null } = {};

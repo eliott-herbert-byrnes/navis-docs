@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { OrgPlan, type StripeSubscriptionStatus } from "@prisma/client";
 
 export type ResolvedOrgAiKeys = {
-  /** Decrypted key; `undefined` in self-hosted (use env); `null` in cloud when unset */
-  anthropicKey: string | null | undefined;
-  /** Decrypted key; `undefined` in self-hosted (use env); `null` in cloud when unset */
-  openAiKey: string | null | undefined;
+  /** Decrypted key from DB, or `null` when not stored */
+  anthropicKey: string | null;
+  /** Decrypted key from DB, or `null` when not stored */
+  openAiKey: string | null;
 };
 
 function isCloudAiEntitled(
@@ -25,20 +25,14 @@ function isCloudAiEntitled(
 }
 
 /**
- * Resolves per-org AI API keys for cloud deploys (decrypted). Self-hosted returns
- * empty resolution so callers use process env vars.
+ * Resolves per-org encrypted AI API keys from the database (decrypted).
+ * Cloud deploys also require an active subscription tier (`cloudEntitled`).
+ * Self-hosted deploys are always entitled; callers may still fall back to env
+ * vars when no org key is stored (see `getAnthropic` / `getOpenAI`).
  */
 export async function resolveOrgAiKeys(
   orgId: string,
 ): Promise<ResolvedOrgAiKeys & { cloudEntitled: boolean }> {
-  if (isSelfHosted()) {
-    return {
-      anthropicKey: undefined,
-      openAiKey: undefined,
-      cloudEntitled: true,
-    };
-  }
-
   const org = await prisma.organization.findUnique({
     where: { id: orgId },
     select: {
@@ -57,6 +51,17 @@ export async function resolveOrgAiKeys(
     };
   }
 
+  const anthropicKey = org.anthropicApiKey ? decrypt(org.anthropicApiKey) : null;
+  const openAiKey = org.openAiApiKey ? decrypt(org.openAiApiKey) : null;
+
+  if (isSelfHosted()) {
+    return {
+      anthropicKey,
+      openAiKey,
+      cloudEntitled: true,
+    };
+  }
+
   const cloudEntitled = isCloudAiEntitled(
     org.plan,
     org.stripeSubscriptionStatus,
@@ -64,7 +69,7 @@ export async function resolveOrgAiKeys(
 
   return {
     cloudEntitled,
-    anthropicKey: org.anthropicApiKey ? decrypt(org.anthropicApiKey) : null,
-    openAiKey: org.openAiApiKey ? decrypt(org.openAiApiKey) : null,
+    anthropicKey,
+    openAiKey,
   };
 }

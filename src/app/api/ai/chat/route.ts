@@ -100,18 +100,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
+    const resolved = await resolveOrgAiKeys(team.department.orgId);
+    if (!resolved.cloudEntitled) {
+      return NextResponse.json(
+        {
+          error:
+            "AI features require an active Pro or Enterprise subscription.",
+        },
+        { status: 403 },
+      );
+    }
+
     let anthropicApiKey: string | undefined;
     if (isCloud()) {
-      const resolved = await resolveOrgAiKeys(team.department.orgId);
-      if (!resolved.cloudEntitled) {
-        return NextResponse.json(
-          {
-            error:
-              "AI features require an active Pro or Enterprise subscription.",
-          },
-          { status: 403 },
-        );
-      }
       if (!resolved.anthropicKey) {
         return NextResponse.json(
           {
@@ -122,6 +123,17 @@ export async function POST(req: NextRequest) {
         );
       }
       anthropicApiKey = resolved.anthropicKey;
+    } else {
+      anthropicApiKey = resolved.anthropicKey ?? undefined;
+      if (!anthropicApiKey && !process.env.ANTHROPIC_API_KEY) {
+        return NextResponse.json(
+          {
+            error:
+              "No Anthropic API key configured. Add your key in Settings → AI Configuration or set ANTHROPIC_API_KEY on the server.",
+          },
+          { status: 402 },
+        );
+      }
     }
 
     // Tiered search
