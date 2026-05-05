@@ -58,7 +58,7 @@ async function reclaimDemoEmailExceptUsers(
 }
 
 /**
- * Wipes `DEMO_ORG_ID` data and re-applies the same org tree as `prisma/seed.ts`.
+ * Wipes `DEMO_ORG_ID` data and re-applies the same org tree as `prisma/seed-demo.ts`.
  * Uses `DEMO_USER_ID` as owner and `DEMO_MEMBER_USER_ID` when set and distinct from the owner,
  * otherwise {@link DEMO_FALLBACK_MEMBER_USER_ID}.
  */

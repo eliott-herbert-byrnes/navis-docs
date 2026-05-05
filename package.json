@@ -15,6 +15,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "db:seed:demo": "tsx prisma/seed-demo.ts",
     "seed": "prisma db seed && tsx src/lib/stripe/seed.ts",
     "stripe:reconcile": "tsx scripts/stripe-reconcile.ts",
     "stripe:reconcile:apply": "tsx scripts/stripe-reconcile.ts --apply",

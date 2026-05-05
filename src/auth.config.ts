@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { canonicalEmail } from "@/lib/email-canonical";
 import { verifyOtpAndConsume } from "@/lib/otp";
+import { ensureDefaultOrgForUser } from "@/features/auth/lib/ensure-default-org-for-user";
 
 export const {
   handlers: { GET, POST },
@@ -68,67 +69,80 @@ export const {
     async signIn({ user, account }) {
       if (!user?.email) return false;
 
+      const canonical = canonicalEmail(user.email);
+
       const isOAuth =
         account?.type === "oauth" || account?.type === "oidc";
-      if (!isOAuth) return true;
 
-      const canonical = canonicalEmail(user.email);
-      const existing = await prisma.user.findUnique({
-        where: { canonicalEmail: canonical },
-      });
-
-      if (!existing) {
-        await prisma.user.create({
-          data: {
-            email: user.email,
-            canonicalEmail: canonical,
-            name: user.name ?? null,
-            image: user.image ?? null,
-            emailVerified: new Date(),
-            ...(account.providerAccountId
-              ? {
-                  accounts: {
-                    create: {
-                      type: account.type,
-                      provider: account.provider,
-                      providerAccountId: account.providerAccountId,
-                      access_token: account.access_token,
-                      token_type: account.token_type,
-                      scope: account.scope,
-                      id_token: account.id_token,
-                      expires_at: account.expires_at,
-                    },
-                  },
-                }
-              : {}),
-          },
+      if (isOAuth) {
+        const existing = await prisma.user.findUnique({
+          where: { canonicalEmail: canonical },
         });
-        return true;
-      }
 
-      if (account?.provider && account.providerAccountId) {
-        await prisma.account.upsert({
-          where: {
-            provider_providerAccountId: {
+        if (!existing) {
+          await prisma.user.create({
+            data: {
+              email: user.email,
+              canonicalEmail: canonical,
+              name: user.name ?? null,
+              image: user.image ?? null,
+              emailVerified: new Date(),
+              ...(account.providerAccountId
+                ? {
+                    accounts: {
+                      create: {
+                        type: account.type,
+                        provider: account.provider,
+                        providerAccountId: account.providerAccountId,
+                        access_token: account.access_token,
+                        token_type: account.token_type,
+                        scope: account.scope,
+                        id_token: account.id_token,
+                        expires_at: account.expires_at,
+                      },
+                    },
+                  }
+                : {}),
+            },
+          });
+        } else if (account?.provider && account.providerAccountId) {
+          await prisma.account.upsert({
+            where: {
+              provider_providerAccountId: {
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+              },
+            },
+            create: {
+              userId: existing.id,
+              type: account.type,
               provider: account.provider,
               providerAccountId: account.providerAccountId,
+              access_token: account.access_token,
+              token_type: account.token_type,
+              scope: account.scope,
+              id_token: account.id_token,
+              expires_at: account.expires_at,
             },
-          },
-          create: {
-            userId: existing.id,
-            type: account.type,
-            provider: account.provider,
-            providerAccountId: account.providerAccountId,
-            access_token: account.access_token,
-            token_type: account.token_type,
-            scope: account.scope,
-            id_token: account.id_token,
-            expires_at: account.expires_at,
-          },
-          update: {},
-        });
+            update: {},
+          });
+        }
       }
-      (user as { id?: string }).id = existing.id;
+
+      const dbUser = await prisma.user.findUnique({
+        where: { canonicalEmail: canonical },
+        select: { id: true, email: true, name: true },
+      });
+      if (!dbUser) return false;
+
+      (user as { id?: string }).id = dbUser.id;
+
+      await ensureDefaultOrgForUser(prisma, {
+        userId: dbUser.id,
+        email: dbUser.email,
+        name: dbUser.name,
+      });
+
       return true;
     },
     async jwt({ token, user }) {
