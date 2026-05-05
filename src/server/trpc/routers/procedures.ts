@@ -27,7 +27,7 @@ import { JsonObject } from "@prisma/client/runtime/client";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
 import { getInitialContentForStyle } from "@/features/procedures/utils/get-initial-content-for-style";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 import { extractManagedImagePathsFromContent } from "@/lib/tiptap-utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
@@ -1431,18 +1431,21 @@ export const procedureRouter = router({
         const keptPaths = new Set([...newImagePaths, ...publishedImagePaths]);
 
         const procedureFolder = `orgs/${ctx.org!.id}/procedures/${input.procedureId}`;
-        const { data: listedObjects, error: listError } =
-          await supabaseAdmin.storage
-            .from(procedureImagesBucket)
-            .list(procedureFolder, { limit: 1000, offset: 0 });
-        if (listError) {
+        let listedObjects: { name: string }[] = [];
+        try {
+          listedObjects = await storage.list(
+            procedureImagesBucket,
+            procedureFolder,
+            { limit: 1000, offset: 0 },
+          );
+        } catch (listError) {
           console.error(
             "Failed to list procedure images for cleanup:",
             listError,
           );
         }
 
-        const listedPaths = (listedObjects ?? [])
+        const listedPaths = listedObjects
           .filter((obj) => !!obj.name)
           .map((obj) => `${procedureFolder}/${obj.name}`);
 
@@ -1456,11 +1459,10 @@ export const procedureRouter = router({
         ]);
 
         if (deletionSet.size > 0) {
-          const { error } = await supabaseAdmin.storage
-            .from(procedureImagesBucket)
-            .remove([...deletionSet]);
-          if (error) {
-            console.error("Failed to remove orphaned procedure images:", error);
+          try {
+            await storage.remove(procedureImagesBucket, [...deletionSet]);
+          } catch (err) {
+            console.error("Failed to remove orphaned procedure images:", err);
           }
         }
       } catch (error) {

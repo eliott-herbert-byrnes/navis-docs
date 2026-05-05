@@ -4,7 +4,7 @@ import {
   logAuditExportRequested,
 } from "@/features/audit/utils/audit";
 import type { AuditExportFilterSnapshot } from "@/features/audit/utils/audit-export-filters";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 import { after } from "next/server";
 import {
   AUDIT_EXPORTS_BUCKET,
@@ -148,17 +148,18 @@ export const auditRouter = router({
       let downloadUrl: string | undefined;
 
       if (job.status === "READY" && job.fileKey) {
-        const { data, error } = await supabaseAdmin.storage
-          .from(AUDIT_EXPORTS_BUCKET)
-          .createSignedUrl(job.fileKey, AUDIT_EXPORT_SIGNED_URL_TTL_SECONDS);
-
-        if (error || !data?.signedUrl) {
+        try {
+          downloadUrl = await storage.createSignedUrl(
+            AUDIT_EXPORTS_BUCKET,
+            job.fileKey,
+            AUDIT_EXPORT_SIGNED_URL_TTL_SECONDS,
+          );
+        } catch {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "Could not create download link",
           });
         }
-        downloadUrl = data.signedUrl;
       }
 
       return {

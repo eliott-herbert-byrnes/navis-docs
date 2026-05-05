@@ -1,6 +1,13 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 
+/**
+ * Service-role Supabase client. The generated `Database` type in `types.ts` is
+ * imported only here and in `storage/supabase-adapter.ts` — nothing else under `src/`
+ * references `@/lib/supabase/types` (self-hosting prep 2f audit). You can remove this
+ * file when nothing imports `supabaseAdmin`; keep `types.ts` until the Supabase
+ * storage adapter is gone or its client is typed without `Database`.
+ */
 let _client: SupabaseClient<Database> | null = null;
 
 function getSupabaseAdmin(): SupabaseClient<Database> {

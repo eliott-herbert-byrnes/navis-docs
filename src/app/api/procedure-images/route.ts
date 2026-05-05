@@ -2,13 +2,23 @@ import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 
 const BUCKET =
   process.env.SUPABASE_PROCEDURE_IMAGES_BUCKET ?? "procedure-images";
 
 const PATH_REGEX =
   /^orgs\/([a-z0-9-]+)\/procedures\/([a-z0-9-]+)\/([a-zA-Z0-9._-]+)$/i;
+
+function contentTypeForImagePath(path: string): string {
+  const lower = path.toLowerCase();
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  if (lower.endsWith(".gif")) return "image/gif";
+  if (lower.endsWith(".webp")) return "image/webp";
+  if (lower.endsWith(".svg")) return "image/svg+xml";
+  return "application/octet-stream";
+}
 
 function parseManagedPath(path: string) {
   const match = path.match(PATH_REGEX);
@@ -80,19 +90,16 @@ export async function GET(req: Request) {
       );
     }
 
-    const { data, error } = await supabaseAdmin.storage
-      .from(BUCKET)
-      .download(path);
-
-    if (error || !data) {
+    let buffer: Buffer;
+    try {
+      buffer = await storage.download(BUCKET, path);
+    } catch {
       return NextResponse.json({ error: "Image not found" }, { status: 404 });
     }
 
-    // data is Blob-like in supabase-js
-    const contentType = data.type || "application/octet-stream";
-    const arrayBuffer = await data.arrayBuffer();
+    const contentType = contentTypeForImagePath(path);
 
-    return new NextResponse(arrayBuffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": contentType,

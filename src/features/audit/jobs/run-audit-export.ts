@@ -13,7 +13,7 @@ import {
   AUDIT_EXPORTS_BUCKET,
   auditExportObjectPath,
 } from "@/lib/supabase/audit-exports-storage";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 
 const PAGE_SIZE = 500;
 
@@ -82,16 +82,10 @@ export async function runAuditExport({
     const buffer = Buffer.from(body, "utf-8");
     const fileKey = auditExportObjectPath(orgId, jobId);
 
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from(AUDIT_EXPORTS_BUCKET)
-      .upload(fileKey, buffer, {
-        contentType: "application/json",
-        upsert: true,
-      });
-
-    if (uploadError) {
-      throw new Error(uploadError.message);
-    }
+    await storage.upload(AUDIT_EXPORTS_BUCKET, fileKey, buffer, {
+      contentType: "application/json",
+      upsert: true,
+    });
 
     await prisma.auditExportJob.update({
       where: { id: jobId },

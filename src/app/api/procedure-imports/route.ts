@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionContext } from "@/lib/auth";
 import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 
 const BUCKET =
   process.env.SUPABASE_PROCEDURE_IMPORTS_BUCKET ?? "procedure-imports";
@@ -72,16 +72,14 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Supabase
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from(BUCKET)
-      .upload(objectPath, buffer, {
+    // Upload to storage
+    try {
+      await storage.upload(BUCKET, objectPath, buffer, {
         contentType: file.type || "application/octet-stream",
         upsert: false,
       });
-
-    if (uploadError) {
-      console.error("Supabase upload failed:", uploadError);
+    } catch (uploadErr) {
+      console.error("Storage upload failed:", uploadErr);
       return NextResponse.json({ error: "Upload failed" }, { status: 500 });
     }
 

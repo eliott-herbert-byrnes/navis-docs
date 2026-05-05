@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // export const runtime = "nodejs";
@@ -95,15 +95,13 @@ export async function POST(
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from(BUCKET)
-      .upload(objectPath, buffer, {
+    try {
+      await storage.upload(BUCKET, objectPath, buffer, {
         contentType: file.type,
         upsert: false,
       });
-
-    if (uploadError) {
-      console.error("Supabase upload failed:", uploadError);
+    } catch (uploadErr) {
+      console.error("Storage upload failed:", uploadErr);
       return NextResponse.json({ error: "Upload failed" }, { status: 500 });
     }
 

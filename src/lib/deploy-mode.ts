@@ -1,5 +1,8 @@
 /**
- * Server-side deploy mode. Use `NEXT_PUBLIC_DEPLOY_MODE` in client components for UI.
+ * Deploy mode (same env as client: `NEXT_PUBLIC_DEPLOY_MODE`). Values: `"cloud"` | `"self-hosted"`.
  */
-export const isCloud = () => process.env.DEPLOY_MODE !== "self-hosted";
-export const isSelfHosted = () => process.env.DEPLOY_MODE === "self-hosted";
+export const isCloud = () =>
+  process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud";
+
+export const isSelfHosted = () =>
+  process.env.NEXT_PUBLIC_DEPLOY_MODE === "self-hosted";

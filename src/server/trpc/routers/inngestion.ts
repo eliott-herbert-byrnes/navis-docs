@@ -1,7 +1,7 @@
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 import { after } from "next/server";
 import {
   router,
@@ -209,9 +209,7 @@ export const ingestionRouter = router({
 
       if (job.fileKey) {
         try {
-          await supabaseAdmin.storage
-            .from(IMPORTS_BUCKET)
-            .remove([job.fileKey]);
+          await storage.remove(IMPORTS_BUCKET, [job.fileKey]);
         } catch (err) {
           console.error("Failed to delete import file from storage:", err);
         }
@@ -247,7 +245,7 @@ export const ingestionRouter = router({
 
       if (fileKey) {
         try {
-          await supabaseAdmin.storage.from(IMPORTS_BUCKET).remove([fileKey]);
+          await storage.remove(IMPORTS_BUCKET, [fileKey]);
         } catch (err) {
           console.error("Failed to delete import file from storage:", err);
         }

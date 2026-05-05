@@ -29,6 +29,8 @@
     "@anthropic-ai/sdk": "^0.68.0",
     "@auth/core": "^0.40.0",
     "@auth/prisma-adapter": "^2.10.0",
+    "@aws-sdk/client-s3": "^3.1042.0",
+    "@aws-sdk/s3-request-presigner": "^3.1042.0",
     "@floating-ui/react": "^0.27.17",
     "@fontsource-variable/hedvig-letters-serif": "^5.2.8",
     "@prisma/adapter-pg": "^7.3.0",

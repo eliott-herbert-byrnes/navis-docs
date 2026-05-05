@@ -2,7 +2,7 @@ import { getAnthropic } from "@/lib/ai/anthropic";
 import { resolveOrgAiKeys } from "@/lib/ai/resolve-org-ai-keys";
 import { isCloud } from "@/lib/deploy-mode";
 import { prisma } from "@/lib/prisma";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { storage } from "@/lib/storage";
 import { Prisma } from "@prisma/client";
 import mammoth from "mammoth";
 
@@ -64,15 +64,7 @@ export async function runImportProcedure({
     const BUCKET =
       process.env.SUPABASE_PROCEDURE_IMPORTS_BUCKET ?? "procedure-imports";
 
-    const { data: fileData, error: downloadError } =
-      await supabaseAdmin.storage.from(BUCKET).download(fileKey);
-
-    if (downloadError || !fileData) {
-      throw new Error("Failed to download import file from storage");
-    }
-
-    const arrayBuffer = await fileData.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const buffer = await storage.download(BUCKET, fileKey);
 
     let plainText = "";
 
