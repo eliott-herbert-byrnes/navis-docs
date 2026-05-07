@@ -1,548 +1,213 @@
-# Navis Docs
-
-**Enterprise Procedure Documentation & Knowledge Management Platform**
-
-A full-stack SaaS application that centralises organisational process documentation with AI-powered search, real-time collaboration, and comprehensive audit trails.
-
-[![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-blue?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-6.16-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
-[![Deployed](https://img.shields.io/badge/Deployed-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
-
-[Live Demo](https://navisdocs.com)
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Business Problem](#business-problem)
-- [Key Features](#key-features)
-- [Technology Stack](#technology-stack)
-- [System Architecture](#system-architecture)
-- [Core Functionality](#core-functionality)
-- [Installation & Setup](#installation--setup)
-- [Database Schema](#database-schema)
-- [AI Integration](#ai-integration)
-- [Security & Compliance](#security--compliance)
-- [Roadmap](#roadmap)
-- [Developer](#developer)
-
----
-
-## Overview
-
-Navis Docs is a modern enterprise SaaS platform designed to solve the critical challenge of process documentation management in organisations. Built with a focus on scalability, user experience, and AI-powered intelligence, it serves as a centralised knowledge repository where teams can create, manage, version, and search their standard operating procedures (SOPs).
-
-**Core Value Proposition:**
-
-- Eliminates scattered documentation across multiple platforms
-- Provides instant access to procedures through AI semantic search
-- Ensures compliance with immutable audit trails
-- Enables data-driven process improvements through analytics
-
----
-
-## 🔍 Business Problem
-
-### The Challenge
-
-Modern enterprises face critical challenges with process documentation:
-
-1. **Information Silos**: Documentation scattered across Google Docs, SharePoint, wikis, and email
-2. **Version Control Issues**: Multiple outdated versions causing operational errors
-3. **Discovery Problems**: Employees waste hours searching for the right process
-4. **Compliance Risks**: Lack of audit trails for regulatory requirements
-5. **Knowledge Loss**: Critical institutional knowledge leaves when employees depart
-6. **Onboarding Delays**: New hires struggle to find relevant procedures
-
-### The Solution
-
-Navis Docs addresses these challenges through:
-
-- **Centralised Repository**: Single source of truth for all organisational processes
-- **AI-Powered Search**: Semantic search using vector embeddings (OpenAI) enables natural language queries
-- **Built-in Version Control**: Track every change with automatic versioning
-- **Complete Audit Trail**: Immutable logs of all actions for compliance and accountability
-- **Smart Organisation**: Hierarchical structure (Org → Department → Team → Process) mirrors company structure
-- **Collaborative Features**: Error reporting, idea submission, and team announcements
-- **Multiple Process Formats**: RAW text, sequential steps, flowcharts, and decision trees
-
-**Target Users**: Medium to large enterprises in regulated industries (finance, healthcare, insurance, legal) requiring documented processes and compliance oversight.
-
----
-
-## Key Features
-
-### **Multi-Format Process Editor**
-
-- **RAW**: Rich text editor powered by TipTap for flexible documentation
-- **STEPS**: Linear step-by-step procedures with expandable sections
-- **FLOW**: Visual flowchart builder using ReactFlow for complex workflows
-- **YES/NO**: Interactive decision trees for guided troubleshooting
-
-### **AI Chat Assistant**
-
-- Semantic search using OpenAI embeddings (text-embedding-3-small)
-- PostgreSQL pgvector for similarity matching
-- Claude 3.5 Haiku for conversational responses
-- Source citation with direct links to relevant processes
-- Context-aware answers based on published documentation
-
-### **Error Tracking & Management**
-
-- In-context error reporting directly from process pages
-- Status tracking (Open → Resolved → Archived)
-- Analytics dashboard for identifying problematic processes
-- Priority assignment and resolution workflow
-
-### **Idea & Improvement System**
-
-- Crowdsource improvements from team members
-- Status pipeline (New → In Progress → Completed → Archived)
-- Integration with process updates
-- Prioritisation based on frequency and impact
-
-### **Comprehensive Audit Logging**
-
-- Immutable record of all system actions
-- Track who, what, when, and where for compliance
-- Filterable by user, action type, entity, and date range
-- Export capabilities for compliance reporting
-
-### **Multi-Tenant Organisation Structure**
-
-- Role-based access control (Owner, Admin, Member)
-- Hierarchical organisation (Departments → Teams)
-- Invitation system with email verification
-- Team-specific news and announcements
-
-### **Favorites & Personalisation**
-
-- Bookmark frequently-used processes
-- Customizable dashboard
-- Quick access sidebar
-
-### **Subscription Management**
-
-- Stripe integration for payments
-- Business ($49/mo) and Enterprise ($299/mo) tiers
-- Customer portal for subscription management
-- Usage-based entitlements (processes, departments, teams)
-
----
-
-## 🛠️ Technology Stack
-
-### **Frontend**
-
-- **Framework**: Next.js 15.5 (App Router, Server Components, Server Actions)
-- **Language**: TypeScript 5
-- **UI Library**: React 19.1
-- **Styling**: Tailwind CSS 4, Radix UI primitives
-- **State Management**: React Query (TanStack Query)
-- **Rich Text Editor**: TipTap 3
-- **Flow Diagrams**: ReactFlow (xyflow) with Dagre layout
-- **Drag & Drop**: dnd-kit
-
-### **Backend**
-
-- **Runtime**: Node.js
-- **Framework**: Next.js API Routes & Server Actions
-- **Database**: PostgreSQL with pgvector extension
-- **ORM**: Prisma 6.16
-- **Authentication**: NextAuth.js 5 (OAuth, Email OTP)
-- **Background work**: Next.js `after()` for post-response jobs (exports, imports, rollout notifications); Stripe inline on org creation
-- **Email**: Resend (transactional emails)
-
-### **AI & Machine Learning**
-
-- **LLM**: Claude 3.5 Haiku (Anthropic)
-- **Embeddings**: OpenAI text-embedding-3-small (1536 dimensions)
-- **Vector Database**: PostgreSQL pgvector
-- **Semantic Search**: Cosine similarity with threshold filtering
-
-### **Infrastructure & DevOps**
-
-- **Hosting**: Vercel (Edge Functions, ISR, SSR)
-- **Database**: Supabase (managed PostgreSQL)
-- **Rate Limiting**: Upstash Redis
-- **Payments**: Stripe
-- **CDN**: Vercel Edge Network
-
-### **Developer Tools**
-
-- **Package Manager**: pnpm
-- **Code Quality**: ESLint, Prettier
-- **Type Safety**: TypeScript strict mode
-- **Schema Validation**: Zod
-- **Version Control**: Git
-
----
-
-## System Architecture
-
-### **Application Architecture**
-
-```
-
-Client (Browser)
-Next.js 15 App Router, React 19, TanStack Query
-│
-▼
-Vercel Edge Network
-Static Generation, ISR, Edge Functions
-│
-▼
-Next.js Server (Node.js)
-│
-▼
-Server Components | API Routes & RSC
-Server Actions    | Auth Middleware
-│
-▼
-Supabase                | External Apis
-PostgreSQL + pgVector   | OpenAI, Anthropic, Stripe, Resend, Upstash
-```
-
-### **Data Flow: AI Chat Feature**
-
-```
-User Query
-    ↓
-Embedding Generation (OpenAI)
-    ↓
-Vector Search (pgvector)
-    ↓
-Retrieve Relevant Chunks
-    ↓
-Context Assembly
-    ↓
-LLM Request (Claude)
-    ↓
-Response with Sources
-    ↓
-User Interface
-```
-
----
-
-## ⚙️ Core Functionality
-
-### **1. Process Management**
-
-**Publishing Workflow:**
-
-```
-Create Process (Draft)
-    ↓
-Edit Content
-    ↓
-Auto-save (30s debounce)
-    ↓
-Publish
-    ↓
-Generate Embeddings
-    ↓
-Update Audit Log
-```
-
-**Technical Implementation:**
-
-- Server Actions for mutations
-- Optimistic UI updates with React Query
-- Automatic plain text extraction from TipTap JSON
-- Chunking algorithm (600 char chunks with overlap)
-- Batch embedding generation
-
-### **2. AI Search Pipeline**
-
-**Vector Similarity Search:**
-
-```sql
-SELECT * FROM match_process_chunks(
-  query_embedding::vector(1536),
-  similarity_threshold::float,
-  match_count::int,
-  team_id::text
-)
-```
-
-**Implementation Details:**
-
-- Cosine similarity threshold: 0.5
-- Returns top 5 most relevant chunks
-- Includes process metadata (title, teamId, processId)
-- Calculates similarity score: `1 - (embedding <=> query_embedding)`
-
----
-
-## 🚀 Installation & Setup
-
-### **Prerequisites**
-
-- Node.js 20+
-- pnpm 10+
-- PostgreSQL 14+ with pgvector extension
-- Supabase account (or local Postgres with pgvector)
-- OpenAI API key
-- Anthropic API key
-- Stripe account (optional, for payments)
-
-### **1. Clone Repository**
+![Navis Docs hero](public/readme-images/hero-image.webp)
+
+<div align="center">
+  <h3 align="center">Navis Docs</h3>
+  <p>The open source platform for knowledge and SOP management</p>
+</div>
+
+<p align="center">
+  <a href="https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen">Roadmap</a>
+  ·
+  <a href="https://navisdocs.com">Website</a>
+  ·
+  <a href="https://navisdocs.com/docs">Docs</a>
+  ·
+  <span>Discord coming soon</span>
+</p>
+
+<div align="center">
+  <a href="https://www.gnu.org/licenses/agpl-3.0.html"><img alt="License" src="https://img.shields.io/badge/license-AGPLv3-purple"></a>
+  <a href="https://github.com/eliott-herbert-byrnes/navis-docs/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/eliott-herbert-byrnes/navis-docs/actions/workflows/ci.yml/badge.svg"></a>
+</div>
+
+## Features 💫
+
+- 🧭 **Organizational Knowledge Base**: Structure SOPs by organization, department, team, category, and process.
+- ✍️ **Four Documentation Formats**: Create rich text procedures, sequential steps, visual flowcharts, and decision trees.
+- 🤖 **AI Search**: Ask questions in plain English and receive answers sourced from published documentation.
+- 🔐 **Role-Based Access**: Give owners, admins, and members the right level of access across each organization.
+- 🧾 **Audit Trails**: Track who changed what and when for compliance, reviews, and operational accountability.
+- 📌 **Favorites**: Pin the procedures your team uses most often.
+- 🚨 **Error Reporting**: Flag outdated or incorrect procedures directly from the page.
+- 💡 **Idea Pipeline**: Capture improvements from the people who use procedures every day.
+- 📣 **Announcements**: Share targeted updates with specific departments and teams.
+
+See our [roadmap](https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen) for upcoming features.
+
+## Screenshot 👁️
+
+<img width="1507" alt="Navis Docs application screenshot" src="public/readme-images/screenshot.webp" />
+
+## Made With 🛠️
+
+- [Next.js](https://nextjs.org/)
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL + pgvector](https://github.com/pgvector/pgvector)
+- [Auth.js](https://authjs.dev/)
+- [TipTap](https://tiptap.dev/)
+- [React Flow](https://reactflow.dev/)
+- [Anthropic](https://www.anthropic.com/) and [OpenAI](https://openai.com/)
+- [Stripe](https://stripe.com/)
+- [Resend](https://resend.com/)
+
+## Self Hosting 🐳
+
+The easiest way to self-host Navis Docs is with Docker Compose. The included Compose file builds the app and starts Postgres with `pgvector` plus Redis.
+
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/navis-docs.git
+git clone https://github.com/eliott-herbert-byrnes/navis-docs.git
 cd navis-docs
 ```
 
-### **2. Install Dependencies**
+2. Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+3. Configure the required values in `.env`:
+
+```bash
+NEXT_PUBLIC_APP_URL=https://docs.your-domain.com
+NEXTAUTH_URL=https://docs.your-domain.com
+AUTH_SECRET=replace-with-generated-value
+AI_KEY_ENCRYPTION_SECRET=replace-with-generated-value
+DATABASE_URL=postgresql://postgres:password@db:5432/navis_docs
+REDIS_URL=redis://redis:6379
+RESEND_API_KEY=re_...
+EMAIL_FROM=Navis Docs <no-reply@your-domain.com>
+NEXT_PUBLIC_DEPLOY_MODE=self-hosted
+```
+
+Generate strong secrets with:
+
+```bash
+openssl rand -base64 32
+```
+
+4. Start the containers:
+
+```bash
+docker compose up --build
+```
+
+5. Access Navis Docs at [http://localhost:3000](http://localhost:3000).
+
+The application will be running in the foreground. You can manage the containers with:
+
+- To run in the background: `docker compose up --build -d`
+- To stop the containers: `docker compose down`
+- To view app logs: `docker compose logs -f app`
+- To rebuild after changing `NEXT_PUBLIC_*` values: `docker compose up --build`
+
+For the complete self-hosting guide, see [SELF_HOSTING.md](./SELF_HOSTING.md).
+
+> **Note**: Navis Docs requires object storage for procedure images, imports, and audit exports. Configure either S3-compatible storage or Supabase Storage in `.env` before running a production deployment.
+
+## Local Development 🧑‍💻
+
+1. Fork or clone the repository:
+
+```bash
+git clone https://github.com/eliott-herbert-byrnes/navis-docs.git
+cd navis-docs
+```
+
+2. Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-### **3. Environment Variables**
-
-Create `.env` file:
-
-````env
-# Database
-DATABASE_URL="postgresql://user:password@host:5432/navis_docs?pgbouncer=true"
-
-# Auth
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-
-# AI
-OPENAI_API_KEY="sk-..."
-ANTHROPIC_API_KEY="sk-ant-..."
-
-# Email
-RESEND_API_KEY="re_..."
-EMAIL_FROM="noreply@yourdomain.com"
-
-# Stripe (optional)
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
-
-# Rate Limiting
-UPSTASH_REDIS_REST_URL="https://..."
-UPSTASH_REDIS_REST_TOKEN="..."
-
-### **4. Database Setup**
+3. Copy `.env.example` to `.env` and configure your local values:
 
 ```bash
-# Enable pgvector extension in PostgreSQL
-# In Supabase: Database → Extensions → Enable "vector"
+cp .env.example .env
+```
 
-# Run migrations
-pnpm prisma migrate deploy
+4. Start local infrastructure:
 
-# Seed demo data
-pnpm seed
-````
+```bash
+docker compose up -d db redis
+```
 
-### **5. Run Development Server**
+5. Run database migrations:
+
+```bash
+pnpm migrate
+```
+
+6. Start the development server:
 
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-### **6. Stripe Setup (Optional)**
+Useful development commands:
 
-```bash
-# Seed Stripe products
-pnpm tsx src/lib/stripe/seed.ts
-```
+- `pnpm typecheck` - run TypeScript checks
+- `pnpm test` - run unit tests
+- `pnpm build` - create a production build
+- `pnpm db:studio` - open Prisma Studio
+- `pnpm format` - format the codebase with Prettier
 
----
+## Environment Variables 🔐
 
-## 🗄️ Database Schema
+| Variable | Description | Required | Example |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string. pgvector is required. | Yes | `postgresql://postgres:password@localhost:5432/navis_docs` |
+| `DIRECT_URL` | Direct PostgreSQL URL for Prisma migrations when using a pooler. | Sometimes | `postgresql://postgres:password@db.example.supabase.co:5432/postgres` |
+| `STORAGE_PROVIDER` | Object storage provider. Use `s3` or `supabase`. | Yes | `s3` |
+| `S3_ENDPOINT` | S3-compatible endpoint. Leave blank for AWS S3. | For S3 | `https://account.r2.cloudflarestorage.com` |
+| `S3_REGION` | S3 region. | For S3 | `auto` |
+| `S3_ACCESS_KEY_ID` | S3 access key ID. | For S3 | `AKIA...` |
+| `S3_SECRET_ACCESS_KEY` | S3 secret access key. | For S3 | `...` |
+| `S3_PROCEDURE_IMAGES_BUCKET` | Bucket for procedure images. | For S3 | `procedure-images` |
+| `S3_PROCEDURE_IMPORTS_BUCKET` | Bucket for procedure imports. | For S3 | `procedure-imports` |
+| `S3_PROCEDURE_AUDITS_BUCKET` | Bucket for audit exports. | For S3 | `audit-exports` |
+| `SUPABASE_URL` | Supabase project URL for Supabase Storage. | For Supabase Storage | `https://project.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server-side storage access. | For Supabase Storage | `eyJ...` |
+| `REDIS_URL` | Redis connection string. | Yes | `redis://localhost:6379` |
+| `AUTH_SECRET` | Auth.js secret used to sign sessions. | Yes | Random 32+ character string |
+| `NEXTAUTH_URL` | Canonical Auth.js URL for callbacks and emails. | Yes | `http://localhost:3000` |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID. | Optional | `xxx.apps.googleusercontent.com` |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret. | Optional | `xxx` |
+| `RESEND_API_KEY` | Resend API key for OTP, invites, and transactional email. | Yes for email | `re_...` |
+| `EMAIL_FROM` | Sender email address. | Yes for email | `Navis Docs <no-reply@your-domain.com>` |
+| `ANTHROPIC_API_KEY` | Anthropic API key for AI chat responses. | Optional | `sk-ant-...` |
+| `OPENAI_API_KEY` | OpenAI API key for embeddings. | Optional | `sk-...` |
+| `AI_KEY_ENCRYPTION_SECRET` | Secret used to encrypt organization-provided AI keys. | Yes | Random 32+ character string |
+| `STRIPE_SECRET_KEY` | Stripe secret key for billing. | Optional | `sk_test_...` |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret. | Optional | `whsec_...` |
+| `STRIPE_DEFAULT_PRICE_ID` | Default Stripe price ID for hosted billing flows. | Optional | `price_...` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key exposed to the browser. | Optional | `pk_test_...` |
+| `NEXT_PUBLIC_APP_URL` | Public app URL for links, metadata, and return URLs. | Yes | `https://navisdocs.com` |
+| `NEXT_PUBLIC_DEPLOY_MODE` | Build-time deployment mode. Use `cloud` or `self-hosted`. | Yes | `self-hosted` |
+| `NEXT_PUBLIC_DEMO_URL` | Optional URL embedded in the marketing page demo iframe. | Optional | `https://demo.navisdocs.com` |
 
-### **Core Entities**
+See [.env.example](./.env.example) for the complete list of supported environment variables and comments.
 
-```prisma
-// Simplified schema overview
+## Contributing 🤝
 
-Organization {
-  id, name, slug, plan, ownerUserId
-  departments[]
-  members[]
-}
+We welcome contributions! Please read our [contribution guidelines](CONTRIBUTING.md) before submitting a pull request.
 
-Department {
-  id, name, orgId
-  teams[]
-}
+## Contributors 👥
 
-Team {
-  id, name, departmentId
-  processes[]
-  categories[]
-}
+<a href="https://github.com/eliott-herbert-byrnes/navis-docs/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=eliott-herbert-byrnes/navis-docs" />
+</a>
 
-Process {
-  id, title, slug, status, style
-  pendingVersion, publishedVersion
-  chunks[]  // For AI search
-}
+## License 📝
 
-ProcessVersion {
-  id, contentJSON, contentText
-  createdBy, createdAt
-}
+Navis Docs is licensed under the [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html).
 
-ProcessChunk {
-  id, processId, teamId, chunkText
-  embedding vector(1536)  // pgvector
-  chunkIndex
-}
+## Contact 📧
 
-User {
-  id, email, name
-  memberships[]
-  favorites[]
-}
-
-AuditLog {
-  id, action, entityType, entityId
-  actorId, orgId, beforeJSON, afterJSON
-}
-```
-
-**Key Relationships:**
-
-- Organization → Departments → Teams → Processes
-- Process → ProcessVersions (1:many)
-- Process → ProcessChunks (1:many, for AI search)
-- User → OrgMembership → Organization (many:many)
-
----
-
-## 🧠 AI Integration
-
-### **Embedding Generation**
-
-**Process:**
-
-1. Extract plain text from TipTap JSON on publish
-2. Chunk content (600 chars, preserving sentence boundaries)
-3. Generate embeddings via OpenAI API
-4. Store in PostgreSQL with pgvector
-
-**Code:**
-
-```typescript
-const embedding = await openai.embeddings.create({
-  model: "text-embedding-3-small",
-  input: chunkText.substring(0, 8000),
-});
-
-await prisma.$executeRaw`
-  INSERT INTO "ProcessChunk" (embedding, ...)
-  VALUES (${embeddingString}::vector, ...)
-`;
-```
-
-### **Search Implementation**
-
-**PostgreSQL Function:**
-
-```sql
-CREATE FUNCTION match_process_chunks(
-  query_embedding vector(1536),
-  similarity_threshold float,
-  match_count int,
-  team_id text
-) RETURNS TABLE (...)
-AS $$
-  SELECT *, (1 - (embedding <=> query_embedding)) as similarity
-  FROM "ProcessChunk"
-  WHERE "teamId" = team_id
-    AND (1 - (embedding <=> query_embedding)) > similarity_threshold
-  ORDER BY embedding <=> query_embedding
-  LIMIT match_count;
-$$
-```
-
-### **LLM Integration (Claude)**
-
-```typescript
-const response = await anthropic.messages.create({
-  model: "claude-haiku-4-5-20251001",
-  max_tokens: 1024,
-  system: `Answer using ONLY the provided context...`,
-  messages: [{ role: "user", content: userQuery }],
-});
-```
-
----
-
-## 🔒 Security & Compliance
-
-### **Authentication & Authorization**
-
-- **Multi-factor**: Email OTP + OAuth (GitHub, Google)
-- **Session Management**: JWT with HTTP-only cookies
-- **RBAC**: Owner, Admin, Member roles with granular permissions
-- **Row-level security**: All queries filtered by organization membership
-
-### **Data Protection**
-
-- **Encryption at Rest**: Supabase default (AES-256)
-- **Encryption in Transit**: TLS 1.3
-- **API Security**: Rate limiting (Upstash Redis)
-- **Input Validation**: Zod schemas on all forms
-- **XSS Protection**: React auto-escaping + DOMPurify for rich text
-
-### **Audit & Compliance**
-
-- **Immutable Audit Logs**: Every action logged with before/after state
-- **Data Retention**: Configurable per organization
-- **Export Capabilities**: CSV/JSON export for compliance reporting
-- **Version History**: Complete process change history
-
-### **Infrastructure Security**
-
-- **HTTPS Only**: Enforced via Vercel
-- **Environment Variables**: Secure storage in Vercel/Supabase
-- **Database**: Connection pooling via PgBouncer
-
----
-
-## Developer
-
-**Eliot Herbert-Byrnes**
-**Email**: eliott.c.h.byrnes@googlemail.com
-**GitHub**: [@eliott-herbert-byrnes](https://github.com/eliott-herbert-byrnes)
-
-### **About This Project**
-
-Navis Docs was built to demonstrate:
-
-- **Full-stack proficiency**: Next.js 15 with App Router, Server Components, Server Actions
-- **AI/ML integration**: Vector embeddings, semantic search, LLM integration
-- **Database expertise**: Complex Prisma schemas, PostgreSQL with pgvector, query optimization
-- **System design**: Multi-tenant SaaS architecture, RBAC, audit logging
-- **Modern tooling**: TypeScript, TanStack Query, Tailwind CSS, Radix UI
-- **DevOps**: Vercel deployment, CI/CD, environment management
-- **Payment integration**: Stripe subscriptions and customer portal
-- **Security**: Authentication, authorization, rate limiting, data protection
-
----
-
-## License
-
-This project is open-source. All rights reserved.
-
----
-
-## Acknowledgments
-
-- Next.js team for the incredible framework
-- The open-source community
+For support or to get in touch, please email [hello@navisdocs.com](mailto:hello@navisdocs.com). Discord details will be added soon.
