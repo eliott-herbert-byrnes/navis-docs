@@ -4,11 +4,23 @@ import type { ComponentType } from "react";
 import { DocContent } from "../_components/doc-content";
 import { docs } from "../_content/docs";
 
+import { Content as AiFeaturesAndByok } from "../_content/ai-features-and-byok";
+import { Content as AuditLogs } from "../_content/audit-logs";
+import { Content as CreatingProcedures } from "../_content/creating-procedures";
 import { Content as GettingStartedSelfHosting } from "../_content/getting-started-self-hosting";
+import { Content as NewsPosts } from "../_content/news-posts";
+import { Content as OnboardingToNavisDocs } from "../_content/onboarding-to-navis-docs";
+import { Content as ProcedureRollouts } from "../_content/procedure-rollouts";
 import { Separator } from "@/components/ui/separator";
 
 const contentMap: Record<string, ComponentType> = {
+  "ai-features-and-byok": AiFeaturesAndByok,
+  "audit-logs": AuditLogs,
+  "creating-procedures": CreatingProcedures,
   "getting-started-self-hosting": GettingStartedSelfHosting,
+  "news-posts": NewsPosts,
+  "onboarding-to-navis-docs": OnboardingToNavisDocs,
+  "procedure-rollouts": ProcedureRollouts,
 };
 
 export function generateStaticParams() {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import {
   Card,
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function DocsIndexPage() {
   return (
     <div className="space-y-8 w-[100%]">
-      <ul className="space-y-6">
+      <ul className="space-y-2">
         {docs.map((article) => (
           <li key={article.slug}>
             <Link
