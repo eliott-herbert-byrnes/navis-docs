@@ -146,7 +146,7 @@ export default function MarketingHomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="hero-feature-heading" className="py-0">
+      <section aria-labelledby="hero-feature-heading" className="py-12">
         <div className="flex flex-col gap-3">
           <h2
             id="hero-feature-heading"
@@ -157,12 +157,12 @@ export default function MarketingHomePage() {
           <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Create your organisation, then structure it into departments and teams. Each team gets its own knowledge base.
           </p>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/docs"}>
+          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75 pb-12" href={"/docs"}>
             See the documentation →
           </Link>
         </div>
 
-        <div className="mt-12 flex justify-center sm:hidden">
+        <div className="flex justify-center sm:hidden">
           <Image
             className="h-auto w-full max-w-2xl rounded-tl-lg rounded-tr-lg rounded-bl-lg border-4 border-secondary"
             src="/webp/hero-feature-image-2.webp"
