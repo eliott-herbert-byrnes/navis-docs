@@ -29,7 +29,7 @@ export function InviteEmail({ orgName, inviteUrl }: InviteEmailProps) {
       <Section className="mb-6 text-center">
         <Button
           href={inviteUrl}
-          className="bg-brand text-white font-semibold rounded-md px-6 py-3 text-sm no-underline"
+          className="bg-brand text-black font-semibold rounded-md px-6 py-3 text-sm no-underline"
         >
           Accept invitation
         </Button>
