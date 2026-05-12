@@ -3,6 +3,7 @@
 import { trpc } from "@/trpc/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { dashboardPath } from "@/app/paths";
 
 export function useCreateInvitation(onSuccessCallback?: () => void) {
   const utils = trpc.useUtils();
@@ -65,7 +66,7 @@ export function useAcceptInvitation() {
     onSuccess: (data) => {
       toast.success(data.message || "Invite accepted successfully");
       // Redirect to home page
-      router.push("/");
+      router.push(dashboardPath());
     },
     onError: (error) => {
       toast.error(

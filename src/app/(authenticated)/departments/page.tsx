@@ -5,7 +5,7 @@ import { DepartmentList } from "@/features/departments/components/department-lis
 import { DepartmentCreateButton } from "@/features/departments/components/department-buttons/department-create-button";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { signInPath } from "@/app/paths";
+import { onboardingPath, signInPath } from "@/app/paths";
 import { PageContainer } from "@/components/ui/page-container";
 
 function DepartmentListSkeleton() {
@@ -37,7 +37,7 @@ export default async function DepartmentsPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect(signInPath());
   const { org, isAdmin } = ctx;
-  if (!org) redirect(signInPath());
+  if (!org) redirect(onboardingPath());
 
   return (
     <PageContainer>
