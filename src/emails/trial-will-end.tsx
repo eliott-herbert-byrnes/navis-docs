@@ -1,18 +1,17 @@
 import { Button, Section, Text } from "@react-email/components";
 
 import { EmailLayout } from "@/emails/_components/email-layout";
+import { getAppHomeUrlForEmail } from "@/lib/email";
 
 export type TrialWillEndEmailProps = {
   orgName: string;
   ownerName: string;
-  billingUrl: string;
   daysRemaining: number;
 };
 
 export function TrialWillEndEmail({
   orgName,
   ownerName,
-  billingUrl,
   daysRemaining,
 }: TrialWillEndEmailProps) {
   return (
@@ -41,7 +40,7 @@ export function TrialWillEndEmail({
       </Section>
       <Section className="mb-6 text-center">
         <Button
-          href={billingUrl}
+          href={getAppHomeUrlForEmail()}
           className="bg-brand text-black font-semibold rounded-md px-6 py-3 text-sm no-underline"
         >
           Add payment method

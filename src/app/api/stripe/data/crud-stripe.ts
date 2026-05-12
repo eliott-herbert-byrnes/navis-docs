@@ -145,13 +145,10 @@ export const deleteStripeSubscription = async (
   });
 
   if (org?.ownerUser?.email) {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
-    const billingUrl = baseUrl ? `${baseUrl}/subscription` : "/subscription";
     await sendSubscriptionEndedEmail({
       to: org.ownerUser.email,
       ownerName: org.ownerUser.name ?? "there",
       orgName: org.name,
-      billingUrl,
     });
   }
 };
@@ -202,16 +199,12 @@ export async function sendTrialWillEndEmail(
     return;
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
-  const billingUrl = baseUrl ? `${baseUrl}/subscription` : "/subscription";
-
   try {
     const resend = getResend();
     const html = await render(
       React.createElement(TrialWillEndEmail, {
         orgName: org.name,
         ownerName: org.ownerUser.name ?? "there",
-        billingUrl,
         daysRemaining: 3,
       }),
     );
@@ -231,7 +224,6 @@ export type SendTrialStartedEmailInput = {
   ownerName: string;
   orgName: string;
   trialEndsAt: Date;
-  billingUrl: string;
 };
 
 /** Welcome email when a cloud org’s Stripe trial subscription is provisioned (e.g. on organization create). */
@@ -244,7 +236,6 @@ export async function sendTrialStartedEmail(
       orgName: input.orgName,
       ownerName: input.ownerName,
       trialEndsAt: input.trialEndsAt,
-      billingUrl: input.billingUrl,
     }),
   );
   await resend.emails.send({
@@ -259,7 +250,6 @@ export type SendSubscriptionEndedEmailInput = {
   to: string;
   ownerName: string;
   orgName: string;
-  billingUrl: string;
 };
 
 /**
@@ -275,7 +265,6 @@ export async function sendSubscriptionEndedEmail(
       React.createElement(SubscriptionEndedEmail, {
         orgName: input.orgName,
         ownerName: input.ownerName,
-        billingUrl: input.billingUrl,
       }),
     );
     await resend.emails.send({
