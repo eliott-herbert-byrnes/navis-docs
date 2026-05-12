@@ -47,7 +47,6 @@ Thank you for your interest in contributing to Navis Docs! This document provide
 
 - Never commit API keys, service role keys, Stripe secrets, or generated `.env` files.
 - Make AI features degrade gracefully when optional API keys are not configured.
-- Be careful with storage and billing code paths because they affect production data and customer accounts.
 - Add or update tests for behavior that touches permissions, billing, audit logs, imports, exports, or AI responses.
 
 ## Local Checks

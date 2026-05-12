@@ -30,8 +30,8 @@ export default async function UserBasePage({
   const offset = (page - 1) * limit;
 
   const trpc = await serverTrpc();
-
   let members: Awaited<ReturnType<typeof trpc.users.getOrgMembers>>["members"];
+  
   try {
     const data = await trpc.users.getOrgMembers({ search, limit, offset });
     members = data.members ?? [];

@@ -50,7 +50,6 @@ See our [roadmap](https://github.com/eliott-herbert-byrnes/navis-docs/projects?q
 - [TipTap](https://tiptap.dev/)
 - [React Flow](https://reactflow.dev/)
 - [Anthropic](https://www.anthropic.com/) and [OpenAI](https://openai.com/)
-- [Stripe](https://stripe.com/)
 - [Resend](https://resend.com/)
 
 ## Self Hosting 🐳

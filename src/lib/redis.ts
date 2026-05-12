@@ -2,12 +2,14 @@ import Redis from "ioredis";
 
 let _client: Redis | null = null;
 
-export function getRedis() {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+export function getRedis(): Redis {
+  if (_client) return _client;
 
-  if (!url || !token) {
-    throw new Error("Upstash env vars missing (required at runtime).");
+  const url = process.env.REDIS_URL;
+  if (!url) {
+    throw new Error("REDIS_URL env var is missing (required at runtime).");
   }
+
+  _client = new Redis(url);
   return _client;
 }
