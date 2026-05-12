@@ -230,10 +230,6 @@ export const organizationRouter = router({
               const trialEndsAt = trialEndSec
                 ? new Date(trialEndSec * 1000)
                 : new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
-              const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
-              const billingUrl = baseUrl
-                ? `${baseUrl}/subscription`
-                : "/subscription";
               const orgNameForEmail = orgForResponse.name;
 
               after(async () => {
@@ -243,7 +239,6 @@ export const organizationRouter = router({
                     ownerName,
                     orgName: orgNameForEmail,
                     trialEndsAt,
-                    billingUrl,
                   });
                 } catch (err) {
                   console.error(

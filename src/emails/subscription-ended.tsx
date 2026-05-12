@@ -1,17 +1,16 @@
 import { Button, Section, Text } from "@react-email/components";
 
 import { EmailLayout } from "@/emails/_components/email-layout";
+import { getAppHomeUrlForEmail } from "@/lib/email";
 
 export type SubscriptionEndedEmailProps = {
   orgName: string;
   ownerName: string;
-  billingUrl: string;
 };
 
 export function SubscriptionEndedEmail({
   orgName,
   ownerName,
-  billingUrl,
 }: SubscriptionEndedEmailProps) {
   return (
     <EmailLayout
@@ -39,7 +38,7 @@ export function SubscriptionEndedEmail({
       </Section>
       <Section className="mb-6 text-center">
         <Button
-          href={billingUrl}
+          href={getAppHomeUrlForEmail()}
           className="bg-brand text-black font-semibold rounded-md px-6 py-3 text-sm no-underline"
         >
           Subscribe

@@ -1,12 +1,12 @@
 import { Button, Section, Text } from "@react-email/components";
 
 import { EmailLayout } from "@/emails/_components/email-layout";
+import { getAppHomeUrlForEmail } from "@/lib/email";
 
 export type TrialStartedEmailProps = {
   orgName: string;
   ownerName: string;
   trialEndsAt: Date;
-  billingUrl: string;
 };
 
 function formatTrialEnd(date: Date) {
@@ -20,7 +20,6 @@ export function TrialStartedEmail({
   orgName,
   ownerName,
   trialEndsAt,
-  billingUrl,
 }: TrialStartedEmailProps) {
   return (
     <EmailLayout
@@ -44,13 +43,13 @@ export function TrialStartedEmail({
         <Text className="text-base leading-relaxed text-gray-700 mb-4">
           Your trial ends on{" "}
           <strong>{formatTrialEnd(trialEndsAt)}</strong>. Add a payment method
-          before then to keep uninterrupted access, or subscribe anytime from
-          your billing page.
+          before then to keep uninterrupted access, or subscribe anytime in
+          Navis Docs.
         </Text>
       </Section>
       <Section className="mb-6 text-center">
         <Button
-          href={billingUrl}
+          href={getAppHomeUrlForEmail()}
           className="bg-brand text-black font-semibold rounded-md px-6 py-3 text-sm no-underline"
         >
           View subscription

@@ -130,7 +130,7 @@ export function AppSidebarClient({
                     variant="ghost"
                     className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
-                    <Link href="/" className="text-sm font-normal cursor-default ml-2">
+                    <Link href="mailto:hello@navisdocs.com" className="text-sm font-normal cursor-default ml-2">
                       Support
                     </Link>
                   </Button>
@@ -140,18 +140,8 @@ export function AppSidebarClient({
                     variant="ghost"
                     className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
-                    <Link href="/" className="text-sm font-normal cursor-default ml-2">
+                    <Link href="/docs" target="_blank" className="text-sm font-normal cursor-default ml-2">
                       Documentation
-                    </Link>
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Button
-                    variant="ghost"
-                    className="flex flex-row justify-start p-2 w-full rounded-none"
-                  >
-                    <Link href="/" className="text-sm font-normal cursor-default ml-2">
-                      Feedback
                     </Link>
                   </Button>
                 </DropdownMenuItem>
