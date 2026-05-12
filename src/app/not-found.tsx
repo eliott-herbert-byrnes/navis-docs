@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+    <div className="dark flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <div className="flex items-center gap-2 self-center font-medium font-serif text-4xl">
+        <div className="flex items-center gap-4 self-center font-medium font-serif text-4xl text-white">
           <div className="flex size-10 items-center justify-center rounded-md text-primary-foreground">
             <Image
               src="/navis-docs-logo-svg.svg"
