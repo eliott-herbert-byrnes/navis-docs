@@ -5,7 +5,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { canonicalEmail } from "@/lib/email-canonical";
 import { verifyOtpAndConsume } from "@/lib/otp";
-import { ensureDefaultOrgForUser } from "@/features/auth/lib/ensure-default-org-for-user";
 
 export const {
   handlers: { GET, POST },
@@ -136,12 +135,6 @@ export const {
       if (!dbUser) return false;
 
       (user as { id?: string }).id = dbUser.id;
-
-      await ensureDefaultOrgForUser(prisma, {
-        userId: dbUser.id,
-        email: dbUser.email,
-        name: dbUser.name,
-      });
 
       return true;
     },
