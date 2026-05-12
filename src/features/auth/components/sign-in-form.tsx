@@ -203,7 +203,8 @@ export function SignInForm({
                     </FieldDescription>
                   )}
                 </Field>
-                {process.env.NEXT_PUBLIC_DEMO_MODE === "true" && (
+                {/* Disabled for cloud */}
+                {/* {process.env.NEXT_PUBLIC_DEMO_MODE === "true" && (
                   <>
                     <Field>
                       <Button
@@ -221,7 +222,7 @@ export function SignInForm({
                       </Button>
                     </Field>
                   </>
-                )}
+                )} */}
               </FieldGroup>
             </form>
           </CardContent>
