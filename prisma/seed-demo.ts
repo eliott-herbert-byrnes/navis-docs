@@ -1,3 +1,4 @@
+import 'dotenv/config'; 
 import { OrgPlan, PrismaClient } from "@prisma/client";
 import { canonicalEmail } from "../src/lib/email-canonical";
 import { DEMO_FALLBACK_MEMBER_USER_ID } from "../src/lib/demo-constants";
