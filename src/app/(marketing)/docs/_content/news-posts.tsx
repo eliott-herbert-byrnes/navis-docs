@@ -9,8 +9,9 @@ export function Content() {
       </p>
       <p>
         Each team has its own news area, so announcements stay close to the
-        procedures and working knowledge they relate to. Posts are stored as rich
-        text using TipTap JSON, which keeps formatting structured and consistent.
+        procedures and working knowledge they relate to. Posts are stored as
+        rich text using TipTap JSON, which keeps formatting structured and
+        consistent.
       </p>
 
       <h2>When to use news</h2>
@@ -26,15 +27,16 @@ export function Content() {
       </ul>
       <p>
         If the update includes step-by-step instructions that members should use
-        repeatedly, create or update a procedure as the source of truth and use a
-        news post to announce the change.
+        repeatedly, create or update a procedure as the source of truth and use
+        a news post to announce the change.
       </p>
 
       <h2>Pinned posts</h2>
       <p>
         Admins can pin important posts so they stay prominent for the team.
-        Pinning is useful for announcements that should remain easy to find, such
-        as launch notices, temporary process changes, or time-sensitive guidance.
+        Pinning is useful for announcements that should remain easy to find,
+        such as launch notices, temporary process changes, or time-sensitive
+        guidance.
       </p>
       <p>
         Keep pinned posts current. Once an announcement no longer needs special
@@ -83,8 +85,8 @@ export function Content() {
       <h3>1. Choose the right team</h3>
       <p>
         Create the post in the team that owns the announcement. If an update
-        applies to multiple teams, write separate posts so each team receives the
-        right context.
+        applies to multiple teams, write separate posts so each team receives
+        the right context.
       </p>
 
       <h3>2. Write the announcement</h3>

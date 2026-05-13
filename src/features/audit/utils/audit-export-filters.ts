@@ -53,17 +53,19 @@ function utcEndOfDay(y: number, monthIndex: number, day: number): Date {
   return new Date(Date.UTC(y, monthIndex, day, 23, 59, 59, 999));
 }
 
-function parseCalendarDateOnlyString(s: string): { y: number; m: number; d: number } | null {
+function parseCalendarDateOnlyString(
+  s: string,
+): { y: number; m: number; d: number } | null {
   const t = s.trim();
   if (!DATE_ONLY.test(t)) return null;
   const [ys, ms, ds] = t.split("-");
   const y = Number(ys);
   const m = Number(ms);
   const d = Number(ds);
-  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d))
+    return null;
   return { y, m: m - 1, d };
 }
-
 
 export function normalizeAuditExportDateRange(input: {
   startDate?: Date | string | null;
@@ -106,8 +108,9 @@ export function normalizeAuditExportDateRange(input: {
   return out;
 }
 
-
-export function buildAuditExportQueryOptions(filters: AuditExportFilterSnapshot): {
+export function buildAuditExportQueryOptions(
+  filters: AuditExportFilterSnapshot,
+): {
   search?: string;
   entityType?: AuditEntityType;
   startDate?: Date;

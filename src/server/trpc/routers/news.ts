@@ -62,7 +62,7 @@ export const newsRouter = router({
           });
           readSet = new Set(readRecords.map((r) => r.newsPostId));
         } catch (error) {
-          console.error(error)
+          console.error(error);
         }
       }
 
@@ -115,7 +115,9 @@ export const newsRouter = router({
         select: { newsPostId: true },
       });
       const readSet = new Set(readRecords.map((r) => r.newsPostId));
-      const unreadCount = postIdsToCheck.filter((id) => !readSet.has(id)).length;
+      const unreadCount = postIdsToCheck.filter(
+        (id) => !readSet.has(id),
+      ).length;
 
       return { count: unreadCount };
     }),

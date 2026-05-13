@@ -75,11 +75,7 @@ export const updateStripeSubscription = async (
 
         const proceduresRaw = allowedProcedures ?? allowedProcesses;
 
-        if (
-          proceduresRaw ||
-          allowedDepartments ||
-          allowedTeamsPerDepartment
-        ) {
+        if (proceduresRaw || allowedDepartments || allowedTeamsPerDepartment) {
           entitlementsJSON = {
             allowedProcedures: proceduresRaw
               ? Number(proceduresRaw)
@@ -168,7 +164,9 @@ export async function handleInvoicePaymentFailed(
 }
 
 /** Paid invoice — re-sync subscription status (e.g. active after successful renewal). */
-export async function handleInvoicePaid(invoice: InvoicePayload): Promise<void> {
+export async function handleInvoicePaid(
+  invoice: InvoicePayload,
+): Promise<void> {
   const subscriptionId = subscriptionIdFromInvoice(invoice);
   if (!subscriptionId) return;
 

@@ -87,8 +87,7 @@ export function useMarkNewsRead() {
     },
     onError: (error) => {
       toast.error(
-        error.message ||
-          "Failed to mark as read, try again or contact support",
+        error.message || "Failed to mark as read, try again or contact support",
       );
     },
   });

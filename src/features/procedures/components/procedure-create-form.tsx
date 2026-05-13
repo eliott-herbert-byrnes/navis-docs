@@ -38,7 +38,11 @@ type CreateProcedureFormProps = {
   redirectOnSuccess?: boolean;
 };
 
-const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: CreateProcedureFormProps) => {
+const CreateProcedureForm = ({
+  categories,
+  cancelPath,
+  redirectOnSuccess,
+}: CreateProcedureFormProps) => {
   const router = useRouter();
   const [isCancelPending, startTransition] = useTransition();
   const [createNewCategory, setCreateNewCategory] = useState(
@@ -53,7 +57,9 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
   const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
-  const effectiveDepartmentId = hasContext ? routeContext.departmentId : selectedDepartmentId;
+  const effectiveDepartmentId = hasContext
+    ? routeContext.departmentId
+    : selectedDepartmentId;
   const effectiveTeamId = hasContext ? routeContext.teamId : selectedTeamId;
 
   const { data: departmentData } = trpc.department.list.useQuery(undefined, {
@@ -73,14 +79,18 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
   const { createProcedure, isPending } = useCreateProcedure(
     effectiveDepartmentId,
     effectiveTeamId,
-    { redirectOnSuccess: redirectOnSuccess ?? true, onSuccess: () => router.replace(cancelPath ?? dashboardPath()) },
+    {
+      redirectOnSuccess: redirectOnSuccess ?? true,
+      onSuccess: () => router.replace(cancelPath ?? dashboardPath()),
+    },
   );
 
   const handleCancel = () => {
     startTransition(() => router.replace(cancelPath ?? dashboardPath()));
   };
 
-  const isSubmitBlocked = !hasContext && (!selectedDepartmentId || !selectedTeamId);
+  const isSubmitBlocked =
+    !hasContext && (!selectedDepartmentId || !selectedTeamId);
 
   const handleNewCategoryChange = (checked: boolean) => {
     setCreateNewCategory(checked);
@@ -113,7 +123,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
       newProcedureCategory: createNewCategory || undefined,
       newProcedureCategoryName: createNewCategory
         ? String(formData.get("newProcedureCategoryName") ?? "").trim() ||
-        undefined
+          undefined
         : undefined,
       procedureStyle: String(formData.get("procedureStyle") ?? "raw").trim() as
         | "raw"
@@ -139,23 +149,44 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                 <FieldGroup>
                   <Field>
                     <FieldLabel>Department</FieldLabel>
-                    <Select value={selectedDepartmentId} onValueChange={(v) => { setSelectedDepartmentId(v); setSelectedTeamId(""); }} disabled={isPending}>
+                    <Select
+                      value={selectedDepartmentId}
+                      onValueChange={(v) => {
+                        setSelectedDepartmentId(v);
+                        setSelectedTeamId("");
+                      }}
+                      disabled={isPending}
+                    >
                       <SelectTrigger className="shadow-none sm:max-w-1/3">
                         <SelectValue placeholder="Select a department" />
-                        </SelectTrigger>
+                      </SelectTrigger>
                       <SelectContent>
-                        {departments.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+                        {departments.map((d) => (
+                          <SelectItem key={d.id} value={d.id}>
+                            {d.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </Field>
                   <Field>
                     <FieldLabel>Team</FieldLabel>
-                    <Select value={selectedTeamId} onValueChange={setSelectedTeamId} disabled={!selectedDepartmentId || isPending}>
-                      <SelectTrigger className="shadow-none sm:max-w-1/3"><SelectValue placeholder="Select a team" /></SelectTrigger>
+                    <Select
+                      value={selectedTeamId}
+                      onValueChange={setSelectedTeamId}
+                      disabled={!selectedDepartmentId || isPending}
+                    >
+                      <SelectTrigger className="shadow-none sm:max-w-1/3">
+                        <SelectValue placeholder="Select a team" />
+                      </SelectTrigger>
                       <SelectContent>
-                        {departments.find(d => d.id === selectedDepartmentId)?.teams.map((t) => (
-                          <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-                        ))}
+                        {departments
+                          .find((d) => d.id === selectedDepartmentId)
+                          ?.teams.map((t) => (
+                            <SelectItem key={t.id} value={t.id}>
+                              {t.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </Field>
@@ -254,7 +285,7 @@ const CreateProcedureForm = ({ categories, cancelPath, redirectOnSuccess }: Crea
                   disabled={isPending}
                 >
                   <FieldLabel htmlFor="rawtext">
-                    <Field orientation="horizontal" >
+                    <Field orientation="horizontal">
                       <FieldContent>
                         <FieldTitle>Raw Text</FieldTitle>
                         <FieldDescription>

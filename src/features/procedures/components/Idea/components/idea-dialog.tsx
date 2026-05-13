@@ -84,7 +84,11 @@ const ProcedureIdeaDialog = ({
             />
           </div>
           <DialogFooter className="flex flex-row gap-2 mt-4">
-            <Button className="w-[75px] shadow-none border" type="submit" isLoading={isPending}>
+            <Button
+              className="w-[75px] shadow-none border"
+              type="submit"
+              isLoading={isPending}
+            >
               Submit
             </Button>
             <Button
@@ -96,7 +100,6 @@ const ProcedureIdeaDialog = ({
             >
               Cancel
             </Button>
-
           </DialogFooter>
         </form>
       </DialogContent>

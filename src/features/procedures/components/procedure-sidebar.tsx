@@ -56,7 +56,7 @@ export function ProcedureSidebar({
     { teamId },
     {
       initialData,
-      staleTime: 1000 * 60, 
+      staleTime: 1000 * 60,
     },
   );
 
@@ -99,16 +99,16 @@ export function ProcedureSidebar({
             <Newspaper className="h-4 w-4" />
             News
             {unreadNewsCount > 0 && (
-                <>
-                  <span
-                    className="size-1.5 rounded-full bg-red-700"
-                    aria-hidden
-                    />
-                  <span className="text-muted-foreground text-xs">
-                    {unreadNewsCount}
-                  </span>
-                </>
-              )}
+              <>
+                <span
+                  className="size-1.5 rounded-full bg-red-700"
+                  aria-hidden
+                />
+                <span className="text-muted-foreground text-xs">
+                  {unreadNewsCount}
+                </span>
+              </>
+            )}
           </Button>
         </Link>
         <Link href={addressPath(departmentId, teamId)}>
@@ -311,7 +311,7 @@ export function ProcedureSidebar({
       {/* Desktop: Regular Sidebar */}
       <aside className="hidden sm:flex col-span-6 lg:col-span-4 bg-background flex-col mt-5">
         {/* <div className="border-b"> */}
-          <ProcedureSearchButton />
+        <ProcedureSearchButton />
         {/* </div> */}
         <SidebarContent />
       </aside>

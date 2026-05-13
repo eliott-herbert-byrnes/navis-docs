@@ -53,7 +53,7 @@ export function AuthenticatedLayoutContent({
   return (
     <SidebarProvider defaultOpen={false}>
       <Suspense fallback={<SidebarFallback />}>
-        <AppSidebar/>
+        <AppSidebar />
       </Suspense>
       <SidebarInset className="">
         <div className="flex flex-row h-full">

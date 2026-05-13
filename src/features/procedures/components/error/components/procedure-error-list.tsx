@@ -162,7 +162,6 @@ function TableCellViewer({ item }: { item: ErrorReport }) {
                 })}
               </p>
             </div>
-
           </div>
           <SheetFooter>
             {item.status === "OPEN" && (
@@ -422,7 +421,7 @@ export function ProcedureErrorList({
                   .getColumn("procedureName")
                   ?.setFilterValue(event.target.value)
               }
-              className="pl-10 mr-2 shadow-none border-1 mb-1" 
+              className="pl-10 mr-2 shadow-none border-1 mb-1"
             />
           </div>
           <div className="flex gap-2">
@@ -552,7 +551,11 @@ export function ProcedureErrorList({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20 shadow-none border-1 rounded-sm" id="rows-per-page">
+              <SelectTrigger
+                size="sm"
+                className="w-20 shadow-none border-1 rounded-sm"
+                id="rows-per-page"
+              >
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />

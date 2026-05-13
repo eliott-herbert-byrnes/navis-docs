@@ -50,6 +50,8 @@ export function getDepartmentIconLabel(
   iconKey?: DepartmentIconKey | string | null,
 ): string {
   if (!iconKey) return departmentIconLabels.users;
-  return departmentIconLabels[iconKey as DepartmentIconKey] ?? departmentIconLabels.users;
+  return (
+    departmentIconLabels[iconKey as DepartmentIconKey] ??
+    departmentIconLabels.users
+  );
 }
-

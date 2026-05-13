@@ -150,7 +150,6 @@ export function ProPlanCardClient({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
-
         <ul className="space-y-2 border-t pt-4">
           {marketingFeatures.map((feature, index) => (
             <li

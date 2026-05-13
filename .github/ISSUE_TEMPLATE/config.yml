@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://navisdocs.com/docs
+    about: Read the maintained product docs and guides.
+  - name: Discord
+    url: https://discord.gg/c7Tj9x3a
+    about: Discuss Navis Docs with the community.

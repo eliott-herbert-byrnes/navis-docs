@@ -70,7 +70,7 @@ export default function LicensePage() {
       </p>
       <p>
         <a
-          href="https://github.com/eliott-herbert-byrnes/navis-docs"
+          href="https://github.com/navis-docs/navis-docs"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -81,10 +81,9 @@ export default function LicensePage() {
       <h2>Cloud Service</h2>
       <p>
         Use of the Navis Docs cloud-hosted service is additionally governed by
-        our{" "}
-        <a href="/terms">Terms and Conditions</a>. The AGPL-3.0 licence covers
-        the software itself; the Terms govern the service we operate on your
-        behalf.
+        our <a href="/terms">Terms and Conditions</a>. The AGPL-3.0 licence
+        covers the software itself; the Terms govern the service we operate on
+        your behalf.
       </p>
     </LegalPageLayout>
   );

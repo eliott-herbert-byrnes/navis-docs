@@ -57,9 +57,7 @@ export default async function DocPage({
 
   return (
     <div className="space-y-2">
-      <h1 className="font-serif text-3xl">
-        {article.title}
-      </h1>
+      <h1 className="font-serif text-3xl">{article.title}</h1>
       <p className="text-muted-foreground mb-4">{article.description}</p>
       <Separator />
       <DocContent>

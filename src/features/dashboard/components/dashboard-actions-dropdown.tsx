@@ -2,7 +2,14 @@
 
 import type { ComponentType } from "react";
 import Link from "next/link";
-import { ChevronDown, UserPlus, Database, Settings, Layers, CreditCard } from "lucide-react";
+import {
+  ChevronDown,
+  UserPlus,
+  Database,
+  Settings,
+  Layers,
+  CreditCard,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -43,7 +50,10 @@ export function DashboardActionsDropdown() {
       <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
         {actions.map((action) => (
           <DropdownMenuItem key={action.label} asChild>
-            <Button variant="ghost" className="flex justify-start p-4 rounded-none">
+            <Button
+              variant="ghost"
+              className="flex justify-start p-4 rounded-none"
+            >
               <Link href={action.path}>
                 <div className="flex flex-row gap-2 items-center">
                   <action.icon className="h-4 w-4 text-muted-foreground" />
@@ -57,4 +67,3 @@ export function DashboardActionsDropdown() {
     </DropdownMenu>
   );
 }
-

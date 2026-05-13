@@ -36,15 +36,13 @@ export function TrialStartedEmail({
           Hi {ownerName},
         </Text>
         <Text className="text-base leading-relaxed text-gray-700 mb-4">
-          Your 14-day free trial has started for{" "}
-          <strong>{orgName}</strong>. You have full access to create and manage
-          documentation during your trial.
+          Your 14-day free trial has started for <strong>{orgName}</strong>. You
+          have full access to create and manage documentation during your trial.
         </Text>
         <Text className="text-base leading-relaxed text-gray-700 mb-4">
-          Your trial ends on{" "}
-          <strong>{formatTrialEnd(trialEndsAt)}</strong>. Add a payment method
-          before then to keep uninterrupted access, or subscribe anytime in
-          Navis Docs.
+          Your trial ends on <strong>{formatTrialEnd(trialEndsAt)}</strong>. Add
+          a payment method before then to keep uninterrupted access, or
+          subscribe anytime in Navis Docs.
         </Text>
       </Section>
       <Section className="mb-6 text-center">

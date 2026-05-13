@@ -10,7 +10,6 @@ description: >-
   including accepting payments, building marketplaces, integrating Stripe,
   processing payments, setting up subscriptions, creating connected accounts, or
   implementing secure key handling.
-
 ---
 
 Latest Stripe API version: **2026-03-25.dahlia**. Always use the latest API version and SDK unless the user specifies otherwise.

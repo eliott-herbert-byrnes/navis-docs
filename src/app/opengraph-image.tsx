@@ -9,7 +9,8 @@ export default function OpenGraphImage() {
     (
       <div
         style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e40af 45%, #172554 100%)",
+          background:
+            "linear-gradient(135deg, #0f172a 0%, #1e40af 45%, #172554 100%)",
           width: "100%",
           height: "100%",
           display: "flex",

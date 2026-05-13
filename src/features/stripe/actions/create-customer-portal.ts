@@ -110,7 +110,8 @@ export const createCustomerPortal = async () => {
       : `https://${rawAppUrl}`
     : "http://localhost:3000";
 
-  const configurationId = await getOrCreateBillingPortalConfigurationId(baseUrl);
+  const configurationId =
+    await getOrCreateBillingPortalConfigurationId(baseUrl);
 
   let session: Stripe.BillingPortal.Session;
   try {

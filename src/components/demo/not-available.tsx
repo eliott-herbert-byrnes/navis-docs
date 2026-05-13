@@ -7,7 +7,9 @@ export function DemoNotAvailable({ feature }: { feature: string }) {
         <h2 className="font-serif text-2xl">
           {`${feature}`} is not part of the demo
         </h2>
-        <p className="text-muted-foreground">Sign up for the full experience.</p>
+        <p className="text-muted-foreground">
+          Sign up for the full experience.
+        </p>
       </div>
     </PageContainer>
   );

@@ -26,9 +26,7 @@ export default function PricingPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-12 sm:px-6 lg:px-8">
       <div className="space-y-2">
-        <h1 className="font-serif text-4xl">
-          Pricing
-        </h1>
+        <h1 className="font-serif text-4xl">Pricing</h1>
         <p className="text-muted-foreground">
           Simple, transparent pricing. Start free — no credit card required.
         </p>

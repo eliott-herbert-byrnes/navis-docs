@@ -8,7 +8,10 @@ import { differenceInDays } from "date-fns";
 import { CreditCard } from "lucide-react";
 
 type DashboardSubscriptionWidgetProps = {
-  org: Pick<Organization, "plan" | "stripeSubscriptionStatus" | "currentPeriodEnd">;
+  org: Pick<
+    Organization,
+    "plan" | "stripeSubscriptionStatus" | "currentPeriodEnd"
+  >;
 };
 
 const isSelfHostedDeploy =

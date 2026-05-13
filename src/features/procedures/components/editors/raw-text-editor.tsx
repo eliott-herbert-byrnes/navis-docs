@@ -190,8 +190,7 @@ export function RawTextEditor({
     editable: !readOnly,
     editorProps: {
       attributes: {
-        class:
-          "pt-16 sm:pt-0 max-w-none focus:outline-none p-4",
+        class: "pt-16 sm:pt-0 max-w-none focus:outline-none p-4",
       },
       handleKeyDown: (_view, event) => {
         if (!_view.editable) return false;
@@ -379,7 +378,10 @@ export function RawTextEditor({
     <EditorContext.Provider value={{ editor }}>
       <div className="space-y-2">
         {/* Toolbar */}
-        <Toolbar className="rounded-sm shadow-none border max-w-2/3 mx-auto" ref={toolbarRef}>
+        <Toolbar
+          className="rounded-sm shadow-none border max-w-2/3 mx-auto"
+          ref={toolbarRef}
+        >
           <Spacer />
           <ToolbarGroup>
             <UndoRedoButton action="undo" />

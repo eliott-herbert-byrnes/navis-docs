@@ -66,19 +66,19 @@ export function ProcedureViewWithAIChat({
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <ProcedureViewActions
-            procedure={procedure}
-            procedureId={procedureId}
-            canEdit={canEdit}
-            isFavorite={isFavorite}
-            isRead={isRead}
-            onAskAI={isDemo ? undefined : handleAskAI}
-            showDocView={showDocView}
-            onViewText={() => setShowDocView((prev) => !prev)}
-            canViewProcedureAudit={canViewProcedureAudit}
-            showAuditLogs={showAuditLogs}
-            onViewAuditLogs={() => setShowAuditLogs((prev) => !prev)}
-          />
+        <ProcedureViewActions
+          procedure={procedure}
+          procedureId={procedureId}
+          canEdit={canEdit}
+          isFavorite={isFavorite}
+          isRead={isRead}
+          onAskAI={isDemo ? undefined : handleAskAI}
+          showDocView={showDocView}
+          onViewText={() => setShowDocView((prev) => !prev)}
+          canViewProcedureAudit={canViewProcedureAudit}
+          showAuditLogs={showAuditLogs}
+          onViewAuditLogs={() => setShowAuditLogs((prev) => !prev)}
+        />
       </div>
 
       {!showAuditLogs ? (

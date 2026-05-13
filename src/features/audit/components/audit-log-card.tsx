@@ -139,7 +139,6 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
           {/* Header - Always Visible */}
           <CardHeader className="py-0 px-0">
             <div className="flex items-center justify-between gap-1 mt-1">
-
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {/* Action Title */}
                 <span className="font-semibold text-md truncate">
@@ -228,7 +227,10 @@ ${log.afterJSON ? JSON.stringify(log.afterJSON, null, 2) : "null"}
                 </div>
                 <div>
                   <span className="font-medium">Entity:</span>{" "}
-                  <span>{log.entityType.charAt(0) + log.entityType.slice(1).toLowerCase()}</span>
+                  <span>
+                    {log.entityType.charAt(0) +
+                      log.entityType.slice(1).toLowerCase()}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Entity ID:</span>{" "}

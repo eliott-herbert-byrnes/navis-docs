@@ -75,10 +75,12 @@ export function AiConfiguration() {
                   </AccessAlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Remove Anthropic API key?</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        Remove Anthropic API key?
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will disable AI chat for your organisation until a new
-                        key is added.
+                        This will disable AI chat for your organisation until a
+                        new key is added.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -135,10 +137,12 @@ export function AiConfiguration() {
                   </AccessAlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Remove OpenAI API key?</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        Remove OpenAI API key?
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        This key is stored for future use and removing it will not
-                        affect AI chat.
+                        This key is stored for future use and removing it will
+                        not affect AI chat.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -162,9 +166,7 @@ export function AiConfiguration() {
               value={openAi}
               onChange={(e) => setOpenAi(e.target.value)}
               placeholder={
-                hasOpenAi
-                  ? "Enter a new key to replace the stored key"
-                  : "sk-…"
+                hasOpenAi ? "Enter a new key to replace the stored key" : "sk-…"
               }
               disabled={isLoading}
               className="shadow-none border"
@@ -186,7 +188,6 @@ export function AiConfiguration() {
         </div>
       </form>
       <Separator className="my-6" />
-
     </>
   );
 }

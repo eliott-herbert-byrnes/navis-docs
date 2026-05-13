@@ -87,7 +87,11 @@ export const favoritesRouter = router({
             },
           },
         },
-        select: { id: true, teamId: true, team: { select: { departmentId: true } } },
+        select: {
+          id: true,
+          teamId: true,
+          team: { select: { departmentId: true } },
+        },
       });
 
       if (!procedure) {

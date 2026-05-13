@@ -266,7 +266,7 @@ export const usersRouter = router({
         });
       }
 
-      revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx.org.id}`, "max");
 
       await createAuditLog({
         orgId: ctx.org.id,
@@ -357,7 +357,7 @@ export const usersRouter = router({
         });
       }
 
-      revalidateTag(`org-dashboard-${ctx.org.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx.org.id}`, "max");
 
       for (const m of toDelete) {
         await createAuditLog({

@@ -94,11 +94,13 @@ export function ProcedureSearchDialog({
         value={query}
         onValueChange={setQuery}
       />
-      <CommandList className="max-h-[300px]
+      <CommandList
+        className="max-h-[300px]
     overflow-y-auto
     transition-[max-height]
     duration-600
-    ease-out py-2">
+    ease-out py-2"
+      >
         {isLoading ? (
           <ProcedureSearchResultsSkeleton />
         ) : (

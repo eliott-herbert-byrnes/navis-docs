@@ -46,7 +46,10 @@ const ProcedureBaseDeleteDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <AccessDialogTrigger adminOnly>
-          <Button variant="ghost" className="w-full flex justify-start gap-3 rounded-none">
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-3 rounded-none"
+          >
             <TrashIcon className="w-4 h-4 text-muted-foreground" />
             <span className="font-normal">Delete</span>
           </Button>
@@ -60,7 +63,7 @@ const ProcedureBaseDeleteDialog = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-        <Button
+          <Button
             className="w-[75px] shadow-none border"
             type="button"
             variant="default"
@@ -78,7 +81,6 @@ const ProcedureBaseDeleteDialog = ({
           >
             Cancel
           </Button>
-
         </DialogFooter>
       </DialogContent>
     </Dialog>

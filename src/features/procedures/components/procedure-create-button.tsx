@@ -18,11 +18,7 @@ const ProcedureCreateButton = () => {
   };
 
   return (
-    <AccessButton
-      adminOnly
-      variant="outline"
-      onClick={handleCreateProcedure}
-    >
+    <AccessButton adminOnly variant="outline" onClick={handleCreateProcedure}>
       {isPending ? (
         <LucideLoaderCircle className="h-4 w-4 animate-spin" />
       ) : (

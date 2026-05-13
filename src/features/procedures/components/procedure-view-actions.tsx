@@ -75,7 +75,8 @@ export function ProcedureViewActions({
     useMarkProcedureRead();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-  const { createErrorReport, isPending: isErrorPending } = useCreateErrorReport();
+  const { createErrorReport, isPending: isErrorPending } =
+    useCreateErrorReport();
   const isFlowWithDoc =
     procedure.style === "FLOW" &&
     hasFlowDocContent(procedure.publishedVersion?.contentJSON);
@@ -260,7 +261,9 @@ export function ProcedureViewActions({
         <ProcedureBaseDeleteDialog
           title="Are you sure you want to delete this procedure?"
           description="This action cannot be undone."
-          onConfirm={async () => { await deleteProcedure(procedureId); }}
+          onConfirm={async () => {
+            await deleteProcedure(procedureId);
+          }}
           isPending={isDeletePending}
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
@@ -297,18 +300,18 @@ export function ProcedureViewActions({
             {/* Team/Category Badges */}
           </div>
           <div className="flex flex-row gap-2 sm:ml-4">
-          {procedure.category && (
-            <Badge variant="outline">
-              <FolderOpen className="w-3 h-3 mr-1" />
-              {procedure.category.name}
-            </Badge>
-          )}
+            {procedure.category && (
+              <Badge variant="outline">
+                <FolderOpen className="w-3 h-3 mr-1" />
+                {procedure.category.name}
+              </Badge>
+            )}
           </div>
           {/* Mark as read - show only when published and unread */}
           <div className="flex flex-row items-center gap-2 sm:ml-auto flex-wrap">
             {showMarkAsRead && (
               <Button
-              size="sm"
+                size="sm"
                 variant="outline"
                 onClick={handleMarkAsRead}
                 disabled={isMarkReadPending || !canMutate}

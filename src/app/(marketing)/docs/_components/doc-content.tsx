@@ -7,8 +7,6 @@ import "@/components/tiptap-node/image-node/image-node.scss";
 
 export function DocContent({ children }: { children: React.ReactNode }) {
   return (
-    <div className="tiptap ProseMirror px-4 py-6 max-w-none">
-      {children}
-    </div>
+    <div className="tiptap ProseMirror px-4 py-6 max-w-none">{children}</div>
   );
 }

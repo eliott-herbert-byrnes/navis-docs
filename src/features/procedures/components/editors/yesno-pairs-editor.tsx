@@ -225,7 +225,11 @@ export function YesNoPairsEditor({
           rows={3}
         />
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => navigateToNode(child.id)} className="border">
+          <Button
+            variant="secondary"
+            onClick={() => navigateToNode(child.id)}
+            className="border"
+          >
             Go to next set <MoveRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -336,7 +340,12 @@ export function YesNoPairsEditor({
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
         )}
-        <Button variant="outline" size="sm" onClick={resetToStart} className="shadow-none border">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={resetToStart}
+          className="shadow-none border"
+        >
           <Home className="w-4 h-4 mr-2" /> Start
         </Button>
       </div>

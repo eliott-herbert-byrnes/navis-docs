@@ -384,7 +384,10 @@ export const organizationRouter = router({
   }),
   getAiAvailability: orgProcedure.query(async ({ ctx }) => {
     if (!ctx.org) {
-      throw new TRPCError({ code: "BAD_REQUEST", message: "No organization found" });
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No organization found",
+      });
     }
 
     const org = await ctx.db.organization.findUnique({
@@ -452,7 +455,10 @@ export const organizationRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.org) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "No organization found" });
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No organization found",
+        });
       }
 
       const data: { anthropicApiKey?: null; openAiApiKey?: null } = {};

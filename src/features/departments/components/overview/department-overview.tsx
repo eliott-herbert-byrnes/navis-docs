@@ -1,6 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
+import {
+  AccessButton,
+  AccessDialogTrigger,
+} from "@/components/ui/access-button";
 import {
   Card,
   CardContent,
@@ -53,7 +56,7 @@ const DepartmentOverview = ({
 }: DepartmentOverviewProps) => {
   const [open, setOpen] = useState(false);
   const [newDepartmentName, setNewDepartmentName] = useState(title);
-  const [currentTab, setCurrentTab] = useState('Settings');
+  const [currentTab, setCurrentTab] = useState("Settings");
   const [exportOpen, setExportOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState("json");
   const { isLoading: isExportLoading, exportWithFormat } =
@@ -72,7 +75,10 @@ const DepartmentOverview = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="rounded-none justify-start font-normal">
+        <Button
+          variant="ghost"
+          className="rounded-none justify-start font-normal"
+        >
           <div className="flex flex-row gap-2 items-center">
             <EyeIcon className="w-4 h-4" />
             Overview
@@ -105,7 +111,9 @@ const DepartmentOverview = ({
 
                 <CardContent className="flex flex-col gap-4 px-1">
                   <div className="grid gap-3">
-                    <Label htmlFor="newDepartmentName" className="text-md">Rename Department</Label>
+                    <Label htmlFor="newDepartmentName" className="text-md">
+                      Rename Department
+                    </Label>
                     <Input
                       name="newDepartmentName"
                       id="newDepartmentName"
@@ -127,15 +135,21 @@ const DepartmentOverview = ({
                       <AccessDialogTrigger adminOnly>
                         <Button
                           variant="outline"
-                          className={"flex justify-start gap-2 max-w-[230px] shadow-none"}
+                          className={
+                            "flex justify-start gap-2 max-w-[230px] shadow-none"
+                          }
                         >
                           <FileInput className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-semibold">Department Procedure Data</span>
+                          <span className="font-semibold">
+                            Department Procedure Data
+                          </span>
                         </Button>
                       </AccessDialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Export Department Procedures</DialogTitle>
+                          <DialogTitle>
+                            Export Department Procedures
+                          </DialogTitle>
                           <DialogDescription>
                             Export all procedure data for this department
                           </DialogDescription>
@@ -181,7 +195,9 @@ const DepartmentOverview = ({
                   <Separator />
                   <div className="grid gap-3">
                     <div className="flex flex-col gap-1">
-                      <CardTitle className="text-md">Delete Department</CardTitle>
+                      <CardTitle className="text-md">
+                        Delete Department
+                      </CardTitle>
                       <CardDescription>
                         Delete the department and all its data
                       </CardDescription>
@@ -212,7 +228,7 @@ const DepartmentOverview = ({
           </Tabs>
         </div>
 
-        {currentTab === 'Settings' && (
+        {currentTab === "Settings" && (
           <div className="flex flex-col gap-2 px-1 shrink-0">
             <Separator />
             <DialogFooter className="mt-2">

@@ -25,7 +25,10 @@ function newPrismaClient(): PrismaClient {
       user: {
         create({ args, query }) {
           const data = args.data as { email?: string; canonicalEmail?: string };
-          if (typeof data.email === "string" && data.canonicalEmail === undefined) {
+          if (
+            typeof data.email === "string" &&
+            data.canonicalEmail === undefined
+          ) {
             data.canonicalEmail = canonicalEmail(data.email);
           }
           return query(args);

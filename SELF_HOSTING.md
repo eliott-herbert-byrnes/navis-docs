@@ -20,7 +20,7 @@ Persistent data is stored in Docker volumes named `db_data` and `redis_data`.
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/eliott-herbert-byrnes/navis-docs.git
+git clone https://github.com/navis-docs/navis-docs.git
 cd navis-docs
 ```
 
@@ -131,9 +131,9 @@ To create credentials:
 4. Go to **APIs & Services** -> **Credentials**.
 5. Create an **OAuth client ID** for a web application.
 6. Add your production redirect URI:
-  `https://your-domain.com/api/auth/callback/google`.
+   `https://your-domain.com/api/auth/callback/google`.
 7. For local development, optionally add:
-  `http://localhost:3000/api/auth/callback/google`.
+   `http://localhost:3000/api/auth/callback/google`.
 8. Copy the client ID and client secret into `.env`:
 
 ```bash

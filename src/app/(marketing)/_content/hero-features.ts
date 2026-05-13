@@ -1,4 +1,3 @@
-
 import { FileText, LayoutList, Network, Workflow } from "lucide-react";
 import type { HeroFeatures } from "./types";
 

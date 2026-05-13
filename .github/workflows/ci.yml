@@ -41,6 +41,9 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: "1"
 
+      - name: Format check
+        run: pnpm prettier --check .
+
       - name: Upload build artifact (.next)
         uses: actions/upload-artifact@v4
         with:

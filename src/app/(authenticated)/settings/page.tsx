@@ -41,7 +41,7 @@ const SettingsPage = async () => {
         description="Manage your organization's settings"
       />
       <Suspense fallback={<OrganizationOverviewSkeleton />}>
-      <AiConfiguration />
+        <AiConfiguration />
         <OrganizationOverview org={org} />
       </Suspense>
     </PageContainer>

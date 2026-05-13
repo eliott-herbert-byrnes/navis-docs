@@ -11,7 +11,9 @@ import { trpc } from "@/trpc/client";
 import dynamic from "next/dynamic";
 const ThemeProvider = dynamic(
   () =>
-    import("@/components/theme/theme-provider").then((mod) => mod.ThemeProvider),
+    import("@/components/theme/theme-provider").then(
+      (mod) => mod.ThemeProvider,
+    ),
   { ssr: false },
 );
 
@@ -28,7 +30,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         defaultOptions: {
           queries: {
             staleTime: 1000 * 30,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
           },
         },
       }),

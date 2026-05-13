@@ -75,24 +75,22 @@ export function AddressList() {
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="font-medium ml-2">{row.original.name}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium ml-2">{row.original.name}</div>
+      ),
     },
     {
       accessorKey: "address",
       header: "Address",
       cell: ({ row }) => (
-        <div className="text-sm max-w-xs truncate">
-          {row.original.address}
-        </div>
+        <div className="text-sm max-w-xs truncate">{row.original.address}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Phone",
       cell: ({ row }) => (
-          <div className="text-sm max-w-xs truncate">
-          {row.original.phone}
-        </div>
+        <div className="text-sm max-w-xs truncate">{row.original.phone}</div>
       ),
     },
     {
@@ -103,7 +101,7 @@ export function AddressList() {
           {row.original.email ? (
             <div className="text-sm max-w-xs truncate">
               {row.original.email}
-              </div>
+            </div>
           ) : (
             <span className="text-muted-foreground">—</span>
           )}
@@ -183,7 +181,11 @@ export function AddressList() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan} className="pl-4">
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className="pl-4"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -240,7 +242,11 @@ export function AddressList() {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
+              <SelectTrigger
+                size="sm"
+                className="w-20 shadow-none"
+                id="rows-per-page"
+              >
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />
@@ -286,7 +292,7 @@ export function AddressList() {
             </Button>
             <Button
               variant="outline"
-              className="hidden size-8 lg:flex shadow-none border" 
+              className="hidden size-8 lg:flex shadow-none border"
               size="icon"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}

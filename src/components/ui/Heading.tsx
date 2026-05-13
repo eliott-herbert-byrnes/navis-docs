@@ -23,7 +23,9 @@ const Heading = ({
             <div className="flex items-center gap-2 mt-1">{breadcrumbs}</div>
           )}
         </div>
-        {actions && <div className="flex items-center gap-2 mt-5">{actions}</div>}
+        {actions && (
+          <div className="flex items-center gap-2 mt-5">{actions}</div>
+        )}
       </div>
       <Separator className="my-6 mb-8" />
     </>

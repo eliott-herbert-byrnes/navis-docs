@@ -61,7 +61,10 @@ export function ProcedureEditDetailsDialog({
       },
       {
         onSuccess: () => {
-          onSuccess({ title: procedureTitle, description: procedureDescription });
+          onSuccess({
+            title: procedureTitle,
+            description: procedureDescription,
+          });
           onOpenChange(false);
         },
       },
@@ -118,10 +121,7 @@ export function ProcedureEditDetailsDialog({
             <Button type="submit" disabled={formDisabled}>
               {isPending ? (
                 <>
-                  <Loader2
-                    className="h-4 w-4 animate-spin mr-2"
-                    aria-hidden
-                  />
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden />
                   Save
                 </>
               ) : (

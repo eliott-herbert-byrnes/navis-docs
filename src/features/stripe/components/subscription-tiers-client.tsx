@@ -33,8 +33,11 @@ export function SubscriptionTiersClient({
   annualPriceId,
   ...rest
 }: SubscriptionTiersClientProps) {
-  const initial: BillingInterval =
-    monthlyPriceId ? "monthly" : annualPriceId ? "annual" : "monthly";
+  const initial: BillingInterval = monthlyPriceId
+    ? "monthly"
+    : annualPriceId
+      ? "annual"
+      : "monthly";
   const [billing, setBilling] = useState<BillingInterval>(initial);
 
   return (

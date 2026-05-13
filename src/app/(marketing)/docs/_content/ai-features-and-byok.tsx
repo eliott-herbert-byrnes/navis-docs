@@ -31,9 +31,9 @@ export function Content() {
         </li>
       </ul>
       <p>
-        Embeddings make procedure content searchable by meaning. Anthropic powers
-        the conversational responses and import assistance that turn uploaded or
-        pasted material into usable procedure drafts.
+        Embeddings make procedure content searchable by meaning. Anthropic
+        powers the conversational responses and import assistance that turn
+        uploaded or pasted material into usable procedure drafts.
       </p>
 
       <h2>Bring your own key</h2>
@@ -45,13 +45,12 @@ export function Content() {
       <p>
         Stored keys are encrypted at rest using{" "}
         <code>AI_KEY_ENCRYPTION_SECRET</code>. Navis Docs can check whether a
-        key exists, but it does not expose the raw value after it has been saved.
+        key exists, but it does not expose the raw value after it has been
+        saved.
       </p>
 
       <h2>Which key enables which feature</h2>
-      <p>
-        The required key depends on the feature you want to use.
-      </p>
+      <p>The required key depends on the feature you want to use.</p>
       <ul>
         <li>
           <strong>Anthropic key</strong>: enables AI chat and AI-assisted
@@ -70,8 +69,8 @@ export function Content() {
 
       <h2>Cloud and self-hosted deployments</h2>
       <p>
-        On Navis Docs cloud, each organization must provide its own Anthropic key
-        before AI chat and AI-assisted import can be used. Owners and admins
+        On Navis Docs cloud, each organization must provide its own Anthropic
+        key before AI chat and AI-assisted import can be used. Owners and admins
         manage that key from organization settings.
       </p>
       <p>

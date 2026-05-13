@@ -28,7 +28,10 @@ function InvitationListSkeleton() {
     <>
       <div className="md:hidden px-4 space-y-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div key={`invite-card-skeleton-${index}`} className="rounded-lg border p-4">
+          <div
+            key={`invite-card-skeleton-${index}`}
+            className="rounded-lg border p-4"
+          >
             <div className="space-y-2">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-1/2" />

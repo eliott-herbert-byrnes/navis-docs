@@ -4,7 +4,11 @@ import type { FooterColumn, NavLink } from "./types";
 export const primaryNav = [
   { href: "/#features", label: "Features" },
   { href: "/docs", label: "Docs" },
-  { href: "https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen", label: "Roadmap", target:"_blank" },
+  {
+    href: "https://github.com/navis-docs/navis-docs/projects?query=is%3Aopen",
+    label: "Roadmap",
+    target: "_blank",
+  },
   { href: "/pricing", label: "Pricing" },
 ] as const satisfies readonly NavLink[];
 
@@ -23,7 +27,7 @@ export const footerNav = [
     links: [
       { href: "mailto:hello@navisdocs.com", label: "Contact" },
       {
-        href: "https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen",
+        href: "https://github.com/navis-docs/navis-docs/projects?query=is%3Aopen",
         label: "Roadmap",
         target: "_blank",
       },

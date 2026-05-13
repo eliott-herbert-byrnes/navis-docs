@@ -61,8 +61,7 @@ export const EditProcedureForm = ({
     teamId,
   );
 
-  const isHeaderDisabled =
-    isSaving || isCancelling || isPending || isDeleting;
+  const isHeaderDisabled = isSaving || isCancelling || isPending || isDeleting;
 
   useEffect(() => {
     onHeaderDisabledChange?.(isHeaderDisabled);
@@ -174,11 +173,21 @@ export const EditProcedureForm = ({
         onSaveSuccess:
           procedure.status === "PUBLISHED"
             ? () =>
-                router.push(viewProcedurePath(departmentId, teamId, procedureId))
+                router.push(
+                  viewProcedurePath(departmentId, teamId, procedureId),
+                )
             : undefined,
       });
     },
-    [procedure, procedureId, content, updateProcedureContent, departmentId, teamId, router],
+    [
+      procedure,
+      procedureId,
+      content,
+      updateProcedureContent,
+      departmentId,
+      teamId,
+      router,
+    ],
   );
 
   useEffect(() => {
@@ -208,7 +217,7 @@ export const EditProcedureForm = ({
         onChange={handleContentChange}
         isPreview={viewMode === "preview"}
         editorMode={editorPane}
-        />
+      />
 
       <ProcedureActionButtons
         hasUnsavedChanges={hasUnsavedChanges}
@@ -224,7 +233,6 @@ export const EditProcedureForm = ({
         discardDraftTrigger={isDraft ? discardDraftTrigger : undefined}
         discardDraftDialog={isDraft ? discardDraftDialog : undefined}
       />
-
     </div>
   );
 };

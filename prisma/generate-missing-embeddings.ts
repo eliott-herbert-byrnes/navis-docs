@@ -94,7 +94,7 @@ async function main() {
 
   for (const procedure of publishedProcedures) {
     try {
-       await generateProcessEmbeddings(procedure.id);
+      await generateProcessEmbeddings(procedure.id);
     } catch (error) {
       console.error(`Failed to procedure ${procedure.title}:`, error);
     }

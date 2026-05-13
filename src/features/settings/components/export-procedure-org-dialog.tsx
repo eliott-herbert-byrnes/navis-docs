@@ -9,7 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
+import {
+  AccessButton,
+  AccessDialogTrigger,
+} from "@/components/ui/access-button";
 import {
   Select,
   SelectContent,
@@ -52,12 +55,7 @@ const ExportProcedureOrgDataButtonDialog = ({
           variant={isProcedureBaseRoute ? "ghost" : "outline"}
           className={cn("flex justify-start gap-2 max-w-[250px] shadow-none")}
         >
-          <FileInput
-            className={cn(
-              "w-4 h-4",
-              "text-muted-foreground",
-            )}
-          />
+          <FileInput className={cn("w-4 h-4", "text-muted-foreground")} />
           <span className="font-semibold">Export Org Procedure Data</span>
         </Button>
       </AccessDialogTrigger>

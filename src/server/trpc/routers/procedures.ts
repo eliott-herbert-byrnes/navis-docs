@@ -145,7 +145,9 @@ export const procedureRouter = router({
 
   // Query: GET-all procedures for export scoped to a department
   listForExportByDepartment: adminProcedure
-    .use(rateLimitMiddleware("procedure-get-procedures-for-export-by-department"))
+    .use(
+      rateLimitMiddleware("procedure-get-procedures-for-export-by-department"),
+    )
     .input(z.object({ departmentId: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
       if (!ctx.org) {
@@ -185,10 +187,7 @@ export const procedureRouter = router({
             },
           },
         },
-        orderBy: [
-          { team: { name: "asc" } },
-          { title: "asc" },
-        ],
+        orderBy: [{ team: { name: "asc" } }, { title: "asc" }],
         take: 5000,
       });
 
@@ -727,8 +726,11 @@ export const procedureRouter = router({
         },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
-      revalidatePath(`/departments/${input.departmentId}/${input.teamId}/procedures`, "layout");
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
+      revalidatePath(
+        `/departments/${input.departmentId}/${input.teamId}/procedures`,
+        "layout",
+      );
 
       if (!procedure) {
         throw new TRPCError({
@@ -1028,12 +1030,11 @@ export const procedureRouter = router({
         where: { id: input.procedureId },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
       revalidatePath(
         `/departments/${procedure.team.departmentId}/${procedure.teamId}/procedures`,
         "layout",
       );
-
 
       await createAuditLog({
         orgId: ctx.org!.id,
@@ -1104,7 +1105,12 @@ export const procedureRouter = router({
             },
           },
         },
-        select: { id: true, categoryId: true, teamId: true, team: { select: { departmentId: true } } },
+        select: {
+          id: true,
+          categoryId: true,
+          teamId: true,
+          team: { select: { departmentId: true } },
+        },
       });
 
       if (!procedures) {
@@ -1127,7 +1133,7 @@ export const procedureRouter = router({
         where: { id: { in: idsToDelete } },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
       const seenTeamPaths = new Set<string>();
       for (const p of procedures) {
         const key = `${p.team.departmentId}/${p.teamId}`;

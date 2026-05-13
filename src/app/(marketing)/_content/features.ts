@@ -1,4 +1,13 @@
-import { Bot, GitCompareArrows, History, Inbox, Lightbulb, Megaphone, StarIcon, Users } from "lucide-react";
+import {
+  Bot,
+  GitCompareArrows,
+  History,
+  Inbox,
+  Lightbulb,
+  Megaphone,
+  StarIcon,
+  Users,
+} from "lucide-react";
 import type { Feature } from "./types";
 
 export const features = [
@@ -6,8 +15,7 @@ export const features = [
     id: "audit-trails",
     icon: History,
     title: "Audit Trials",
-    description:
-      "Every action recorded with who, what, and when.",
+    description: "Every action recorded with who, what, and when.",
   },
   {
     id: "ai-search",
@@ -41,22 +49,18 @@ export const features = [
     id: "role-based-access",
     icon: Users,
     title: "Role Based Access",
-    description:
-      "Owners, admins, and members each see exactly what they need.",
+    description: "Owners, admins, and members each see exactly what they need.",
   },
   {
     id: "favorites",
     icon: StarIcon,
     title: "Favorites",
-    description:
-      "Pin the procedures you reach for most.",
+    description: "Pin the procedures you reach for most.",
   },
   {
     id: "announcements",
     icon: Megaphone,
     title: "Announcements",
-    description:
-      "Push targeted updates to specific departments or teams.",
+    description: "Push targeted updates to specific departments or teams.",
   },
-
 ] as const satisfies readonly Feature[];

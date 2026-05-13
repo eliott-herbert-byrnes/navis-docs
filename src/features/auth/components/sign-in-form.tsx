@@ -104,7 +104,7 @@ export function SignInForm({
       } else {
         toast.error(
           res.message ??
-          "Failed to load demo credentials, try again or refresh the page",
+            "Failed to load demo credentials, try again or refresh the page",
         );
       }
     });
@@ -125,7 +125,7 @@ export function SignInForm({
       } else {
         toast.error(
           res.message ??
-          "Demo verification failed, try again or use a new code",
+            "Demo verification failed, try again or use a new code",
         );
       }
     });
@@ -137,7 +137,9 @@ export function SignInForm({
         <Card className="animate-fade-from-top max-w-sm border-none">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome back</CardTitle>
-            <CardDescription className="">Login with your Google account</CardDescription>
+            <CardDescription className="">
+              Login with your Google account
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form>
@@ -269,7 +271,13 @@ export function SignInForm({
                       <div className="text-center text-sm">{msg}</div>
                     )}
                   </Field>
-                  <Button type="submit" onClick={verifyCode} disabled={pending} className="shadow" variant={"secondary"}>
+                  <Button
+                    type="submit"
+                    onClick={verifyCode}
+                    disabled={pending}
+                    className="shadow"
+                    variant={"secondary"}
+                  >
                     {pending ? (
                       <LucideLoaderCircle className="h-4 w-4 animate-spin" />
                     ) : (
@@ -278,7 +286,11 @@ export function SignInForm({
                   </Button>
                   <FieldDescription className="text-center">
                     Didn&apos;t receive the code?{" "}
-                    <a href="#" className="hover:!text-brand" onClick={requestCode}>
+                    <a
+                      href="#"
+                      className="hover:!text-brand"
+                      onClick={requestCode}
+                    >
                       Resend
                     </a>
                   </FieldDescription>
@@ -288,10 +300,19 @@ export function SignInForm({
           </Card>
         </>
       )}
-      {!sent ? (<FieldDescription className="px-6 text-center pt-1 ">
-        By clicking continue, you agree to our <a href="/terms" className="hover:!text-brand">Terms of Service</a>{" "}
-        and <a href="/privacy" className="hover:!text-brand">Privacy Policy</a>.
-      </FieldDescription>) : null}
+      {!sent ? (
+        <FieldDescription className="px-6 text-center pt-1 ">
+          By clicking continue, you agree to our{" "}
+          <a href="/terms" className="hover:!text-brand">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="hover:!text-brand">
+            Privacy Policy
+          </a>
+          .
+        </FieldDescription>
+      ) : null}
     </div>
   );
 }

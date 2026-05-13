@@ -38,7 +38,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TeamDeleteButton } from "../team-buttons/team-delete-button";
 import { TeamRenameButton } from "../team-buttons/team-rename-button";
 
-function DepartmentTeamTableRowsSkeleton({ rowCount = 5 }: { rowCount?: number }) {
+function DepartmentTeamTableRowsSkeleton({
+  rowCount = 5,
+}: {
+  rowCount?: number;
+}) {
   return (
     <>
       {Array.from({ length: rowCount }).map((_, index) => (
@@ -212,7 +216,10 @@ export function DepartmentTeamTable({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="sm:ml-auto shadow-none border w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="sm:ml-auto shadow-none border w-full sm:w-auto"
+            >
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -244,7 +251,9 @@ export function DepartmentTeamTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  const meta = header.column.columnDef.meta as { className?: string } | undefined;
+                  const meta = header.column.columnDef.meta as
+                    | { className?: string }
+                    | undefined;
                   return (
                     <TableHead key={header.id} className={meta?.className}>
                       {header.isPlaceholder
@@ -278,7 +287,9 @@ export function DepartmentTeamTable({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => {
-                    const meta = cell.column.columnDef.meta as { className?: string } | undefined;
+                    const meta = cell.column.columnDef.meta as
+                      | { className?: string }
+                      | undefined;
                     return (
                       <TableCell key={cell.id} className={meta?.className}>
                         {flexRender(

@@ -91,7 +91,9 @@ export function AccessDialogTrigger({
   }
 
   const el = React.cloneElement(
-    children as React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>,
+    children as React.ReactElement<
+      React.ButtonHTMLAttributes<HTMLButtonElement>
+    >,
     {
       disabled: true,
       "aria-disabled": true,
@@ -129,7 +131,9 @@ export function AccessAlertDialogTrigger({
   }
 
   const el = React.cloneElement(
-    children as React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>,
+    children as React.ReactElement<
+      React.ButtonHTMLAttributes<HTMLButtonElement>
+    >,
     {
       disabled: true,
       "aria-disabled": true,

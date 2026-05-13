@@ -34,8 +34,8 @@ export function TrialWillEndEmail({
           when the trial period closes.
         </Text>
         <Text className="text-base leading-relaxed text-gray-700 mb-4">
-          Without a payment method, your organisation may move to read-only
-          mode after the trial ends.
+          Without a payment method, your organisation may move to read-only mode
+          after the trial ends.
         </Text>
       </Section>
       <Section className="mb-6 text-center">

@@ -64,8 +64,7 @@ function MarketingProPlanCard({ billing }: { billing: BillingInterval }) {
             <p className="text-xs text-muted-foreground">
               Billed annually —{" "}
               {toCurrencyFromCent(ANNUAL_PRICE_CENTS, CURRENCY)}/ year per seat
-              (
-              {toCurrencyFromCent(ANNUAL_EFFECTIVE_MONTHLY, CURRENCY)}/ mo
+              ({toCurrencyFromCent(ANNUAL_EFFECTIVE_MONTHLY, CURRENCY)}/ mo
               effective).
             </p>
             <p className="text-xs font-medium text-primary">

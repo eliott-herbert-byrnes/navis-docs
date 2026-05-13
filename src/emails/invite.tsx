@@ -20,7 +20,8 @@ export function InviteEmail({ orgName, inviteUrl }: InviteEmailProps) {
       </Section>
       <Section className="mb-6">
         <Text className="text-base leading-relaxed text-gray-700 mb-4">
-          You have been invited to join <strong>{orgName}</strong> on Navis Docs.
+          You have been invited to join <strong>{orgName}</strong> on Navis
+          Docs.
         </Text>
         <Text className="text-base leading-relaxed text-gray-700 mb-4">
           Click the button below to accept your invitation and get started.

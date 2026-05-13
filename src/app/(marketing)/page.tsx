@@ -37,10 +37,8 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingHomePage() {
-
   return (
     <div className="mx-auto space-y-16 px-4 py-12 sm:px-6 lg:px-8">
-
       <section
         aria-labelledby="hero-heading"
         className="space-y-4 lg:max-w-[50%]"
@@ -52,23 +50,22 @@ export default function MarketingHomePage() {
           The open source platform for knowledge and SOP management
         </h1>
         <p className="text-muted-foreground text-xl sm:text-2xl">
-          Navis Docs helps teams capture, organize, and share SOPs, runbooks, and process knowledge from one place.
+          Navis Docs helps teams capture, organize, and share SOPs, runbooks,
+          and process knowledge from one place.
         </p>
         <div className="flex flex-row gap-2">
-          <Button
-            variant={"outline"}
-          >
+          <Button variant={"outline"}>
             <Link href={dashboardPath()}>Get Started</Link>
           </Button>
-          <Button
-            variant={"outline"}
-          >
-            <Link href={"https://github.com/eliott-herbert-byrnes/navis-docs"} target="_blank">
+          <Button variant={"outline"}>
+            <Link
+              href={"https://github.com/navis-docs/navis-docs"}
+              target="_blank"
+            >
               Self Host
             </Link>
           </Button>
         </div>
-
       </section>
 
       <section aria-label="Product screenshot preview" className="py-24">
@@ -118,7 +115,6 @@ export default function MarketingHomePage() {
       </section>
 
       <section aria-labelledby="company-logos">
-
         <div className="inset-x-0 flex justify-center">
           <p
             id="company-logos"
@@ -155,9 +151,13 @@ export default function MarketingHomePage() {
             Build around your organization
           </h2>
           <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
-            Create your organisation, then structure it into departments and teams. Each team gets its own knowledge base.
+            Create your organisation, then structure it into departments and
+            teams. Each team gets its own knowledge base.
           </p>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75 pb-12" href={"/docs"}>
+          <Link
+            className="text-brand text-xl sm:text-xl hover:text-brand/75 pb-12"
+            href={"/docs"}
+          >
             See the documentation →
           </Link>
         </div>
@@ -202,7 +202,6 @@ export default function MarketingHomePage() {
         className="py-24"
         id="four-formats"
       >
-
         <div className="flex flex-col gap-3">
           <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Standardise
@@ -213,7 +212,10 @@ export default function MarketingHomePage() {
           >
             Four formats. One tool
           </h2>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/docs"}>
+          <Link
+            className="text-brand text-xl sm:text-xl hover:text-brand/75"
+            href={"/docs"}
+          >
             See the documentation →
           </Link>
         </div>
@@ -222,7 +224,10 @@ export default function MarketingHomePage() {
           {HeroFeature.map((feature) => {
             const Icon = feature.icon;
             return (
-              <div key={feature.id} className="flex flex-col bg-card p-8 rounded-lg gap-4 ">
+              <div
+                key={feature.id}
+                className="flex flex-col bg-card p-8 rounded-lg gap-4 "
+              >
                 <div className="flex flex-row items-center gap-2">
                   <Icon className="h-5 w-5 shrink-0 text-muted-foreground" />
                   <span className="font-serif text-2xl">{feature.title}</span>
@@ -232,11 +237,14 @@ export default function MarketingHomePage() {
             );
           })}
         </div>
-
       </section>
 
-      <section aria-labelledby="features-heading" className="py-12" id="features">
-        <div className="flex flex-col gap-3 items-center text-center" >
+      <section
+        aria-labelledby="features-heading"
+        className="py-12"
+        id="features"
+      >
+        <div className="flex flex-col gap-3 items-center text-center">
           <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
             Features
           </p>
@@ -246,7 +254,10 @@ export default function MarketingHomePage() {
           >
             AI Integration - Bring Your Own Keys
           </h2>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
+          <Link
+            className="text-brand text-xl sm:text-xl hover:text-brand/75"
+            href={"/"}
+          >
             See our roadmap →
           </Link>
         </div>
@@ -261,9 +272,7 @@ export default function MarketingHomePage() {
               >
                 <div className="flex flex-row items-center gap-2">
                   <Icon className="h-5 w-5 shrink-0 text-muted-foreground" />
-                  <h3 className="font-serif text-lg">
-                    {feature.title}
-                  </h3>
+                  <h3 className="font-serif text-lg">{feature.title}</h3>
                 </div>
                 <p className="mt-3 min-h-0 flex-1 overflow-y-auto text-muted-foreground text-sm">
                   {feature.description}
@@ -272,7 +281,6 @@ export default function MarketingHomePage() {
             );
           })}
         </ul>
-
       </section>
 
       {/* <section aria-labelledby="testimonial-heading" className="py-12">
@@ -310,9 +318,13 @@ export default function MarketingHomePage() {
             Questions?
           </h2>
           <p className="text-muted-foreground text-xl sm:text-xl w-full sm:w-2/3 lg:w-1/3">
-            Find answers to common questions about Navis Docs. Can’t find what you’re looking for?
+            Find answers to common questions about Navis Docs. Can’t find what
+            you’re looking for?
           </p>
-          <Link className="text-brand text-xl sm:text-xl hover:text-brand/75" href={"/"}>
+          <Link
+            className="text-brand text-xl sm:text-xl hover:text-brand/75"
+            href={"/"}
+          >
             Contact us →
           </Link>
         </div>
@@ -334,15 +346,14 @@ export default function MarketingHomePage() {
             Try Navis Docs now.
           </h2>
           <div className="flex flex-row gap-2">
-            <Button
-              variant={"outline"}
-            >
+            <Button variant={"outline"}>
               <Link href={dashboardPath()}>Cloud</Link>
             </Button>
-            <Button
-              variant={"outline"}
-            >
-              <Link href={"https://github.com/eliott-herbert-byrnes/navis-docs"} target="_blank">
+            <Button variant={"outline"}>
+              <Link
+                href={"https://github.com/navis-docs/navis-docs"}
+                target="_blank"
+              >
                 Self Host
               </Link>
             </Button>

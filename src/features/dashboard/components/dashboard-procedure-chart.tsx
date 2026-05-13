@@ -15,11 +15,15 @@ const chartConfig = {
 
 type DashboardProcedureChartProps = { data: ProcedureChartData };
 
-export function DashboardProcedureChart({ data }: DashboardProcedureChartProps) {
+export function DashboardProcedureChart({
+  data,
+}: DashboardProcedureChartProps) {
   return (
     <Card className="shadow-none border-1">
       <CardHeader>
-        <CardTitle className="text-md font-medium">Procedures Created</CardTitle>
+        <CardTitle className="text-md font-medium">
+          Procedures Created
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-40 w-full">

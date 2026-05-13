@@ -12,11 +12,14 @@ export default async function ProcedureBaseCreatePage() {
 
   return (
     <PageContainer>
-      <Heading title="Create Procedure" description="Create a new procedure and assign it to a department and team." />
+      <Heading
+        title="Create Procedure"
+        description="Create a new procedure and assign it to a department and team."
+      />
       <CreateProcedureForm
-        categories={[]}            
+        categories={[]}
         cancelPath={procedureBasePath()}
-        redirectOnSuccess={true}   
+        redirectOnSuccess={true}
       />
     </PageContainer>
   );

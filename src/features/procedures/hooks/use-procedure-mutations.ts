@@ -11,11 +11,15 @@ import {
 import { RolloutRoleFilter } from "@prisma/client";
 
 type CreateProcedureOptions = {
-  redirectOnSuccess?: boolean; 
-  onSuccess?: () => void;    
+  redirectOnSuccess?: boolean;
+  onSuccess?: () => void;
 };
 
-export function useCreateProcedure(departmentId: string, teamId: string, options?: CreateProcedureOptions) {
+export function useCreateProcedure(
+  departmentId: string,
+  teamId: string,
+  options?: CreateProcedureOptions,
+) {
   const utils = trpc.useUtils();
   const router = useRouter();
   const mutation = trpc.procedures.createProcedure.useMutation({
@@ -25,7 +29,9 @@ export function useCreateProcedure(departmentId: string, teamId: string, options
       utils.procedures.categoriesWithProcedures.invalidate();
       if (data?.data?.id) {
         if (options?.redirectOnSuccess !== false) {
-          toast.success("Procedure created successfully, redirecting to editor");
+          toast.success(
+            "Procedure created successfully, redirecting to editor",
+          );
           router.push(editProcedurePath(departmentId, teamId, data.data.id));
         } else {
           utils.procedures.getProceduresForBase.invalidate();

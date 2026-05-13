@@ -41,10 +41,7 @@ const ENTERPRISE_FEATURES = [
 const SELF_HOSTED_DESCRIPTION =
   "This deployment runs on your infrastructure. All product features are available without a cloud subscription or Stripe checkout.";
 
-function pickPrice(
-  prices: Stripe.Price[],
-  billing: "monthly" | "annual",
-) {
+function pickPrice(prices: Stripe.Price[], billing: "monthly" | "annual") {
   const meta = billing === "monthly" ? "monthly" : "annual";
   return (
     prices.find((p) => p.metadata?.billing === meta) ??
@@ -131,7 +128,7 @@ export function SelfHostedPlanCard() {
       <CardFooter className="mt-auto border-t pt-6">
         <Button asChild variant="outline" className="w-full">
           <a
-            href="https://github.com/eliott-herbert-byrnes/navis-docs"
+            href="https://github.com/navis-docs/navis-docs"
             target="_blank"
             rel="noopener noreferrer"
           >

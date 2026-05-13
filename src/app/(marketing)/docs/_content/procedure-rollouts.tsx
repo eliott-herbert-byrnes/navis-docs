@@ -10,17 +10,17 @@ export function Content() {
       </p>
       <p>
         When you publish a procedure with notify, email, or news options
-        enabled, Navis Docs creates a <code>ProcedureRollout</code>. That rollout
-        records the target audience, drives notifications, and gives admins a
-        way to track outstanding reads.
+        enabled, Navis Docs creates a <code>ProcedureRollout</code>. That
+        rollout records the target audience, drives notifications, and gives
+        admins a way to track outstanding reads.
       </p>
 
       <h2>When to use rollouts</h2>
       <p>
         Rollouts are most useful when a procedure affects day-to-day work,
-        compliance, safety, or training. For minor edits, you may publish without
-        notifying everyone. For material changes, enable rollout options so
-        members can see what needs their attention.
+        compliance, safety, or training. For minor edits, you may publish
+        without notifying everyone. For material changes, enable rollout options
+        so members can see what needs their attention.
       </p>
       <ul>
         <li>New procedures that everyone in a team must understand</li>

@@ -30,7 +30,6 @@ const IdeasPage = async ({ searchParams }: IdeasPageProps) => {
   return (
     <>
       <PageContainer>
-
         <Heading
           title="Ideas"
           description="View and manage ideas for this organization"

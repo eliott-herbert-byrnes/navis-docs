@@ -38,5 +38,5 @@ export function useProcedureRouteContext() {
 }
 
 export function useProcedureRouteContextOptional() {
-  return useContext(ProcedureRouteContext); 
+  return useContext(ProcedureRouteContext);
 }

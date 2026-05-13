@@ -21,9 +21,7 @@ export function LegalPageLayout({
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mb-10">
-        <h1 className="font-serif text-4xl">
-          {title}
-        </h1>
+        <h1 className="font-serif text-4xl">{title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Last updated: {lastUpdated}
         </p>

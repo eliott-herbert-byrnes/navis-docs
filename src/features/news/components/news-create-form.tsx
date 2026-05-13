@@ -58,83 +58,87 @@ const NewsCreateForm = ({ teamName }: NewsCreateFormProps) => {
 
   return (
     <div className="w-full">
-        <form onSubmit={handleSubmit}>
-          <FieldGroup>
-            <FieldSet>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="newsPostTitle">Title</FieldLabel>
-                  <Input
-                    id="newsPostTitle"
-                    placeholder="News Post Title"
-                    name="newsPostTitle"
-                    required
-                    disabled={isPending}
-                    className="shadow-none border sm:max-w-1/3"
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="newsPostBody">Body</FieldLabel>
-                  <Textarea
-                    id="newsPostBody"
-                    name="newsPostBody"
-                    placeholder="Enter the body of the news post"
-                    rows={10}
-                    required
-                    disabled={isPending}
-                    className="shadow-none border sm:max-w-1/2"
-                  />
-                </Field>
-              </FieldGroup>
-            </FieldSet>
-            <FieldSeparator />
-            <FieldSet>
-              <FieldLegend>Pinned</FieldLegend>
-              <FieldDescription>
-                Select if the news post should be pinned to the top of the news
-                feed.
-              </FieldDescription>
-              <FieldGroup>
-                <Field orientation="horizontal">
-                  <Checkbox
-                    id="pinned"
-                    name="pinned"
-                    checked={pinned}
-                    onCheckedChange={handlePinnedChange}
-                    disabled={isPending}
-                  />
-                  <FieldLabel htmlFor="pinned" className="font-normal">
-                    Pin to the top of the news feed
-                  </FieldLabel>
-                </Field>
-              </FieldGroup>
-            </FieldSet>
-            <Field orientation="horizontal">
-              <Button type="submit" disabled={isPending || isCancelPending} className="shadow-none border">
-                {isPending ? (
-                  <>
-                    <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={handleCancel}
-                disabled={isPending || isCancelPending}
-                className="shadow-none border"
-              >
-                {isCancelPending ? (
-                  <LucideLoaderCircle className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Cancel"
-                )}
-              </Button>
-            </Field>
-          </FieldGroup>
-        </form>
+      <form onSubmit={handleSubmit}>
+        <FieldGroup>
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="newsPostTitle">Title</FieldLabel>
+                <Input
+                  id="newsPostTitle"
+                  placeholder="News Post Title"
+                  name="newsPostTitle"
+                  required
+                  disabled={isPending}
+                  className="shadow-none border sm:max-w-1/3"
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="newsPostBody">Body</FieldLabel>
+                <Textarea
+                  id="newsPostBody"
+                  name="newsPostBody"
+                  placeholder="Enter the body of the news post"
+                  rows={10}
+                  required
+                  disabled={isPending}
+                  className="shadow-none border sm:max-w-1/2"
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+          <FieldSeparator />
+          <FieldSet>
+            <FieldLegend>Pinned</FieldLegend>
+            <FieldDescription>
+              Select if the news post should be pinned to the top of the news
+              feed.
+            </FieldDescription>
+            <FieldGroup>
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="pinned"
+                  name="pinned"
+                  checked={pinned}
+                  onCheckedChange={handlePinnedChange}
+                  disabled={isPending}
+                />
+                <FieldLabel htmlFor="pinned" className="font-normal">
+                  Pin to the top of the news feed
+                </FieldLabel>
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+          <Field orientation="horizontal">
+            <Button
+              type="submit"
+              disabled={isPending || isCancelPending}
+              className="shadow-none border"
+            >
+              {isPending ? (
+                <>
+                  <LucideLoaderCircle className="h-4 w-4 mr-2 animate-spin" />
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={handleCancel}
+              disabled={isPending || isCancelPending}
+              className="shadow-none border"
+            >
+              {isCancelPending ? (
+                <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+              ) : (
+                "Cancel"
+              )}
+            </Button>
+          </Field>
+        </FieldGroup>
+      </form>
     </div>
   );
 };

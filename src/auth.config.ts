@@ -70,8 +70,7 @@ export const {
 
       const canonical = canonicalEmail(user.email);
 
-      const isOAuth =
-        account?.type === "oauth" || account?.type === "oidc";
+      const isOAuth = account?.type === "oauth" || account?.type === "oidc";
 
       if (isOAuth) {
         const existing = await prisma.user.findUnique({

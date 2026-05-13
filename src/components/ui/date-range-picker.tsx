@@ -28,10 +28,7 @@ export function DatePickerWithRange({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className="justify-start px-2.5 font-normal" 
-        >
+        <Button variant="outline" className="justify-start px-2.5 font-normal">
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date?.from ? (
             <>

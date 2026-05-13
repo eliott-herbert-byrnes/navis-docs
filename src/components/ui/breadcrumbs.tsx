@@ -75,10 +75,12 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
                         {group.label}
                       </DropdownMenuLabel>
                       {group.items.map((item) => (
-                        <DropdownMenuItem asChild key={item.id ?? item.href} className="py-2">
-                          <Link href={item.href}>
-                          {item.title}
-                          </Link>
+                        <DropdownMenuItem
+                          asChild
+                          key={item.id ?? item.href}
+                          className="py-2"
+                        >
+                          <Link href={item.href}>{item.title}</Link>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuGroup>
@@ -100,7 +102,11 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {breadcrumb.dropdown.map((item) => (
-                    <DropdownMenuItem asChild key={item.id ?? item.href} className="py-2">
+                    <DropdownMenuItem
+                      asChild
+                      key={item.id ?? item.href}
+                      className="py-2"
+                    >
                       <Link href={item.href}>{item.title}</Link>
                     </DropdownMenuItem>
                   ))}

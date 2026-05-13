@@ -88,6 +88,8 @@ export function buildAuditExportJsonEnvelope(input: {
 }
 
 /** Stable JSON for upload (compact, UTF-8). */
-export function stringifyAuditExportJson(envelope: AuditExportJsonEnvelope): string {
+export function stringifyAuditExportJson(
+  envelope: AuditExportJsonEnvelope,
+): string {
   return JSON.stringify(envelope);
 }

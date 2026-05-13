@@ -52,7 +52,10 @@ const CreateTeamDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <AccessDialogTrigger adminOnly>
-        <Button variant="ghost" className="rounded-none justify-start font-normal">
+        <Button
+          variant="ghost"
+          className="rounded-none justify-start font-normal"
+        >
           <div className="flex flex-row gap-2 items-center">
             <PlusIcon className="w-4 h-4" />
             Team
@@ -81,7 +84,6 @@ const CreateTeamDialog = ({
           />
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2 mt-4">
-
           <Button
             className="w-[75px] shadow-none border"
             type="button"

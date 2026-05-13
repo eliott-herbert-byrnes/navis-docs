@@ -284,9 +284,7 @@ export default function PrivacyPage() {
       <ul>
         <li>We collect only the data necessary to provide the service</li>
         <li>We do not track users across different websites or services</li>
-        <li>
-          We do not sell personal data or share it with advertisers
-        </li>
+        <li>We do not sell personal data or share it with advertisers</li>
         <li>
           You may request deletion of your account and associated personal data
           by contacting us at{" "}
@@ -314,7 +312,7 @@ export default function PrivacyPage() {
       </p>
       <p>
         <a
-          href="https://github.com/eliott-herbert-byrnes/navis-docs"
+          href="https://github.com/navis-docs/navis-docs"
           target="_blank"
           rel="noopener noreferrer"
         >

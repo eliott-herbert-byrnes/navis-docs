@@ -504,7 +504,11 @@ export function UserList({ data: initialData }: { data: User[] }) {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20 shadow-none border" id="rows-per-page">
+              <SelectTrigger
+                size="sm"
+                className="w-20 shadow-none border"
+                id="rows-per-page"
+              >
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />

@@ -68,8 +68,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { message, teamId, departmentId, conversationHistory, previousSources } =
-      await req.json();
+    const {
+      message,
+      teamId,
+      departmentId,
+      conversationHistory,
+      previousSources,
+    } = await req.json();
 
     if (!message || !teamId || !departmentId) {
       return NextResponse.json(
@@ -79,11 +84,15 @@ export async function POST(req: NextRequest) {
     }
 
     const lastUserMessage =
-    (conversationHistory ?? [])
-      .slice()
-      .reverse()
-      .find((m: { role: string; content: string }) => m?.role === "user" && typeof m.content === "string" && m.content.trim().length > 0)
-      ?.content ?? null;
+      (conversationHistory ?? [])
+        .slice()
+        .reverse()
+        .find(
+          (m: { role: string; content: string }) =>
+            m?.role === "user" &&
+            typeof m.content === "string" &&
+            m.content.trim().length > 0,
+        )?.content ?? null;
 
     const userTeams = await getUserTeamIds(user.userId);
     if (!userTeams.includes(teamId)) {
@@ -154,7 +163,11 @@ export async function POST(req: NextRequest) {
     let { chunks, tier: searchTier } = await runTieredSearch(message);
 
     // Fallback: retry search using the last user message from history
-    if (searchTier === "none" && lastUserMessage && lastUserMessage !== message) {
+    if (
+      searchTier === "none" &&
+      lastUserMessage &&
+      lastUserMessage !== message
+    ) {
       const fallback = await runTieredSearch(lastUserMessage);
       if (fallback.tier !== "none") {
         chunks = fallback.chunks;
@@ -167,7 +180,10 @@ export async function POST(req: NextRequest) {
       (previousSources ?? []) as { procedureId: string; title: string }[]
     ).map((s) => s.procedureId);
 
-    const stickyChunks = await getChunksByProcedureIds(previousProcedureIds, teamId);
+    const stickyChunks = await getChunksByProcedureIds(
+      previousProcedureIds,
+      teamId,
+    );
 
     if (stickyChunks.length > 0) {
       const existingChunkIds = new Set(chunks.map((c: ChunkResult) => c.id));
@@ -179,9 +195,13 @@ export async function POST(req: NextRequest) {
       } else {
         // Have current results — supplement with sticky chunks from the same procedures
         // so the model retains full procedure content across follow-up turns
-        const currentProcedureIds = new Set(chunks.map((c: ChunkResult) => c.procedureId));
+        const currentProcedureIds = new Set(
+          chunks.map((c: ChunkResult) => c.procedureId),
+        );
         const relevantStickyChunks = stickyChunks.filter(
-          (c) => currentProcedureIds.has(c.procedureId) && !existingChunkIds.has(c.id),
+          (c) =>
+            currentProcedureIds.has(c.procedureId) &&
+            !existingChunkIds.has(c.id),
         );
         chunks = [...chunks, ...relevantStickyChunks];
       }

@@ -76,7 +76,11 @@ export function AuditPagination({
             value={pageSize.toString()}
             onValueChange={(value) => changePageSize(Number(value))}
           >
-            <SelectTrigger size="sm" className="w-20 shadow-none" id="page-size">
+            <SelectTrigger
+              size="sm"
+              className="w-20 shadow-none"
+              id="page-size"
+            >
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">

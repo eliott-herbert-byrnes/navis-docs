@@ -76,9 +76,7 @@ export function EditProcedurePageClient({
         <Button
           variant={editorPane === "flow" ? "outline" : "outline"}
           size="sm"
-          onClick={() =>
-            setEditorPane((m) => (m === "flow" ? "text" : "flow"))
-          }
+          onClick={() => setEditorPane((m) => (m === "flow" ? "text" : "flow"))}
           disabled={isHeaderDisabled}
         >
           <PencilIcon className="h-4 w-4" />
@@ -174,4 +172,3 @@ export function EditProcedurePageClient({
     </>
   );
 }
-

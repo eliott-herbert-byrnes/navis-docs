@@ -154,7 +154,7 @@ export const ideasRouter = router({
         },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
       return {
         data: idea,
@@ -203,7 +203,7 @@ export const ideasRouter = router({
         data: { status: input.status as IdeaStatus },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
       const statusLabel =
         input.status === "COMPLETED"
@@ -258,7 +258,7 @@ export const ideasRouter = router({
         where: { id: input.ideaId },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
       return {
         data: { ideaId: input.ideaId },
@@ -305,7 +305,7 @@ export const ideasRouter = router({
         where: { id: { in: idsToDelete } },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
       return {
         data: { deletedCount: ideas.length },

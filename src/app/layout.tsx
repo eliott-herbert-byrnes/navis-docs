@@ -28,12 +28,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com"></link>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin=""></link>
-        <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet"></link>
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        ></link>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap"
+          rel="stylesheet"
+        ></link>
       </head>
       <body className={`${GeistSans.variable} antialiased min-h-screen`}>
-          <Toaster />
-          {children}
+        <Toaster />
+        {children}
       </body>
     </html>
   );

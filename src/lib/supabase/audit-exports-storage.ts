@@ -1,4 +1,3 @@
-
 export const AUDIT_EXPORTS_BUCKET =
   process.env.SUPABASE_PROCEDURE_AUDITS_BUCKET ?? "audit-exports";
 

@@ -111,9 +111,7 @@ export default function TermsPage() {
           You authorise us to charge your payment method automatically on each
           billing cycle
         </li>
-        <li>
-          No surprise fees — your card will never be charged unexpectedly
-        </li>
+        <li>No surprise fees — your card will never be charged unexpectedly</li>
       </ul>
 
       <h3>Seat-Based Billing</h3>
@@ -229,10 +227,10 @@ export default function TermsPage() {
       <h2 id="liability">Limitation of Liability</h2>
       <p>
         To the maximum extent permitted by law, Navis Docs and its contributors
-        shall not be liable for any indirect, incidental, special, consequential,
-        or punitive damages, or any loss of profits or revenues, whether incurred
-        directly or indirectly, or any loss of data, use, goodwill, or other
-        intangible losses resulting from:
+        shall not be liable for any indirect, incidental, special,
+        consequential, or punitive damages, or any loss of profits or revenues,
+        whether incurred directly or indirectly, or any loss of data, use,
+        goodwill, or other intangible losses resulting from:
       </p>
       <ul>
         <li>Your use or inability to use the service</li>

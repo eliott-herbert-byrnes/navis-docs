@@ -3,9 +3,9 @@ export function Content() {
     <>
       <h2>What the audit log is</h2>
       <p>
-        The audit log records important activity across an organization. It gives
-        admins a searchable history of operational changes, who made them, and
-        when they happened.
+        The audit log records important activity across an organization. It
+        gives admins a searchable history of operational changes, who made them,
+        and when they happened.
       </p>
       <p>
         Audit logging is designed for accountability and compliance. It helps
@@ -38,9 +38,9 @@ export function Content() {
         not see the audit log navigation item and cannot access audit records.
       </p>
       <p>
-        Because the log can include sensitive operational history, keep audit log
-        access limited to users who need organization management or compliance
-        responsibilities.
+        Because the log can include sensitive operational history, keep audit
+        log access limited to users who need organization management or
+        compliance responsibilities.
       </p>
 
       <h2>Filtering events</h2>
@@ -50,8 +50,8 @@ export function Content() {
       </p>
       <ul>
         <li>
-          <strong>Entity type</strong>: focus on areas such as procedures, users,
-          departments, teams, news, or rollouts
+          <strong>Entity type</strong>: focus on areas such as procedures,
+          users, departments, teams, news, or rollouts
         </li>
         <li>
           <strong>Actor</strong>: review activity performed by a specific user
@@ -70,8 +70,8 @@ export function Content() {
       <h2>Exporting audit records</h2>
       <p>
         Admins can request an audit export when they need an offline record or a
-        file for compliance review. Exports are generated asynchronously so large
-        requests do not block normal app usage.
+        file for compliance review. Exports are generated asynchronously so
+        large requests do not block normal app usage.
       </p>
       <p>The export job moves through these statuses:</p>
       <ul>
@@ -95,12 +95,12 @@ export function Content() {
       <h2>Access control</h2>
       <p>
         The audit log is admin-only. Owners and admins can review records and
-        request exports. Members cannot access the page, run filters, or download
-        export files.
+        request exports. Members cannot access the page, run filters, or
+        download export files.
       </p>
       <p>
-        Treat exports with the same care as the in-app audit log. Downloaded JSON
-        files may contain sensitive information about users, organization
+        Treat exports with the same care as the in-app audit log. Downloaded
+        JSON files may contain sensitive information about users, organization
         configuration, and operational changes.
       </p>
 

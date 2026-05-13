@@ -6,7 +6,7 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen">Roadmap</a>
+  <a href="https://github.com/navis-docs/navis-docs/projects?query=is%3Aopen">Roadmap</a>
   ·
   <a href="https://navisdocs.com">Website</a>
   ·
@@ -17,7 +17,7 @@
 
 <div align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0.html"><img alt="License" src="https://img.shields.io/badge/license-AGPLv3-purple"></a>
-  <a href="https://github.com/eliott-herbert-byrnes/navis-docs/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/eliott-herbert-byrnes/navis-docs/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/navis-docs/navis-docs/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/navis-docs/navis-docs/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://discord.gg/c7Tj9x3a"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20us-5865F2?style=flat&logo=discord&logoColor=white"></a>
 </div>
 
@@ -33,7 +33,7 @@
 - 💡 **Idea Pipeline**: Capture improvements from the people who use procedures every day.
 - 📣 **Announcements**: Share targeted updates with specific departments and teams.
 
-See our [roadmap](https://github.com/eliott-herbert-byrnes/navis-docs/projects?query=is%3Aopen) for upcoming features.
+See our [roadmap](https://github.com/navis-docs/navis-docs/projects?query=is%3Aopen) for upcoming features.
 
 ## Screenshot 👁️
 
@@ -60,7 +60,7 @@ The easiest way to self-host Navis Docs is with Docker Compose. The included Com
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/eliott-herbert-byrnes/navis-docs.git
+git clone https://github.com/navis-docs/navis-docs.git
 cd navis-docs
 ```
 
@@ -114,7 +114,7 @@ For the complete self-hosting guide, see [SELF_HOSTING.md](./SELF_HOSTING.md).
 1. Fork or clone the repository:
 
 ```bash
-git clone https://github.com/eliott-herbert-byrnes/navis-docs.git
+git clone https://github.com/navis-docs/navis-docs.git
 cd navis-docs
 ```
 
@@ -160,37 +160,37 @@ Useful development commands:
 
 ## Environment Variables 🔐
 
-| Variable | Description | Required | Example |
-| --- | --- | --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string. pgvector is required. | Yes | `postgresql://postgres:password@localhost:5432/navis_docs` |
-| `DIRECT_URL` | Direct PostgreSQL URL for Prisma migrations when using a pooler. | Sometimes | `postgresql://postgres:password@db.example.supabase.co:5432/postgres` |
-| `STORAGE_PROVIDER` | Object storage provider. Use `s3` or `supabase`. | Yes | `s3` |
-| `S3_ENDPOINT` | S3-compatible endpoint. Leave blank for AWS S3. | For S3 | `https://account.r2.cloudflarestorage.com` |
-| `S3_REGION` | S3 region. | For S3 | `auto` |
-| `S3_ACCESS_KEY_ID` | S3 access key ID. | For S3 | `AKIA...` |
-| `S3_SECRET_ACCESS_KEY` | S3 secret access key. | For S3 | `...` |
-| `S3_PROCEDURE_IMAGES_BUCKET` | Bucket for procedure images. | For S3 | `procedure-images` |
-| `S3_PROCEDURE_IMPORTS_BUCKET` | Bucket for procedure imports. | For S3 | `procedure-imports` |
-| `S3_PROCEDURE_AUDITS_BUCKET` | Bucket for audit exports. | For S3 | `audit-exports` |
-| `SUPABASE_URL` | Supabase project URL for Supabase Storage. | For Supabase Storage | `https://project.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server-side storage access. | For Supabase Storage | `eyJ...` |
-| `REDIS_URL` | Redis connection string. | Yes | `redis://localhost:6379` |
-| `AUTH_SECRET` | Auth.js secret used to sign sessions. | Yes | Random 32+ character string |
-| `NEXTAUTH_URL` | Canonical Auth.js URL for callbacks and emails. | Yes | `http://localhost:3000` |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID. | Optional | `xxx.apps.googleusercontent.com` |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret. | Optional | `xxx` |
-| `RESEND_API_KEY` | Resend API key for OTP, invites, and transactional email. | Yes for email | `re_...` |
-| `EMAIL_FROM` | Sender email address. | Yes for email | `Navis Docs <no-reply@your-domain.com>` |
-| `ANTHROPIC_API_KEY` | Anthropic API key for AI chat responses. | Optional | `sk-ant-...` |
-| `OPENAI_API_KEY` | OpenAI API key for embeddings. | Optional | `sk-...` |
-| `AI_KEY_ENCRYPTION_SECRET` | Secret used to encrypt organization-provided AI keys. | Yes | Random 32+ character string |
-| `STRIPE_SECRET_KEY` | Stripe secret key for billing. | Optional | `sk_test_...` |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret. | Optional | `whsec_...` |
-| `STRIPE_DEFAULT_PRICE_ID` | Default Stripe price ID for hosted billing flows. | Optional | `price_...` |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key exposed to the browser. | Optional | `pk_test_...` |
-| `NEXT_PUBLIC_APP_URL` | Public app URL for links, metadata, and return URLs. | Yes | `https://navisdocs.com` |
-| `NEXT_PUBLIC_DEPLOY_MODE` | Build-time deployment mode. Use `cloud` or `self-hosted`. | Yes | `self-hosted` |
-| `NEXT_PUBLIC_DEMO_URL` | Optional URL embedded in the marketing page demo iframe. | Optional | `https://demo.navisdocs.com` |
+| Variable                             | Description                                                      | Required             | Example                                                               |
+| ------------------------------------ | ---------------------------------------------------------------- | -------------------- | --------------------------------------------------------------------- |
+| `DATABASE_URL`                       | PostgreSQL connection string. pgvector is required.              | Yes                  | `postgresql://postgres:password@localhost:5432/navis_docs`            |
+| `DIRECT_URL`                         | Direct PostgreSQL URL for Prisma migrations when using a pooler. | Sometimes            | `postgresql://postgres:password@db.example.supabase.co:5432/postgres` |
+| `STORAGE_PROVIDER`                   | Object storage provider. Use `s3` or `supabase`.                 | Yes                  | `s3`                                                                  |
+| `S3_ENDPOINT`                        | S3-compatible endpoint. Leave blank for AWS S3.                  | For S3               | `https://account.r2.cloudflarestorage.com`                            |
+| `S3_REGION`                          | S3 region.                                                       | For S3               | `auto`                                                                |
+| `S3_ACCESS_KEY_ID`                   | S3 access key ID.                                                | For S3               | `AKIA...`                                                             |
+| `S3_SECRET_ACCESS_KEY`               | S3 secret access key.                                            | For S3               | `...`                                                                 |
+| `S3_PROCEDURE_IMAGES_BUCKET`         | Bucket for procedure images.                                     | For S3               | `procedure-images`                                                    |
+| `S3_PROCEDURE_IMPORTS_BUCKET`        | Bucket for procedure imports.                                    | For S3               | `procedure-imports`                                                   |
+| `S3_PROCEDURE_AUDITS_BUCKET`         | Bucket for audit exports.                                        | For S3               | `audit-exports`                                                       |
+| `SUPABASE_URL`                       | Supabase project URL for Supabase Storage.                       | For Supabase Storage | `https://project.supabase.co`                                         |
+| `SUPABASE_SERVICE_ROLE_KEY`          | Supabase service role key for server-side storage access.        | For Supabase Storage | `eyJ...`                                                              |
+| `REDIS_URL`                          | Redis connection string.                                         | Yes                  | `redis://localhost:6379`                                              |
+| `AUTH_SECRET`                        | Auth.js secret used to sign sessions.                            | Yes                  | Random 32+ character string                                           |
+| `NEXTAUTH_URL`                       | Canonical Auth.js URL for callbacks and emails.                  | Yes                  | `http://localhost:3000`                                               |
+| `GOOGLE_CLIENT_ID`                   | Google OAuth client ID.                                          | Optional             | `xxx.apps.googleusercontent.com`                                      |
+| `GOOGLE_CLIENT_SECRET`               | Google OAuth client secret.                                      | Optional             | `xxx`                                                                 |
+| `RESEND_API_KEY`                     | Resend API key for OTP, invites, and transactional email.        | Yes for email        | `re_...`                                                              |
+| `EMAIL_FROM`                         | Sender email address.                                            | Yes for email        | `Navis Docs <no-reply@your-domain.com>`                               |
+| `ANTHROPIC_API_KEY`                  | Anthropic API key for AI chat responses.                         | Optional             | `sk-ant-...`                                                          |
+| `OPENAI_API_KEY`                     | OpenAI API key for embeddings.                                   | Optional             | `sk-...`                                                              |
+| `AI_KEY_ENCRYPTION_SECRET`           | Secret used to encrypt organization-provided AI keys.            | Yes                  | Random 32+ character string                                           |
+| `STRIPE_SECRET_KEY`                  | Stripe secret key for billing.                                   | Optional             | `sk_test_...`                                                         |
+| `STRIPE_WEBHOOK_SECRET`              | Stripe webhook signing secret.                                   | Optional             | `whsec_...`                                                           |
+| `STRIPE_DEFAULT_PRICE_ID`            | Default Stripe price ID for hosted billing flows.                | Optional             | `price_...`                                                           |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key exposed to the browser.                   | Optional             | `pk_test_...`                                                         |
+| `NEXT_PUBLIC_APP_URL`                | Public app URL for links, metadata, and return URLs.             | Yes                  | `https://navisdocs.com`                                               |
+| `NEXT_PUBLIC_DEPLOY_MODE`            | Build-time deployment mode. Use `cloud` or `self-hosted`.        | Yes                  | `self-hosted`                                                         |
+| `NEXT_PUBLIC_DEMO_URL`               | Optional URL embedded in the marketing page demo iframe.         | Optional             | `https://demo.navisdocs.com`                                          |
 
 See [.env.example](./.env.example) for the complete list of supported environment variables and comments.
 
@@ -200,8 +200,8 @@ We welcome contributions! Please read our [contribution guidelines](CONTRIBUTING
 
 ## Contributors 👥
 
-<a href="https://github.com/eliott-herbert-byrnes/navis-docs/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eliott-herbert-byrnes/navis-docs" />
+<a href="https://github.com/navis-docs/navis-docs/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=navis-docs/navis-docs" />
 </a>
 
 ## License 📝

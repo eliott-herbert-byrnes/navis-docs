@@ -3,7 +3,10 @@ import { getSessionContext, getUserById } from "@/lib/auth";
 import { Suspense } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { NewsCreateButton } from "@/features/news/components/news-create-button";
-import { NewsListSkeleton, NewsPostList } from "@/features/news/components/news-list";
+import {
+  NewsListSkeleton,
+  NewsPostList,
+} from "@/features/news/components/news-list";
 import { serverTrpc } from "@/server/trpc/server";
 
 export default async function NewsPage({

@@ -11,10 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = metadataBase();
   const lastModified = new Date();
   const allPaths = [
-    ...new Set([
-      ...getMarketingSitemapPaths(),
-      ...getDocsSitemapPaths(),
-    ]),
+    ...new Set([...getMarketingSitemapPaths(), ...getDocsSitemapPaths()]),
   ];
 
   return allPaths.map((path) => ({

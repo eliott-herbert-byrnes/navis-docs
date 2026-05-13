@@ -3,7 +3,6 @@ name: stripe-projects
 description: >-
   Use when setting up a new app or local repo with Stripe Projects, provisioning
   a software stack, or bootstrapping the Projects CLI from a coding agent.
-
 ---
 
 Stripe Projects is a CLI for provisioning software stacks.

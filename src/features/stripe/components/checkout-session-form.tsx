@@ -27,8 +27,7 @@ const CheckoutSessionForm = ({
   );
 
   const normalizedActivePlan = (activePlan ?? "").toLowerCase();
-  const isActivePlan =
-    activeSubscription && normalizedActivePlan === "pro";
+  const isActivePlan = activeSubscription && normalizedActivePlan === "pro";
 
   return (
     <Form

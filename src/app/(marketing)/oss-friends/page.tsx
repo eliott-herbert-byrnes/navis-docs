@@ -25,8 +25,8 @@ export default function OssFriendsPage() {
       <div className="space-y-2">
         <h1 className="font-serif text-4xl">OSS friends</h1>
         <p className="text-muted-foreground">
-          We&apos;re proud to be part of the open source community. Here are some
-          amazing open source projects we love and support.
+          We&apos;re proud to be part of the open source community. Here are
+          some amazing open source projects we love and support.
         </p>
       </div>
       <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

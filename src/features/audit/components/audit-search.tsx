@@ -109,7 +109,14 @@ export const AuditSearch = () => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [search, pathname, router, searchParams.toString(), entityType, dateRange]);
+  }, [
+    search,
+    pathname,
+    router,
+    searchParams.toString(),
+    entityType,
+    dateRange,
+  ]);
 
   return (
     <div className="relative w-full flex flex-col sm:flex-row sm:items-center gap-3 justify-between">

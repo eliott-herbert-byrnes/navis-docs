@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import * as React from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 
-import { cn } from "@/lib/utils"
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { cn } from "@/lib/utils";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 function Accordion({
   className,
@@ -15,11 +15,11 @@ function Accordion({
       data-slot="accordion"
       className={cn(
         "flex w-full flex-col overflow-hidden rounded-md",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AccordionItem({
@@ -31,11 +31,11 @@ function AccordionItem({
       data-slot="accordion-item"
       className={cn(
         "not-last:border-b data-[state=open]:bg-muted/50",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AccordionTrigger({
@@ -49,16 +49,22 @@ function AccordionTrigger({
         data-slot="accordion-trigger"
         className={cn(
           "group/accordion-trigger relative flex flex-1 items-start justify-between gap-4 border border-transparent p-0 py-1 text-left text-base/relaxed font-medium transition-[color,box-shadow] duration-200 outline-none disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-5 **:data-[slot=accordion-trigger-icon]:shrink-0 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
-          className
+          className,
         )}
         {...props}
       >
         {children}
-        <ChevronDownIcon data-slot="accordion-trigger-icon" className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
-        <ChevronUpIcon data-slot="accordion-trigger-icon" className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />
+        <ChevronDownIcon
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+        />
+        <ChevronUpIcon
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+        />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
-  )
+  );
 }
 
 function AccordionContent({
@@ -75,13 +81,13 @@ function AccordionContent({
       <div
         className={cn(
           "pb-4 pt-1 text-base/relaxed transition-[color] duration-200 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-3",
-          className
+          className,
         )}
       >
         {children}
       </div>
     </AccordionPrimitive.Content>
-  )
+  );
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };

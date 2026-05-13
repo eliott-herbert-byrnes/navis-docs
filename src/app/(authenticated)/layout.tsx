@@ -8,9 +8,7 @@ export default function AuthenticatedLayout({
 }) {
   return (
     <Providers>
-      <AuthenticatedLayoutContent>
-        {children}
-      </AuthenticatedLayoutContent>
+      <AuthenticatedLayoutContent>{children}</AuthenticatedLayoutContent>
     </Providers>
-  )
+  );
 }

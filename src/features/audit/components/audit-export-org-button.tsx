@@ -9,7 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AccessButton, AccessDialogTrigger } from "@/components/ui/access-button";
+import {
+  AccessButton,
+  AccessDialogTrigger,
+} from "@/components/ui/access-button";
 import type { AuditEntityType } from "@/features/audit/utils/audit-export-filters";
 import { trpc } from "@/trpc/client";
 import { FileJson, Loader2 } from "lucide-react";
@@ -36,9 +39,7 @@ export function AuditExportOrgButton({ filters }: AuditExportOrgButtonProps) {
     onSuccess: (data) => {
       setJobId(data.jobId);
       if (data.alreadyRunning) {
-        toast.message(
-          "An export is already in progress; showing its status…",
-        );
+        toast.message("An export is already in progress; showing its status…");
       }
     },
     onError: (e) => {
@@ -71,11 +72,7 @@ export function AuditExportOrgButton({ filters }: AuditExportOrgButtonProps) {
       return;
     }
 
-    if (
-      status === "READY" &&
-      downloadUrl &&
-      !downloadTriggeredRef.current
-    ) {
+    if (status === "READY" && downloadUrl && !downloadTriggeredRef.current) {
       downloadTriggeredRef.current = true;
       window.location.href = downloadUrl;
       ack.mutate({ jobId });

@@ -34,8 +34,8 @@ export const getSessionContext = cache(async () => {
     return getDemoSessionContext();
   }
 
-  const session = await auth()
-  if (!session?.user?.id || !session.user.email) return null
+  const session = await auth();
+  if (!session?.user?.id || !session.user.email) return null;
 
   const membership = await prisma.orgMembership.findFirst({
     where: { userId: session.user.id },

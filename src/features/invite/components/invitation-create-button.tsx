@@ -64,7 +64,10 @@ const InvitationCreateButton = () => {
               className="w-[75px]"
               type="button"
               variant="outline"
-              onClick={() => { setOpen(false); setEmail(""); }}
+              onClick={() => {
+                setOpen(false);
+                setEmail("");
+              }}
               disabled={isPending}
             >
               Cancel

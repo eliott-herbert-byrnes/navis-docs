@@ -145,7 +145,6 @@ function TableCellViewer({ item }: { item: Idea }) {
                 })}
               </p>
             </div>
-
           </div>
           <SheetFooter>
             {item.status === "NEW" && (
@@ -478,7 +477,11 @@ export function IdeaList({ data: initialData }: { data: Idea[] }) {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger size="sm" className="w-20 shadow-none" id="rows-per-page">
+              <SelectTrigger
+                size="sm"
+                className="w-20 shadow-none"
+                id="rows-per-page"
+              >
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
                 />

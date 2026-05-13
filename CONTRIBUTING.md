@@ -4,8 +4,8 @@ Thank you for your interest in contributing to Navis Docs! This document provide
 
 ## Getting Started
 
-1. Fork the repository.
-2. Clone your fork: `git clone https://github.com/YOUR-USERNAME/navis-docs.git`
+1. Fork the repository [`navis-docs/navis-docs`](https://github.com/navis-docs/navis-docs).
+2. Clone your fork after replacing `YOUR-USERNAME`: `git clone https://github.com/YOUR-USERNAME/navis-docs.git`. To clone upstream only, use `git clone https://github.com/navis-docs/navis-docs.git`.
 3. Create a new branch: `git checkout -b feat/your-feature-name`
 4. Install dependencies: `pnpm install`
 5. Copy `.env.example` to `.env` and configure your environment variables.

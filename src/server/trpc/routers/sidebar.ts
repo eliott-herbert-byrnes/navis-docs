@@ -1,6 +1,10 @@
 import { router, orgProcedure } from "@/server/trpc/init";
 import { z } from "zod";
-import { OrgMembershipRole, ProcedureStatus, RolloutRoleFilter } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  ProcedureStatus,
+  RolloutRoleFilter,
+} from "@prisma/client";
 
 export const sidebarRouter = router({
   getSidebarData: orgProcedure
@@ -89,7 +93,11 @@ export const sidebarRouter = router({
                 notifyRoleFilter: true,
               },
             })
-          : ([] as { procedureId: string; versionId: string; notifyRoleFilter: RolloutRoleFilter }[]),
+          : ([] as {
+              procedureId: string;
+              versionId: string;
+              notifyRoleFilter: RolloutRoleFilter;
+            }[]),
         postIdsToCheck.length > 0
           ? ctx.db.userNewsRead.findMany({
               where: { userId, newsPostId: { in: postIdsToCheck } },

@@ -76,10 +76,7 @@ export const storage = new Proxy({} as StorageAdapter, {
     const value = adapter[prop as keyof StorageAdapter];
     if (typeof value === "function") {
       return (
-        value as (
-          this: StorageAdapter,
-          ...args: unknown[]
-        ) => unknown
+        value as (this: StorageAdapter, ...args: unknown[]) => unknown
       ).bind(adapter);
     }
     return value;

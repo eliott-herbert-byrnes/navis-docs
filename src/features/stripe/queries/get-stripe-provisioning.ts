@@ -79,10 +79,8 @@ export const getStripeProvisionByOrg = async (
     numFromEnt(ent, ["allowedDepartments", "maxDepartments"]) ??
     defaults[planKey].departments;
   const allowedTeamsPerDepartment =
-    numFromEnt(ent, [
-      "allowedTeamsPerDepartment",
-      "maxTeamsPerDepartment",
-    ]) ?? defaults[planKey].teamsPerDepartment;
+    numFromEnt(ent, ["allowedTeamsPerDepartment", "maxTeamsPerDepartment"]) ??
+    defaults[planKey].teamsPerDepartment;
 
   return {
     allowedDepartments,

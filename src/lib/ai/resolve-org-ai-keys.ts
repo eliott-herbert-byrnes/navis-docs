@@ -51,7 +51,9 @@ export async function resolveOrgAiKeys(
     };
   }
 
-  const anthropicKey = org.anthropicApiKey ? decrypt(org.anthropicApiKey) : null;
+  const anthropicKey = org.anthropicApiKey
+    ? decrypt(org.anthropicApiKey)
+    : null;
   const openAiKey = org.openAiApiKey ? decrypt(org.openAiApiKey) : null;
 
   if (isSelfHosted()) {

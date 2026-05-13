@@ -49,10 +49,12 @@ export function AIChatDrawer({
   const { departmentId, teamId } = useProcedureRouteContext();
   const { allowed: canUseAi } = useAccessGate(false);
   const { isAdmin } = useAuthContext();
-  const { data: aiAvailability } =
-    trpc.organization.getAiAvailability.useQuery(undefined, {
+  const { data: aiAvailability } = trpc.organization.getAiAvailability.useQuery(
+    undefined,
+    {
       staleTime: 1000 * 60 * 5,
-    });
+    },
+  );
   const keysConfigured = aiAvailability?.keysConfigured ?? true;
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
@@ -89,8 +91,13 @@ export function AIChatDrawer({
       const lastAssistantSources =
         [...messages]
           .reverse()
-          .find((m) => m.role === "assistant" && m.sources && m.sources.length > 0)
-          ?.sources?.map((s) => ({ procedureId: s.procedureId, title: s.title })) ?? [];
+          .find(
+            (m) => m.role === "assistant" && m.sources && m.sources.length > 0,
+          )
+          ?.sources?.map((s) => ({
+            procedureId: s.procedureId,
+            title: s.title,
+          })) ?? [];
 
       const response = await fetch("/api/ai/chat", {
         method: "POST",
@@ -204,7 +211,9 @@ export function AIChatDrawer({
           className="w-full sm:w-[345px] p-0 flex flex-col outline-none focus:outline-none shadow-none rounded-none"
         >
           <SheetHeader className="flex flex-row pl-4 border-b">
-            <SheetTitle><span className="">AI Assistant</span></SheetTitle>
+            <SheetTitle>
+              <span className="">AI Assistant</span>
+            </SheetTitle>
           </SheetHeader>
 
           {!canUseAi ? (
@@ -250,10 +259,11 @@ export function AIChatDrawer({
           ) : null}
 
           {/* Messages */}
-          <ScrollArea className="flex-1 overflow-y-auto relative" ref={scrollRef}>
-            {messages.length === 0 ? (
-              null
-            ) : (
+          <ScrollArea
+            className="flex-1 overflow-y-auto relative"
+            ref={scrollRef}
+          >
+            {messages.length === 0 ? null : (
               <div className="flex flex-col">
                 {messages.map((message, i) => (
                   <div key={i}>
@@ -278,13 +288,13 @@ export function AIChatDrawer({
             )}
           </ScrollArea>
 
-
           {/* Input */}
           <form onSubmit={handleSubmit} className="pl-4 pb-4 pr-2">
             <div className="py-4 mr-10">
               <div className="bottom-0">
                 <p className="text-sm text-muted-foreground">
-                  The assistant is AI and can make mistakes. Double-check and clarify responses.
+                  The assistant is AI and can make mistakes. Double-check and
+                  clarify responses.
                 </p>
               </div>
             </div>

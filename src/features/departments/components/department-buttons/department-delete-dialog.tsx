@@ -40,8 +40,8 @@ const DepartmentDeleteDialog = ({
           disabled={isPending}
         >
           <div className="flex flex-row gap-2 items-center">
-          <TrashIcon className="w-4 h-4" />
-          Delete
+            <TrashIcon className="w-4 h-4" />
+            Delete
           </div>
         </Button>
       </AccessDialogTrigger>
@@ -77,7 +77,7 @@ const DepartmentDeleteDialog = ({
           </Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog >
+    </Dialog>
   );
 };
 

@@ -74,7 +74,10 @@ export function AppSidebarClient({
                     <SidebarMenuItem
                       key={item.title}
                       className={cn(
-                        "isAdmin" in item && item.isAdmin && !isAdmin && "hidden",
+                        "isAdmin" in item &&
+                          item.isAdmin &&
+                          !isAdmin &&
+                          "hidden",
                       )}
                     >
                       <SidebarMenuButton
@@ -111,7 +114,10 @@ export function AppSidebarClient({
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton asChild className="shadow-none border-none bg-brand hover:bg-brand/80 text-black hover:text-black">
+                <SidebarMenuButton
+                  asChild
+                  className="shadow-none border-none bg-brand hover:bg-brand/80 text-black hover:text-black"
+                >
                   <div className="flex size-2 shrink-0 items-center justify-center">
                     <User2 />
                   </div>
@@ -130,7 +136,10 @@ export function AppSidebarClient({
                     variant="ghost"
                     className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
-                    <Link href="mailto:hello@navisdocs.com" className="text-sm font-normal cursor-default ml-2">
+                    <Link
+                      href="mailto:hello@navisdocs.com"
+                      className="text-sm font-normal cursor-default ml-2"
+                    >
                       Support
                     </Link>
                   </Button>
@@ -140,14 +149,16 @@ export function AppSidebarClient({
                     variant="ghost"
                     className="flex flex-row justify-start p-2 w-full rounded-none"
                   >
-                    <Link href="/docs" target="_blank" className="text-sm font-normal cursor-default ml-2">
+                    <Link
+                      href="/docs"
+                      target="_blank"
+                      className="text-sm font-normal cursor-default ml-2"
+                    >
                       Documentation
                     </Link>
                   </Button>
                 </DropdownMenuItem>
-                {isDemo ? (
-                  null
-                ) : (
+                {isDemo ? null : (
                   <DropdownMenuItem asChild>
                     <Button
                       variant="ghost"
@@ -167,4 +178,3 @@ export function AppSidebarClient({
     </Sidebar>
   );
 }
-

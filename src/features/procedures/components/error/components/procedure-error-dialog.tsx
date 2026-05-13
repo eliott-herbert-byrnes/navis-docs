@@ -57,7 +57,10 @@ export const ProcedureErrorDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <AccessDialogTrigger>
-          <Button variant="ghost" className="m-0 p-0 justify-start rounded-none">
+          <Button
+            variant="ghost"
+            className="m-0 p-0 justify-start rounded-none"
+          >
             <Flag className="w-4 h-4 text-muted-foreground" />
             <span className="font-normal ml-1">Report</span>
           </Button>

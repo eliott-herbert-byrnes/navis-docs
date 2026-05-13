@@ -5,7 +5,11 @@ import { getSessionUser } from "@/lib/auth";
 import { isSelfHosted } from "@/lib/deploy-mode";
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
-import { OrgMembershipRole, OrgPlan, StripeSubscriptionStatus } from "@prisma/client";
+import {
+  OrgMembershipRole,
+  OrgPlan,
+  StripeSubscriptionStatus,
+} from "@prisma/client";
 import { redirect } from "next/navigation";
 
 export const createCheckoutSession = async (

@@ -29,10 +29,7 @@ export function encrypt(text: string): string {
   const key = getAiEncryptionKey();
   const iv = randomBytes(IV_LENGTH);
   const cipher = createCipheriv(ALGO, key, iv);
-  const enc = Buffer.concat([
-    cipher.update(text, "utf8"),
-    cipher.final(),
-  ]);
+  const enc = Buffer.concat([cipher.update(text, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
   const combined = Buffer.concat([iv, tag, enc]);
   return `${ENC_PREFIX}${combined.toString("base64")}`;

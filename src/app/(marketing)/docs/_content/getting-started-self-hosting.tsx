@@ -35,7 +35,7 @@ export function Content() {
       <h3>1. Clone the repository</h3>
       <p>Clone Navis Docs onto the server where you will run Docker Compose:</p>
       <pre>
-        <code>{`git clone https://github.com/eliott-herbert-byrnes/navis-docs.git
+        <code>{`git clone https://github.com/navis-docs/navis-docs.git
 cd navis-docs`}</code>
       </pre>
 

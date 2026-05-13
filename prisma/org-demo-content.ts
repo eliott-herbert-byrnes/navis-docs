@@ -1336,5 +1336,4 @@ export async function applyOrgDemoContent(
       );
     }
   }
-
 }

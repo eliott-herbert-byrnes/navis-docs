@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/contexts/auth-context";
 import {
@@ -152,4 +156,3 @@ export function DepartmentIconSelector({
     </Popover>
   );
 }
-

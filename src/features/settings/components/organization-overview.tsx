@@ -43,9 +43,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
           <div className="grid gap-4">
             <div className="flex flex-col gap-1">
               <span className="font-semibold">Rename</span>
-              <span className="text-sm">
-                Rename the organization
-              </span>
+              <span className="text-sm">Rename the organization</span>
             </div>
             <Input
               name="orgName"
@@ -112,8 +110,8 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
             <div className="flex flex-col gap-1">
               <span className="font-semibold">Delete Organization</span>
               <span className="text-sm">
-                Delete the organization and all its data. This action will
-                also automatically cancel any active subscriptions.
+                Delete the organization and all its data. This action will also
+                automatically cancel any active subscriptions.
               </span>
             </div>
             <OrganizationDeleteButton />

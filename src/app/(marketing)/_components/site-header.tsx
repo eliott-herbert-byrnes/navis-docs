@@ -18,18 +18,10 @@ export function SiteHeader() {
           href="/"
           className="flex shrink-0 items-center gap-2 rounded-sm text-foreground outline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <Image
-            src="/navis-docs-logo-svg.svg"
-            width={30}
-            height={30}
-            alt=""
-          />
+          <Image src="/navis-docs-logo-svg.svg" width={30} height={30} alt="" />
         </Link>
 
-        <nav
-          aria-label="Primary"
-          className="hidden items-center gap-2 md:flex"
-        >
+        <nav aria-label="Primary" className="hidden items-center gap-2 md:flex">
           {primaryNav.map((item) => (
             <Link
               key={item.href}

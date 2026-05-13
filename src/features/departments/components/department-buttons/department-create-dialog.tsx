@@ -107,35 +107,35 @@ const DepartmentDialog = ({
               </Button>
             </CollapsibleTrigger>
           </div>
+          <Input
+            id="teamName1"
+            name="teamName1"
+            type="text"
+            placeholder="Team Name"
+            required
+            value={teamName1}
+            onChange={(e) => setTeamName1(e.target.value)}
+            className="shadow-none border"
+          />
+          <CollapsibleContent className="flex flex-col gap-2">
             <Input
-              id="teamName1"
-              name="teamName1"
+              id="teamName2"
+              name="teamName2"
               type="text"
               placeholder="Team Name"
-              required
-              value={teamName1}
-              onChange={(e) => setTeamName1(e.target.value)}
+              value={teamName2}
+              onChange={(e) => setTeamName2(e.target.value)}
               className="shadow-none border"
             />
-          <CollapsibleContent className="flex flex-col gap-2">
-              <Input
-                id="teamName2"
-                name="teamName2"
-                type="text"
-                placeholder="Team Name"
-                value={teamName2}
-                onChange={(e) => setTeamName2(e.target.value)}
-                className="shadow-none border"
-              />
-              <Input
-                id="teamName3"
-                name="teamName3"
-                type="text"
-                placeholder="Team Name"
-                value={teamName3}
-                onChange={(e) => setTeamName3(e.target.value)}
-                className="shadow-none border"
-              />
+            <Input
+              id="teamName3"
+              name="teamName3"
+              type="text"
+              placeholder="Team Name"
+              value={teamName3}
+              onChange={(e) => setTeamName3(e.target.value)}
+              className="shadow-none border"
+            />
           </CollapsibleContent>
         </Collapsible>
         <DialogFooter className="flex flex-row gap-2 mt-4">

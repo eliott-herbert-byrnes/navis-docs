@@ -23,7 +23,9 @@ export function AcceptInviteClient() {
 
     if (status === "unauthenticated") {
       const callbackUrl = `/auth/accept-invite?token=${token}`;
-      router.push(`/auth/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+      router.push(
+        `/auth/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`,
+      );
       return;
     }
 
@@ -34,7 +36,12 @@ export function AcceptInviteClient() {
   return (
     <div className="flex flex-col gap-3 items-center my-auto mx-auto w-full max-w-[350px] pt-50">
       <div className="flex flex-row gap-2 items-center">
-        <Image src="/navis-docs-logo-svg.svg" width={45} height={45} alt="Navis Docs logo" />
+        <Image
+          src="/navis-docs-logo-svg.svg"
+          width={45}
+          height={45}
+          alt="Navis Docs logo"
+        />
         <h2 className="text-4xl font-serif">Navis Docs</h2>
       </div>
       <CardCompact

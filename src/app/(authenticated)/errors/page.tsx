@@ -29,7 +29,6 @@ const ErrorsPage = async ({ searchParams }: ErrorsPageProps) => {
   return (
     <>
       <PageContainer>
-
         <Heading
           title="Error Reports"
           description="View and manage error reports for procedures"

@@ -3,7 +3,11 @@ import { ProcedureList } from "@/features/procedure-base/components/procedure-li
 import { ListSkeleton } from "@/components/ui/list-skeleton";
 import { ExportProcedureOrgDataButton } from "@/features/settings/components/export-procedure-org-data-button";
 import { getSessionContext } from "@/lib/auth";
-import { onboardingPath, dashboardPath, procedureBaseCreatePath } from "@/app/paths";
+import {
+  onboardingPath,
+  dashboardPath,
+  procedureBaseCreatePath,
+} from "@/app/paths";
 import { redirect } from "next/navigation";
 import { serverTrpc } from "@/server/trpc/server";
 import { Suspense } from "react";
@@ -11,7 +15,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, PlusIcon } from "lucide-react";
 import { PageContainer } from "@/components/ui/page-container";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const ProcedureBasePage = async () => {
   const ctx = await getSessionContext();
@@ -27,7 +36,6 @@ const ProcedureBasePage = async () => {
   });
   const data = proceduresResult;
 
-
   const createProcedureButton = (
     <Button variant="ghost" className="flex justify-start p-0 rounded-none">
       <Link href={procedureBaseCreatePath()} className="ml-1 cursor-default">
@@ -37,7 +45,7 @@ const ProcedureBasePage = async () => {
         </div>
       </Link>
     </Button>
-  )
+  );
 
   const dropdownButtons = (
     <DropdownMenu>
@@ -47,33 +55,31 @@ const ProcedureBasePage = async () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col p-0 m-0 gap-1">
-        <DropdownMenuItem asChild>
-          {createProcedureButton}
-        </DropdownMenuItem>
+        <DropdownMenuItem asChild>{createProcedureButton}</DropdownMenuItem>
         <DropdownMenuItem asChild>
           <ExportProcedureOrgDataButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 
   return (
-      <PageContainer>
-        <Heading
-          title="Procedures"
-          description="View and manage procedures for your organization"
-          actions={
-            <div className="flex flex-col gap-2">
-              {/* Disabled for MVP */}
-              {/* <ProcedureImportButton /> */}
-              {dropdownButtons}
-            </div>
-          }
-        />
-        <Suspense fallback={<ListSkeleton />}>
-          <ProcedureList initialData={data} />
-        </Suspense>
-      </PageContainer>
+    <PageContainer>
+      <Heading
+        title="Procedures"
+        description="View and manage procedures for your organization"
+        actions={
+          <div className="flex flex-col gap-2">
+            {/* Disabled for MVP */}
+            {/* <ProcedureImportButton /> */}
+            {dropdownButtons}
+          </div>
+        }
+      />
+      <Suspense fallback={<ListSkeleton />}>
+        <ProcedureList initialData={data} />
+      </Suspense>
+    </PageContainer>
   );
 };
 

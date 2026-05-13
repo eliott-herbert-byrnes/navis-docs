@@ -46,7 +46,10 @@ const UserDeleteDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <AccessDialogTrigger adminOnly>
-          <Button variant="ghost" className="w-full flex justify-start gap-2 rounded-none">
+          <Button
+            variant="ghost"
+            className="w-full flex justify-start gap-2 rounded-none"
+          >
             <TrashIcon className="w-4 h-4 text-muted-foreground" />
             <span className="font-normal">Delete</span>
           </Button>

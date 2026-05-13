@@ -8,11 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  EyeIcon,
-  LucideLoaderCircle,
-  SquareArrowUpRight,
-} from "lucide-react";
+import { EyeIcon, LucideLoaderCircle, SquareArrowUpRight } from "lucide-react";
 import { TeamDropdown } from "./team-dropdown";
 import { DepartmentIconSelector } from "./department-icon-selector";
 import {

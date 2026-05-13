@@ -62,8 +62,7 @@ export async function createContext(opts?: FetchCreateContextFnOptions) {
   // Without this fallback, the demo host check fails on the server-side
   // caller path and demo pages that fetch via `serverTrpc()` are treated as
   // unauthenticated.
-  const host =
-    opts?.req.headers.get("host") ?? (await headers()).get("host");
+  const host = opts?.req.headers.get("host") ?? (await headers()).get("host");
   if (isDemoHost(host)) {
     const demoCtx = await createDemoContext();
     if (demoCtx) return demoCtx;

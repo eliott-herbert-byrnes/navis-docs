@@ -136,23 +136,26 @@ export const invitesRouter = router({
       });
 
       await createAuditLog({
-          orgId: ctx.org.id,
-          actorId: ctx.user?.id ?? "",
-          action: "INVITATION_CREATED",
-          entityType: "INVITATION",
-          entityId: invitation.email,
-          afterJSON: {
-              email: invitation.email,
-              role: invitation.role,
-              expiresAt: invitation.expiresAt.toISOString(),
-          },
+        orgId: ctx.org.id,
+        actorId: ctx.user?.id ?? "",
+        action: "INVITATION_CREATED",
+        entityType: "INVITATION",
+        entityId: invitation.email,
+        afterJSON: {
+          email: invitation.email,
+          role: invitation.role,
+          expiresAt: invitation.expiresAt.toISOString(),
+        },
       });
 
       const link = `${process.env.NEXTAUTH_URL}/auth/accept-invite?token=${rawToken}`;
 
       const resend = getResend();
       const html = await render(
-        React.createElement(InviteEmail, { orgName: ctx.org.name, inviteUrl: link }),
+        React.createElement(InviteEmail, {
+          orgName: ctx.org.name,
+          inviteUrl: link,
+        }),
       );
       await resend.emails.send({
         from: getEmailFrom(),
@@ -203,16 +206,16 @@ export const invitesRouter = router({
       });
 
       await createAuditLog({
-          orgId: ctx?.org?.id ?? "",
-          actorId: ctx.user?.id ?? "",
-          action: "INVITATION_DELETED",
-          entityType: "INVITATION",
-          entityId: input.email,
-          beforeJSON: {
-              email: invite.email,
-              role: invite.role,
-              status: invite.status,
-          },
+        orgId: ctx?.org?.id ?? "",
+        actorId: ctx.user?.id ?? "",
+        action: "INVITATION_DELETED",
+        entityType: "INVITATION",
+        entityId: input.email,
+        beforeJSON: {
+          email: invite.email,
+          role: invite.role,
+          status: invite.status,
+        },
       });
 
       return {
@@ -282,9 +285,7 @@ export const invitesRouter = router({
       }
 
       // After finding invite, verify mailbox matches (canonical; dots/+tags significant)
-      if (
-        invite.canonicalEmail !== canonicalEmail(ctx.user!.email!)
-      ) {
+      if (invite.canonicalEmail !== canonicalEmail(ctx.user!.email!)) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message:
@@ -350,21 +351,20 @@ export const invitesRouter = router({
         });
       }
 
-      revalidateTag(`org-dashboard-${invite.orgId}`, 'max');
+      revalidateTag(`org-dashboard-${invite.orgId}`, "max");
 
       await createAuditLog({
-          orgId: invite.orgId,
-          actorId: ctx.user?.id ?? "",
-          action: "INVITATION_ACCEPTED",
-          entityType: "INVITATION",
-          entityId: invite.email,
-          afterJSON: {
-              email: invite.email,
-              userId: ctx.user?.id,
-              role: memberRole,
-          },
+        orgId: invite.orgId,
+        actorId: ctx.user?.id ?? "",
+        action: "INVITATION_ACCEPTED",
+        entityType: "INVITATION",
+        entityId: invite.email,
+        afterJSON: {
+          email: invite.email,
+          userId: ctx.user?.id,
+          role: memberRole,
+        },
       });
-
 
       return {
         data: { orgId: invite.orgId },

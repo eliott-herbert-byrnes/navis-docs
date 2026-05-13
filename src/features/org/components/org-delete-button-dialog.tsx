@@ -23,7 +23,10 @@ const OrganizationDeleteButton = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive" className="flex justify-start gap-4 max-w-[250px]">
+        <Button
+          variant="destructive"
+          className="flex justify-start gap-4 max-w-[250px]"
+        >
           <Trash className="w-4 h-4" />
           <span className="font-semibold">Delete Organization</span>
         </Button>

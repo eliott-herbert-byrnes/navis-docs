@@ -47,7 +47,11 @@ const ProcedureDeleteButtonDialog = ({
         <AccessDialogTrigger adminOnly>
           <Button variant="destructive" size="sm" disabled={isPending}>
             <TrashIcon className="h-4 w-4 mr-2" />
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete"}
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </AccessDialogTrigger>
       ) : null}
@@ -81,7 +85,6 @@ const ProcedureDeleteButtonDialog = ({
           >
             Cancel
           </Button>
-
         </DialogFooter>
       </DialogContent>
     </Dialog>

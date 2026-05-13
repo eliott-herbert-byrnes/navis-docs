@@ -111,10 +111,7 @@ export function ProcedureActionButtons({
               className="shadow-none border"
               onClick={onPublish}
               disabled={
-                isSaving ||
-                isCancelling ||
-                isPublishing ||
-                hasUnsavedChanges
+                isSaving || isCancelling || isPublishing || hasUnsavedChanges
               }
             >
               {isPublishing ? (

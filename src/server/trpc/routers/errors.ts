@@ -106,7 +106,7 @@ export const errorsRouter = router({
         },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
       return {
         data: errorReport,
@@ -168,9 +168,8 @@ export const errorsRouter = router({
         data: { status: input.status as ErrorReportStatus },
       });
 
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
-      
       const statusLabel =
         input.status === "RESOLVED"
           ? "completed"
@@ -237,7 +236,7 @@ export const errorsRouter = router({
         where: { id: input.errorId },
       });
 
-      revalidateTag(`org-dashboard-${ctx.org!.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx.org!.id}`, "max");
 
       return {
         data: { errorId: input.errorId },
@@ -286,7 +285,7 @@ export const errorsRouter = router({
         where: { id: { in: idsToDelete } },
       });
 
-      revalidateTag(`org-dashboard-${ctx?.org?.id}`, 'max');
+      revalidateTag(`org-dashboard-${ctx?.org?.id}`, "max");
 
       return {
         data: { deletedCount: errors.length },

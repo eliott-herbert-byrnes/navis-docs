@@ -10,7 +10,9 @@ export type DashboardStats = {
   newIdeas: number;
 };
 
-export async function getDashboardStats(orgId: string): Promise<DashboardStats> {
+export async function getDashboardStats(
+  orgId: string,
+): Promise<DashboardStats> {
   "use cache";
   applyOrgDashboardCachePolicy(orgId);
 

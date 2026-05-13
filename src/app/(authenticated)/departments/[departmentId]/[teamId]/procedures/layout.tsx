@@ -19,15 +19,14 @@ export default async function ProcedureLayout({
   const initialSidebarData = await trpc.sidebar.getSidebarData({ teamId });
 
   return (
-      <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
-        <div className="sm:grid sm:col-span-24 sm:grid-cols-24">
-            <ProcedureSidebar
-              isAdmin={isAdmin}
-              initialData={initialSidebarData}
-            />
+    <ProcedureRouteProvider departmentId={departmentId} teamId={teamId}>
+      <div className="sm:grid sm:col-span-24 sm:grid-cols-24">
+        <ProcedureSidebar isAdmin={isAdmin} initialData={initialSidebarData} />
 
-            <main className="sm:col-span-14 sm:col-start-8 lg:col-span-16 lg:col-start-6">{children}</main>
-        </div>
-      </ProcedureRouteProvider>
+        <main className="sm:col-span-14 sm:col-start-8 lg:col-span-16 lg:col-start-6">
+          {children}
+        </main>
+      </div>
+    </ProcedureRouteProvider>
   );
 }

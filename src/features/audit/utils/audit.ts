@@ -139,7 +139,6 @@ export async function logAuditExportRequested(input: {
   });
 }
 
-
 export async function logAuditExportReady(input: {
   orgId: string;
   actorId: string;
@@ -249,7 +248,6 @@ export async function getAuditLogsWithCount(
 
   return { logs, totalCount };
 }
-
 
 export async function getAuditLogsWithCountForExport(
   orgId: string,
