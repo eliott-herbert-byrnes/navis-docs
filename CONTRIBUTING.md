@@ -93,7 +93,7 @@ pnpm migrate
 - Check existing issues and pull requests before starting larger work.
 - Review [SELF_HOSTING.md](SELF_HOSTING.md) for Docker and deployment details.
 - Email [hello@navisdocs.com](mailto:hello@navisdocs.com) for major concerns.
-- Discord details will be added soon.
+- Join the [Navis Docs Discord](https://discord.gg/c7Tj9x3a) for community discussion.
 
 ## Code of Conduct
 

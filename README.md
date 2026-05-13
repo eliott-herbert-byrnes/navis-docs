@@ -12,12 +12,13 @@
   ·
   <a href="https://navisdocs.com/docs">Docs</a>
   ·
-  <span>Discord coming soon</span>
+  <a href="https://discord.gg/c7Tj9x3a">Discord</a>
 </p>
 
 <div align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0.html"><img alt="License" src="https://img.shields.io/badge/license-AGPLv3-purple"></a>
   <a href="https://github.com/eliott-herbert-byrnes/navis-docs/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/eliott-herbert-byrnes/navis-docs/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://discord.gg/c7Tj9x3a"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20us-5865F2?style=flat&logo=discord&logoColor=white"></a>
 </div>
 
 ## Features 💫
@@ -209,4 +210,4 @@ Navis Docs is licensed under the [GNU Affero General Public License v3.0](https:
 
 ## Contact 📧
 
-For support or to get in touch, please email [hello@navisdocs.com](mailto:hello@navisdocs.com). Discord details will be added soon.
+For support or to get in touch, join the [Navis Docs Discord](https://discord.gg/c7Tj9x3a) or email [hello@navisdocs.com](mailto:hello@navisdocs.com).
