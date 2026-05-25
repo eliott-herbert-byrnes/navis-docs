@@ -12,7 +12,7 @@ import { addressRouter } from "./address";
 import { newsRouter } from "./news";
 import { invitesRouter } from "./invites";
 import { aiRouter } from "./ai";
-import { ingestionRouter } from "./inngestion";
+import { ingestionRouter } from "./ingestion";
 import { auditRouter } from "./audit";
 import { sidebarRouter } from "./sidebar";
 

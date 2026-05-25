@@ -87,20 +87,33 @@ export async function runProcedureRollout({
         }),
       );
 
-      const resend = getResend();
-      const emailFrom = getEmailFrom();
+      try {
+        const resend = getResend();
+        const emailFrom = getEmailFrom();
 
-      for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
-        const batchRecipients = recipients.slice(i, i + BATCH_SIZE);
-        const batchPayload = batchRecipients.map((to) => ({
-          from: emailFrom,
-          to,
-          subject,
-          html,
-        }));
-        await resend.batch.send(batchPayload, {
-          idempotencyKey: `${rolloutId}:email:batch-${i}`,
-        });
+        for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+          const batchRecipients = recipients.slice(i, i + BATCH_SIZE);
+          const batchPayload = batchRecipients.map((to) => ({
+            from: emailFrom,
+            to,
+            subject,
+            html,
+          }));
+          const { error } = await resend.batch.send(batchPayload, {
+            idempotencyKey: `${rolloutId}:email:batch-${i}`,
+          });
+          if (error) {
+            console.error(
+              `[runProcedureRollout] email batch ${i} failed for rollout ${rolloutId}`,
+              error,
+            );
+          }
+        }
+      } catch (err) {
+        console.error(
+          `[runProcedureRollout] email delivery failed for rollout ${rolloutId}`,
+          err,
+        );
       }
     }
   }

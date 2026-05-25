@@ -134,6 +134,42 @@ export const invitesRouter = router({
         },
       });
 
+      const link = `${process.env.NEXTAUTH_URL}/auth/accept-invite?token=${rawToken}`;
+
+      try {
+        const resend = getResend();
+        const html = await render(
+          React.createElement(InviteEmail, {
+            orgName: ctx.org.name,
+            inviteUrl: link,
+          }),
+        );
+        const { error } = await resend.emails.send({
+          from: getEmailFrom(),
+          to: email,
+          subject: `You've been invited to join ${ctx.org.name}`,
+          html,
+        });
+        if (error) {
+          throw error;
+        }
+      } catch (err) {
+        console.error("[createInvitation] failed to send invite email", err);
+        await ctx.db.invitation.delete({
+          where: {
+            invitationId: {
+              orgId: ctx.org.id,
+              canonicalEmail: canonical,
+            },
+          },
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not send invitation email, try again later",
+          cause: err,
+        });
+      }
+
       await createAuditLog({
         orgId: ctx.org.id,
         actorId: ctx.user?.id ?? "",
@@ -145,22 +181,6 @@ export const invitesRouter = router({
           role: invitation.role,
           expiresAt: invitation.expiresAt.toISOString(),
         },
-      });
-
-      const link = `${process.env.NEXTAUTH_URL}/auth/accept-invite?token=${rawToken}`;
-
-      const resend = getResend();
-      const html = await render(
-        React.createElement(InviteEmail, {
-          orgName: ctx.org.name,
-          inviteUrl: link,
-        }),
-      );
-      await resend.emails.send({
-        from: getEmailFrom(),
-        to: email,
-        subject: `You've been invited to join ${ctx.org.name}`,
-        html,
       });
 
       return {
