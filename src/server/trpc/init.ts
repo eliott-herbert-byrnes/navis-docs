@@ -139,7 +139,12 @@ export const adminProcedure = t.procedure
   .use(authMiddleware)
   .use(adminMiddleware);
 export const orgProcedure = protectedProcedure.use(orgMiddleware);
-export const orgAdminProcedure = adminProcedure.use(orgMiddleware);
+export const orgAdminReadProcedure = adminProcedure.use(orgMiddleware);
+/** Admin mutations blocked in demo (reads use {@link orgAdminReadProcedure}). */
+export const orgAdminWriteProcedure =
+  orgAdminReadProcedure.use(demoBlockMiddleware);
+/** @deprecated Prefer orgAdminReadProcedure or orgAdminWriteProcedure */
+export const orgAdminProcedure = orgAdminReadProcedure;
 
 /** Member write operations that require an active trial or subscription */
 export const orgActiveProcedure = orgProcedure
@@ -147,6 +152,6 @@ export const orgActiveProcedure = orgProcedure
   .use(demoBlockMiddleware);
 
 /** Admin write operations that require an active trial or subscription */
-export const orgAdminActiveProcedure = orgAdminProcedure
-  .use(subscriptionMiddleware)
-  .use(demoBlockMiddleware);
+export const orgAdminActiveProcedure = orgAdminWriteProcedure.use(
+  subscriptionMiddleware,
+);

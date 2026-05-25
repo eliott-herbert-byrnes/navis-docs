@@ -212,6 +212,11 @@ export const procedureRouter = router({
       const procedures = await ctx.db.procedure.findMany({
         where: {
           teamId: input.teamId,
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
           categoryId: null,
           ...(ctx.isAdmin
             ? { status: { in: ["PUBLISHED", "DRAFT"] as const } }
@@ -574,6 +579,11 @@ export const procedureRouter = router({
       const procedures = await ctx.db.procedure.findMany({
         where: {
           teamId: input.teamId,
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
           status: "PUBLISHED",
           title: {
             contains: input.query,
@@ -597,14 +607,6 @@ export const procedureRouter = router({
         },
         take: 10,
       });
-
-      if (!procedures) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Error searching procedures, try a different search or refresh the page",
-        });
-      }
 
       return { data: procedures };
     }),
@@ -1666,113 +1668,100 @@ export const procedureRouter = router({
       };
     }),
   // Query: GET outstanding procedure versions for current user (unread rollouts in this org)
-  getOutstandingForCurrentUser: orgProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const orgId = input.orgId ?? ctx.org!.id;
-      const userId = ctx.user!.id ?? "";
+  getOutstandingForCurrentUser: orgProcedure.query(async ({ ctx }) => {
+    const orgId = ctx.org.id;
+    const userId = ctx.user!.id ?? "";
 
-      const membership = await ctx.db.orgMembership.findUnique({
-        where: {
-          orgId_userId: {
-            orgId,
-            userId,
-          },
-        },
-      });
-
-      if (!membership) {
-        return { data: [] };
-      }
-
-      const rollouts = await ctx.db.procedureRollout.findMany({
-        where: {
+    const membership = await ctx.db.orgMembership.findUnique({
+      where: {
+        orgId_userId: {
           orgId,
-          createdAt: { gte: membership.createdAt },
-          procedure: {
-            status: { not: ProcedureStatus.ARCHIVED },
-          },
-        },
-        select: {
-          procedureId: true,
-          versionId: true,
-          notifyRoleFilter: true,
-        },
-      });
-
-      const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
-        if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
-        if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
-          return (
-            membership.role === OrgMembershipRole.OWNER ||
-            membership.role === OrgMembershipRole.ADMIN
-          );
-        }
-        if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
-          return membership.role === OrgMembershipRole.MEMBER;
-        }
-        return false;
-      };
-
-      const inScopeRollouts = rollouts.filter((r) =>
-        isUserInScopeForRollout(r.notifyRoleFilter),
-      );
-
-      if (inScopeRollouts.length === 0) {
-        return { data: [] };
-      }
-
-      const reads = await ctx.db.userProcedureRead.findMany({
-        where: {
           userId,
-          OR: inScopeRollouts.map((r) => ({
-            procedureId: r.procedureId,
-            versionId: r.versionId,
-          })),
         },
-        select: {
-          procedureId: true,
-          versionId: true,
+      },
+    });
+
+    if (!membership) {
+      return { data: [] };
+    }
+
+    const rollouts = await ctx.db.procedureRollout.findMany({
+      where: {
+        orgId,
+        createdAt: { gte: membership.createdAt },
+        procedure: {
+          status: { not: ProcedureStatus.ARCHIVED },
         },
-      });
+      },
+      select: {
+        procedureId: true,
+        versionId: true,
+        notifyRoleFilter: true,
+      },
+    });
 
-      const readSet = new Set(
-        reads.map((r) => `${r.procedureId}:${r.versionId}`),
-      );
+    const isUserInScopeForRollout = (notifyRoleFilter: RolloutRoleFilter) => {
+      if (notifyRoleFilter === RolloutRoleFilter.ALL_USERS) return true;
+      if (notifyRoleFilter === RolloutRoleFilter.ADMINS_ONLY) {
+        return (
+          membership.role === OrgMembershipRole.OWNER ||
+          membership.role === OrgMembershipRole.ADMIN
+        );
+      }
+      if (notifyRoleFilter === RolloutRoleFilter.MEMBERS_ONLY) {
+        return membership.role === OrgMembershipRole.MEMBER;
+      }
+      return false;
+    };
 
-      const outstanding = inScopeRollouts.filter((r) => {
-        const key = `${r.procedureId}:${r.versionId}`;
-        return !readSet.has(key);
-      });
+    const inScopeRollouts = rollouts.filter((r) =>
+      isUserInScopeForRollout(r.notifyRoleFilter),
+    );
 
-      return {
-        data: outstanding.map((r) => ({
+    if (inScopeRollouts.length === 0) {
+      return { data: [] };
+    }
+
+    const reads = await ctx.db.userProcedureRead.findMany({
+      where: {
+        userId,
+        OR: inScopeRollouts.map((r) => ({
           procedureId: r.procedureId,
           versionId: r.versionId,
         })),
-      };
-    }),
+      },
+      select: {
+        procedureId: true,
+        versionId: true,
+      },
+    });
+
+    const readSet = new Set(
+      reads.map((r) => `${r.procedureId}:${r.versionId}`),
+    );
+
+    const outstanding = inScopeRollouts.filter((r) => {
+      const key = `${r.procedureId}:${r.versionId}`;
+      return !readSet.has(key);
+    });
+
+    return {
+      data: outstanding.map((r) => ({
+        procedureId: r.procedureId,
+        versionId: r.versionId,
+      })),
+    };
+  }),
   // Query: GET outstanding procedure versions for a given user (admin only; for user list viewer)
-  getOutstandingForUser: adminProcedure
+  getOutstandingForUser: orgAdminProcedure
     .use(rateLimitMiddleware("procedure-get-outstanding-for-user"))
     .input(
       z.object({
         userId: z.string().uuid(),
-        orgId: z.string().uuid().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const orgId = input.orgId ?? ctx.org?.id;
-      if (!orgId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Organization context or orgId is required",
-        });
-      }
+      const orgId = ctx.org!.id;
       const userId = input.userId;
 
       const membership = await ctx.db.orgMembership.findUnique({

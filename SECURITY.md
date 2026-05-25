@@ -6,13 +6,11 @@ Thank you for helping keep Navis Docs and its users safe.
 
 **Please do not open a public GitHub issue for security reports.**
 
-Instead, email **[security@navisdocs.com](mailto:security@navisdocs.com)** with:
+Instead, email **[hello@navisdocs.com](mailto:hello@navisdocs.com)** with:
 
 - A short description of the issue and potential impact
 - Steps to reproduce or proof of concept
 - Affected versions or deployment assumptions (cloud vs self-hosted) if known
-
-If you prefer, you may use **[hello@navisdocs.com](mailto:hello@navisdocs.com)** for routing; clearly mark the subject as `[Security]`.
 
 We will acknowledge receipt when we can and work with you on a coordinated disclosure timeline.
 

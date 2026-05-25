@@ -19,9 +19,9 @@ export function useRenameOrganization() {
     },
   });
 
-  const renameOrganization = (data: { orgId: string; orgName: string }) => {
+  const renameOrganization = (data: { orgName: string }) => {
     mutation.mutate({
-      ...data,
+      orgName: data.orgName,
     });
   };
 

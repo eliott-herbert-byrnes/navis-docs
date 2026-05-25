@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { validateDemoEnv } from "./src/lib/demo-env";
+
+validateDemoEnv();
 
 const nextConfig: NextConfig = {
   output: "standalone",
