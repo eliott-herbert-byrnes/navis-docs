@@ -77,6 +77,16 @@ jobs:
       - name: Prisma generate
         run: pnpm prisma generate
 
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Prepare shadow database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -tc \
+            "SELECT 1 FROM pg_database WHERE datname = 'navis_docs_shadow'" | grep -q 1 \
+            || PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 \
+            -c "CREATE DATABASE navis_docs_shadow;"
+
       - name: Check migration schema drift
         run: pnpm migrate:check
         env:
