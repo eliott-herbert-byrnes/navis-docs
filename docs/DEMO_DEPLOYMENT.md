@@ -6,9 +6,9 @@ See [SELF_HOSTING.md](../SELF_HOSTING.md) for single-tenant self-hosting. This d
 
 ## Architecture
 
-| Project    | Domain                         | Database            | Demo env vars                                     |
-| ---------- | ------------------------------ | ------------------- | ------------------------------------------------- |
-| Production | `app.navisdocs.com`, marketing | Production Postgres | **None** (only `NEXT_PUBLIC_DEMO_URL` for iframe) |
+| Project    | Domain                         | Database            | Demo env vars                                                |
+| ---------- | ------------------------------ | ------------------- | ------------------------------------------------------------ |
+| Production | `app.navisdocs.com`, marketing | Production Postgres | **None** (only `NEXT_PUBLIC_DEMO_URL` for iframe)            |
 | Demo       | `demo.navisdocs.com`           | Demo Postgres only  | `NEXT_PUBLIC_DEMO_*` + `DEMO_*` (not `NEXT_PUBLIC_DEMO_URL`) |
 
 **Rule:** Production must never set `NEXT_PUBLIC_DEMO_MODE`, `NEXT_PUBLIC_DEMO_HOST`, or `DEMO_*`. The demo project must never share `DATABASE_URL`, `REDIS_URL`, or storage buckets with production.
