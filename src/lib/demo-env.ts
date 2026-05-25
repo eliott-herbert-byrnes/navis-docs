@@ -14,16 +14,16 @@ function hostnameFromUrl(url: string, envName: string): string {
   try {
     return new URL(url).hostname;
   } catch {
-    throw new Error(
-      `[demo-env] ${envName} must be a valid URL (got "${url}")`,
-    );
+    throw new Error(`[demo-env] ${envName} must be a valid URL (got "${url}")`);
   }
 }
 
 function requireEnv(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) {
-    throw new Error(`[demo-env] ${name} is required when NEXT_PUBLIC_DEMO_MODE=true`);
+    throw new Error(
+      `[demo-env] ${name} is required when NEXT_PUBLIC_DEMO_MODE=true`,
+    );
   }
   return value;
 }

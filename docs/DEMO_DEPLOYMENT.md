@@ -6,10 +6,10 @@ See [SELF_HOSTING.md](../SELF_HOSTING.md) for single-tenant self-hosting. This d
 
 ## Architecture
 
-| Project | Domain | Database | Demo env vars |
-| ------- | ------ | -------- | ------------- |
+| Project    | Domain                         | Database            | Demo env vars                                     |
+| ---------- | ------------------------------ | ------------------- | ------------------------------------------------- |
 | Production | `app.navisdocs.com`, marketing | Production Postgres | **None** (only `NEXT_PUBLIC_DEMO_URL` for iframe) |
-| Demo | `demo.navisdocs.com` | Demo Postgres only | Full `NEXT_PUBLIC_DEMO_*` + `DEMO_*` |
+| Demo       | `demo.navisdocs.com`           | Demo Postgres only  | Full `NEXT_PUBLIC_DEMO_*` + `DEMO_*`              |
 
 **Rule:** Production must never set `NEXT_PUBLIC_DEMO_MODE`, `NEXT_PUBLIC_DEMO_HOST`, or `DEMO_*`. The demo project must never share `DATABASE_URL`, `REDIS_URL`, or storage buckets with production.
 
@@ -33,20 +33,20 @@ Do **not** set:
 
 Create a second Vercel project from the same Git repo. Set:
 
-| Variable | Example |
-| -------- | ------- |
-| `NEXT_PUBLIC_DEMO_MODE` | `true` |
-| `NEXT_PUBLIC_DEMO_HOST` | `demo.navisdocs.com` |
-| `NEXT_PUBLIC_APP_URL` | `https://demo.navisdocs.com` |
-| `NEXT_PUBLIC_DEMO_URL` | `https://demo.navisdocs.com` |
-| `DEMO_ORG_ID` | From seed (stable UUID) |
-| `DEMO_USER_ID` | From seed (stable UUID) |
-| `DEMO_MEMBER_USER_ID` | Optional second demo user UUID |
-| `DATABASE_URL` | Demo DB only |
-| `REDIS_URL` | Demo Redis |
-| Storage vars | Demo buckets |
-| `AUTH_SECRET` | Unique secret |
-| `AUTH_TRUST_HOST` | `true` |
+| Variable                | Example                        |
+| ----------------------- | ------------------------------ |
+| `NEXT_PUBLIC_DEMO_MODE` | `true`                         |
+| `NEXT_PUBLIC_DEMO_HOST` | `demo.navisdocs.com`           |
+| `NEXT_PUBLIC_APP_URL`   | `https://demo.navisdocs.com`   |
+| `NEXT_PUBLIC_DEMO_URL`  | `https://demo.navisdocs.com`   |
+| `DEMO_ORG_ID`           | From seed (stable UUID)        |
+| `DEMO_USER_ID`          | From seed (stable UUID)        |
+| `DEMO_MEMBER_USER_ID`   | Optional second demo user UUID |
+| `DATABASE_URL`          | Demo DB only                   |
+| `REDIS_URL`             | Demo Redis                     |
+| Storage vars            | Demo buckets                   |
+| `AUTH_SECRET`           | Unique secret                  |
+| `AUTH_TRUST_HOST`       | `true`                         |
 
 Omit Stripe live keys, Google OAuth, and platform AI keys unless you need them for testing.
 
