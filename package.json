@@ -29,7 +29,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install chromium",
     "audit:ci": "pnpm audit --audit-level high",
-    "migrate:check": "prisma migrate diff --from-migrations prisma/migrations --to-schema prisma/schema.prisma --shadow-database-url \"$SHADOW_DATABASE_URL\" --exit-code",
+    "migrate:check": "prisma migrate diff --from-migrations prisma/migrations --to-schema prisma/schema.prisma --exit-code",
     "formatCheck": "tsc --noEmit && prettier --write ."
   },
   "dependencies": {

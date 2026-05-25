@@ -5,6 +5,8 @@ import { defineConfig } from "prisma/config";
 const migrationDatabaseUrl =
   process.env.DIRECT_URL ?? process.env.DATABASE_URL;
 
+const shadowDatabaseUrl = process.env.SHADOW_DATABASE_URL;
+
 if (!migrationDatabaseUrl) {
   throw new Error(
     "Set DATABASE_URL (and optionally DIRECT_URL for pooled deployments).",
@@ -19,5 +21,6 @@ export default defineConfig({
   },
   datasource: {
     url: migrationDatabaseUrl,
+    ...(shadowDatabaseUrl ? { shadowDatabaseUrl } : {}),
   },
 });

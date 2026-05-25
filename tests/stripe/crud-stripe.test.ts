@@ -106,7 +106,7 @@ describe("Stripe billing data handlers", () => {
       id: "in_1",
       customer: "cus_123",
       subscription: "sub_123",
-    } as Stripe.Invoice);
+    } as unknown as Stripe.Invoice);
 
     expect(mockOrgUpdate).toHaveBeenCalledWith({
       where: { stripeCustomerId: "cus_123" },
