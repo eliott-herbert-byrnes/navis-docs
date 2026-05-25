@@ -96,6 +96,7 @@ model VerificationToken {
 enum OrgPlan {
   pro
   enterprise
+  free
 }
 
 model Organization {
@@ -109,6 +110,7 @@ model Organization {
   openAiApiKey             String?
   createdAt                DateTime                  @default(now())
   currentPeriodEnd         DateTime?
+  billingGraceEndsAt       DateTime?
   stripeCustomerId         String?                   @unique
   stripeSubscriptionId     String?                   @unique
   stripeSubscriptionStatus StripeSubscriptionStatus?

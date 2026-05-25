@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { isSelfHosted } from "@/lib/deploy-mode";
 import { LucideCheck } from "lucide-react";
 import { getStripeCustomerByOrg } from "../queries/get-stripe-customer";
@@ -40,6 +40,9 @@ const ENTERPRISE_FEATURES = [
 
 const SELF_HOSTED_DESCRIPTION =
   "This deployment runs on your infrastructure. All product features are available without a cloud subscription or Stripe checkout.";
+
+const BILLING_NOT_CONFIGURED_DESCRIPTION =
+  "Stripe billing is not configured for this deployment. Set STRIPE_SECRET_KEY and related environment variables to enable subscriptions.";
 
 function pickPrice(prices: Stripe.Price[], billing: "monthly" | "annual") {
   const meta = billing === "monthly" ? "monthly" : "annual";
@@ -140,6 +143,41 @@ export function SelfHostedPlanCard() {
   );
 }
 
+export function BillingNotConfiguredCard() {
+  return (
+    <Card className="flex w-full animate-fade-from-top flex-col border-dashed">
+      <CardHeader className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="text-xl">Pro</CardTitle>
+          <Badge variant="secondary">Unavailable</Badge>
+        </div>
+        <p className="text-2xl font-medium tracking-tight">Billing not configured</p>
+        <CardDescription className="whitespace-normal text-sm h-[75px]">
+          {BILLING_NOT_CONFIGURED_DESCRIPTION}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1">
+        <ul className="space-y-2 border-t pt-4">
+          {PRO_FEATURES.map((f) => (
+            <li key={f.name} className="flex gap-x-2 text-sm">
+              <LucideCheck
+                className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
+              <span className="text-muted-foreground">{f.name}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+      <CardFooter className="mt-auto border-t pt-6">
+        <Button disabled variant="outline" className="w-full">
+          Subscribe unavailable
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
 type ProductsProps = {
   orgSlug: string | null | undefined;
 };
@@ -149,11 +187,38 @@ const Products = async ({ orgSlug }: ProductsProps) => {
   const plan = stripeCustomer?.plan;
   const isEnterprise = plan === OrgPlan.enterprise;
 
+  if (!isSelfHosted() && !isEnterprise && !isStripeConfigured()) {
+    return (
+      <SubscriptionTiersClient
+        selfHosted={<SelfHostedPlanCard />}
+        enterprise={<EnterprisePlanCard isActive={isEnterprise} />}
+        orgSlug={orgSlug}
+        productName="Pro"
+        description={PRO_DESCRIPTION}
+        marketingFeatures={[...PRO_FEATURES]}
+        monthlyPriceId={null}
+        annualPriceId={null}
+        monthlyUnitAmount={null}
+        monthlyCurrency="usd"
+        annualUnitAmount={null}
+        annualCurrency="usd"
+        activePlan={plan}
+        activeSubscription={false}
+        showCheckoutCta={false}
+        isTrialing={false}
+        isSelfHosted={false}
+        isEnterprise={isEnterprise}
+        proPlan={<BillingNotConfiguredCard />}
+      />
+    );
+  }
+
   let subscriptionStatus = stripeCustomer?.stripeSubscriptionStatus;
   if (
     stripeCustomer?.stripeSubscriptionId &&
     !isSelfHosted() &&
-    !isEnterprise
+    !isEnterprise &&
+    isStripeConfigured()
   ) {
     try {
       const sub = await getStripe().subscriptions.retrieve(
@@ -165,16 +230,19 @@ const Products = async ({ orgSlug }: ProductsProps) => {
     }
   }
 
+  const isFreePlan = plan === OrgPlan.free;
   const activeSubscription =
-    subscriptionStatus === "active" || subscriptionStatus === "trialing";
+    !isFreePlan &&
+    (subscriptionStatus === "active" || subscriptionStatus === "trialing");
   const isTrialing = subscriptionStatus === "trialing";
+  const showCheckoutCta = isFreePlan || !activeSubscription;
 
   let monthly: Stripe.Price | null = null;
   let annual: Stripe.Price | null = null;
   let proProduct: Stripe.Product | null = null;
   let marketingFeatures: { name?: string | null }[] = [...PRO_FEATURES];
 
-  if (!isSelfHosted() && !isEnterprise) {
+  if (!isSelfHosted() && !isEnterprise && isStripeConfigured()) {
     const products = await getStripe().products.list({ active: true });
     proProduct =
       products.data.find((p) => p.metadata?.plan === "pro") ??
@@ -209,6 +277,7 @@ const Products = async ({ orgSlug }: ProductsProps) => {
       annualCurrency={annual?.currency ?? "usd"}
       activePlan={plan}
       activeSubscription={activeSubscription}
+      showCheckoutCta={showCheckoutCta}
       isTrialing={isTrialing}
       isSelfHosted={isSelfHosted()}
       isEnterprise={isEnterprise}

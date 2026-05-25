@@ -1,7 +1,7 @@
 import { decrypt } from "@/lib/crypto";
+import { resolveOrgWriteAccess } from "@/lib/billing/access";
 import { isSelfHosted } from "@/lib/deploy-mode";
 import { prisma } from "@/lib/prisma";
-import { OrgPlan, type StripeSubscriptionStatus } from "@prisma/client";
 
 export type ResolvedOrgAiKeys = {
   /** Decrypted key from DB, or `null` when not stored */
@@ -10,23 +10,9 @@ export type ResolvedOrgAiKeys = {
   openAiKey: string | null;
 };
 
-function isCloudAiEntitled(
-  plan: OrgPlan,
-  stripeSubscriptionStatus: StripeSubscriptionStatus | null,
-): boolean {
-  if (plan === OrgPlan.enterprise) return true;
-  if (plan === OrgPlan.pro) {
-    return (
-      stripeSubscriptionStatus === "active" ||
-      stripeSubscriptionStatus === "trialing"
-    );
-  }
-  return false;
-}
-
 /**
  * Resolves per-org encrypted AI API keys from the database (decrypted).
- * Cloud deploys also require an active subscription tier (`cloudEntitled`).
+ * Cloud deploys also require write access (active, trialing, or past_due grace).
  * Self-hosted deploys are always entitled; callers may still fall back to env
  * vars when no org key is stored (see `getAnthropic` / `getOpenAI`).
  */
@@ -38,6 +24,7 @@ export async function resolveOrgAiKeys(
     select: {
       plan: true,
       stripeSubscriptionStatus: true,
+      billingGraceEndsAt: true,
       anthropicApiKey: true,
       openAiApiKey: true,
     },
@@ -64,10 +51,7 @@ export async function resolveOrgAiKeys(
     };
   }
 
-  const cloudEntitled = isCloudAiEntitled(
-    org.plan,
-    org.stripeSubscriptionStatus,
-  );
+  const cloudEntitled = resolveOrgWriteAccess(org).hasWriteAccess;
 
   return {
     cloudEntitled,

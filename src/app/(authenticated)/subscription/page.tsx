@@ -5,7 +5,9 @@ import { Heading } from "@/components/ui/Heading";
 import { getSessionContext } from "@/lib/auth";
 import { isDemoContext } from "@/lib/demo";
 import { redirect } from "next/navigation";
+import { BillingStatusBanner } from "@/features/stripe/components/billing-status-banner";
 import { Products } from "@/features/stripe/components/product";
+import { SubscriptionCheckoutToast } from "@/features/stripe/components/subscription-checkout-toast";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageContainer } from "@/components/ui/page-container";
@@ -42,15 +44,25 @@ const SubscriptionPage = async () => {
   }
 
   const ctx = await getSessionContext();
-  const { org, isAdmin } = ctx ?? {};
+  const { org, isAdmin, accessLevel, graceEndsAt } = ctx ?? {};
   if (!org) redirect(onboardingPath());
   if (!isAdmin) redirect(dashboardPath());
 
   return (
     <PageContainer>
+      <Suspense fallback={null}>
+        <SubscriptionCheckoutToast />
+      </Suspense>
       <Heading
         title="Subscription"
         description="Manage the subscription for this organization"
+      />
+      <BillingStatusBanner
+        accessLevel={accessLevel ?? "full"}
+        graceEndsAt={graceEndsAt ?? null}
+        stripeSubscriptionStatus={org.stripeSubscriptionStatus}
+        isAdmin={isAdmin ?? false}
+        hideSubscribeLink
       />
       <Suspense fallback={<ProductsSkeleton />}>
         <Products orgSlug={org.slug} />

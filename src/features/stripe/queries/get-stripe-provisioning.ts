@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { isSelfHosted } from "@/lib/deploy-mode";
+import { OrgPlan } from "@prisma/client";
 
 export type OrgProvisioning = {
   allowedDepartments: number;
@@ -51,6 +52,15 @@ export const getStripeProvisionByOrg = async (
     return {
       allowedDepartments: Infinity,
       allowedTeamsPerDepartment: Infinity,
+      currentDepartments,
+      currentTeams,
+    };
+  }
+
+  if (org.plan === OrgPlan.free) {
+    return {
+      allowedDepartments: 0,
+      allowedTeamsPerDepartment: 0,
       currentDepartments,
       currentTeams,
     };

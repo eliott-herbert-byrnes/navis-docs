@@ -7,3 +7,9 @@ export function getAppHomeUrlForEmail(): string {
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
   return baseUrl ? `${baseUrl}/` : "/";
 }
+
+/** Subscription page URL for billing-related email CTAs. */
+export function getSubscriptionUrlForEmail(): string {
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
+  return baseUrl ? `${baseUrl}/subscription` : "/subscription";
+}

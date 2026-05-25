@@ -1,6 +1,7 @@
 import { SubscriptionEndedEmail } from "@/emails/subscription-ended";
 import { TrialStartedEmail } from "@/emails/trial-started";
 import { TrialWillEndEmail } from "@/emails/trial-will-end";
+import { BILLING_GRACE_DAYS } from "@/lib/billing/access";
 import { getEmailFrom } from "@/lib/email";
 import { getResend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
@@ -96,14 +97,30 @@ export const updateStripeSubscription = async (
 
   const orgPlan = stripeMetadataPlanToOrgPlan(plan);
 
+  const customerId =
+    typeof subscription.customer === "string"
+      ? subscription.customer
+      : subscription.customer.id;
+
+  const existingOrg = await prisma.organization.findUnique({
+    where: { stripeCustomerId: customerId },
+    select: { id: true },
+  });
+  if (!existingOrg) return;
+
+  const clearsGrace =
+    subscription.status === StripeSubscriptionStatus.active ||
+    subscription.status === StripeSubscriptionStatus.trialing;
+
   await prisma.organization.update({
-    where: { stripeCustomerId: subscription.customer as string },
+    where: { stripeCustomerId: customerId },
     data: {
       stripeSubscriptionId: subscription.id,
       stripeSubscriptionStatus: subscription.status,
       currentPeriodEnd: currentPeriodEnd
         ? new Date(currentPeriodEnd * 1000)
         : null,
+      ...(clearsGrace ? { billingGraceEndsAt: null } : {}),
       ...(orgPlan ? { plan: orgPlan } : {}),
       ...(Object.keys(entitlementsJSON).length > 0 && { entitlementsJSON }),
     },
@@ -130,13 +147,17 @@ export const deleteStripeSubscription = async (
     where: { stripeCustomerId: customerId },
     include: { ownerUser: { select: { email: true, name: true } } },
   });
+  if (!org) return;
 
   await prisma.organization.update({
     where: { stripeCustomerId: customerId },
     data: {
+      plan: OrgPlan.free,
+      entitlementsJSON: {},
       stripeSubscriptionId: null,
       stripeSubscriptionStatus: null,
       currentPeriodEnd: null,
+      billingGraceEndsAt: null,
     },
   });
 
@@ -157,9 +178,33 @@ export async function handleInvoicePaymentFailed(
   const customerId = stripeCustomerIdFromInvoice(invoice);
   if (!subscriptionId || !customerId) return;
 
+  const org = await prisma.organization.findUnique({
+    where: { stripeCustomerId: customerId },
+    select: {
+      stripeSubscriptionStatus: true,
+      billingGraceEndsAt: true,
+    },
+  });
+  if (!org) return;
+
+  const previousStatus = org.stripeSubscriptionStatus;
+  const shouldSetGrace =
+    (previousStatus === StripeSubscriptionStatus.active ||
+      previousStatus === StripeSubscriptionStatus.trialing) &&
+    org.billingGraceEndsAt == null;
+
   await prisma.organization.update({
     where: { stripeCustomerId: customerId },
-    data: { stripeSubscriptionStatus: StripeSubscriptionStatus.past_due },
+    data: {
+      stripeSubscriptionStatus: StripeSubscriptionStatus.past_due,
+      ...(shouldSetGrace
+        ? {
+            billingGraceEndsAt: new Date(
+              Date.now() + BILLING_GRACE_DAYS * 24 * 60 * 60 * 1000,
+            ),
+          }
+        : {}),
+    },
   });
 }
 
@@ -197,19 +242,30 @@ export async function sendTrialWillEndEmail(
     return;
   }
 
+  const trialEnd = subscription.trial_end;
+  const daysRemaining = trialEnd
+    ? Math.max(
+        0,
+        Math.ceil(
+          (trialEnd * 1000 - Date.now()) / (24 * 60 * 60 * 1000),
+        ),
+      )
+    : 3;
+  const dayLabel = daysRemaining === 1 ? "day" : "days";
+
   try {
     const resend = getResend();
     const html = await render(
       React.createElement(TrialWillEndEmail, {
         orgName: org.name,
         ownerName: org.ownerUser.name ?? "there",
-        daysRemaining: 3,
+        daysRemaining,
       }),
     );
     await resend.emails.send({
       from: getEmailFrom(),
       to: org.ownerUser.email,
-      subject: `Your Navis Docs trial for ${org.name} ends in 3 days`,
+      subject: `Your Navis Docs trial for ${org.name} ends in ${daysRemaining} ${dayLabel}`,
       html,
     });
   } catch (err) {

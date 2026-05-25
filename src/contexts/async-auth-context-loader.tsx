@@ -13,6 +13,8 @@ export async function AsyncAuthContextLoader({
     <AuthProvider
       isAdmin={ctx?.isAdmin ?? false}
       hasActiveAccess={ctx?.hasActiveAccess ?? false}
+      accessLevel={ctx?.accessLevel ?? "read_only"}
+      graceEndsAt={ctx?.graceEndsAt ?? null}
     >
       {children}
     </AuthProvider>

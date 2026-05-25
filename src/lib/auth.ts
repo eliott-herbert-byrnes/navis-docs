@@ -1,11 +1,8 @@
 import { prisma } from "./prisma";
 import { auth } from "@/auth";
 import { cache } from "react";
-import {
-  OrgMembershipRole,
-  OrgPlan,
-  StripeSubscriptionStatus,
-} from "@prisma/client";
+import { OrgMembershipRole } from "@prisma/client";
+import { resolveOrgWriteAccess } from "@/lib/billing/access";
 import { isDemoContext } from "./demo";
 import { DEMO_USER_EMAIL } from "./demo-constants";
 
@@ -26,6 +23,8 @@ async function getDemoSessionContext() {
     isAdmin: true,
     role: OrgMembershipRole.ADMIN,
     hasActiveAccess: true,
+    accessLevel: "full" as const,
+    graceEndsAt: null,
     isDemo: true,
   };
 }
@@ -44,10 +43,13 @@ export const getSessionContext = cache(async () => {
   });
 
   const org = membership?.org ?? null;
-  const hasActiveAccess =
-    org?.plan === OrgPlan.enterprise ||
-    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.active ||
-    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.trialing;
+  const orgAccess = org
+    ? resolveOrgWriteAccess(org)
+    : {
+        hasWriteAccess: false,
+        accessLevel: "read_only" as const,
+        graceEndsAt: null,
+      };
 
   return {
     userId: session.user.id,
@@ -55,7 +57,10 @@ export const getSessionContext = cache(async () => {
     org,
     isAdmin: membership?.role === "ADMIN" || membership?.role === "OWNER",
     role: membership?.role ?? null,
-    hasActiveAccess,
+    /** Write access — see `resolveOrgWriteAccess()`. */
+    hasActiveAccess: orgAccess.hasWriteAccess,
+    accessLevel: orgAccess.accessLevel,
+    graceEndsAt: orgAccess.graceEndsAt,
     isDemo: false,
   };
 });

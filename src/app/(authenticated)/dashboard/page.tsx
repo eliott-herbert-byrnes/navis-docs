@@ -52,7 +52,7 @@ export default async function DashboardPage() {
 
         <div className="space-y-4">
           <DashboardStatCards stats={stats} />
-          <DashboardProcedureChart data={chartData} />
+              <DashboardProcedureChart data={chartData} />
           <div>
             <h2 className="text-sm font-semibold mb-4">Recent Activity</h2>
             <Suspense fallback={<DashboardAuditStreamSkeleton />}>
