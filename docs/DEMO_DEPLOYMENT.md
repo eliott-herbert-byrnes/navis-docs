@@ -6,10 +6,10 @@ See [SELF_HOSTING.md](../SELF_HOSTING.md) for single-tenant self-hosting. This d
 
 ## Architecture
 
-| Project    | Domain                         | Database            | Demo env vars                                     |
-| ---------- | ------------------------------ | ------------------- | ------------------------------------------------- |
-| Production | `app.navisdocs.com`, marketing | Production Postgres | **None** (only `NEXT_PUBLIC_DEMO_URL` for iframe) |
-| Demo       | `demo.navisdocs.com`           | Demo Postgres only  | Full `NEXT_PUBLIC_DEMO_*` + `DEMO_*`              |
+| Project    | Domain                         | Database            | Demo env vars                                                |
+| ---------- | ------------------------------ | ------------------- | ------------------------------------------------------------ |
+| Production | `app.navisdocs.com`, marketing | Production Postgres | **None** (only `NEXT_PUBLIC_DEMO_URL` for iframe)            |
+| Demo       | `demo.navisdocs.com`           | Demo Postgres only  | `NEXT_PUBLIC_DEMO_*` + `DEMO_*` (not `NEXT_PUBLIC_DEMO_URL`) |
 
 **Rule:** Production must never set `NEXT_PUBLIC_DEMO_MODE`, `NEXT_PUBLIC_DEMO_HOST`, or `DEMO_*`. The demo project must never share `DATABASE_URL`, `REDIS_URL`, or storage buckets with production.
 
@@ -20,7 +20,7 @@ Build-time validation in `src/lib/demo-env.ts` (imported from `next.config.ts`) 
 Set:
 
 - `NEXT_PUBLIC_APP_URL` — production app URL
-- `NEXT_PUBLIC_DEMO_URL` — `https://demo.navisdocs.com` (iframe `src` only)
+- `NEXT_PUBLIC_DEMO_URL` — `https://demo.navisdocs.com` (marketing iframe base URL; appends `/dashboard`)
 - Production `DATABASE_URL`, auth, Stripe, Redis, storage, etc.
 
 Do **not** set:
@@ -38,7 +38,6 @@ Create a second Vercel project from the same Git repo. Set:
 | `NEXT_PUBLIC_DEMO_MODE` | `true`                         |
 | `NEXT_PUBLIC_DEMO_HOST` | `demo.navisdocs.com`           |
 | `NEXT_PUBLIC_APP_URL`   | `https://demo.navisdocs.com`   |
-| `NEXT_PUBLIC_DEMO_URL`  | `https://demo.navisdocs.com`   |
 | `DEMO_ORG_ID`           | From seed (stable UUID)        |
 | `DEMO_USER_ID`          | From seed (stable UUID)        |
 | `DEMO_MEMBER_USER_ID`   | Optional second demo user UUID |
@@ -48,7 +47,7 @@ Create a second Vercel project from the same Git repo. Set:
 | `AUTH_SECRET`           | Unique secret                  |
 | `AUTH_TRUST_HOST`       | `true`                         |
 
-Omit Stripe live keys, Google OAuth, and platform AI keys unless you need them for testing.
+Omit `NEXT_PUBLIC_DEMO_URL` (production marketing iframe only). Omit Stripe live keys, Google OAuth, and platform AI keys unless you need them for testing.
 
 Point DNS `demo.navisdocs.com` at this project only — not at production.
 
@@ -105,13 +104,14 @@ The script wipes and re-seeds the demo org via `src/lib/demo-reset.ts` and inval
 
 On `https://demo.navisdocs.com`:
 
+- `/` redirects to `/dashboard`.
 - `/dashboard` loads without sign-in.
 - Settings, Invite, Subscription, and procedure edit pages show demo-not-available UI.
 - tRPC writes return `FORBIDDEN` / "not available in the demo".
 
 ### Iframe embedding
 
-Marketing site iframe loads the demo. Verify headers:
+Marketing site iframe loads the demo dashboard (`NEXT_PUBLIC_DEMO_URL` + `/dashboard`). Verify headers:
 
 ```bash
 curl -sI https://demo.navisdocs.com/dashboard | grep -iE 'x-frame|content-security|x-robots'

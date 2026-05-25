@@ -4,6 +4,7 @@ import { companyLogos } from "@/app/(marketing)/_content/company-logos";
 import { features } from "@/app/(marketing)/_content/features";
 import { HeroFeature } from "@/app/(marketing)/_content/hero-features";
 import { dashboardPath } from "@/app/paths";
+import { getDemoIframeSrc } from "@/lib/demo";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { SiteAccordion } from "./_components/site-accordion";
@@ -37,6 +38,8 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingHomePage() {
+  const demoIframeSrc = getDemoIframeSrc();
+
   return (
     <div className="mx-auto space-y-16 px-4 py-12 sm:px-6 lg:px-8">
       <section
@@ -82,9 +85,9 @@ export default function MarketingHomePage() {
         </div>
         <div className="relative hidden sm:block">
           <div className="absolute inset-x-0 z-10 flex justify-center">
-            {process.env.NEXT_PUBLIC_DEMO_URL ? (
+            {demoIframeSrc ? (
               <iframe
-                src={process.env.NEXT_PUBLIC_DEMO_URL}
+                src={demoIframeSrc}
                 title="Navis Docs live demo"
                 loading="lazy"
                 className="aspect-[1460/730] w-full max-w-[1460px] rounded-lg border-4 border-secondary"
