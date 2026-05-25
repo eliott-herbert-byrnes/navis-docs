@@ -89,7 +89,7 @@ function InvitationListSkeleton() {
 }
 
 const InvitationList = ({ orgId, search, page = 1 }: InvitationListProps) => {
-  const { data, isLoading } = useGetInvites(orgId, search, page, 10);
+  const { data, isLoading } = useGetInvites(search, page, 10);
   const { data: usersData } = trpc.users.getUsersByIds.useQuery(
     {
       userIds: data?.data.invites.map((inv) => inv.invitedByUserId ?? "") ?? [],

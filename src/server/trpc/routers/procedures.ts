@@ -212,6 +212,11 @@ export const procedureRouter = router({
       const procedures = await ctx.db.procedure.findMany({
         where: {
           teamId: input.teamId,
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
           categoryId: null,
           ...(ctx.isAdmin
             ? { status: { in: ["PUBLISHED", "DRAFT"] as const } }
@@ -574,6 +579,11 @@ export const procedureRouter = router({
       const procedures = await ctx.db.procedure.findMany({
         where: {
           teamId: input.teamId,
+          team: {
+            department: {
+              orgId: ctx.org.id,
+            },
+          },
           status: "PUBLISHED",
           title: {
             contains: input.query,
@@ -597,14 +607,6 @@ export const procedureRouter = router({
         },
         take: 10,
       });
-
-      if (!procedures) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Error searching procedures, try a different search or refresh the page",
-        });
-      }
 
       return { data: procedures };
     }),
@@ -1666,14 +1668,8 @@ export const procedureRouter = router({
       };
     }),
   // Query: GET outstanding procedure versions for current user (unread rollouts in this org)
-  getOutstandingForCurrentUser: orgProcedure
-    .input(
-      z.object({
-        orgId: z.string().uuid().optional(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const orgId = input.orgId ?? ctx.org!.id;
+  getOutstandingForCurrentUser: orgProcedure.query(async ({ ctx }) => {
+      const orgId = ctx.org.id;
       const userId = ctx.user!.id ?? "";
 
       const membership = await ctx.db.orgMembership.findUnique({
@@ -1757,22 +1753,15 @@ export const procedureRouter = router({
       };
     }),
   // Query: GET outstanding procedure versions for a given user (admin only; for user list viewer)
-  getOutstandingForUser: adminProcedure
+  getOutstandingForUser: orgAdminProcedure
     .use(rateLimitMiddleware("procedure-get-outstanding-for-user"))
     .input(
       z.object({
         userId: z.string().uuid(),
-        orgId: z.string().uuid().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const orgId = input.orgId ?? ctx.org?.id;
-      if (!orgId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Organization context or orgId is required",
-        });
-      }
+      const orgId = ctx.org!.id;
       const userId = input.userId;
 
       const membership = await ctx.db.orgMembership.findUnique({

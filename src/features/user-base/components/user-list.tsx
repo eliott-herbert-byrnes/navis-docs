@@ -100,7 +100,7 @@ function TableCellViewer({ item }: { item: User }) {
   const [open, setOpen] = React.useState(false);
 
   const { data, isLoading } = trpc.procedures.getOutstandingForUser.useQuery(
-    { userId: item.userId, orgId: item.orgId },
+    { userId: item.userId },
     { enabled: open && !item.compliant },
   );
 

@@ -26,6 +26,7 @@ async function getDemoSessionContext() {
     isAdmin: true,
     role: OrgMembershipRole.ADMIN,
     hasActiveAccess: true,
+    isDemo: true,
   };
 }
 
@@ -55,6 +56,7 @@ export const getSessionContext = cache(async () => {
     isAdmin: membership?.role === "ADMIN" || membership?.role === "OWNER",
     role: membership?.role ?? null,
     hasActiveAccess,
+    isDemo: false,
   };
 });
 

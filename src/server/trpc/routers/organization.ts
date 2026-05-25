@@ -1,7 +1,8 @@
 import {
   router,
   adminProcedure,
-  orgAdminProcedure,
+  orgAdminReadProcedure,
+  orgAdminWriteProcedure,
   orgAdminActiveProcedure,
   orgProcedure,
   rateLimitMiddleware,
@@ -32,11 +33,10 @@ function isStripeResourceGone(error: unknown): boolean {
 
 export const organizationRouter = router({
   //Mutate: Update organization
-  renameOrganization: adminProcedure
+  renameOrganization: orgAdminWriteProcedure
     .use(rateLimitMiddleware("organization-update"))
     .input(
       z.object({
-        orgId: z.string().min(1, { message: "Organization ID is required" }),
         orgName: z
           .string()
           .min(1, { message: "Organization name is required" })
@@ -46,24 +46,16 @@ export const organizationRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (
-        !ctx.membership ||
-        !["ADMIN", "OWNER"].includes(ctx.membership.role) ||
-        !ctx.org
-      ) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Unauthorized, reauthenticate your current session",
-        });
-      }
+      const org = ctx.org!;
+      const actorId = ctx.user!.id ?? "";
 
       const beforeState = {
-        id: ctx.org.id,
-        name: ctx.org.name,
+        id: org.id,
+        name: org.name,
       };
 
       const updatedOrg = await ctx.db.organization.update({
-        where: { id: input.orgId },
+        where: { id: org.id },
         data: { name: input.orgName },
       });
 
@@ -76,11 +68,11 @@ export const organizationRouter = router({
       }
 
       await createAuditLog({
-        orgId: input.orgId,
-        actorId: ctx?.user?.id ?? "",
+        orgId: org.id,
+        actorId,
         action: "ORGANIZATION_UPDATED",
         entityType: "ORGANIZATION",
-        entityId: ctx.org.id,
+        entityId: org.id,
         beforeJSON: beforeState,
         afterJSON: {
           id: updatedOrg.id,
@@ -364,7 +356,7 @@ export const organizationRouter = router({
         data: deleted,
       };
     }),
-  getAiKeyStatus: orgAdminProcedure.query(async ({ ctx }) => {
+  getAiKeyStatus: orgAdminReadProcedure.query(async ({ ctx }) => {
     if (!ctx.org) {
       throw new TRPCError({
         code: "BAD_REQUEST",

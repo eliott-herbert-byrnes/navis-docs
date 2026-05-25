@@ -19,6 +19,11 @@ export const sidebarRouter = router({
           ctx.db.procedure.findMany({
             where: {
               teamId: input.teamId,
+              team: {
+                department: {
+                  orgId,
+                },
+              },
               categoryId: null,
               ...(ctx.isAdmin
                 ? { status: { in: ["PUBLISHED", "DRAFT"] as const } }
@@ -28,7 +33,14 @@ export const sidebarRouter = router({
             orderBy: { title: "asc" },
           }),
           ctx.db.category.findMany({
-            where: { teamId: input.teamId },
+            where: {
+              teamId: input.teamId,
+              team: {
+                department: {
+                  orgId,
+                },
+              },
+            },
             select: {
               id: true,
               name: true,

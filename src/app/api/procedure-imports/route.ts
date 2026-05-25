@@ -17,6 +17,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (ctx.isDemo) {
+      return NextResponse.json(
+        { error: "This action is not available in the demo." },
+        { status: 403 },
+      );
+    }
+
     if (!ctx.isAdmin) {
       return NextResponse.json(
         { error: "Only organization admins can upload imports" },

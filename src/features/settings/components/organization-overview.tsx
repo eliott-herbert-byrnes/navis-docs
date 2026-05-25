@@ -33,7 +33,7 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
   };
 
   const handleUpdate = () => {
-    renameOrganization({ orgId: org.id, orgName: orgName });
+    renameOrganization({ orgName: orgName });
   };
 
   return (

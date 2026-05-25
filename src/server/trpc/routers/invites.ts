@@ -1,7 +1,7 @@
 import {
   router,
-  adminProcedure,
   orgAdminActiveProcedure,
+  orgAdminProcedure,
   rateLimitMiddleware,
   protectedProcedure,
 } from "@/server/trpc/init";
@@ -22,10 +22,9 @@ import { canonicalEmail } from "@/lib/email-canonical";
 
 export const invitesRouter = router({
   // Query: Get Invites with pagination
-  getInvites: adminProcedure
+  getInvites: orgAdminProcedure
     .input(
       z.object({
-        orgId: z.string(),
         search: z.string().optional(),
         page: z.number().default(1),
         pageSize: z.number().default(10),
@@ -35,7 +34,7 @@ export const invitesRouter = router({
       const skip = (input.page - 1) * input.pageSize;
 
       const where = {
-        orgId: input.orgId,
+        orgId: ctx.org.id,
         ...(input.search && {
           email: {
             contains: input.search,

@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 
-/** Invalidated by `/api/cron/reset-demo` after the demo org is re-seeded. */
+/** Invalidated by `pnpm demo:reset` after the demo org is re-seeded. */
 export const DEMO_ORG_CACHE_TAG = "demo";
 
 /**

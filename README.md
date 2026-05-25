@@ -50,7 +50,7 @@ See our [roadmap](https://github.com/navis-docs/navis-docs/projects?query=is%3Ao
 - [Auth.js](https://authjs.dev/)
 - [TipTap](https://tiptap.dev/)
 - [React Flow](https://reactflow.dev/)
-- [Anthropic](https://www.anthropic.com/) and [OpenAI](https://openai.com/)
+- [Anthropic](https://www.anthropic.com/) and [OpenAI](https://openai.com/) SDKs
 - [Resend](https://resend.com/)
 
 ## Self Hosting 🐳

@@ -1,4 +1,5 @@
 import { router, orgProcedure, rateLimitMiddleware } from "@/server/trpc/init";
+import { assertTeamInOrg } from "@/server/trpc/org-scope";
 import { z } from "zod";
 import { generateEmbedding } from "@/lib/ai/embeddings";
 
@@ -23,6 +24,8 @@ export const aiRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
+      await assertTeamInOrg(ctx.db, input.teamId, ctx.org!.id);
+
       const queryEmbedding = await generateEmbedding(input.query);
 
       const queryEmbeddingString = `[${queryEmbedding.join(",")}]`;
