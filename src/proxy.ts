@@ -7,17 +7,30 @@ const ALLOWED_FRAME_ANCESTORS = [
   "https://www.navisdocs.com",
 ];
 
+function applyDemoHeaders(res: NextResponse) {
+  res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  res.headers.delete("X-Frame-Options");
+  res.headers.set(
+    "Content-Security-Policy",
+    `frame-ancestors ${ALLOWED_FRAME_ANCESTORS.join(" ")};`,
+  );
+}
+
 export function proxy(req: NextRequest) {
   const host = req.headers.get("host") ?? "";
+
+  if (isDemoHost(host) && req.nextUrl.pathname === "/") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/dashboard";
+    const res = NextResponse.redirect(url);
+    applyDemoHeaders(res);
+    return res;
+  }
+
   const res = NextResponse.next();
 
   if (isDemoHost(host)) {
-    res.headers.set("X-Robots-Tag", "noindex, nofollow");
-    res.headers.delete("X-Frame-Options");
-    res.headers.set(
-      "Content-Security-Policy",
-      `frame-ancestors ${ALLOWED_FRAME_ANCESTORS.join(" ")};`,
-    );
+    applyDemoHeaders(res);
   } else {
     res.headers.set("X-Frame-Options", "DENY");
   }

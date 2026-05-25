@@ -190,7 +190,7 @@ Useful development commands:
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key exposed to the browser.                   | Optional             | `pk_test_...`                                                         |
 | `NEXT_PUBLIC_APP_URL`                | Public app URL for links, metadata, and return URLs.             | Yes                  | `https://navisdocs.com`                                               |
 | `NEXT_PUBLIC_DEPLOY_MODE`            | Build-time deployment mode. Use `cloud` or `self-hosted`.        | Yes                  | `self-hosted`                                                         |
-| `NEXT_PUBLIC_DEMO_URL`               | Optional URL embedded in the marketing page demo iframe.         | Optional             | `https://demo.navisdocs.com`                                          |
+| `NEXT_PUBLIC_DEMO_URL`               | Production only: demo base URL for the marketing iframe (`/dashboard` appended). | Optional             | `https://demo.navisdocs.com`                                          |
 
 See [.env.example](./.env.example) for the complete list of supported environment variables and comments.
 
