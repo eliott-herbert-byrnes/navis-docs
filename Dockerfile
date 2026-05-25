@@ -37,6 +37,7 @@ RUN mkdir -p /tmp/prisma-migrate/node_modules && \
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+RUN apk add --no-cache wget
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
@@ -44,6 +45,10 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /tmp/prisma-migrate/node_modules/ ./node_modules/
 COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh && \
+    chown -R node:node /app
+USER node
 EXPOSE 3000
-CMD ["node", "server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:3000/api/health || exit 1
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
