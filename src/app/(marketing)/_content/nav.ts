@@ -50,16 +50,23 @@ export const footerNav = [
   },
 ] as const satisfies readonly FooterColumn[];
 
+/** Same-origin path suitable for sitemap.xml (no fragments, mailto, or external URLs). */
+function isSitemapPath(href: string): boolean {
+  return href.startsWith("/") && !href.includes("#");
+}
+
 /**
  * All public marketing paths for `sitemap.ts` — derived from nav definitions so
  * new footer/header links stay in sync with the sitemap.
  */
 export function getMarketingSitemapPaths(): string[] {
   const paths = new Set<string>(["/"]);
-  for (const item of primaryNav) paths.add(item.href);
+  for (const item of primaryNav) {
+    if (isSitemapPath(item.href)) paths.add(item.href);
+  }
   for (const column of footerNav) {
     for (const link of column.links) {
-      paths.add(link.href);
+      if (isSitemapPath(link.href)) paths.add(link.href);
     }
   }
   return Array.from(paths).sort((a, b) => a.localeCompare(b));
