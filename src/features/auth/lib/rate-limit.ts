@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { RateLimiterRedis } from "rate-limiter-flexible";
+import { getClientIpFromHeaders } from "@/lib/client-ip";
 import { getRedis } from "@/lib/redis";
 
 let _authLimiter: RateLimiterRedis | null = null;
@@ -19,8 +20,7 @@ function getAuthLimiter(): RateLimiterRedis {
 }
 
 export async function limiter(scope: string): Promise<{ success: boolean }> {
-  const h = await headers();
-  const ip = (h.get("x-forwarded-for") ?? "unknown").split(",")[0]!.trim();
+  const ip = getClientIpFromHeaders(await headers());
   try {
     await getAuthLimiter().consume(`${scope}:${ip}`);
     return { success: true };

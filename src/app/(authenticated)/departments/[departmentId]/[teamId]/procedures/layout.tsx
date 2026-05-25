@@ -1,7 +1,9 @@
+import { signInPath } from "@/app/paths";
 import { ProcedureSidebar } from "@/features/procedures/components/procedure-sidebar";
 import { serverTrpc } from "@/server/trpc/server";
 import { ProcedureRouteProvider } from "@/contexts/procedure-route-context";
 import { getSessionContext } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function ProcedureLayout({
   children,
@@ -12,7 +14,7 @@ export default async function ProcedureLayout({
 }) {
   const { departmentId, teamId } = await params;
   const ctx = await getSessionContext();
-  if (!ctx) return <div className="h-full invisible" aria-hidden></div>;
+  if (!ctx) redirect(signInPath());
   const { isAdmin } = ctx;
 
   const trpc = await serverTrpc();

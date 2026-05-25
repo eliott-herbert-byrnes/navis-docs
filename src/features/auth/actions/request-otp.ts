@@ -6,7 +6,6 @@ import { getEmailFrom } from "@/lib/email";
 import { createOtpFor } from "@/lib/otp";
 import { getResend } from "@/lib/resend";
 import { render } from "@react-email/render";
-import { headers } from "next/headers";
 import { limiter } from "../lib/rate-limit";
 import { SignInOtpEmail } from "@/emails/sign-in-otp";
 
@@ -15,8 +14,7 @@ const schema = z.object({
 });
 
 export const requestOtpAction = async (emailRaw: string) => {
-  const ip = (await headers()).get("x-forwarded-for") ?? "anon";
-  const { success } = await limiter(`otp:request:${ip}`);
+  const { success } = await limiter("otp:request");
   if (!success)
     return { ok: false, message: "Too many requests, try again later" };
 
