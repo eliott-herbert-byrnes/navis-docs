@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { RateLimiterRedis } from "rate-limiter-flexible";
+import { RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
 import { getRedis } from "@/lib/redis";
 
 let _authLimiter: RateLimiterRedis | null = null;
@@ -24,7 +24,14 @@ export async function limiter(scope: string): Promise<{ success: boolean }> {
   try {
     await getAuthLimiter().consume(`${scope}:${ip}`);
     return { success: true };
-  } catch {
+  } catch (err) {
+    if (err instanceof RateLimiterRes) {
+      return { success: false };
+    }
+    console.error(
+      "[rate-limit] Redis store unavailable; failing closed",
+      err,
+    );
     return { success: false };
   }
 }
