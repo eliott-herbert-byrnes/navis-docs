@@ -4,13 +4,38 @@ import { toActionState } from "@/components/form/utils/to-action-state";
 import { getSessionUser } from "@/lib/auth";
 import { isSelfHosted } from "@/lib/deploy-mode";
 import { prisma } from "@/lib/prisma";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import {
   OrgMembershipRole,
   OrgPlan,
   StripeSubscriptionStatus,
 } from "@prisma/client";
 import { redirect } from "next/navigation";
+
+const CHECKOUT_BLOCKED_STATUSES: StripeSubscriptionStatus[] = [
+  StripeSubscriptionStatus.active,
+  StripeSubscriptionStatus.trialing,
+  StripeSubscriptionStatus.past_due,
+  StripeSubscriptionStatus.unpaid,
+  StripeSubscriptionStatus.paused,
+  StripeSubscriptionStatus.incomplete,
+];
+
+function canStartCheckout(org: {
+  plan: OrgPlan;
+  stripeSubscriptionStatus: StripeSubscriptionStatus | null;
+}): boolean {
+  if (org.plan === OrgPlan.free) {
+    return true;
+  }
+
+  const status = org.stripeSubscriptionStatus;
+  if (!status) {
+    return true;
+  }
+
+  return !CHECKOUT_BLOCKED_STATUSES.includes(status);
+}
 
 export const createCheckoutSession = async (
   orgSlug: string | null | undefined,
@@ -25,6 +50,13 @@ export const createCheckoutSession = async (
     return toActionState(
       "ERROR",
       "Checkout is not available for self-hosted deployments.",
+    );
+  }
+
+  if (!isStripeConfigured()) {
+    return toActionState(
+      "ERROR",
+      "Billing is not configured. Contact your administrator.",
     );
   }
 
@@ -48,11 +80,7 @@ export const createCheckoutSession = async (
     );
   }
 
-  const status = org.stripeSubscriptionStatus;
-  if (
-    status === StripeSubscriptionStatus.active ||
-    status === StripeSubscriptionStatus.trialing
-  ) {
+  if (!canStartCheckout(org)) {
     return toActionState(
       "ERROR",
       "This organization already has an active subscription.",
@@ -88,13 +116,6 @@ export const createCheckoutSession = async (
     customerId = customer.id;
   }
 
-  const priorSubs = await getStripe().subscriptions.list({
-    customer: customerId,
-    status: "all",
-    limit: 1,
-  });
-  const eligibleForTrial = priorSubs.data.length === 0;
-
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const session = await getStripe().checkout.sessions.create({
     mode: "subscription",
@@ -105,9 +126,6 @@ export const createCheckoutSession = async (
     success_url: `${baseUrl}/subscription?status=success`,
     cancel_url: `${baseUrl}/subscription?status=canceled`,
     metadata: { orgId: org.id, orgSlug: org.slug, plan: org.plan },
-    ...(eligibleForTrial
-      ? { subscription_data: { trial_period_days: 14 } }
-      : {}),
   });
 
   if (!session.url) {

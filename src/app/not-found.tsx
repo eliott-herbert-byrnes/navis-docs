@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { dashboardPath } from "@/app/paths";
 
 export const metadata: Metadata = {
   title: "404 - Page Not Found | Navis Docs",
@@ -40,7 +39,7 @@ export default function NotFound() {
           </CardHeader>
           <CardContent className="flex justify-center">
             <Button asChild className="w-full bg-brand hover:bg-brand/75">
-              <Link href={dashboardPath()}>Return to Dashboard</Link>
+              <Link href="/">Back to home</Link>
             </Button>
           </CardContent>
         </Card>

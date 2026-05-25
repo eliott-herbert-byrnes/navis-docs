@@ -11,16 +11,51 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/contexts/auth-context";
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+function formatGraceDaysRemaining(graceEndsAt: Date | null): number {
+  if (!graceEndsAt) return 0;
+  return Math.max(0, Math.ceil((graceEndsAt.getTime() - Date.now()) / MS_PER_DAY));
+}
+
+function getAccessTooltip(
+  hasActiveAccess: boolean,
+  accessLevel: "full" | "grace" | "read_only",
+  isAdmin: boolean,
+  adminOnly: boolean,
+  graceEndsAt: Date | null,
+): string | null {
+  if (hasActiveAccess) {
+    return adminOnly && !isAdmin ? "Admin access required" : null;
+  }
+
+  if (accessLevel === "grace" && isAdmin) {
+    const days = formatGraceDaysRemaining(graceEndsAt);
+    return `Payment failed — update billing within ${days} day${days === 1 ? "" : "s"}`;
+  }
+
+  if (accessLevel === "read_only") {
+    return isAdmin
+      ? "Subscribe to restore full access"
+      : "Organisation is read-only — contact your admin";
+  }
+
+  return isAdmin
+    ? "Subscribe to restore full access"
+    : "Organisation is read-only — contact your admin";
+}
+
 export function useAccessGate(adminOnly = false) {
-  const { hasActiveAccess, isAdmin } = useAuthContext();
+  const { hasActiveAccess, isAdmin, accessLevel, graceEndsAt } =
+    useAuthContext();
   const allowed = hasActiveAccess && (!adminOnly || isAdmin);
-  const tooltip = !hasActiveAccess
-    ? isAdmin
-      ? "Subscribe for access"
-      : "Contact your organisation admin for access"
-    : adminOnly && !isAdmin
-      ? "Admin access required"
-      : null;
+  const tooltip = getAccessTooltip(
+    hasActiveAccess,
+    accessLevel,
+    isAdmin,
+    adminOnly,
+    graceEndsAt,
+  );
   return { allowed, tooltip };
 }
 

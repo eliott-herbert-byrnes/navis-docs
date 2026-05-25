@@ -20,7 +20,7 @@ import {
 } from "@prisma/client";
 import { encrypt } from "@/lib/crypto";
 import { isCloud } from "@/lib/deploy-mode";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { after } from "next/server";
 
 function isStripeResourceGone(error: unknown): boolean {
@@ -126,6 +126,23 @@ export const organizationRouter = router({
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
 
+      if (isCloud()) {
+        if (!isStripeConfigured()) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message:
+              "Billing is not configured. Set STRIPE_SECRET_KEY to create organizations in cloud mode.",
+          });
+        }
+        if (!process.env.STRIPE_DEFAULT_PRICE_ID) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message:
+              "Billing is not configured. Set STRIPE_DEFAULT_PRICE_ID to create organizations in cloud mode.",
+          });
+        }
+      }
+
       let org: Organization;
       try {
         org = await ctx.db.$transaction(async (tx) => {
@@ -163,11 +180,10 @@ export const organizationRouter = router({
       let orgForResponse = org;
 
       if (isCloud()) {
-        const priceId = process.env.STRIPE_DEFAULT_PRICE_ID;
-        if (priceId) {
-          let createdCustomerId: string | undefined;
-          let createdSubscriptionId: string | undefined;
-          try {
+        const priceId = process.env.STRIPE_DEFAULT_PRICE_ID!;
+        let createdCustomerId: string | undefined;
+        let createdSubscriptionId: string | undefined;
+        try {
             const seatCount = Math.max(
               1,
               await ctx.db.orgMembership.count({
@@ -284,7 +300,6 @@ export const organizationRouter = router({
               cause: error,
             });
           }
-        }
       }
 
       return {

@@ -1,14 +1,10 @@
 import { auth } from "@/auth";
+import { resolveOrgWriteAccess } from "@/lib/billing/access";
 import { isDemoHost } from "@/lib/demo";
 import { prisma } from "@/lib/prisma";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { headers } from "next/headers";
-import {
-  OrgMembershipRole,
-  OrgPlan,
-  Prisma,
-  StripeSubscriptionStatus,
-} from "@prisma/client";
+import { OrgMembershipRole, Prisma } from "@prisma/client";
 import { DEMO_USER_EMAIL } from "@/lib/demo-constants";
 
 type MembershipWithOrg = Prisma.OrgMembershipGetPayload<{
@@ -51,6 +47,8 @@ async function createDemoContext() {
     membership,
     isAdmin: true,
     hasActiveAccess: true,
+    accessLevel: "full" as const,
+    graceEndsAt: null,
     isDemo: true,
   };
 }
@@ -73,6 +71,8 @@ export async function createContext(opts?: FetchCreateContextFnOptions) {
       membership: null,
       isAdmin: false,
       hasActiveAccess: false,
+      accessLevel: "read_only" as const,
+      graceEndsAt: null,
       isDemo: true,
     };
   }
@@ -94,10 +94,13 @@ export async function createContext(opts?: FetchCreateContextFnOptions) {
       (membership?.role === "ADMIN" || membership?.role === "OWNER") ?? false;
   }
 
-  const hasActiveAccess =
-    org?.plan === OrgPlan.enterprise ||
-    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.active ||
-    org?.stripeSubscriptionStatus === StripeSubscriptionStatus.trialing;
+  const orgAccess = org
+    ? resolveOrgWriteAccess(org)
+    : {
+        hasWriteAccess: false,
+        accessLevel: "read_only" as const,
+        graceEndsAt: null,
+      };
 
   return {
     db: prisma,
@@ -105,7 +108,10 @@ export async function createContext(opts?: FetchCreateContextFnOptions) {
     org,
     membership,
     isAdmin,
-    hasActiveAccess,
+    /** Write access — see `resolveOrgWriteAccess()`. */
+    hasActiveAccess: orgAccess.hasWriteAccess,
+    accessLevel: orgAccess.accessLevel,
+    graceEndsAt: orgAccess.graceEndsAt,
     isDemo: false,
   };
 }

@@ -14,6 +14,15 @@ export const createOtpFor = async (email: string) => {
     data: { email: email.toLowerCase(), codeHash, expiresAt },
   });
 
+  if (process.env.E2E_TEST_MODE === "true") {
+    try {
+      const { getRedis } = await import("@/lib/redis");
+      await getRedis().set(`e2e:otp:${email.toLowerCase()}`, code, "EX", 600);
+    } catch {
+      // Redis may be unavailable in some test environments
+    }
+  }
+
   return { code, expiresAt };
 };
 

@@ -43,14 +43,17 @@ model Account {
 }
 
 model Address {
-  id        String   @id @default(uuid())
+  id        String       @id @default(uuid())
   name      String
   address   String
   phone     String
   email     String?
   website   String?
   orgId     String
-  createdAt DateTime @default(now())
+  createdAt DateTime     @default(now())
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
 }
 
 model EmailOTP {
@@ -96,6 +99,7 @@ model VerificationToken {
 enum OrgPlan {
   pro
   enterprise
+  free
 }
 
 model Organization {
@@ -109,6 +113,7 @@ model Organization {
   openAiApiKey             String?
   createdAt                DateTime                  @default(now())
   currentPeriodEnd         DateTime?
+  billingGraceEndsAt       DateTime?
   stripeCustomerId         String?                   @unique
   stripeSubscriptionId     String?                   @unique
   stripeSubscriptionStatus StripeSubscriptionStatus?
@@ -118,7 +123,10 @@ model Organization {
   invitations              Invitation[]
   memberships              OrgMembership[]
   procedureRollout         ProcedureRollout[]
+  addresses                Address[]
   ownerUser                User                      @relation(fields: [ownerUserId], references: [id])
+
+  @@index([ownerUserId])
 }
 
 model OrgMembership {
@@ -361,6 +369,7 @@ model IngestionJob {
 
   @@index([orgId, status, createdAt])
   @@index([procedureId, status, createdAt])
+  @@index([outputVersionId])
 }
 
 /// Async org-wide audit log JSON export (storage path in fileKey when READY).
@@ -393,7 +402,8 @@ model AuditLog {
   at         DateTime @default(now())
   beforeJSON Json?
   afterJSON  Json?
-   @@index([orgId, entityType, entityId, at])
+  @@index([orgId, entityType, entityId, at])
+  @@index([orgId, actorId, at])
 }
 
 enum InvitationStatus {

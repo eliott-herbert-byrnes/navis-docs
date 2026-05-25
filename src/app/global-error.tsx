@@ -21,8 +21,10 @@ const GeistSans = Geist({
 
 export default function GlobalError({
   error,
+  reset,
 }: {
   error: Error & { digest?: string };
+  reset: () => void;
 }) {
   console.error(error);
   return (
@@ -51,7 +53,7 @@ export default function GlobalError({
               <CardContent className="flex flex-col gap-3 justify-center">
                 <Button
                   className="w-full bg-brand hover:bg-brand/75"
-                  onClick={() => window.location.reload()}
+                  onClick={() => reset()}
                 >
                   Try Again
                 </Button>

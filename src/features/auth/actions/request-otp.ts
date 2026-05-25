@@ -32,14 +32,29 @@ export const requestOtpAction = async (emailRaw: string) => {
 
   const { code } = await createOtpFor(email);
 
-  const resend = getResend();
-  const html = await render(React.createElement(SignInOtpEmail, { code }));
-  await resend.emails.send({
-    from: getEmailFrom(),
-    to: email,
-    subject: "Your sign-in code",
-    html,
-  });
+  try {
+    const resend = getResend();
+    const html = await render(React.createElement(SignInOtpEmail, { code }));
+    const { error } = await resend.emails.send({
+      from: getEmailFrom(),
+      to: email,
+      subject: "Your sign-in code",
+      html,
+    });
+    if (error) {
+      console.error("[requestOtp] failed to send email", error);
+      return {
+        ok: false,
+        message: "Could not send sign-in code, try again later",
+      };
+    }
+  } catch (err) {
+    console.error("[requestOtp] failed to send email", err);
+    return {
+      ok: false,
+      message: "Could not send sign-in code, try again later",
+    };
+  }
 
   return { ok: true, message: "Code sent. Check your email" };
 };

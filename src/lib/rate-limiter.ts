@@ -1,6 +1,6 @@
 "use server";
 
-import { RateLimiterRedis } from "rate-limiter-flexible";
+import { RateLimiterRedis, RateLimiterRes } from "rate-limiter-flexible";
 import { getRedis } from "./redis";
 
 let _aiLimiter: RateLimiterRedis | null = null;
@@ -52,7 +52,14 @@ export async function getLimitByUser(
   try {
     await limiter.consume(key);
     return { success: true };
-  } catch {
+  } catch (err) {
+    if (err instanceof RateLimiterRes) {
+      return { success: false };
+    }
+    console.error(
+      "[rate-limit] Redis store unavailable; failing closed",
+      err,
+    );
     return { success: false };
   }
 }

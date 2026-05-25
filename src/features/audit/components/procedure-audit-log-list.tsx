@@ -73,7 +73,6 @@ export function ProcedureAuditLogList({
       { procedureId, limit: PAGE_SIZE },
       {
         enabled,
-        initialPageParam: 0,
         getNextPageParam: (lastPage) =>
           lastPage.hasMore ? lastPage.nextOffset : undefined,
       },

@@ -32,6 +32,7 @@ type ProPlanCardClientProps = {
   annualCurrency: string;
   activePlan: string | null | undefined;
   activeSubscription: boolean;
+  showCheckoutCta: boolean;
   isTrialing: boolean;
   billing: BillingInterval;
   isSelfHosted: boolean;
@@ -51,6 +52,7 @@ export function ProPlanCardClient({
   annualCurrency,
   activePlan,
   activeSubscription,
+  showCheckoutCta,
   isTrialing,
   billing,
   isSelfHosted,
@@ -174,7 +176,7 @@ export function ProPlanCardClient({
           <Button disabled className="w-full">
             <span className="font-semibold">Checkout</span>
           </Button>
-        ) : selectedPriceId ? (
+        ) : showCheckoutCta && selectedPriceId ? (
           <CheckoutSessionForm
             key={selectedPriceId}
             orgSlug={orgSlug}

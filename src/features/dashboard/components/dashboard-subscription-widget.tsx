@@ -6,12 +6,18 @@ import Link from "next/link";
 import { subscriptionPath } from "@/app/paths";
 import { differenceInDays } from "date-fns";
 import { CreditCard } from "lucide-react";
+import { resolveOrgWriteAccess } from "@/lib/billing/access";
+import { BillingStatusBanner } from "@/features/stripe/components/billing-status-banner";
 
 type DashboardSubscriptionWidgetProps = {
   org: Pick<
     Organization,
-    "plan" | "stripeSubscriptionStatus" | "currentPeriodEnd"
+    | "plan"
+    | "stripeSubscriptionStatus"
+    | "currentPeriodEnd"
+    | "billingGraceEndsAt"
   >;
+  isAdmin: boolean;
 };
 
 const isSelfHostedDeploy =
@@ -19,7 +25,9 @@ const isSelfHostedDeploy =
 
 export function DashboardSubscriptionWidget({
   org,
+  isAdmin,
 }: DashboardSubscriptionWidgetProps) {
+  const { accessLevel, graceEndsAt } = resolveOrgWriteAccess(org);
   const daysUntilRenewal = org.currentPeriodEnd
     ? differenceInDays(org.currentPeriodEnd, new Date())
     : null;
@@ -38,6 +46,13 @@ export function DashboardSubscriptionWidget({
           <CreditCard className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent className="space-y-3">
+          <BillingStatusBanner
+            accessLevel={accessLevel}
+            graceEndsAt={graceEndsAt}
+            stripeSubscriptionStatus={org.stripeSubscriptionStatus}
+            isAdmin={isAdmin}
+            compact
+          />
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-semibold capitalize">{org.plan}</span>
             <Badge variant="outline" className="text-xs">
@@ -62,6 +77,13 @@ export function DashboardSubscriptionWidget({
         <CreditCard className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-3">
+        <BillingStatusBanner
+          accessLevel={accessLevel}
+          graceEndsAt={graceEndsAt}
+          stripeSubscriptionStatus={org.stripeSubscriptionStatus}
+          isAdmin={isAdmin}
+          compact
+        />
         <div className="flex items-center gap-2">
           <span className="text-sm capitalize font-semibold">{org.plan}</span>
           {org.stripeSubscriptionStatus && (

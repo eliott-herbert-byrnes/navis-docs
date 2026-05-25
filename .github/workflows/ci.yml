@@ -9,8 +9,14 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  NEXT_PUBLIC_APP_URL: https://ci.example.com
+  NEXT_PUBLIC_DEPLOY_MODE: self-hosted
+  NEXT_TELEMETRY_DISABLED: "1"
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/navis_docs
+
 jobs:
-  ci:
+  quality:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,15 +37,84 @@ jobs:
         run: pnpm typecheck
 
       - name: Unit tests
-        run: pnpm test
+        run: pnpm test:ci
+
+      - name: Dependency audit
+        run: pnpm audit:ci
+
+  schema-drift:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: navis_docs
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
 
       - name: Prisma generate
         run: pnpm prisma generate
 
-      - name: Build (no secrets required)
-        run: pnpm build
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Prepare shadow database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -tc \
+            "SELECT 1 FROM pg_database WHERE datname = 'navis_docs_shadow'" | grep -q 1 \
+            || PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 \
+            -c "CREATE DATABASE navis_docs_shadow;"
+
+      - name: Check migration schema drift
+        run: pnpm migrate:check
         env:
-          NEXT_TELEMETRY_DISABLED: "1"
+          SHADOW_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/navis_docs_shadow
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [quality, schema-drift]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Prisma generate
+        run: pnpm prisma generate
+
+      - name: Build
+        run: pnpm build
 
       - name: Upload build artifact (.next)
         uses: actions/upload-artifact@v4
@@ -50,3 +125,18 @@ jobs:
             next.config.*
             package.json
             pnpm-lock.yaml
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [quality, schema-drift]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker build smoke test
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_APP_URL=https://ci.example.com \
+            --build-arg NEXT_PUBLIC_DEPLOY_MODE=self-hosted \
+            -t navis-docs:ci \
+            .

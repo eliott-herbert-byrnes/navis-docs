@@ -23,7 +23,13 @@
     "format": "prettier --write .",
     "email": "email dev --dir src/emails",
     "test": "vitest",
+    "test:ci": "vitest run",
     "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install chromium",
+    "audit:ci": "pnpm audit --audit-level high",
+    "migrate:check": "prisma migrate diff --from-migrations prisma/migrations --to-schema prisma/schema.prisma --exit-code",
     "formatCheck": "tsc --noEmit && prettier --write ."
   },
   "dependencies": {
@@ -73,9 +79,9 @@
     "@tiptap/pm": "^3.19.0",
     "@tiptap/react": "^3.9.0",
     "@tiptap/starter-kit": "^3.9.0",
-    "@trpc/client": "^11.0.0",
-    "@trpc/react-query": "^11.0.0",
-    "@trpc/server": "^11.0.0",
+    "@trpc/client": "^11.8.0",
+    "@trpc/react-query": "^11.8.0",
+    "@trpc/server": "^11.8.0",
     "@types/dagre": "^0.7.53",
     "big.js": "^7.0.1",
     "class-variance-authority": "^0.7.1",
@@ -91,7 +97,7 @@
     "lodash.throttle": "^4.1.1",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.11.0",
-    "next": "16.2.2",
+    "next": "16.2.6",
     "next-auth": "5.0.0-beta.29",
     "next-themes": "npm:@ecosy/next-themes@^0.4.6",
     "openai": "^6.8.1",
@@ -115,6 +121,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+    "@playwright/test": "^1.60.0",
     "@react-email/preview-server": "5.2.10",
     "@tailwindcss/postcss": "^4",
     "@types/big.js": "^6.2.2",
@@ -125,7 +132,7 @@
     "@types/react-dom": "19.2.3",
     "@vitest/ui": "^4.0.16",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.2.6",
     "prettier": "^3.6.2",
     "prisma": "^7.3.0",
     "react-email": "^5.2.10",
@@ -140,7 +147,22 @@
   "pnpm": {
     "overrides": {
       "@types/react": "19.2.10",
-      "@types/react-dom": "19.2.3"
+      "@types/react-dom": "19.2.3",
+      "@hono/node-server": ">=1.19.10",
+      "@xmldom/xmldom": ">=0.8.13",
+      "defu": ">=6.1.5",
+      "effect": ">=3.20.0",
+      "immutable": ">=5.1.5",
+      "lodash": ">=4.18.0",
+      "fast-uri": ">=3.1.2",
+      "flatted": ">=3.4.0",
+      "hono": ">=4.12.4",
+      "minimatch": ">=3.1.3",
+      "next": ">=16.2.6",
+      "picomatch": ">=4.0.4",
+      "rollup": ">=4.59.0",
+      "tar": ">=7.5.11",
+      "vite": ">=7.3.2"
     }
   }
 }
