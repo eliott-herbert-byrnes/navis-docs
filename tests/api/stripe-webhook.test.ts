@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Prisma } from "@prisma/client";
 import Stripe from "stripe";
 
 const mockConstructEvent = vi.fn();
@@ -7,6 +8,7 @@ const mockDeleteStripeSubscription = vi.fn();
 const mockSendTrialWillEndEmail = vi.fn();
 const mockHandleInvoicePaymentFailed = vi.fn();
 const mockHandleInvoicePaid = vi.fn();
+const mockStripeWebhookEventCreate = vi.fn();
 
 vi.mock("@/lib/stripe", () => ({
   getStripe: () => ({
@@ -14,6 +16,14 @@ vi.mock("@/lib/stripe", () => ({
       constructEvent: (...args: unknown[]) => mockConstructEvent(...args),
     },
   }),
+}));
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    stripeWebhookEvent: {
+      create: (...args: unknown[]) => mockStripeWebhookEventCreate(...args),
+    },
+  },
 }));
 
 vi.mock("@/app/api/stripe/data", () => ({
@@ -41,6 +51,7 @@ describe("POST /api/stripe", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
+    mockStripeWebhookEventCreate.mockResolvedValue(undefined);
     mockUpdateStripeSubscription.mockResolvedValue(undefined);
     mockDeleteStripeSubscription.mockResolvedValue(undefined);
     mockSendTrialWillEndEmail.mockResolvedValue(undefined);
@@ -82,6 +93,7 @@ describe("POST /api/stripe", () => {
     const subscription = { id: "sub_123" } as Stripe.Subscription;
 
     mockConstructEvent.mockReturnValue({
+      id: "evt_1",
       type: "customer.subscription.updated",
       data: { object: subscription },
     });
@@ -94,6 +106,9 @@ describe("POST /api/stripe", () => {
     );
 
     expect(response.status).toBe(200);
+    expect(mockStripeWebhookEventCreate).toHaveBeenCalledWith({
+      data: { id: "evt_1", type: "customer.subscription.updated" },
+    });
     expect(mockUpdateStripeSubscription).toHaveBeenCalledWith(subscription);
   });
 
@@ -101,6 +116,7 @@ describe("POST /api/stripe", () => {
     const invoice = { id: "in_123" } as Stripe.Invoice;
 
     mockConstructEvent.mockReturnValueOnce({
+      id: "evt_failed",
       type: "invoice.payment_failed",
       data: { object: invoice },
     });
@@ -115,6 +131,7 @@ describe("POST /api/stripe", () => {
     expect(mockHandleInvoicePaymentFailed).toHaveBeenCalledWith(invoice);
 
     mockConstructEvent.mockReturnValueOnce({
+      id: "evt_paid",
       type: "invoice.paid",
       data: { object: invoice },
     });
@@ -131,6 +148,7 @@ describe("POST /api/stripe", () => {
 
   it("returns 500 when a handler throws", async () => {
     mockConstructEvent.mockReturnValue({
+      id: "evt_del",
       type: "customer.subscription.deleted",
       data: { object: { id: "sub_del" } },
     });
@@ -144,5 +162,31 @@ describe("POST /api/stripe", () => {
     );
 
     expect(response.status).toBe(500);
+  });
+
+  it("returns 200 without reprocessing duplicate events", async () => {
+    const subscription = { id: "sub_123" } as Stripe.Subscription;
+
+    mockConstructEvent.mockReturnValue({
+      id: "evt_duplicate",
+      type: "customer.subscription.updated",
+      data: { object: subscription },
+    });
+    mockStripeWebhookEventCreate.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError("Unique constraint failed", {
+        code: "P2002",
+        clientVersion: "test",
+      }),
+    );
+
+    const response = await POST(
+      new Request("http://localhost/api/stripe", {
+        method: "POST",
+        body: JSON.stringify({ id: "evt_duplicate" }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockUpdateStripeSubscription).not.toHaveBeenCalled();
   });
 });

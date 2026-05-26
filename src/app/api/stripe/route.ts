@@ -1,4 +1,6 @@
+import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
+import { Prisma } from "@prisma/client";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Stripe } from "stripe";
@@ -41,6 +43,23 @@ export async function POST(req: Request) {
   }
 
   try {
+    try {
+      await prisma.stripeWebhookEvent.create({
+        data: {
+          id: event.id,
+          type: event.type,
+        },
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        return new NextResponse(null, { status: 200 });
+      }
+      throw err;
+    }
+
     switch (event.type) {
       case "customer.subscription.created":
         await handleSubscriptionCreated(
