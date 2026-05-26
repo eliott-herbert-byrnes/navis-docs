@@ -6,6 +6,15 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  getOrganizationNameValidationMessage,
+  ORG_NAME_MAX_LENGTH_RENAME,
+} from "@/lib/org-name";
 import { CreditCard, FolderPen, Loader2 } from "lucide-react";
 import { ExportProcedureOrgDataButton } from "./export-procedure-org-data-button";
 import { ExportUserOrgDataButton } from "./export-user-org-data-button";
@@ -22,6 +31,15 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
   const { renameOrganization, isLoading } = useRenameOrganization();
   const [isPending, startTransition] = useTransition();
 
+  const trimmedOrgName = orgName.trim();
+  const validationMessage = getOrganizationNameValidationMessage(
+    trimmedOrgName,
+    ORG_NAME_MAX_LENGTH_RENAME,
+  );
+  const isNameInvalid = validationMessage !== null;
+  const isUnchanged = trimmedOrgName === org.name;
+  const isRenameDisabled = isLoading || isNameInvalid || isUnchanged;
+
   const handleManageSubscription = () => {
     startTransition(async () => {
       try {
@@ -33,8 +51,27 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
   };
 
   const handleUpdate = () => {
-    renameOrganization({ orgName: orgName });
+    if (isNameInvalid || isUnchanged) return;
+    renameOrganization({ orgName: trimmedOrgName });
   };
+
+  const renameButton = (
+    <Button
+      onClick={handleUpdate}
+      disabled={isRenameDisabled}
+      variant="outline"
+      className="w-full flex justify-start gap-2 shadow-none border max-w-[250px]"
+    >
+      {isLoading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <>
+          <FolderPen className="w-4 h-4 text-muted-foreground" />
+          <span className="font-semibold">Rename Organization</span>
+        </>
+      )}
+    </Button>
+  );
 
   return (
     <div className="flex flex-col w-full mb-8">
@@ -51,23 +88,19 @@ const OrganizationOverview = ({ org }: OrganizationOverviewProps) => {
               type="text"
               value={orgName}
               onChange={(e) => setOrgName(e.target.value)}
+              maxLength={ORG_NAME_MAX_LENGTH_RENAME}
               className="shadow-none border max-w-[250px]"
             />
-            <Button
-              onClick={handleUpdate}
-              disabled={isLoading}
-              variant="outline"
-              className="w-full flex justify-start gap-2 shadow-none border max-w-[250px]"
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <FolderPen className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-semibold">Rename Organization</span>
-                </>
-              )}
-            </Button>
+            {isNameInvalid && !isLoading ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex max-w-[250px]">{renameButton}</span>
+                </TooltipTrigger>
+                <TooltipContent>{validationMessage}</TooltipContent>
+              </Tooltip>
+            ) : (
+              renameButton
+            )}
           </div>
           <Separator />
           <div className="grid gap-3">
