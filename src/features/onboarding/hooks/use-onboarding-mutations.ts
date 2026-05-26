@@ -28,6 +28,5 @@ export function useCreateOrganization() {
     createOrganization,
     isPending: mutation.isPending,
     isSuccess: mutation.isSuccess,
-    error: mutation.error,
   };
 }

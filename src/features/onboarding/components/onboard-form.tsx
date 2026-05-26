@@ -29,7 +29,7 @@ export function OnboardForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [name, setName] = useState("");
-  const { createOrganization, isPending, error } = useCreateOrganization();
+  const { createOrganization, isPending } = useCreateOrganization();
 
   const trimmedName = name.trim();
   const validationMessage = getOrganizationNameValidationMessage(
@@ -54,7 +54,7 @@ export function OnboardForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="animate-fade-from-top">
-        <CardHeader className="text-center">
+        <CardHeader>
           <CardTitle className="text-xl">Create your organization</CardTitle>
           <CardDescription>
             Enter your organization name below to create your organization
@@ -76,16 +76,12 @@ export function OnboardForm({
                   maxLength={ORG_NAME_MAX_LENGTH_CREATE}
                   disabled={isPending}
                 />
-                <FieldDescription>At least 3 characters</FieldDescription>
-                {error && (
-                  <p className="text-sm text-red-500 mt-1">{error.message}</p>
-                )}
               </Field>
               <Field>
                 {isNameInvalid && !isPending ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="inline-flex">{submitButton}</span>
+                      <span>{submitButton}</span>
                     </TooltipTrigger>
                     <TooltipContent>{validationMessage}</TooltipContent>
                   </Tooltip>
