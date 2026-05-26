@@ -406,6 +406,13 @@ model AuditLog {
   @@index([orgId, actorId, at])
 }
 
+model StripeWebhookEvent {
+  id          String   @id
+  type        String
+  processedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
 enum InvitationStatus {
   PENDING
   ACCEPTED

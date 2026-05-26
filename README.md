@@ -187,7 +187,6 @@ Useful development commands:
 | `STRIPE_SECRET_KEY`                  | Stripe secret key for billing.                                                   | Yes (cloud)          | `sk_test_...`                                                         |
 | `STRIPE_WEBHOOK_SECRET`              | Stripe webhook signing secret.                                                   | Yes (cloud)          | `whsec_...`                                                           |
 | `STRIPE_DEFAULT_PRICE_ID`            | Default Stripe price ID used when creating org trials at signup.                   | Yes (cloud)          | `price_...`                                                           |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key exposed to the browser.                                   | Yes (cloud)          | `pk_test_...`                                                         |
 | `NEXT_PUBLIC_APP_URL`                | Public app URL for links, metadata, and return URLs.                             | Yes                  | `https://navisdocs.com`                                               |
 | `NEXT_PUBLIC_DEPLOY_MODE`            | Build-time deployment mode. Use `cloud` or `self-hosted`.                        | Yes                  | `self-hosted`                                                         |
 | `NEXT_PUBLIC_DEMO_URL`               | Production only: demo base URL for the marketing iframe (`/dashboard` appended). | Optional             | `https://demo.navisdocs.com`                                          |

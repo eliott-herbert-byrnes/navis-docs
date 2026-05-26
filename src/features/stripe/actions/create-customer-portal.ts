@@ -1,8 +1,9 @@
 "use server";
 import { dashboardPath, signInPath, subscriptionPath } from "@/app/paths";
 import { getSessionContext } from "@/lib/auth";
+import { isSelfHosted } from "@/lib/deploy-mode";
 import { prisma } from "@/lib/prisma";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import { Stripe } from "stripe";
 
@@ -73,6 +74,10 @@ export const createCustomerPortal = async () => {
   const ctx = await getSessionContext();
   if (!ctx) {
     redirect(signInPath());
+  }
+
+  if (isSelfHosted() || !isStripeConfigured()) {
+    redirect(subscriptionPath());
   }
 
   const { org, isAdmin } = ctx;
