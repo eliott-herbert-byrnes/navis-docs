@@ -46,7 +46,7 @@ export function OnboardForm({
   };
 
   const submitButton = (
-    <Button type="submit" disabled={isSubmitDisabled}>
+    <Button type="submit" disabled={isSubmitDisabled} className="w-full">
       {isPending ? "Creating..." : "Create Organization"}
     </Button>
   );
@@ -81,7 +81,7 @@ export function OnboardForm({
                 {isNameInvalid && !isPending ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span>{submitButton}</span>
+                      <span className="block w-full">{submitButton}</span>
                     </TooltipTrigger>
                     <TooltipContent>{validationMessage}</TooltipContent>
                   </Tooltip>
