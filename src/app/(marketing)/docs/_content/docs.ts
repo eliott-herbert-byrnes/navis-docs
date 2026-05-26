@@ -38,7 +38,7 @@ export const docs: DocArticle[] = [
     slug: "ai-features-and-byok",
     title: "AI Features and BYOK",
     description:
-      "How Navis Docs AI features work, which provider keys are needed, and how BYOK is managed.",
+      "How self-hosted AI features work, which provider keys are needed, and how BYOK is managed.",
   },
   {
     slug: "audit-logs",

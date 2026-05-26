@@ -31,6 +31,8 @@ type ProcedureViewWithAIChatProps = {
   canViewProcedureAudit: boolean;
   /** Omits Ask AI + drawer on demo host (server-detected). */
   isDemo?: boolean;
+  /** Omits Ask AI + drawer when AI is disabled (e.g. cloud deploy). */
+  aiEnabled?: boolean;
 };
 
 export function ProcedureViewWithAIChat({
@@ -41,6 +43,7 @@ export function ProcedureViewWithAIChat({
   isRead,
   canViewProcedureAudit,
   isDemo = false,
+  aiEnabled = true,
 }: ProcedureViewWithAIChatProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState<
@@ -72,7 +75,7 @@ export function ProcedureViewWithAIChat({
           canEdit={canEdit}
           isFavorite={isFavorite}
           isRead={isRead}
-          onAskAI={isDemo ? undefined : handleAskAI}
+          onAskAI={isDemo || !aiEnabled ? undefined : handleAskAI}
           showDocView={showDocView}
           onViewText={() => setShowDocView((prev) => !prev)}
           canViewProcedureAudit={canViewProcedureAudit}
@@ -112,7 +115,7 @@ export function ProcedureViewWithAIChat({
         </div>
       )}
 
-      {!isDemo ? (
+      {!isDemo && aiEnabled ? (
         <DynamicAIChatDrawer
           open={isChatOpen}
           onOpenChange={handleChatOpenChange}

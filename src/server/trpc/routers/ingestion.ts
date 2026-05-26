@@ -1,6 +1,7 @@
 import { createAuditLog } from "@/features/audit/utils/audit";
 import { generatePlainTextFromTiptap } from "@/features/procedures/utils/generate-plain-text-from-tiptap";
 import { makeSlugFromTitle } from "@/features/procedures/utils/make-slug-from-title";
+import { assertAiEnabled } from "@/lib/ai/ai-enabled";
 import { storage } from "@/lib/storage";
 import { after } from "next/server";
 import {
@@ -30,6 +31,7 @@ export const ingestionRouter = router({
     .use(rateLimitProcedureMiddleware("procedure-import"))
     .input(startImportSchema)
     .mutation(async ({ ctx, input }) => {
+      assertAiEnabled();
       const { title, teamId, departmentId, fileKey, sourceType } = input;
 
       const team = await ctx.db.team.findFirst({

@@ -30,7 +30,7 @@ export function Content() {
         </li>
         <li>
           <strong>Team</strong>: a working group inside a department with its
-          own procedures, categories, news, and AI chat
+          own procedures, categories, news, and AI chat (self-hosted only)
         </li>
         <li>
           <strong>Procedures</strong>: the team's collection of guides,

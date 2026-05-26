@@ -1,4 +1,5 @@
 import { getAnthropic } from "@/lib/ai/anthropic";
+import { assertAiEnabled } from "@/lib/ai/ai-enabled";
 import { resolveOrgAiKeys } from "@/lib/ai/resolve-org-ai-keys";
 import { isCloud } from "@/lib/deploy-mode";
 import { prisma } from "@/lib/prisma";
@@ -56,6 +57,8 @@ export async function runImportProcedure({
   sourceType,
 }: RunImportProcedureParams): Promise<void> {
   try {
+    assertAiEnabled();
+
     await prisma.ingestionJob.update({
       where: { id: jobId },
       data: { status: "PARSING" },

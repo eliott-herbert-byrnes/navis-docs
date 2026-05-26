@@ -1,5 +1,6 @@
 import { Heading } from "@/components/ui/Heading";
 import { ProcedureViewWithAIChat } from "@/features/procedures/components/procedure-view-with-ai-chat";
+import { isAiEnabled } from "@/lib/ai/ai-enabled";
 import { getSessionContext } from "@/lib/auth";
 import { isDemoContext } from "@/lib/demo";
 import { Suspense } from "react";
@@ -61,6 +62,7 @@ const ProcedureViewPage = async ({ params }: ProcedureViewPageProps) => {
           isRead={isRead}
           canViewProcedureAudit={canViewProcedureAudit}
           isDemo={isDemo}
+          aiEnabled={isAiEnabled()}
         />
       </Suspense>
     </div>

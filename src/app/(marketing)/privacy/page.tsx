@@ -71,8 +71,11 @@ export default function PrivacyPage() {
         identifiers.
       </p>
       <p>
-        If your organisation enables AI features, an encrypted copy of your
-        Anthropic or OpenAI API key is stored in our database.
+        Navis Docs cloud does not offer AI features and does not store
+        organisation AI API keys for product use. If you run a self-hosted
+        instance and your organisation enables AI there, an encrypted copy of
+        your Anthropic or OpenAI API key may be stored in that instance&rsquo;s
+        database.
       </p>
 
       <h3>Address book</h3>
@@ -101,8 +104,10 @@ export default function PrivacyPage() {
 
       <h3>AI chat content</h3>
       <p>
-        When you use the AI assistant, your messages and the relevant knowledge
-        base context are sent to Anthropic&rsquo;s API for processing. See the{" "}
+        Navis Docs cloud does not include an AI assistant. If you use a
+        self-hosted instance with AI enabled, your messages and relevant
+        knowledge base context are sent to Anthropic&rsquo;s API from that
+        deployment. See the{" "}
         <a href="#ai-features">AI Features and Data Processing</a> section for
         details.
       </p>
@@ -118,7 +123,10 @@ export default function PrivacyPage() {
         </li>
         <li>Process subscription billing via Stripe</li>
         <li>Enforce rate limits to protect service availability</li>
-        <li>Power AI assistant responses when the feature is enabled</li>
+        <li>
+          Power AI assistant responses on self-hosted deployments when the
+          feature is enabled (not available on Navis Docs cloud)
+        </li>
       </ul>
       <p>
         We will never sell your data or use it for advertising. Your
@@ -152,10 +160,11 @@ export default function PrivacyPage() {
       <h3>Browser storage (not cookies)</h3>
       <ul>
         <li>
-          <strong>sessionStorage</strong> — AI chat message history is stored
-          per team in your browser&rsquo;s sessionStorage. This data is never
-          sent to our servers or any analytics vendor; it exists only in your
-          browser tab and is cleared when the tab is closed.
+          <strong>sessionStorage</strong> — on self-hosted instances with AI
+          enabled, chat message history is stored per team in your
+          browser&rsquo;s sessionStorage. This data is never sent to Navis Docs
+          servers or any analytics vendor; it exists only in your browser tab
+          and is cleared when the tab is closed.
         </li>
         <li>
           <strong>localStorage</strong> — your theme preference (light or dark)
@@ -166,8 +175,13 @@ export default function PrivacyPage() {
 
       <h2 id="ai-features">AI Features and Data Processing</h2>
       <p>
-        When you use the AI assistant, your messages and the relevant sections
-        of your knowledge base are sent to{" "}
+        <strong>Navis Docs cloud does not offer AI features.</strong> Cloud users
+        do not send chat messages or knowledge base context to Anthropic through
+        the Navis Docs cloud service.
+      </p>
+      <p>
+        On self-hosted deployments with AI enabled, messages and relevant
+        sections of your knowledge base are sent to{" "}
         <a
           href="https://www.anthropic.com"
           target="_blank"
@@ -179,13 +193,14 @@ export default function PrivacyPage() {
         train their models.
       </p>
       <p>
-        AI features are only active if your organisation has configured an API
-        key. If no key has been configured, no data is sent to Anthropic.
+        On self-hosted instances, AI features are only active if your
+        organisation or deployment has configured the required API keys. If no
+        key has been configured, no data is sent to Anthropic.
       </p>
       <p>
-        AI chat messages are not stored on our servers. They are persisted
-        temporarily in your browser&rsquo;s sessionStorage (see above) and
-        cleared when you close the tab.
+        AI chat messages are not stored on Navis Docs servers. On self-hosted
+        instances they are persisted temporarily in your browser&rsquo;s
+        sessionStorage (see above) and cleared when you close the tab.
       </p>
 
       <h2 id="subprocessors">Third-Party Subprocessors</h2>
@@ -220,10 +235,10 @@ export default function PrivacyPage() {
             </tr>
             <tr>
               <td>Anthropic</td>
-              <td>AI assistant responses</td>
+              <td>AI assistant responses (self-hosted only)</td>
               <td>
-                Chat message content and knowledge base context (only when AI is
-                enabled)
+                Not used by Navis Docs cloud. On self-hosted instances with AI
+                enabled: chat message content and knowledge base context
               </td>
             </tr>
             <tr>

@@ -25,7 +25,7 @@
 
 - 🧭 **Organizational Knowledge Base**: Structure SOPs by organization, department, team, category, and process.
 - ✍️ **Four Documentation Formats**: Create rich text procedures, sequential steps, visual flowcharts, and decision trees.
-- 🤖 **AI Search**: Ask questions in plain English and receive answers sourced from published documentation.
+- 🤖 **AI Search** (self-hosted): Ask questions in plain English and receive answers sourced from published documentation.
 - 🔐 **Role-Based Access**: Give owners, admins, and members the right level of access across each organization.
 - 🧾 **Audit Trails**: Track who changed what and when for compliance, reviews, and operational accountability.
 - 📌 **Favorites**: Pin the procedures your team uses most often.
@@ -109,6 +109,16 @@ For the complete self-hosting guide, see [SELF_HOSTING.md](./SELF_HOSTING.md).
 
 > **Note**: Navis Docs requires object storage for procedure images, imports, and audit exports. Configure either S3-compatible storage or Supabase Storage in `.env` before running a production deployment.
 
+## Cloud deployment ☁️
+
+Navis Docs cloud (hosted at [navisdocs.com](https://navisdocs.com)) is built with `NEXT_PUBLIC_DEPLOY_MODE=cloud`.
+
+**AI is disabled on cloud.** The cloud deployment does not offer AI chat, AI-assisted procedure import, or procedure chunk embeddings. Published procedures are **not** RAG-indexed on cloud.
+
+Self-hosted deployments use `NEXT_PUBLIC_DEPLOY_MODE=self-hosted`. AI features are optional and require platform keys (`ANTHROPIC_API_KEY` for chat, `OPENAI_API_KEY` for embeddings) and/or organization API keys configured in Settings. See [SELF_HOSTING.md](./SELF_HOSTING.md) for setup details.
+
+Do not set platform `OPENAI_API_KEY` on a cloud build to enable background indexing — that contradicts product messaging and is not supported by the application (embedding generation is skipped when deploy mode is `cloud`).
+
 ## Local Development 🧑‍💻
 
 1. Fork or clone the repository:
@@ -181,8 +191,8 @@ Useful development commands:
 | `GOOGLE_CLIENT_SECRET`               | Google OAuth client secret.                                                      | Optional             | `xxx`                                                                 |
 | `RESEND_API_KEY`                     | Resend API key for OTP, invites, and transactional email.                        | Yes for email        | `re_...`                                                              |
 | `EMAIL_FROM`                         | Sender email address.                                                            | Yes for email        | `Navis Docs <no-reply@your-domain.com>`                               |
-| `ANTHROPIC_API_KEY`                  | Anthropic API key for AI chat responses.                                         | Optional             | `sk-ant-...`                                                          |
-| `OPENAI_API_KEY`                     | OpenAI API key for embeddings.                                                   | Optional             | `sk-...`                                                              |
+| `ANTHROPIC_API_KEY`                  | Anthropic API key for AI chat (self-hosted only).                                | Optional             | `sk-ant-...`                                                          |
+| `OPENAI_API_KEY`                     | OpenAI API key for embeddings / semantic search (self-hosted only).              | Optional             | `sk-...`                                                              |
 | `AI_KEY_ENCRYPTION_SECRET`           | Secret used to encrypt organization-provided AI keys.                            | Yes                  | Random 32+ character string                                           |
 | `STRIPE_SECRET_KEY`                  | Stripe secret key for billing.                                                   | Yes (cloud)          | `sk_test_...`                                                         |
 | `STRIPE_WEBHOOK_SECRET`              | Stripe webhook signing secret.                                                   | Yes (cloud)          | `whsec_...`                                                           |

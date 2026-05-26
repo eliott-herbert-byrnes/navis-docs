@@ -32,6 +32,7 @@ vi.mock("@/lib/ai/resolve-org-ai-keys", () => ({
 
 vi.mock("@/lib/deploy-mode", () => ({
   isCloud: vi.fn(() => false),
+  isSelfHosted: vi.fn(() => true),
 }));
 
 vi.mock("@/lib/ai/anthropic", () => ({

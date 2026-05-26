@@ -19,6 +19,7 @@ import {
   type Organization,
 } from "@prisma/client";
 import { encrypt } from "@/lib/crypto";
+import { assertAiEnabled, isAiEnabled } from "@/lib/ai/ai-enabled";
 import { isCloud } from "@/lib/deploy-mode";
 import {
   createOrgNameSchema,
@@ -387,6 +388,10 @@ export const organizationRouter = router({
       });
     }
 
+    if (!isAiEnabled()) {
+      return { aiEnabled: false, keysConfigured: false };
+    }
+
     const org = await ctx.db.organization.findUnique({
       where: { id: ctx.org.id },
       // Only Anthropic key drives the chat route — OpenAI is currently inert
@@ -395,10 +400,10 @@ export const organizationRouter = router({
     const hasOrgKey = Boolean(org?.anthropicApiKey);
     if (!isCloud()) {
       const hasEnvKey = Boolean(process.env.ANTHROPIC_API_KEY);
-      return { keysConfigured: hasOrgKey || hasEnvKey };
+      return { aiEnabled: true, keysConfigured: hasOrgKey || hasEnvKey };
     }
 
-    return { keysConfigured: hasOrgKey };
+    return { aiEnabled: true, keysConfigured: hasOrgKey };
   }),
   saveAiKeys: orgAdminActiveProcedure
     .use(rateLimitMiddleware("organization-ai-keys"))
@@ -409,6 +414,8 @@ export const organizationRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      assertAiEnabled();
+
       if (!ctx.org) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -451,6 +458,8 @@ export const organizationRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      assertAiEnabled();
+
       if (!ctx.org) {
         throw new TRPCError({
           code: "BAD_REQUEST",
