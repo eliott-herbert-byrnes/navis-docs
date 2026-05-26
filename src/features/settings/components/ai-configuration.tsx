@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +24,8 @@ import { useAiConfiguration } from "../hooks/use-ai-configuration";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+const isCloudDeploy = process.env.NEXT_PUBLIC_DEPLOY_MODE === "cloud";
+
 export function AiConfiguration() {
   const { statusQuery, saveMutation, removeMutation } = useAiConfiguration();
   const [anthropic, setAnthropic] = useState("");
@@ -39,6 +42,7 @@ export function AiConfiguration() {
   const isLoading = statusQuery.isLoading;
   const hasAnthropic = statusQuery.data?.hasAnthropicKey ?? false;
   const hasOpenAi = statusQuery.data?.hasOpenAiKey ?? false;
+  const formDisabled = isLoading || isCloudDeploy;
 
   return (
     <>
@@ -46,11 +50,21 @@ export function AiConfiguration() {
         <div className="flex flex-col gap-1">
           <span className="font-semibold">AI configuration</span>
           <span className="text-sm text-muted-foreground">
-            Store your own Anthropic and OpenAI API keys for this organization.
-            Keys are encrypted at rest. Leave a field blank to keep the current
-            key unchanged.
+            {isCloudDeploy
+              ? "Organisation API keys are used on self-hosted Navis Docs only. Navis Docs cloud does not use organisation AI keys."
+              : "Store your own Anthropic and OpenAI API keys for this organization. Keys are encrypted at rest. Leave a field blank to keep the current key unchanged."}
           </span>
         </div>
+
+        {isCloudDeploy ? (
+          <Alert className="border-muted">
+            <AlertTitle>Self-hosted only</AlertTitle>
+            <AlertDescription>
+              API keys in Settings are for self-hosted deployments. Navis Docs
+              cloud does not use organisation AI keys.
+            </AlertDescription>
+          </Alert>
+        ) : null}
 
         <div className="grid gap-4 max-w-md">
           <div className="grid gap-2">
@@ -59,7 +73,7 @@ export function AiConfiguration() {
               <Badge variant={"default"}>
                 {hasAnthropic ? "Configured" : "Not set"}
               </Badge>
-              {hasAnthropic && (
+              {hasAnthropic && !isCloudDeploy && (
                 <AlertDialog>
                   <AccessAlertDialogTrigger adminOnly>
                     <Button
@@ -110,7 +124,7 @@ export function AiConfiguration() {
                   ? "Enter a new key to replace the stored key"
                   : "sk-ant-api03-…"
               }
-              disabled={isLoading}
+              disabled={formDisabled}
               className="shadow-none border"
             />
           </div>
@@ -121,7 +135,7 @@ export function AiConfiguration() {
               <Badge variant={"default"}>
                 {hasOpenAi ? "Configured" : "Not set"}
               </Badge>
-              {hasOpenAi && (
+              {hasOpenAi && !isCloudDeploy && (
                 <AlertDialog>
                   <AccessAlertDialogTrigger adminOnly>
                     <Button
@@ -168,7 +182,7 @@ export function AiConfiguration() {
               placeholder={
                 hasOpenAi ? "Enter a new key to replace the stored key" : "sk-…"
               }
-              disabled={isLoading}
+              disabled={formDisabled}
               className="shadow-none border"
             />
           </div>
@@ -177,7 +191,7 @@ export function AiConfiguration() {
             adminOnly
             type="submit"
             variant="outline"
-            disabled={isLoading || saveMutation.isPending}
+            disabled={formDisabled || saveMutation.isPending}
             className="w-full flex justify-start gap-2 shadow-none border max-w-[250px] mt-1"
           >
             {saveMutation.isPending ? (

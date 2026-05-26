@@ -5,6 +5,10 @@ import {
   searchProcedureChunks,
 } from "@/features/ai/queries/search-chunks";
 import { getAnthropic } from "@/lib/ai/anthropic";
+import {
+  AI_SELF_HOSTED_ONLY_USER,
+  isAiEnabled,
+} from "@/lib/ai/ai-enabled";
 import { resolveOrgAiKeys } from "@/lib/ai/resolve-org-ai-keys";
 import { getSessionUser, getUserTeamIds } from "@/lib/auth";
 import { isCloud } from "@/lib/deploy-mode";
@@ -57,6 +61,13 @@ export async function POST(req: NextRequest) {
     const user = await getSessionUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!isAiEnabled()) {
+      return NextResponse.json(
+        { error: AI_SELF_HOSTED_ONLY_USER },
+        { status: 403 },
+      );
     }
 
     const limiter = await aiLimiter();

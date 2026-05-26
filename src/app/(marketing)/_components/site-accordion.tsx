@@ -22,7 +22,7 @@ const items = [
     value: "integration",
     trigger: "How do I integrate my own API keys?",
     content:
-      "Navis Docs uses OpenAI for semantic search and Anthropic Claude for the AI chat assistant. On the cloud version, these are managed from the admin settings. If you're self-hosting, add your OPENAI_API_KEY and ANTHROPIC_API_KEY to your .env file and the AI features will activate automatically.",
+      "AI search and AI chat are available on self-hosted Navis Docs only, the cloud offering does not include AI features. When self-hosting, add OPENAI_API_KEY (embeddings and semantic search) and ANTHROPIC_API_KEY (chat and AI-assisted import) to your .env file, or configure organization keys in Settings. Both keys are required for chat and semantic search.",
   },
   {
     value: "plans",

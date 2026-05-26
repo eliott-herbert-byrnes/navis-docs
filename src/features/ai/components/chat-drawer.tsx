@@ -25,6 +25,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AI_SELF_HOSTED_ONLY_ADMIN,
+  AI_SELF_HOSTED_ONLY_USER,
+} from "@/lib/ai/ai-enabled";
 import { trpc } from "@/trpc/client";
 
 type AIChatDrawerProps = {
@@ -55,7 +59,9 @@ export function AIChatDrawer({
       staleTime: 1000 * 60 * 5,
     },
   );
+  const aiEnabled = aiAvailability?.aiEnabled ?? true;
   const keysConfigured = aiAvailability?.keysConfigured ?? true;
+  const chatAvailable = aiEnabled && keysConfigured;
   const [messages, setMessages, clearMessages] = usePersistedChatState(
     departmentId,
     teamId,
@@ -172,7 +178,7 @@ export function AIChatDrawer({
   return (
     <>
       {/* Floating Button */}
-      {keysConfigured ? (
+      {chatAvailable ? (
         <Button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 bg-brand text-foreground dark:text-background dark:hover:bg-brand/75 hover:text-accent-foreground hover:bg-brand/75 border w-14 h-14"
@@ -197,9 +203,13 @@ export function AIChatDrawer({
             </span>
           </TooltipTrigger>
           <TooltipContent side="left">
-            {isAdmin
-              ? "Add an Anthropic API key in Settings to enable AI chat"
-              : "AI chat is not configured. Contact your organisation admin."}
+            {!aiEnabled
+              ? isAdmin
+                ? AI_SELF_HOSTED_ONLY_ADMIN
+                : AI_SELF_HOSTED_ONLY_USER
+              : isAdmin
+                ? "Add an Anthropic API key in Settings to enable AI chat"
+                : "AI chat is not configured. Contact your organisation admin."}
           </TooltipContent>
         </Tooltip>
       )}
@@ -237,7 +247,28 @@ export function AIChatDrawer({
             </Alert>
           ) : null}
 
-          {canUseAi && !keysConfigured ? (
+          {canUseAi && !aiEnabled ? (
+            <Alert className="mx-4 mt-3 shrink-0 border-muted">
+              <AlertTitle>AI not available</AlertTitle>
+              <AlertDescription className="flex flex-col gap-2">
+                <span>
+                  {isAdmin
+                    ? AI_SELF_HOSTED_ONLY_ADMIN
+                    : AI_SELF_HOSTED_ONLY_USER}
+                </span>
+                {isAdmin ? (
+                  <Link
+                    href="/docs/getting-started-self-hosting"
+                    className="text-primary font-medium underline underline-offset-4"
+                  >
+                    Self-hosting guide
+                  </Link>
+                ) : null}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
+          {canUseAi && aiEnabled && !keysConfigured ? (
             <Alert className="mx-4 mt-3 shrink-0 border-muted">
               <AlertTitle>AI chat not configured</AlertTitle>
               <AlertDescription className="flex flex-col gap-2">

@@ -36,11 +36,12 @@ export function Content() {
         uploaded or pasted material into usable procedure drafts.
       </p>
 
-      <h2>Bring your own key</h2>
+      <h2>Bring your own key (self-hosted)</h2>
       <p>
-        Organization owners and admins can provide AI API keys in organization
-        settings. This is the bring-your-own-key, or BYOK, model. It lets each
-        organization control the key used for its AI features.
+        On self-hosted deployments, organization owners and admins can provide AI
+        API keys in organization settings. This is the bring-your-own-key, or
+        BYOK, model. It lets each organization control the keys used for its AI
+        features instead of relying only on environment variables.
       </p>
       <p>
         Stored keys are encrypted at rest using{" "}
@@ -69,15 +70,19 @@ export function Content() {
 
       <h2>Cloud and self-hosted deployments</h2>
       <p>
-        On Navis Docs cloud, each organization must provide its own Anthropic
-        key before AI chat and AI-assisted import can be used. Owners and admins
-        manage that key from organization settings.
+        <strong>Navis Docs cloud does not offer AI features.</strong> There is no
+        AI chat, AI-assisted procedure import, or procedure chunk embeddings on
+        cloud. Published procedures are not RAG-indexed on cloud.
       </p>
       <p>
-        In self-hosted deployments, operators can set{" "}
-        <code>ANTHROPIC_API_KEY</code> in the environment instead. When the
-        server environment provides the key, users do not need to configure BYOK
-        inside the organization. For deployment setup, see{" "}
+        AI features are available on <strong>self-hosted</strong> deployments
+        only. Operators set platform keys in the environment (
+        <code>ANTHROPIC_API_KEY</code> for chat and import,{" "}
+        <code>OPENAI_API_KEY</code> for embeddings), or organizations configure
+        keys in Settings (BYOK). Both Anthropic and OpenAI keys are required for
+        chat and semantic search. When the server environment provides keys,
+        users do not need to configure BYOK inside the organization. For
+        deployment setup, see{" "}
         <a href="/docs/getting-started-self-hosting">
           Getting Started with Self Hosting
         </a>
@@ -96,12 +101,15 @@ export function Content() {
         checks, but it never returns the secret key value to the browser.
       </p>
 
-      <h2>Suggested setup workflow</h2>
+      <h2>Suggested setup workflow (self-hosted)</h2>
       <h3>1. Decide how keys will be supplied</h3>
       <p>
-        Cloud organizations should use BYOK in organization settings.
-        Self-hosters can choose between organization-provided keys and
-        environment-level keys depending on how they want to manage secrets.
+        Self-hosters can choose between organization-provided keys in Settings
+        and environment-level keys in <code>.env</code>, depending on how you
+        want to manage secrets. Set <code>NEXT_PUBLIC_DEPLOY_MODE=self-hosted</code>{" "}
+        and provide both <code>ANTHROPIC_API_KEY</code> and{" "}
+        <code>OPENAI_API_KEY</code> at the platform level, or configure them per
+        organization in Settings.
       </p>
 
       <h3>2. Add the Anthropic key</h3>

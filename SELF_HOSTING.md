@@ -290,6 +290,24 @@ then rebuild:
 docker compose up --build
 ```
 
+## Enabling AI features
+
+AI chat, AI-assisted procedure import, and semantic search are available on
+self-hosted deployments only. Set both platform keys in `.env`:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-...   # AI chat and AI-assisted import
+OPENAI_API_KEY=sk-...          # procedure embeddings and semantic search
+```
+
+Both keys are required for AI chat and semantic search to work. You can
+instead configure organization API keys in Settings (BYOK); see
+[AI Features and BYOK](https://navisdocs.com/docs/ai-features-and-byok) on
+the docs site.
+
+Do not set `OPENAI_API_KEY` on a cloud build (`NEXT_PUBLIC_DEPLOY_MODE=cloud`)
+expecting background indexing — cloud deployments skip embedding generation.
+
 ### Stored AI Keys No Longer Decrypt
 
 Restore the original `AI_KEY_ENCRYPTION_SECRET` from backup. If the original

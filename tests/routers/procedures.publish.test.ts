@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ProcedureStatus } from "@prisma/client";
 
+vi.mock("@/lib/deploy-mode", () => ({
+  isCloud: vi.fn().mockReturnValue(false),
+  isSelfHosted: vi.fn().mockReturnValue(true),
+}));
+
 vi.mock("@/features/audit/utils/audit", () => ({
   createAuditLog: vi.fn().mockResolvedValue(undefined),
 }));
@@ -24,6 +29,8 @@ vi.mock("next/cache", () => ({
   revalidateTag: vi.fn(),
 }));
 
+import { isSelfHosted } from "@/lib/deploy-mode";
+import { generateProcedureEmbeddings } from "@/features/ai/actions/generate-embeddings";
 import { procedureRouter } from "@/server/trpc/routers/procedures";
 
 describe("Procedure Router - publishProcedure", () => {
@@ -204,5 +211,47 @@ describe("Procedure Router - publishProcedure", () => {
         publishedVersionId: versionId,
       },
     });
+  });
+
+  it("publishes successfully on cloud when embeddings are disabled", async () => {
+    vi.mocked(isSelfHosted).mockReturnValue(false);
+
+    mockFindUnique.mockResolvedValue({
+      id: procedureId,
+      teamId: "team-1",
+      status: "DRAFT",
+      publishedVersionId: null,
+      team: { departmentId: "dept-1" },
+      pendingVersion: {
+        id: versionId,
+        contentJSON: {
+          tiptap: {
+            type: "doc",
+            content: [
+              {
+                type: "paragraph",
+                content: [{ type: "text", text: "Cloud publish content." }],
+              },
+            ],
+          },
+        },
+      },
+      publishedVersion: null,
+    });
+
+    mockVersionUpdate.mockResolvedValue({ id: versionId });
+    mockProcedureUpdate.mockResolvedValue({ id: procedureId });
+
+    const caller = procedureRouter.createCaller(mockContext);
+    await caller.publishProcedure({ procedureId });
+
+    expect(mockProcedureUpdate).toHaveBeenCalledWith({
+      where: { id: procedureId },
+      data: {
+        status: ProcedureStatus.PUBLISHED,
+        publishedVersionId: versionId,
+      },
+    });
+    expect(generateProcedureEmbeddings).toHaveBeenCalledWith(procedureId);
   });
 });

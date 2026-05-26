@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TRPCError } from "@trpc/server";
 
+vi.mock("@/lib/deploy-mode", () => ({
+  isCloud: vi.fn().mockReturnValue(false),
+  isSelfHosted: vi.fn().mockReturnValue(true),
+}));
+
 vi.mock("@/features/audit/utils/audit", () => ({
   createAuditLog: vi.fn().mockResolvedValue(undefined),
 }));
@@ -15,6 +20,8 @@ vi.mock("@/features/procedures/jobs/run-import-procedure", () => ({
   runImportProcedure: vi.fn().mockResolvedValue(undefined),
 }));
 
+import { isCloud, isSelfHosted } from "@/lib/deploy-mode";
+import { AI_SELF_HOSTED_ONLY_USER } from "@/lib/ai/ai-enabled";
 import { ingestionRouter } from "@/server/trpc/routers/ingestion";
 
 describe("Ingestion Router", () => {
@@ -135,5 +142,28 @@ describe("Ingestion Router", () => {
         jobId: "00000000-0000-4000-8000-000000000099",
       }),
     ).rejects.toThrow(TRPCError);
+  });
+
+  it("startImport is FORBIDDEN on cloud", async () => {
+    vi.mocked(isCloud).mockReturnValue(true);
+    vi.mocked(isSelfHosted).mockReturnValue(false);
+
+    const caller = ingestionRouter.createCaller(mockContext);
+
+    await expect(
+      caller.startImport({
+        title: "Imported SOP",
+        teamId: "team-1",
+        departmentId: "dept-1",
+        fileKey: "org/file.txt",
+        sourceType: "FILE_TXT",
+      }),
+    ).rejects.toMatchObject({
+      code: "FORBIDDEN",
+      message: AI_SELF_HOSTED_ONLY_USER,
+    } satisfies Partial<TRPCError>);
+
+    expect(mockTeamFindFirst).not.toHaveBeenCalled();
+    expect(mockJobCreate).not.toHaveBeenCalled();
   });
 });

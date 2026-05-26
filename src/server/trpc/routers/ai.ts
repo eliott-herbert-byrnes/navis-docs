@@ -1,6 +1,7 @@
 import { router, orgProcedure, rateLimitMiddleware } from "@/server/trpc/init";
 import { assertTeamInOrg } from "@/server/trpc/org-scope";
 import { z } from "zod";
+import { assertAiEnabled } from "@/lib/ai/ai-enabled";
 import { generateEmbedding } from "@/lib/ai/embeddings";
 
 export interface ChunkResult {
@@ -24,6 +25,7 @@ export const aiRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
+      assertAiEnabled();
       await assertTeamInOrg(ctx.db, input.teamId, ctx.org!.id);
 
       const queryEmbedding = await generateEmbedding(input.query);

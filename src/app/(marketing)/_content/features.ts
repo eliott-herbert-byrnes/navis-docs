@@ -22,7 +22,7 @@ export const features = [
     icon: Bot,
     title: "AI Search",
     description:
-      "Ask a question in plain English and get an answer sourced directly.",
+      "Available when self-hosting. Ask a question in plain English and get an answer sourced directly from your published procedures.",
   },
   {
     id: "version-control",
