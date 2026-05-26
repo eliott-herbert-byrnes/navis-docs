@@ -9,8 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  getOrganizationNameValidationMessage,
+  ORG_NAME_MAX_LENGTH_CREATE,
+  ORG_NAME_MIN_LENGTH,
+} from "@/lib/org-name";
 import { useCreateOrganization } from "../hooks/use-onboarding-mutations";
 import { useState } from "react";
 
@@ -21,13 +31,25 @@ export function OnboardForm({
   const [name, setName] = useState("");
   const { createOrganization, isPending, error } = useCreateOrganization();
 
+  const trimmedName = name.trim();
+  const validationMessage = getOrganizationNameValidationMessage(
+    trimmedName,
+    ORG_NAME_MAX_LENGTH_CREATE,
+  );
+  const isNameInvalid = validationMessage !== null;
+  const isSubmitDisabled = isPending || isNameInvalid;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim().length < 6) {
-      return;
-    }
-    createOrganization(name.trim());
+    if (isNameInvalid) return;
+    createOrganization(trimmedName);
   };
+
+  const submitButton = (
+    <Button type="submit" disabled={isSubmitDisabled}>
+      {isPending ? "Creating..." : "Create Organization"}
+    </Button>
+  );
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -39,7 +61,7 @@ export function OnboardForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <FieldGroup>
               <Field>
                 <Input
@@ -50,21 +72,26 @@ export function OnboardForm({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  minLength={6}
-                  maxLength={191}
+                  minLength={ORG_NAME_MIN_LENGTH}
+                  maxLength={ORG_NAME_MAX_LENGTH_CREATE}
                   disabled={isPending}
                 />
+                <FieldDescription>At least 3 characters</FieldDescription>
                 {error && (
                   <p className="text-sm text-red-500 mt-1">{error.message}</p>
                 )}
               </Field>
               <Field>
-                <Button
-                  type="submit"
-                  disabled={isPending || name.trim().length < 6}
-                >
-                  {isPending ? "Creating..." : "Create Organization"}
-                </Button>
+                {isNameInvalid && !isPending ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex">{submitButton}</span>
+                    </TooltipTrigger>
+                    <TooltipContent>{validationMessage}</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  submitButton
+                )}
               </Field>
             </FieldGroup>
           </form>

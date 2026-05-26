@@ -20,6 +20,11 @@ import {
 } from "@prisma/client";
 import { encrypt } from "@/lib/crypto";
 import { isCloud } from "@/lib/deploy-mode";
+import {
+  createOrgNameSchema,
+  organizationNameToSlug,
+  renameOrgNameSchema,
+} from "@/lib/org-name";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { after } from "next/server";
 
@@ -37,12 +42,7 @@ export const organizationRouter = router({
     .use(rateLimitMiddleware("organization-update"))
     .input(
       z.object({
-        orgName: z
-          .string()
-          .min(1, { message: "Organization name is required" })
-          .max(100, {
-            message: "Organization name must be less than 100 characters",
-          }),
+        orgName: renameOrgNameSchema,
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -88,14 +88,7 @@ export const organizationRouter = router({
     .use(rateLimitMiddleware("organization-create"))
     .input(
       z.object({
-        name: z
-          .string()
-          .min(6, {
-            message: "Organization name must be at least 6 characters",
-          })
-          .max(191, {
-            message: "Organization name must be less than 191 characters",
-          }),
+        name: createOrgNameSchema,
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -121,10 +114,7 @@ export const organizationRouter = router({
         });
       }
 
-      const slug = input.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+      const slug = organizationNameToSlug(input.name);
 
       if (isCloud()) {
         if (!isStripeConfigured()) {
