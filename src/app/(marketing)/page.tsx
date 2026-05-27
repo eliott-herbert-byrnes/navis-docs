@@ -116,7 +116,7 @@ export default function MarketingHomePage() {
           </div>
         </div>
       </section>
-
+{/* 
       <section aria-labelledby="company-logos">
         <div className="inset-x-0 flex justify-center">
           <p
@@ -143,7 +143,7 @@ export default function MarketingHomePage() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       <section aria-labelledby="hero-feature-heading" className="py-12">
         <div className="flex flex-col gap-3">
